@@ -12,7 +12,7 @@ import {
 import { JobStatus, BatchAggregateStatus } from '@/modules/publishing/state-machine';
 
 interface StatusTagProps {
-  status: JobStatus | BatchAggregateStatus | 'CONNECTED' | 'EXPIRING' | 'REVOKED';
+  status: JobStatus | BatchAggregateStatus | 'CONNECTED' | 'EXPIRING' | 'REVOKED' | 'DRAFT' | 'READY';
   className?: string;
 }
 
@@ -30,6 +30,20 @@ export const StatusTag: React.FC<StatusTagProps> = ({ status, className = '' }) 
       text = 'text-semantic-success';
       border = 'border-semantic-success/20';
       Icon = CheckCircle2;
+      break;
+
+    case 'READY':
+      bg = 'bg-brand-indigo/10';
+      text = 'text-brand-indigo';
+      border = 'border-brand-indigo/20';
+      Icon = CheckCircle2;
+      break;
+
+    case 'DRAFT':
+      bg = 'bg-paper-subtle';
+      text = 'text-ink-secondary';
+      border = 'border-border-rule';
+      Icon = Clock;
       break;
 
     case 'SENT_TO_INBOX':

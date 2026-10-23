@@ -97,7 +97,7 @@ export class YouTubeProvider {
         'Content-Length': totalBytes.toString(),
         'Content-Range': `bytes 0-${totalBytes - 1}/${totalBytes}`,
       },
-      body: videoBuffer,
+      body: new Uint8Array(videoBuffer),
     });
 
     // HTTP 200 or 201 indicates complete upload

@@ -123,7 +123,7 @@ export class TikTokProvider {
         'Content-Length': totalBytes.toString(),
         'Content-Range': `bytes 0-${totalBytes - 1}/${totalBytes}`,
       },
-      body: buffer,
+      body: new Uint8Array(buffer),
     });
 
     if (response.status !== 200 && response.status !== 201) {
