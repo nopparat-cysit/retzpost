@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { 
   UploadCloud, 
@@ -29,7 +29,11 @@ import {
   LayoutGrid,
   Link2,
   Lock,
-  Info
+  Info,
+  Search,
+  Users,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 
@@ -38,8 +42,10 @@ type MediaTypeMode = 'PHOTOS' | 'VIDEO' | 'TEXT_ONLY';
 interface DestinationAccount {
   id: string;
   platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK' | 'THREADS' | 'TWITTER';
+  platformGroup: 'Instagram' | 'Facebook' | 'YouTube' | 'TikTok' | 'Other';
   name: string;
   handle: string;
+  badge: string; // e.g., 'Personal', 'Brand Studio', 'Clips & Shorts', 'Community'
   avatarBg: string;
   avatarText: string;
   capabilities: {
@@ -49,12 +55,16 @@ interface DestinationAccount {
   };
 }
 
+// Multi-Channel Dataset: Demonstrates multiple channels per platform
 const CONNECTED_ACCOUNTS: DestinationAccount[] = [
+  // 1. Instagram: 2 Accounts
   {
-    id: 'ig',
+    id: 'ig_personal',
     platform: 'INSTAGRAM',
-    name: 'Instagram',
+    platformGroup: 'Instagram',
+    name: 'Alex Rivera (Personal)',
     handle: '@alexrivera_official',
+    badge: 'Personal',
     avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
     avatarText: 'IG',
     capabilities: {
@@ -64,10 +74,29 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
     },
   },
   {
-    id: 'fb',
+    id: 'ig_brand',
+    platform: 'INSTAGRAM',
+    platformGroup: 'Instagram',
+    name: 'RetzPost HQ (Brand Studio)',
+    handle: '@retzpost_app',
+    badge: 'Brand Studio',
+    avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
+    avatarText: 'IG',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+
+  // 2. Facebook: 3 Pages
+  {
+    id: 'fb_personal',
     platform: 'FACEBOOK',
-    name: 'Facebook Page',
-    handle: 'Alex Rivera Media',
+    platformGroup: 'Facebook',
+    name: 'Alex Rivera Media Studio',
+    handle: 'Alex Rivera Studio',
+    badge: 'Creator Page',
     avatarBg: 'bg-[#1877F2]',
     avatarText: 'FB',
     capabilities: {
@@ -77,10 +106,44 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
     },
   },
   {
-    id: 'yt',
+    id: 'fb_brand',
+    platform: 'FACEBOOK',
+    platformGroup: 'Facebook',
+    name: 'RetzPost Official Page',
+    handle: 'RetzPost Multi-Publishing',
+    badge: 'Product Page',
+    avatarBg: 'bg-[#1877F2]',
+    avatarText: 'FB',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+  {
+    id: 'fb_community',
+    platform: 'FACEBOOK',
+    platformGroup: 'Facebook',
+    name: 'Tech & Creator Thailand',
+    handle: 'Tech Creators Club TH',
+    badge: 'Community Page',
+    avatarBg: 'bg-[#1877F2]',
+    avatarText: 'FB',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+
+  // 3. YouTube: 2 Channels
+  {
+    id: 'yt_main',
     platform: 'YOUTUBE',
-    name: 'YouTube',
+    platformGroup: 'YouTube',
+    name: 'Alex Rivera Studio (Main)',
     handle: '@AlexRiveraStudio',
+    badge: 'Main Channel',
     avatarBg: 'bg-[#FF0000]',
     avatarText: 'YT',
     capabilities: {
@@ -90,10 +153,29 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
     },
   },
   {
-    id: 'tt',
+    id: 'yt_shorts',
+    platform: 'YOUTUBE',
+    platformGroup: 'YouTube',
+    name: 'Alex Clips & Highlights',
+    handle: '@AlexClips',
+    badge: 'Clips & Shorts',
+    avatarBg: 'bg-[#FF0000]',
+    avatarText: 'YT',
+    capabilities: {
+      feed: { supported: false, label: '—' },
+      story: { supported: false, label: '—' },
+      reel: { supported: true, label: 'Shorts' },
+    },
+  },
+
+  // 4. TikTok: 2 Accounts
+  {
+    id: 'tt_personal',
     platform: 'TIKTOK',
-    name: 'TikTok',
+    platformGroup: 'TikTok',
+    name: 'Alex Rivera (Personal)',
     handle: '@alexrivera_official',
+    badge: 'Personal',
     avatarBg: 'bg-ink-primary',
     avatarText: 'TT',
     capabilities: {
@@ -103,10 +185,29 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
     },
   },
   {
-    id: 'th',
+    id: 'tt_brand',
+    platform: 'TIKTOK',
+    platformGroup: 'TikTok',
+    name: 'RetzPost Quick Tips',
+    handle: '@retzpost_clips',
+    badge: 'Brand Clips',
+    avatarBg: 'bg-ink-primary',
+    avatarText: 'TT',
+    capabilities: {
+      feed: { supported: true, label: 'Photos' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Video' },
+    },
+  },
+
+  // 5. Threads & X: 2 Accounts
+  {
+    id: 'th_personal',
     platform: 'THREADS',
-    name: 'Threads',
+    platformGroup: 'Other',
+    name: 'Alex Rivera on Threads',
     handle: '@alexrivera',
+    badge: 'Personal',
     avatarBg: 'bg-black',
     avatarText: 'TH',
     capabilities: {
@@ -116,10 +217,12 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
     },
   },
   {
-    id: 'x',
+    id: 'x_personal',
     platform: 'TWITTER',
-    name: 'X (Twitter)',
+    platformGroup: 'Other',
+    name: 'Alex Rivera on X',
     handle: '@alexrivera',
+    badge: 'Personal',
     avatarBg: 'bg-[#0f1419]',
     avatarText: '𝕏',
     capabilities: {
@@ -131,8 +234,12 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
 ];
 
 export default function CreatePostPage() {
-  // Master Media Ingestion Mode: Switch to test smart validation!
+  // Master Media Ingestion Mode
   const [mediaMode, setMediaMode] = useState<MediaTypeMode>('PHOTOS');
+
+  // Search & Filter State for Channels
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedGroupFilter, setSelectedGroupFilter] = useState<'ALL' | 'Instagram' | 'Facebook' | 'YouTube' | 'TikTok' | 'Other'>('ALL');
 
   // Sample Photos
   const [images, setImages] = useState<Array<{ id: string; name: string; size: string }>>([
@@ -150,18 +257,19 @@ export default function CreatePostPage() {
 
   // Placements State Dictionary: [accountId_format]: boolean
   const [placements, setPlacements] = useState<Record<string, boolean>>({
-    'ig_feed': true,
-    'ig_story': true,
-    'ig_reel': false,
-    'fb_feed': true,
-    'fb_story': false,
-    'fb_reel': false,
-    'yt_reel': false,
-    'tt_feed': false,
-    'tt_story': false,
-    'tt_reel': false,
-    'th_feed': false,
-    'x_feed': false,
+    'ig_personal_feed': true,
+    'ig_personal_story': true,
+    'ig_brand_feed': false,
+    'fb_personal_feed': true,
+    'fb_brand_feed': true,
+    'fb_brand_story': false,
+    'fb_community_feed': false,
+    'yt_main_reel': false,
+    'yt_shorts_reel': false,
+    'tt_personal_feed': false,
+    'tt_brand_feed': false,
+    'th_personal_feed': false,
+    'x_personal_feed': false,
   });
 
   // Content Fields
@@ -222,7 +330,7 @@ export default function CreatePostPage() {
 
   // Bulk Column Toggles with Smart Validation
   const toggleAllForFormat = (format: 'feed' | 'story' | 'reel') => {
-    const eligibleAccounts = CONNECTED_ACCOUNTS.filter(
+    const eligibleAccounts = filteredAccounts.filter(
       (acc) => getFormatValidation(format, acc).eligible
     );
     if (eligibleAccounts.length === 0) return;
@@ -240,6 +348,54 @@ export default function CreatePostPage() {
     });
   };
 
+  // Toggle All Valid Placements for an Entire Platform Group (e.g., all 3 Facebook Pages)
+  const togglePlatformGroup = (group: string) => {
+    const groupAccounts = CONNECTED_ACCOUNTS.filter((acc) => acc.platformGroup === group);
+    
+    // Check if all eligible placements in this group are currently selected
+    let allSelected = true;
+    groupAccounts.forEach((acc) => {
+      (['feed', 'story', 'reel'] as const).forEach((fmt) => {
+        if (getFormatValidation(fmt, acc).eligible && !placements[`${acc.id}_${fmt}`]) {
+          allSelected = false;
+        }
+      });
+    });
+
+    setPlacements((prev) => {
+      const next = { ...prev };
+      groupAccounts.forEach((acc) => {
+        (['feed', 'story', 'reel'] as const).forEach((fmt) => {
+          if (getFormatValidation(fmt, acc).eligible) {
+            next[`${acc.id}_${fmt}`] = !allSelected;
+          }
+        });
+      });
+      return next;
+    });
+  };
+
+  // Filtered Accounts by search & group
+  const filteredAccounts = useMemo(() => {
+    return CONNECTED_ACCOUNTS.filter((acc) => {
+      const matchesGroup = selectedGroupFilter === 'ALL' || acc.platformGroup === selectedGroupFilter;
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch = !q || acc.name.toLowerCase().includes(q) || acc.handle.toLowerCase().includes(q) || acc.badge.toLowerCase().includes(q);
+      return matchesGroup && matchesSearch;
+    });
+  }, [searchQuery, selectedGroupFilter]);
+
+  // Group accounts by platformGroup for presentation
+  const groupedAccounts = useMemo(() => {
+    const map = new Map<string, DestinationAccount[]>();
+    filteredAccounts.forEach((acc) => {
+      const list = map.get(acc.platformGroup) || [];
+      list.push(acc);
+      map.set(acc.platformGroup, list);
+    });
+    return map;
+  }, [filteredAccounts]);
+
   // Active counts
   const totalActivePlacements = Object.entries(placements).filter(([key, val]) => {
     if (!val) return false;
@@ -254,18 +410,13 @@ export default function CreatePostPage() {
     return val.eligible && placements[`${acc.id}_story`];
   });
 
-  const isAnyReelActive = CONNECTED_ACCOUNTS.some((acc) => {
-    const val = getFormatValidation('reel', acc);
-    return val.eligible && placements[`${acc.id}_reel`];
-  });
-
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
       <Masthead
         folio="COMPOSER / DISPATCH DESK"
         editionDate="MULTI-PLACEMENT STUDIO"
         title="Universal Content Composer"
-        subtitle="Upload once. Dispatch simultaneously across Feed Posts, 24h Stories, and Reels/Shorts with automated media validation."
+        subtitle="Manage multiple channels per platform. Publish simultaneously across Feed, Stories, and Reels with smart validation."
         actions={
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono text-brand-indigo font-semibold px-2.5 py-1 bg-brand-indigo/10 rounded-editorial border border-brand-indigo/20">
@@ -382,7 +533,7 @@ export default function CreatePostPage() {
                   )}
                 </div>
                 <p className="text-[11px] font-mono text-brand-indigo">
-                  ✓ Photo carousel validated for Feed Posts & 9:16 Story framing (Reels column disabled below).
+                  ✓ Photo carousel validated for Feed & Stories (Reels column disabled below).
                 </p>
               </div>
             )}
@@ -428,22 +579,60 @@ export default function CreatePostPage() {
             )}
           </section>
 
-          {/* SECTION 02: OMNI-PLACEMENT MATRIX TABLE WITH SMART VALIDATION (OPTION 1 + OPTION 3) */}
+          {/* SECTION 02: OMNI-PLACEMENT MATRIX WITH MULTI-CHANNEL SCALING */}
           <section className="bg-paper-raised border border-border-rule rounded-card p-5 shadow-xs">
             <div className="flex items-baseline justify-between mb-3 pb-2 border-b border-border-rule">
               <div className="flex items-baseline gap-2">
                 <span className="font-mono text-xs font-bold text-brand-indigo">[SEC. 02]</span>
                 <h2 className="font-serif font-medium text-base text-ink-primary">
-                  Omni-Placement Matrix & Validation Desk
+                  Multi-Channel Placement Matrix ({CONNECTED_ACCOUNTS.length} Connected Channels)
                 </h2>
               </div>
               <span className="text-[11px] font-mono text-ink-secondary">
-                Smart rules adapt to {mediaMode.replace('_', ' ')}
+                Multiple accounts per platform supported
               </span>
             </div>
 
-            {/* Matrix Quick Bulk Actions Bar */}
-            <div className="flex flex-wrap items-center justify-between gap-2 p-2.5 bg-paper-subtle rounded-editorial border border-border-rule mb-3 text-xs">
+            {/* Search & Platform Filter Tabs */}
+            <div className="space-y-2.5 mb-3">
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-ink-secondary absolute left-3 top-2.5" />
+                <input
+                  type="text"
+                  placeholder="Filter channels by name, handle, or badge (e.g. 'Personal', 'Brand', '@AlexClips')..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-8 pr-3 py-1.5 text-xs bg-paper-canvas border border-border-rule rounded-editorial font-mono text-ink-primary placeholder:text-ink-secondary/50 focus:outline-none focus:border-brand-indigo"
+                />
+              </div>
+
+              {/* Platform Filter Pills */}
+              <div className="flex flex-wrap items-center gap-1.5 text-xs">
+                {(['ALL', 'Instagram', 'Facebook', 'YouTube', 'TikTok', 'Other'] as const).map((grp) => {
+                  const count = grp === 'ALL' 
+                    ? CONNECTED_ACCOUNTS.length 
+                    : CONNECTED_ACCOUNTS.filter(a => a.platformGroup === grp).length;
+                  
+                  return (
+                    <button
+                      key={grp}
+                      type="button"
+                      onClick={() => setSelectedGroupFilter(grp)}
+                      className={`px-2.5 py-1 rounded text-[11px] font-mono transition-colors ${
+                        selectedGroupFilter === grp
+                          ? 'bg-ink-primary text-white font-semibold'
+                          : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
+                      }`}
+                    >
+                      {grp === 'ALL' ? 'All Channels' : grp} ({count})
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Quick Column Selectors */}
+            <div className="flex flex-wrap items-center justify-between gap-2 p-2 bg-paper-subtle rounded-editorial border border-border-rule mb-3 text-xs">
               <span className="text-[11px] font-mono text-ink-secondary font-medium">
                 Quick Column Selectors:
               </span>
@@ -484,138 +673,180 @@ export default function CreatePostPage() {
               </div>
             </div>
 
-            {/* Matrix Table */}
+            {/* Matrix Table with Platform Groupings */}
             <div className="overflow-x-auto border border-border-rule rounded-editorial bg-paper-canvas">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-border-rule bg-paper-subtle/70 text-[11px] font-mono text-ink-secondary">
-                    <th className="py-2.5 px-3.5 font-semibold">Destination Account</th>
+                  <tr className="border-b border-border-rule bg-paper-subtle/80 text-[11px] font-mono text-ink-secondary">
+                    <th className="py-2.5 px-3.5 font-semibold">Channel / Page / Account</th>
                     <th className="py-2.5 px-3 text-center font-semibold">📰 Feed Post</th>
                     <th className="py-2.5 px-3 text-center font-semibold">📱 24h Story</th>
                     <th className="py-2.5 px-3 text-center font-semibold">🎬 Reel / Shorts</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-rule text-xs">
-                  {CONNECTED_ACCOUNTS.map((acc) => {
-                    const feedVal = getFormatValidation('feed', acc);
-                    const storyVal = getFormatValidation('story', acc);
-                    const reelVal = getFormatValidation('reel', acc);
-
-                    const isFeedActive = feedVal.eligible && placements[`${acc.id}_feed`];
-                    const isStoryActive = storyVal.eligible && placements[`${acc.id}_story`];
-                    const isReelActive = reelVal.eligible && placements[`${acc.id}_reel`];
-
-                    const isAnyActive = isFeedActive || isStoryActive || isReelActive;
-
-                    return (
-                      <tr 
-                        key={acc.id} 
-                        className={`transition-colors ${
-                          isAnyActive ? 'bg-paper-canvas' : 'bg-paper-subtle/30 opacity-70'
-                        } hover:bg-paper-subtle/50`}
-                      >
-                        {/* Account Info Column */}
-                        <td className="py-3 px-3.5">
-                          <div className="flex items-center gap-2.5">
-                            <div className={`w-7 h-7 rounded-editorial ${acc.avatarBg} text-white flex items-center justify-center font-bold text-[11px] shrink-0 shadow-2xs`}>
-                              {acc.avatarText}
+                  {Array.from(groupedAccounts.entries()).map(([groupName, accounts]) => (
+                    <React.Fragment key={groupName}>
+                      {/* Platform Group Subheader with Quick Group Toggle */}
+                      <tr className="bg-paper-subtle/60 border-t-2 border-border-rule/80">
+                        <td colSpan={4} className="py-2 px-3.5">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-[10px] font-bold text-ink-primary uppercase tracking-wider">
+                                {groupName}
+                              </span>
+                              <span className="text-[10px] font-mono text-ink-secondary bg-paper-canvas px-1.5 py-0.2 rounded border border-border-rule">
+                                {accounts.length} {accounts.length > 1 ? 'Channels' : 'Channel'}
+                              </span>
                             </div>
-                            <div>
-                              <p className="font-semibold text-xs text-ink-primary leading-tight">{acc.name}</p>
-                              <p className="text-[10px] font-mono text-ink-secondary">{acc.handle}</p>
-                            </div>
+
+                            <button
+                              type="button"
+                              onClick={() => togglePlatformGroup(groupName)}
+                              className="text-[10px] font-mono text-brand-indigo hover:underline flex items-center gap-1 font-semibold"
+                            >
+                              <span>⚡ Toggle All {groupName}</span>
+                            </button>
                           </div>
                         </td>
-
-                        {/* Column 1: Feed Post */}
-                        <td className="py-3 px-3 text-center">
-                          {acc.capabilities.feed.supported ? (
-                            feedVal.eligible ? (
-                              <button
-                                type="button"
-                                onClick={() => togglePlacement(acc.id, 'feed', acc)}
-                                className={`px-2.5 py-1 rounded-full text-[11px] font-mono font-medium transition-all ${
-                                  isFeedActive
-                                    ? 'bg-brand-indigo text-white shadow-2xs font-semibold'
-                                    : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
-                                }`}
-                              >
-                                {isFeedActive ? `✓ ${acc.capabilities.feed.label}` : `+ ${acc.capabilities.feed.label}`}
-                              </button>
-                            ) : (
-                              <span 
-                                title={feedVal.reason}
-                                className="inline-flex items-center gap-1 text-[10px] font-mono text-ink-secondary/50 bg-paper-subtle px-2 py-0.5 rounded cursor-not-allowed"
-                              >
-                                <Lock className="w-2.5 h-2.5" />
-                                <span>No Photo</span>
-                              </span>
-                            )
-                          ) : (
-                            <span className="text-[11px] font-mono text-ink-secondary/40">—</span>
-                          )}
-                        </td>
-
-                        {/* Column 2: 24h Story */}
-                        <td className="py-3 px-3 text-center">
-                          {acc.capabilities.story.supported ? (
-                            storyVal.eligible ? (
-                              <button
-                                type="button"
-                                onClick={() => togglePlacement(acc.id, 'story', acc)}
-                                className={`px-2.5 py-1 rounded-full text-[11px] font-mono font-medium transition-all ${
-                                  isStoryActive
-                                    ? 'bg-accent-terracotta text-white shadow-2xs font-semibold'
-                                    : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
-                                }`}
-                              >
-                                {isStoryActive ? `✓ ${acc.capabilities.story.label}` : `+ ${acc.capabilities.story.label}`}
-                              </button>
-                            ) : (
-                              <span 
-                                title={storyVal.reason}
-                                className="inline-flex items-center gap-1 text-[10px] font-mono text-ink-secondary/50 bg-paper-subtle px-2 py-0.5 rounded cursor-not-allowed"
-                              >
-                                <Lock className="w-2.5 h-2.5" />
-                                <span>No Media</span>
-                              </span>
-                            )
-                          ) : (
-                            <span className="text-[11px] font-mono text-ink-secondary/40">—</span>
-                          )}
-                        </td>
-
-                        {/* Column 3: Reels & Shorts */}
-                        <td className="py-3 px-3 text-center">
-                          {acc.capabilities.reel.supported ? (
-                            reelVal.eligible ? (
-                              <button
-                                type="button"
-                                onClick={() => togglePlacement(acc.id, 'reel', acc)}
-                                className={`px-2.5 py-1 rounded-full text-[11px] font-mono font-medium transition-all ${
-                                  isReelActive
-                                    ? 'bg-semantic-info text-white shadow-2xs font-semibold'
-                                    : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
-                                }`}
-                              >
-                                {isReelActive ? `✓ ${acc.capabilities.reel.label}` : `+ ${acc.capabilities.reel.label}`}
-                              </button>
-                            ) : (
-                              <span 
-                                title={reelVal.reason}
-                                className="inline-flex items-center gap-1 text-[10px] font-mono text-ink-secondary/50 bg-paper-subtle px-2 py-0.5 rounded cursor-not-allowed"
-                              >
-                                <Lock className="w-2.5 h-2.5" />
-                                <span>Video Req.</span>
-                              </span>
-                            )
-                          ) : (
-                            <span className="text-[11px] font-mono text-ink-secondary/40">—</span>
-                          )}
-                        </td>
                       </tr>
-                    );
-                  })}
+
+                      {/* Accounts inside this Group */}
+                      {accounts.map((acc) => {
+                        const feedVal = getFormatValidation('feed', acc);
+                        const storyVal = getFormatValidation('story', acc);
+                        const reelVal = getFormatValidation('reel', acc);
+
+                        const isFeedActive = feedVal.eligible && placements[`${acc.id}_feed`];
+                        const isStoryActive = storyVal.eligible && placements[`${acc.id}_story`];
+                        const isReelActive = reelVal.eligible && placements[`${acc.id}_reel`];
+
+                        const isAnyActive = isFeedActive || isStoryActive || isReelActive;
+
+                        return (
+                          <tr 
+                            key={acc.id} 
+                            className={`transition-colors ${
+                              isAnyActive ? 'bg-paper-canvas' : 'bg-paper-subtle/20 opacity-70'
+                            } hover:bg-paper-subtle/40`}
+                          >
+                            {/* Channel Details */}
+                            <td className="py-2.5 px-3.5">
+                              <div className="flex items-center gap-2.5">
+                                <div className={`w-7 h-7 rounded-editorial ${acc.avatarBg} text-white flex items-center justify-center font-bold text-[11px] shrink-0 shadow-2xs`}>
+                                  {acc.avatarText}
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-1.5">
+                                    <p className="font-semibold text-xs text-ink-primary leading-tight">{acc.name}</p>
+                                    <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-paper-subtle border border-border-rule text-ink-secondary">
+                                      {acc.badge}
+                                    </span>
+                                  </div>
+                                  <p className="text-[10px] font-mono text-ink-secondary">{acc.handle}</p>
+                                </div>
+                              </div>
+                            </td>
+
+                            {/* Column 1: Feed */}
+                            <td className="py-2.5 px-3 text-center">
+                              {acc.capabilities.feed.supported ? (
+                                feedVal.eligible ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => togglePlacement(acc.id, 'feed', acc)}
+                                    className={`px-2.5 py-1 rounded-full text-[11px] font-mono font-medium transition-all ${
+                                      isFeedActive
+                                        ? 'bg-brand-indigo text-white shadow-2xs font-semibold'
+                                        : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
+                                    }`}
+                                  >
+                                    {isFeedActive ? `✓ ${acc.capabilities.feed.label}` : `+ ${acc.capabilities.feed.label}`}
+                                  </button>
+                                ) : (
+                                  <span 
+                                    title={feedVal.reason}
+                                    className="inline-flex items-center gap-1 text-[10px] font-mono text-ink-secondary/50 bg-paper-subtle px-2 py-0.5 rounded cursor-not-allowed"
+                                  >
+                                    <Lock className="w-2.5 h-2.5" />
+                                    <span>No Photo</span>
+                                  </span>
+                                )
+                              ) : (
+                                <span className="text-[11px] font-mono text-ink-secondary/40">—</span>
+                              )}
+                            </td>
+
+                            {/* Column 2: Story */}
+                            <td className="py-2.5 px-3 text-center">
+                              {acc.capabilities.story.supported ? (
+                                storyVal.eligible ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => togglePlacement(acc.id, 'story', acc)}
+                                    className={`px-2.5 py-1 rounded-full text-[11px] font-mono font-medium transition-all ${
+                                      isStoryActive
+                                        ? 'bg-accent-terracotta text-white shadow-2xs font-semibold'
+                                        : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
+                                    }`}
+                                  >
+                                    {isStoryActive ? `✓ ${acc.capabilities.story.label}` : `+ ${acc.capabilities.story.label}`}
+                                  </button>
+                                ) : (
+                                  <span 
+                                    title={storyVal.reason}
+                                    className="inline-flex items-center gap-1 text-[10px] font-mono text-ink-secondary/50 bg-paper-subtle px-2 py-0.5 rounded cursor-not-allowed"
+                                  >
+                                    <Lock className="w-2.5 h-2.5" />
+                                    <span>No Media</span>
+                                  </span>
+                                )
+                              ) : (
+                                <span className="text-[11px] font-mono text-ink-secondary/40">—</span>
+                              )}
+                            </td>
+
+                            {/* Column 3: Reels & Shorts */}
+                            <td className="py-2.5 px-3 text-center">
+                              {acc.capabilities.reel.supported ? (
+                                reelVal.eligible ? (
+                                  <button
+                                    type="button"
+                                    onClick={() => togglePlacement(acc.id, 'reel', acc)}
+                                    className={`px-2.5 py-1 rounded-full text-[11px] font-mono font-medium transition-all ${
+                                      isReelActive
+                                        ? 'bg-semantic-info text-white shadow-2xs font-semibold'
+                                        : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
+                                    }`}
+                                  >
+                                    {isReelActive ? `✓ ${acc.capabilities.reel.label}` : `+ ${acc.capabilities.reel.label}`}
+                                  </button>
+                                ) : (
+                                  <span 
+                                    title={reelVal.reason}
+                                    className="inline-flex items-center gap-1 text-[10px] font-mono text-ink-secondary/50 bg-paper-subtle px-2 py-0.5 rounded cursor-not-allowed"
+                                  >
+                                    <Lock className="w-2.5 h-2.5" />
+                                    <span>Video Req.</span>
+                                  </span>
+                                )
+                              ) : (
+                                <span className="text-[11px] font-mono text-ink-secondary/40">—</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </React.Fragment>
+                  ))}
+
+                  {filteredAccounts.length === 0 && (
+                    <tr>
+                      <td colSpan={4} className="py-8 text-center text-xs font-mono text-ink-secondary">
+                        No channels match &quot;{searchQuery}&quot;. Try clearing your filter.
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -623,7 +854,7 @@ export default function CreatePostPage() {
             <p className="text-[10px] font-mono text-ink-secondary mt-2 flex items-center gap-1.5">
               <Info className="w-3 h-3 text-brand-indigo shrink-0" />
               <span>
-                Matrix auto-locks invalid formats based on detected media (Option 3 Validation active).
+                Select specific channels individually, or use &quot;Toggle All [Platform]&quot; to control multiple pages simultaneously.
               </span>
             </p>
           </section>
@@ -953,7 +1184,6 @@ export default function CreatePostPage() {
                   </div>
                 )}
 
-                {/* Reels Right Interaction Strip */}
                 <div className="flex items-end justify-between">
                   <div className="space-y-1 max-w-[140px]">
                     <p className="text-[11px] font-bold line-clamp-1">@alexrivera_official</p>
