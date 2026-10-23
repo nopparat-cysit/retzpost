@@ -43,12 +43,24 @@ import {
   Sliders,
   X,
   Copy,
-  FolderOpen
+  FolderOpen,
+  ThumbsUp,
+  ThumbsDown,
+  Play,
+  Music,
+  Disc
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { CustomDatePicker } from '@/components/ui/custom-date-picker';
 import { CustomTimePicker } from '@/components/ui/custom-time-picker';
 import { CustomDropdown } from '@/components/ui/custom-dropdown';
+import { 
+  FacebookLogo, 
+  InstagramLogo, 
+  YouTubeLogo, 
+  TikTokLogo, 
+  SocialPlatformIcon 
+} from '@/components/ui/social-icons';
 import { 
   PostTemplate, 
   TemplateCategory,
@@ -872,7 +884,8 @@ export default function CreatePostPage() {
     }
   };
 
-  // Preview Mode in Right Rail (Column 3)
+  // Preview Mode in Right Rail (Column 3): Multi-Platform & Multi-Format Live Proof
+  const [previewPlatform, setPreviewPlatform] = useState<'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK'>('INSTAGRAM');
   const [previewTab, setPreviewTab] = useState<'FEED' | 'STORY' | 'REEL'>('FEED');
 
   // Cadence
@@ -887,6 +900,103 @@ export default function CreatePostPage() {
   const workspaceChannels = useMemo(() => {
     return CHANNELS_BY_WORKSPACE.filter(ch => ch.workspaceId === activeWorkspaceId);
   }, [activeWorkspaceId]);
+
+  // Active Account for Live Proof Preview (Graceful fallback to workspace-branded account if not connected)
+  const previewAccount = useMemo(() => {
+    const matched = workspaceChannels.find((ch) => ch.platform === previewPlatform);
+    if (matched) return matched;
+    const cleanHandle = activeWorkspace.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const fallbacks: Record<string, DestinationAccount> = {
+      INSTAGRAM: {
+        id: `mock_ig_${activeWorkspaceId}`,
+        workspaceId: activeWorkspaceId,
+        platform: 'INSTAGRAM',
+        platformGroup: 'Instagram',
+        name: `${activeWorkspace.name}`,
+        handle: `@${cleanHandle}_official`,
+        badge: 'Instagram',
+        avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
+        avatarText: 'IG',
+        capabilities: { feed: { supported: true, label: 'Feed' }, story: { supported: true, label: 'Story' }, reel: { supported: true, label: 'Reel' } },
+      },
+      FACEBOOK: {
+        id: `mock_fb_${activeWorkspaceId}`,
+        workspaceId: activeWorkspaceId,
+        platform: 'FACEBOOK',
+        platformGroup: 'Facebook',
+        name: `${activeWorkspace.name} Page`,
+        handle: `${activeWorkspace.name} Official`,
+        badge: 'Facebook Page',
+        avatarBg: 'bg-[#1877F2]',
+        avatarText: 'FB',
+        capabilities: { feed: { supported: true, label: 'Feed' }, story: { supported: true, label: 'Story' }, reel: { supported: true, label: 'Reel' } },
+      },
+      YOUTUBE: {
+        id: `mock_yt_${activeWorkspaceId}`,
+        workspaceId: activeWorkspaceId,
+        platform: 'YOUTUBE',
+        platformGroup: 'YouTube',
+        name: `${activeWorkspace.name} Studio`,
+        handle: `@${cleanHandle}Studio`,
+        badge: 'YouTube Channel',
+        avatarBg: 'bg-[#FF0000]',
+        avatarText: 'YT',
+        capabilities: { feed: { supported: true, label: 'Community' }, story: { supported: false, label: '—' }, reel: { supported: true, label: 'Shorts' } },
+      },
+      TIKTOK: {
+        id: `mock_tt_${activeWorkspaceId}`,
+        workspaceId: activeWorkspaceId,
+        platform: 'TIKTOK',
+        platformGroup: 'TikTok',
+        name: `${activeWorkspace.name}`,
+        handle: `@${cleanHandle}`,
+        badge: 'TikTok',
+        avatarBg: 'bg-ink-primary',
+        avatarText: 'TT',
+        capabilities: { feed: { supported: true, label: 'Photos' }, story: { supported: true, label: 'Story' }, reel: { supported: true, label: 'Video' } },
+      },
+    };
+    return fallbacks[previewPlatform] || workspaceChannels[0];
+  }, [workspaceChannels, previewPlatform, activeWorkspaceId, activeWorkspace.name]);
+
+  // Available format sub-pills adapted dynamically per platform
+  const platformFormats = useMemo(() => {
+    const map: Record<'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK', { id: 'FEED' | 'STORY' | 'REEL'; label: string; icon: React.ComponentType<{ className?: string }> }[]> = {
+      INSTAGRAM: [
+        { id: 'FEED', label: 'Feed Post', icon: LayoutGrid },
+        { id: 'STORY', label: 'Story (24h)', icon: Smartphone },
+        { id: 'REEL', label: 'Reels (9:16)', icon: Film },
+      ],
+      FACEBOOK: [
+        { id: 'FEED', label: 'Page Post', icon: LayoutGrid },
+        { id: 'STORY', label: 'Story (24h)', icon: Smartphone },
+        { id: 'REEL', label: 'Reels (9:16)', icon: Film },
+      ],
+      YOUTUBE: [
+        { id: 'REEL', label: 'Shorts (9:16)', icon: Film },
+        { id: 'FEED', label: 'Video Feed', icon: LayoutGrid },
+      ],
+      TIKTOK: [
+        { id: 'REEL', label: 'Video (9:16)', icon: Film },
+        { id: 'FEED', label: 'Photo Slide', icon: LayoutGrid },
+        { id: 'STORY', label: 'Story', icon: Smartphone },
+      ],
+    };
+    return map[previewPlatform];
+  }, [previewPlatform]);
+
+  const handleSelectPreviewPlatform = (plat: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK') => {
+    setPreviewPlatform(plat);
+    const validFormats = {
+      INSTAGRAM: ['FEED', 'STORY', 'REEL'],
+      FACEBOOK: ['FEED', 'STORY', 'REEL'],
+      YOUTUBE: ['REEL', 'FEED'],
+      TIKTOK: ['REEL', 'FEED', 'STORY'],
+    }[plat];
+    if (!validFormats.includes(previewTab)) {
+      setPreviewTab(validFormats[0] as 'FEED' | 'STORY' | 'REEL');
+    }
+  };
 
   // Active Custom Presets for this Workspace
   const activePresets = customPresetsMap[activeWorkspaceId] || [];
@@ -2090,200 +2200,697 @@ export default function CreatePostPage() {
             </span>
           </div>
 
-          {/* Format Switcher Tabs */}
-          <div className="flex items-center p-1 bg-paper-subtle border border-border-rule rounded-editorial text-xs">
-            <button
-              type="button"
-              onClick={() => setPreviewTab('FEED')}
-              className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-medium rounded transition-colors ${
-                previewTab === 'FEED'
-                  ? 'bg-paper-canvas text-brand-indigo shadow-xs font-semibold'
-                  : 'text-ink-secondary hover:text-ink-primary'
-              }`}
-            >
-              <LayoutGrid className="w-3.5 h-3.5" />
-              <span>Feed</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setPreviewTab('STORY')}
-              className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-medium rounded transition-colors ${
-                previewTab === 'STORY'
-                  ? 'bg-paper-canvas text-accent-terracotta shadow-xs font-semibold'
-                  : 'text-ink-secondary hover:text-ink-primary'
-              }`}
-            >
-              <Smartphone className="w-3.5 h-3.5" />
-              <span>Story</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setPreviewTab('REEL')}
-              className={`flex-1 flex items-center justify-center gap-1 py-1.5 text-xs font-medium rounded transition-colors ${
-                previewTab === 'REEL'
-                  ? 'bg-paper-canvas text-semantic-info shadow-xs font-semibold'
-                  : 'text-ink-secondary hover:text-ink-primary'
-              }`}
-            >
-              <Film className="w-3.5 h-3.5" />
-              <span>Reels</span>
-            </button>
+          {/* Clean Multi-Platform & Multi-Format Selector Dock */}
+          <div className="bg-paper-subtle border border-border-rule rounded-editorial p-1.5 space-y-1.5 shadow-2xs">
+            {/* Tier 1: Platform Pills (Clean & Compact) */}
+            <div className="grid grid-cols-4 gap-1 p-0.5 bg-paper-canvas/80 border border-border-rule/60 rounded-md">
+              {(['INSTAGRAM', 'FACEBOOK', 'YOUTUBE', 'TIKTOK'] as const).map((plat) => {
+                const isActive = previewPlatform === plat;
+                return (
+                  <button
+                    key={plat}
+                    type="button"
+                    onClick={() => handleSelectPreviewPlatform(plat)}
+                    className={`flex items-center justify-center gap-1.5 py-1.5 px-1 rounded text-[11px] font-semibold transition-all ${
+                      isActive
+                        ? 'bg-paper-raised text-ink-primary shadow-xs ring-1 ring-border-rule font-bold'
+                        : 'text-ink-secondary hover:text-ink-primary hover:bg-paper-raised/50'
+                    }`}
+                    title={`Switch to ${plat} Preview`}
+                  >
+                    {plat === 'INSTAGRAM' && <InstagramLogo size={14} className="shrink-0" />}
+                    {plat === 'FACEBOOK' && <FacebookLogo size={14} className="shrink-0" />}
+                    {plat === 'YOUTUBE' && <YouTubeLogo size={14} className="shrink-0" />}
+                    {plat === 'TIKTOK' && <TikTokLogo size={14} className="shrink-0" />}
+                    <span className="truncate">
+                      {plat === 'INSTAGRAM' ? 'IG' : plat === 'FACEBOOK' ? 'FB' : plat === 'YOUTUBE' ? 'YT' : 'TikTok'}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Tier 2: Dynamic Format Sub-Pills for Active Platform */}
+            <div className="flex items-center gap-1">
+              {platformFormats.map((fmt) => {
+                const isFormatActive = previewTab === fmt.id;
+                const FmtIcon = fmt.icon;
+                return (
+                  <button
+                    key={fmt.id}
+                    type="button"
+                    onClick={() => setPreviewTab(fmt.id)}
+                    className={`flex-1 flex items-center justify-center gap-1 py-1 px-1.5 text-[10px] font-medium rounded transition-all ${
+                      isFormatActive
+                        ? 'bg-brand-indigo text-white font-semibold shadow-2xs'
+                        : 'bg-paper-canvas text-ink-secondary hover:text-ink-primary border border-border-rule/60'
+                    }`}
+                  >
+                    <FmtIcon className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{fmt.label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* TAB 1: FEED PREVIEW */}
-          {previewTab === 'FEED' && (
-            <div className="bg-paper-canvas border border-border-rule rounded-editorial overflow-hidden shadow-2xs">
-              <div className="p-2.5 flex items-center justify-between border-b border-border-rule/60">
-                <div className="flex items-center gap-2">
-                  <div className="w-5 h-5 rounded-full bg-brand-indigo text-white flex items-center justify-center text-[9px] font-bold">
-                    AR
+          {/* ========================================================================= */}
+          {/* 1. INSTAGRAM PREVIEWS                                                     */}
+          {/* ========================================================================= */}
+          {previewPlatform === 'INSTAGRAM' && (
+            <>
+              {/* IG FEED */}
+              {previewTab === 'FEED' && (
+                <div className="bg-paper-canvas border border-border-rule rounded-editorial overflow-hidden shadow-2xs">
+                  <div className="p-2.5 flex items-center justify-between border-b border-border-rule/60">
+                    <div className="flex items-center gap-2">
+                      <div className="p-0.5 rounded-full bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]">
+                        <div className="w-5 h-5 rounded-full bg-paper-canvas flex items-center justify-center text-[8px] font-bold text-ink-primary">
+                          {previewAccount.avatarText || 'IG'}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-ink-primary leading-none truncate max-w-[150px]">
+                          {previewAccount.handle || '@channel'}
+                        </p>
+                        <p className="text-[8px] font-mono text-ink-secondary">
+                          Instagram Feed • {mediaMode === 'PHOTOS' ? `Carousel (${images.length})` : mediaMode === 'VIDEO' ? 'Video Post' : 'Text'}
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono text-ink-secondary">•••</span>
                   </div>
-                  <div>
-                    <p className="text-xs font-semibold text-ink-primary leading-none truncate max-w-[150px]">
-                      {workspaceChannels[0]?.handle || '@channel'}
+
+                  <div className="aspect-[4/3] bg-paper-subtle relative flex items-center justify-center border-b border-border-rule/60">
+                    {mediaMode === 'PHOTOS' && (
+                      <>
+                        <ImageIcon className="w-8 h-8 text-brand-indigo/40" />
+                        <span className="absolute bottom-2 right-2 px-1.5 py-0.2 rounded-full bg-ink-primary/75 text-white font-mono text-[9px]">
+                          1/{images.length}
+                        </span>
+                      </>
+                    )}
+                    {mediaMode === 'VIDEO' && (
+                      <div className="text-center">
+                        <div className="w-10 h-10 mx-auto rounded-full bg-black/40 flex items-center justify-center mb-1">
+                          <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+                        </div>
+                        <span className="text-[9px] font-mono text-ink-secondary">{videoAsset.duration} • 1080p</span>
+                      </div>
+                    )}
+                    {mediaMode === 'TEXT_ONLY' && (
+                      <div className="p-3 text-center">
+                        <p className="font-serif italic text-xs text-ink-primary line-clamp-3">
+                          &quot;{sharedCaption}&quot;
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="px-2.5 pt-2 pb-1 flex items-center justify-between text-ink-secondary">
+                    <div className="flex items-center gap-2.5">
+                      <Heart className="w-3.5 h-3.5 hover:text-semantic-error cursor-pointer" />
+                      <MessageCircle className="w-3.5 h-3.5 cursor-pointer" />
+                      <Send className="w-3.5 h-3.5 cursor-pointer" />
+                    </div>
+                    <Bookmark className="w-3.5 h-3.5 cursor-pointer" />
+                  </div>
+
+                  <div className="p-2.5 pt-1 text-xs">
+                    <p className="text-[10px] font-semibold text-ink-primary mb-1">
+                      Liked by <span className="font-bold">retz.creator</span> and 1,284 others
                     </p>
-                    <p className="text-[8px] font-mono text-ink-secondary">
-                      Feed Post • {mediaMode === 'PHOTOS' ? `Carousel (${images.length})` : mediaMode === 'VIDEO' ? 'Video Post' : 'Text'}
+                    <p className="font-semibold text-ink-primary text-xs mb-0.5 line-clamp-1">
+                      {workingTitle}
+                    </p>
+                    <p className="text-ink-secondary text-[10px] line-clamp-2 leading-relaxed">
+                      <span className="font-semibold text-ink-primary mr-1">{previewAccount.handle}</span>
+                      {sharedCaption}
+                    </p>
+                    <p className="text-[8px] font-mono text-ink-secondary/70 mt-1 uppercase">
+                      2 HOURS AGO
                     </p>
                   </div>
-                </div>
-                <span className="text-[10px] font-mono text-ink-secondary">•••</span>
-              </div>
-
-              <div className="aspect-[4/3] bg-paper-subtle relative flex items-center justify-center border-b border-border-rule/60">
-                {mediaMode === 'PHOTOS' && (
-                  <>
-                    <ImageIcon className="w-8 h-8 text-brand-indigo/40" />
-                    <span className="absolute bottom-2 right-2 px-1.5 py-0.2 rounded-full bg-ink-primary/75 text-white font-mono text-[9px]">
-                      1/{images.length}
-                    </span>
-                  </>
-                )}
-                {mediaMode === 'VIDEO' && (
-                  <div className="text-center">
-                    <Film className="w-8 h-8 text-semantic-info/60 mx-auto mb-1" />
-                    <span className="text-[9px] font-mono text-ink-secondary">{videoAsset.duration} • 1080p</span>
-                  </div>
-                )}
-                {mediaMode === 'TEXT_ONLY' && (
-                  <div className="p-3 text-center">
-                    <p className="font-serif italic text-xs text-ink-primary line-clamp-3">
-                      &quot;{sharedCaption}&quot;
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="px-2.5 pt-2 pb-1 flex items-center justify-between text-ink-secondary">
-                <div className="flex items-center gap-2.5">
-                  <Heart className="w-3.5 h-3.5 hover:text-semantic-error cursor-pointer" />
-                  <MessageCircle className="w-3.5 h-3.5 cursor-pointer" />
-                  <Send className="w-3.5 h-3.5 cursor-pointer" />
-                </div>
-                <Bookmark className="w-3.5 h-3.5 cursor-pointer" />
-              </div>
-
-              <div className="p-2.5 pt-1 text-xs">
-                <p className="font-semibold text-ink-primary text-xs mb-0.5 line-clamp-1">
-                  {workingTitle}
-                </p>
-                <p className="text-ink-secondary text-[10px] line-clamp-2 leading-relaxed">
-                  <span className="font-semibold text-ink-primary mr-1">{workspaceChannels[0]?.handle || '@channel'}</span>
-                  {sharedCaption}
-                </p>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 2: STORY PREVIEW (9:16 VERTICAL PHONE) */}
-          {previewTab === 'STORY' && (
-            <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-gradient-to-b from-[#2a2d3e] to-[#12131a] rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
-              <div>
-                <div className="flex gap-1 mb-1.5">
-                  <div className="h-0.5 flex-1 bg-white rounded-full"></div>
-                  <div className="h-0.5 flex-1 bg-white/40 rounded-full"></div>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-4 h-4 rounded-full bg-accent-terracotta text-white flex items-center justify-center text-[7px] font-bold ring-1 ring-white">
-                    AR
-                  </div>
-                  <span className="text-[9px] font-semibold text-white/90 truncate max-w-[110px]">
-                    {workspaceChannels[0]?.handle || '@channel'}
-                  </span>
-                  <span className="text-[8px] text-white/50">24h</span>
-                </div>
-              </div>
-
-              <div className="my-auto text-center px-2">
-                <div className="w-10 h-10 mx-auto rounded-full bg-white/10 flex items-center justify-center mb-1.5 backdrop-blur-xs">
-                  {mediaMode === 'VIDEO' ? <Film className="w-5 h-5 text-white/80" /> : <ImageIcon className="w-5 h-5 text-white/80" />}
-                </div>
-                <p className="text-[10px] font-medium text-white/90 line-clamp-2">
-                  {workingTitle}
-                </p>
-              </div>
-
-              <div className="space-y-1.5">
-                {storyLinkUrl ? (
-                  <div className="mx-auto w-fit px-2.5 py-0.5 bg-white text-ink-primary rounded-full shadow-lg flex items-center gap-1">
-                    <Link2 className="w-2.5 h-2.5 text-brand-indigo" />
-                    <span className="text-[9px] font-mono font-bold uppercase truncate max-w-[100px]">
-                      {storyLinkUrl.replace(/^https?:\/\//, '')}
-                    </span>
-                    <ExternalLink className="w-2 h-2 opacity-60" />
-                  </div>
-                ) : (
-                  <div className="text-center text-[8px] font-mono text-white/40">
-                    (No Link Sticker Added)
-                  </div>
-                )}
-
-                <div className="h-6 rounded-full border border-white/20 px-2 flex items-center justify-between text-[9px] text-white/40 bg-black/20">
-                  <span>Send message...</span>
-                  <Heart className="w-3 h-3 text-white/50" />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: REELS / SHORTS PREVIEW */}
-          {previewTab === 'REEL' && (
-            <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
-              <div className="flex items-center justify-between text-[9px]">
-                <span className="font-semibold text-white/90">Reels / Shorts</span>
-                <span className="font-mono text-semantic-info">00:48</span>
-              </div>
-
-              {mediaMode === 'VIDEO' ? (
-                <div className="my-auto text-center">
-                  <div className="w-10 h-10 mx-auto rounded-full bg-semantic-info/20 flex items-center justify-center mb-1.5 border border-semantic-info/40">
-                    <Film className="w-5 h-5 text-semantic-info" />
-                  </div>
-                  <span className="text-[9px] font-mono text-white/80 bg-black/50 px-1.5 py-0.2 rounded">
-                    1080x1920 (9:16)
-                  </span>
-                </div>
-              ) : (
-                <div className="my-auto text-center p-2 bg-white/5 rounded-editorial border border-white/10">
-                  <Lock className="w-4 h-4 text-semantic-warning mx-auto mb-1" />
-                  <p className="text-[9px] text-white/80 font-mono">
-                    Reels require video asset.
-                  </p>
                 </div>
               )}
 
-              <div className="flex items-end justify-between">
-                <div className="space-y-0.5 max-w-[120px]">
-                  <p className="text-[10px] font-bold line-clamp-1">{workspaceChannels[0]?.handle || '@channel'}</p>
-                  <p className="text-[9px] text-white/80 line-clamp-2">{workingTitle}</p>
+              {/* IG STORY */}
+              {previewTab === 'STORY' && (
+                <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-gradient-to-b from-[#2a2d3e] to-[#12131a] rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  <div>
+                    <div className="flex gap-1 mb-1.5">
+                      <div className="h-0.5 flex-1 bg-white rounded-full"></div>
+                      <div className="h-0.5 flex-1 bg-white/40 rounded-full"></div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-gradient-to-tr from-[#F58529] to-[#DD2A7B] text-white flex items-center justify-center text-[7px] font-bold ring-1 ring-white">
+                          {previewAccount.avatarText || 'IG'}
+                        </div>
+                        <span className="text-[9px] font-semibold text-white/90 truncate max-w-[100px]">
+                          {previewAccount.handle}
+                        </span>
+                        <span className="text-[8px] text-white/50">24h</span>
+                      </div>
+                      <X className="w-3 h-3 text-white/60" />
+                    </div>
+                  </div>
+
+                  <div className="my-auto text-center px-2">
+                    <div className="w-10 h-10 mx-auto rounded-full bg-white/10 flex items-center justify-center mb-1.5 backdrop-blur-xs">
+                      {mediaMode === 'VIDEO' ? <Film className="w-5 h-5 text-white/80" /> : <ImageIcon className="w-5 h-5 text-white/80" />}
+                    </div>
+                    <p className="text-[10px] font-medium text-white/90 line-clamp-2">
+                      {workingTitle}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    {storyLinkUrl ? (
+                      <div className="mx-auto w-fit px-2.5 py-0.5 bg-white text-ink-primary rounded-full shadow-lg flex items-center gap-1">
+                        <Link2 className="w-2.5 h-2.5 text-brand-indigo" />
+                        <span className="text-[9px] font-mono font-bold uppercase truncate max-w-[100px]">
+                          {storyLinkUrl.replace(/^https?:\/\//, '')}
+                        </span>
+                        <ExternalLink className="w-2 h-2 opacity-60" />
+                      </div>
+                    ) : (
+                      <div className="text-center text-[8px] font-mono text-white/40">
+                        (No Link Sticker Added)
+                      </div>
+                    )}
+
+                    <div className="h-6 rounded-full border border-white/20 px-2 flex items-center justify-between text-[9px] text-white/40 bg-black/20">
+                      <span>Send message...</span>
+                      <Heart className="w-3 h-3 text-white/50" />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-col items-center gap-2 text-white/90">
-                  <Heart className="w-3.5 h-3.5" />
-                  <MessageCircle className="w-3.5 h-3.5" />
-                  <Send className="w-3.5 h-3.5" />
+              )}
+
+              {/* IG REELS */}
+              {previewTab === 'REEL' && (
+                <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  <div className="flex items-center justify-between text-[9px]">
+                    <span className="font-semibold text-white/90">Reels</span>
+                    <Camera className="w-3 h-3 text-white/70" />
+                  </div>
+
+                  {mediaMode === 'VIDEO' ? (
+                    <div className="my-auto text-center">
+                      <div className="w-10 h-10 mx-auto rounded-full bg-semantic-info/20 flex items-center justify-center mb-1.5 border border-semantic-info/40">
+                        <Film className="w-5 h-5 text-semantic-info" />
+                      </div>
+                      <span className="text-[9px] font-mono text-white/80 bg-black/50 px-1.5 py-0.2 rounded">
+                        1080x1920 (9:16)
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="my-auto text-center p-2 bg-white/5 rounded-editorial border border-white/10">
+                      <ImageIcon className="w-4 h-4 text-white/40 mx-auto mb-1" />
+                      <p className="text-[8px] text-white/70 font-mono">
+                        Reels preview simulates 9:16 vertical video
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex items-end justify-between">
+                    <div className="space-y-1 max-w-[125px]">
+                      <div className="flex items-center gap-1">
+                        <div className="w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-[#F58529] to-[#DD2A7B] text-[7px] font-bold flex items-center justify-center">
+                          {previewAccount.avatarText || 'IG'}
+                        </div>
+                        <p className="text-[9px] font-bold line-clamp-1">{previewAccount.handle}</p>
+                      </div>
+                      <p className="text-[8px] text-white/80 line-clamp-2">{workingTitle}</p>
+                      <div className="flex items-center gap-1 text-[7px] text-white/60">
+                        <Music className="w-2 h-2" />
+                        <span className="truncate">Original audio • {previewAccount.name}</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 text-white/90">
+                      <div className="flex flex-col items-center">
+                        <Heart className="w-3.5 h-3.5" />
+                        <span className="text-[7px]">28K</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span className="text-[7px]">312</span>
+                      </div>
+                      <Send className="w-3.5 h-3.5" />
+                      <Bookmark className="w-3.5 h-3.5" />
+                      <div className="w-4 h-4 rounded-full border border-white/40 flex items-center justify-center bg-black/60">
+                        <Disc className="w-2.5 h-2.5 animate-spin" style={{ animationDuration: '4s' }} />
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
+              )}
+            </>
+          )}
+
+          {/* ========================================================================= */}
+          {/* 2. FACEBOOK PREVIEWS                                                      */}
+          {/* ========================================================================= */}
+          {previewPlatform === 'FACEBOOK' && (
+            <>
+              {/* FB FEED */}
+              {previewTab === 'FEED' && (
+                <div className="bg-paper-canvas border border-border-rule rounded-editorial overflow-hidden shadow-2xs text-ink-primary">
+                  <div className="p-2.5 flex items-center justify-between border-b border-border-rule/60">
+                    <div className="flex items-center gap-2">
+                      <div className="w-6 h-6 rounded-full bg-[#1877F2] text-white flex items-center justify-center text-[10px] font-bold">
+                        f
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1">
+                          <p className="text-xs font-bold text-ink-primary leading-none truncate max-w-[130px]">
+                            {previewAccount.name}
+                          </p>
+                          <CheckCircle2 className="w-3 h-3 text-[#1877F2] shrink-0" />
+                        </div>
+                        <p className="text-[8px] font-mono text-ink-secondary mt-0.5">
+                          Just now • 🌐 Public
+                        </p>
+                      </div>
+                    </div>
+                    <span className="text-[10px] font-mono text-ink-secondary">•••</span>
+                  </div>
+
+                  <div className="p-2.5 pt-2 text-xs space-y-1">
+                    <p className="font-semibold text-ink-primary text-xs line-clamp-1">
+                      {workingTitle}
+                    </p>
+                    <p className="text-ink-secondary text-[11px] line-clamp-3 leading-relaxed">
+                      {sharedCaption}
+                    </p>
+                  </div>
+
+                  {/* Media or Link Preview Box */}
+                  {mediaMode === 'PHOTOS' ? (
+                    <div className="aspect-[16/9] bg-paper-subtle relative flex items-center justify-center border-y border-border-rule/60">
+                      <ImageIcon className="w-8 h-8 text-[#1877F2]/40" />
+                      <span className="absolute bottom-2 right-2 px-1.5 py-0.2 rounded bg-ink-primary/75 text-white font-mono text-[9px]">
+                        {images.length} photos
+                      </span>
+                    </div>
+                  ) : mediaMode === 'VIDEO' ? (
+                    <div className="aspect-[16/9] bg-ink-primary text-white relative flex items-center justify-center border-y border-border-rule/60">
+                      <div className="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center shadow-lg">
+                        <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+                      </div>
+                      <span className="absolute bottom-2 right-2 px-1.5 py-0.2 rounded bg-black/80 font-mono text-[9px]">
+                        {videoAsset.duration}
+                      </span>
+                    </div>
+                  ) : storyLinkUrl ? (
+                    <div className="border-y border-border-rule/60 bg-paper-subtle p-2 flex items-center gap-2">
+                      <div className="w-12 h-12 rounded bg-paper-canvas border border-border-rule flex items-center justify-center shrink-0">
+                        <ExternalLink className="w-5 h-5 text-[#1877F2]" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <span className="text-[8px] font-mono uppercase text-ink-secondary block truncate">
+                          {storyLinkUrl.replace(/^https?:\/\//, '').split('/')[0]}
+                        </span>
+                        <p className="text-xs font-bold text-ink-primary truncate">{workingTitle}</p>
+                        <p className="text-[9px] text-ink-secondary line-clamp-1">Official publication link preview</p>
+                      </div>
+                    </div>
+                  ) : null}
+
+                  {/* FB Reactions */}
+                  <div className="px-2.5 py-1.5 flex items-center justify-between text-[10px] text-ink-secondary border-b border-border-rule/40">
+                    <div className="flex items-center gap-1">
+                      <span className="flex -space-x-1">
+                        <span className="w-3.5 h-3.5 rounded-full bg-[#1877F2] text-white flex items-center justify-center text-[7px]">👍</span>
+                        <span className="w-3.5 h-3.5 rounded-full bg-red-500 text-white flex items-center justify-center text-[7px]">❤️</span>
+                      </span>
+                      <span className="font-mono text-[9px] ml-1">142</span>
+                    </div>
+                    <span className="font-mono text-[9px]">28 comments • 6 shares</span>
+                  </div>
+
+                  {/* FB Action Buttons */}
+                  <div className="grid grid-cols-3 p-1 text-ink-secondary text-[11px] font-medium">
+                    <button type="button" className="flex items-center justify-center gap-1 py-1 hover:bg-paper-subtle rounded transition-colors">
+                      <ThumbsUp className="w-3.5 h-3.5" />
+                      <span>Like</span>
+                    </button>
+                    <button type="button" className="flex items-center justify-center gap-1 py-1 hover:bg-paper-subtle rounded transition-colors">
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      <span>Comment</span>
+                    </button>
+                    <button type="button" className="flex items-center justify-center gap-1 py-1 hover:bg-paper-subtle rounded transition-colors">
+                      <Share2 className="w-3.5 h-3.5" />
+                      <span>Share</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* FB STORY */}
+              {previewTab === 'STORY' && (
+                <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-gradient-to-b from-[#1877F2] via-[#0d47a1] to-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  <div>
+                    <div className="flex gap-1 mb-1.5">
+                      <div className="h-0.5 flex-1 bg-white rounded-full"></div>
+                      <div className="h-0.5 flex-1 bg-white/40 rounded-full"></div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-white text-[#1877F2] flex items-center justify-center text-[8px] font-bold ring-1 ring-white">
+                          f
+                        </div>
+                        <span className="text-[9px] font-semibold text-white/90 truncate max-w-[100px]">
+                          {previewAccount.name}
+                        </span>
+                        <span className="text-[8px] text-white/50">Story</span>
+                      </div>
+                      <X className="w-3 h-3 text-white/60" />
+                    </div>
+                  </div>
+
+                  <div className="my-auto text-center px-2">
+                    <div className="w-10 h-10 mx-auto rounded-full bg-white/10 flex items-center justify-center mb-1.5 backdrop-blur-xs">
+                      {mediaMode === 'VIDEO' ? <Film className="w-5 h-5 text-white/80" /> : <ImageIcon className="w-5 h-5 text-white/80" />}
+                    </div>
+                    <p className="text-[10px] font-medium text-white/90 line-clamp-2">
+                      {workingTitle}
+                    </p>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="h-6 rounded-full border border-white/20 px-2 flex items-center justify-between text-[9px] text-white/40 bg-black/20">
+                      <span>Reply to {previewAccount.name}...</span>
+                      <div className="flex items-center gap-1 text-[10px]">
+                        <span>👍</span>
+                        <span>❤️</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* FB REELS */}
+              {previewTab === 'REEL' && (
+                <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  <div className="flex items-center justify-between text-[9px]">
+                    <span className="font-semibold text-white/90 flex items-center gap-1">
+                      <FacebookLogo size={12} />
+                      <span>Facebook Reels</span>
+                    </span>
+                    <span className="text-[8px] font-mono text-white/60">00:30</span>
+                  </div>
+
+                  <div className="my-auto text-center">
+                    <div className="w-10 h-10 mx-auto rounded-full bg-[#1877F2]/20 flex items-center justify-center mb-1.5 border border-[#1877F2]/40">
+                      <Film className="w-5 h-5 text-[#1877F2]" />
+                    </div>
+                    <span className="text-[9px] font-mono text-white/80 bg-black/50 px-1.5 py-0.2 rounded">
+                      Facebook 9:16 Video
+                    </span>
+                  </div>
+
+                  <div className="flex items-end justify-between">
+                    <div className="space-y-1 max-w-[125px]">
+                      <div className="flex items-center gap-1">
+                        <span className="text-[9px] font-bold line-clamp-1">{previewAccount.name}</span>
+                        <button type="button" className="px-1.5 py-0.2 rounded bg-[#1877F2] text-white text-[7px] font-bold">
+                          Follow
+                        </button>
+                      </div>
+                      <p className="text-[8px] text-white/80 line-clamp-2">{workingTitle}</p>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 text-white/90">
+                      <ThumbsUp className="w-3.5 h-3.5" />
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      <Share2 className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ========================================================================= */}
+          {/* 3. YOUTUBE PREVIEWS                                                       */}
+          {/* ========================================================================= */}
+          {previewPlatform === 'YOUTUBE' && (
+            <>
+              {/* YOUTUBE SHORTS */}
+              {previewTab === 'REEL' && (
+                <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  <div className="flex items-center justify-between text-[9px]">
+                    <div className="flex items-center gap-1">
+                      <YouTubeLogo size={14} />
+                      <span className="font-bold text-white tracking-tight">Shorts</span>
+                    </div>
+                    <Search className="w-3 h-3 text-white/70" />
+                  </div>
+
+                  <div className="my-auto text-center">
+                    <div className="w-10 h-10 mx-auto rounded-full bg-[#FF0000]/20 flex items-center justify-center mb-1.5 border border-[#FF0000]/40">
+                      <Play className="w-5 h-5 text-[#FF0000] fill-[#FF0000] ml-0.5" />
+                    </div>
+                    <span className="text-[9px] font-mono text-white/80 bg-black/50 px-1.5 py-0.2 rounded">
+                      YouTube Shorts (9:16)
+                    </span>
+                  </div>
+
+                  <div className="flex items-end justify-between">
+                    <div className="space-y-1 max-w-[125px]">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-[#FF0000] text-white flex items-center justify-center text-[7px] font-bold">
+                          YT
+                        </div>
+                        <p className="text-[9px] font-bold truncate max-w-[65px]">{previewAccount.name}</p>
+                        <span className="px-1.5 py-0.2 rounded-full bg-[#FF0000] text-white text-[7px] font-bold uppercase shrink-0">
+                          Subscribe
+                        </span>
+                      </div>
+                      <p className="text-[8px] text-white/90 line-clamp-2">{workingTitle}</p>
+                      <div className="flex items-center gap-1 text-[7px] text-white/60">
+                        <Music className="w-2 h-2" />
+                        <span className="truncate">Original Sound • {previewAccount.name}</span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 text-white/90">
+                      <div className="flex flex-col items-center">
+                        <ThumbsUp className="w-3.5 h-3.5" />
+                        <span className="text-[7px]">18K</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <ThumbsDown className="w-3.5 h-3.5" />
+                        <span className="text-[7px]">Dislike</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <MessageCircle className="w-3.5 h-3.5" />
+                        <span className="text-[7px]">420</span>
+                      </div>
+                      <Share2 className="w-3.5 h-3.5" />
+                      <div className="w-4 h-4 rounded bg-paper-canvas/20 border border-white/30 flex items-center justify-center">
+                        <span className="text-[6px] font-bold">🔀</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* YOUTUBE VIDEO FEED */}
+              {previewTab === 'FEED' && (
+                <div className="bg-paper-canvas border border-border-rule rounded-editorial overflow-hidden shadow-2xs text-ink-primary">
+                  <div className="aspect-[16/9] bg-black text-white relative flex items-center justify-center">
+                    <div className="w-12 h-12 rounded-full bg-[#FF0000] flex items-center justify-center shadow-lg">
+                      <Play className="w-6 h-6 fill-white text-white ml-0.5" />
+                    </div>
+                    <span className="absolute bottom-2 right-2 px-1 py-0.2 rounded bg-black/90 font-mono text-[9px] font-bold">
+                      {videoAsset.duration || '04:15'}
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 flex items-start gap-2">
+                    <div className="w-7 h-7 rounded-full bg-[#FF0000] text-white flex items-center justify-center text-[9px] font-bold shrink-0 mt-0.5">
+                      YT
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-xs font-bold text-ink-primary line-clamp-2 leading-tight">
+                        {workingTitle || 'Untitled Video Title'}
+                      </p>
+                      <p className="text-[10px] text-ink-secondary mt-0.5 flex items-center gap-1">
+                        <span>{previewAccount.name}</span>
+                        <CheckCircle2 className="w-2.5 h-2.5 text-ink-secondary" />
+                      </p>
+                      <p className="text-[9px] font-mono text-ink-secondary">
+                        24K views • 3 hours ago
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="px-2.5 pb-2.5">
+                    <div className="p-2 bg-paper-subtle rounded text-[10px] text-ink-secondary line-clamp-2">
+                      {sharedCaption || 'No description provided.'}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+
+          {/* ========================================================================= */}
+          {/* 4. TIKTOK PREVIEWS                                                        */}
+          {/* ========================================================================= */}
+          {previewPlatform === 'TIKTOK' && (
+            <>
+              {/* TIKTOK 9:16 VIDEO */}
+              {previewTab === 'REEL' && (
+                <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  <div className="flex items-center justify-between text-[10px]">
+                    <div className="w-4"></div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-white/60 text-[9px]">Following</span>
+                      <span className="font-bold text-white text-[10px] border-b-2 border-white pb-0.5">For You</span>
+                    </div>
+                    <Search className="w-3.5 h-3.5 text-white/80" />
+                  </div>
+
+                  {mediaMode === 'VIDEO' ? (
+                    <div className="my-auto text-center">
+                      <div className="w-10 h-10 mx-auto rounded-full bg-paper-canvas/20 flex items-center justify-center mb-1.5 border border-white/30">
+                        <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+                      </div>
+                      <span className="text-[9px] font-mono text-white/80 bg-black/50 px-1.5 py-0.2 rounded">
+                        TikTok 9:16 Feed
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="my-auto text-center p-2 bg-white/5 rounded-editorial border border-white/10">
+                      <TikTokLogo size={20} className="mx-auto mb-1 opacity-80" />
+                      <p className="text-[8px] text-white/70 font-mono">
+                        TikTok vertical immersion preview
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex items-end justify-between">
+                    <div className="space-y-1 max-w-[125px]">
+                      <p className="text-[10px] font-bold text-white leading-tight">
+                        @{previewAccount.handle.replace(/^@/, '')}
+                      </p>
+                      <p className="text-[8px] text-white/90 line-clamp-2 leading-relaxed">
+                        {workingTitle} {sharedCaption}
+                      </p>
+                      <p className="text-[8px] font-semibold text-semantic-info">
+                        #fyp #foryou #retzpost
+                      </p>
+                      <div className="flex items-center gap-1 text-[7px] text-white/80">
+                        <Music className="w-2 h-2 shrink-0 animate-pulse" />
+                        <span className="truncate">original sound - {previewAccount.name}</span>
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col items-center gap-2 text-white">
+                      <div className="relative">
+                        <div className="w-6 h-6 rounded-full bg-paper-canvas text-ink-primary font-bold text-[8px] flex items-center justify-center ring-1 ring-white">
+                          {previewAccount.avatarText || 'TT'}
+                        </div>
+                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-[#FE2C55] text-white flex items-center justify-center text-[7px] font-bold">
+                          +
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <Heart className="w-3.5 h-3.5 fill-[#FE2C55] text-[#FE2C55]" />
+                        <span className="text-[7px]">54K</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <MessageCircle className="w-3.5 h-3.5 fill-white/20 text-white" />
+                        <span className="text-[7px]">1.4K</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <Bookmark className="w-3.5 h-3.5 fill-semantic-warning text-semantic-warning" />
+                        <span className="text-[7px]">6.2K</span>
+                      </div>
+                      <div className="flex flex-col items-center">
+                        <Share2 className="w-3.5 h-3.5 fill-white text-white" />
+                        <span className="text-[7px]">890</span>
+                      </div>
+                      <div className="w-5 h-5 rounded-full bg-ink-primary border border-white/60 flex items-center justify-center">
+                        <Disc className="w-3 h-3 text-white/80 animate-spin" style={{ animationDuration: '3s' }} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TIKTOK PHOTO SLIDE */}
+              {previewTab === 'FEED' && (
+                <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  <div className="flex items-center justify-between text-[9px]">
+                    <span className="font-semibold text-white/90">TikTok Photo Mode</span>
+                    <span className="px-1.5 py-0.2 rounded-full bg-white/20 font-mono text-[8px]">
+                      1/{images.length || 1}
+                    </span>
+                  </div>
+
+                  <div className="my-auto text-center p-2 bg-paper-canvas/10 rounded-editorial border border-white/10">
+                    <Camera className="w-6 h-6 text-white/70 mx-auto mb-1" />
+                    <p className="text-[9px] text-white font-medium">{workingTitle}</p>
+                    <p className="text-[7px] text-white/50 font-mono mt-0.5">Swipe to explore photo carousel</p>
+                  </div>
+
+                  <div className="flex items-end justify-between">
+                    <div className="space-y-1 max-w-[125px]">
+                      <p className="text-[10px] font-bold text-white">
+                        @{previewAccount.handle.replace(/^@/, '')}
+                      </p>
+                      <p className="text-[8px] text-white/90 line-clamp-2">
+                        {sharedCaption}
+                      </p>
+                    </div>
+                    <div className="flex flex-col items-center gap-2 text-white">
+                      <Heart className="w-3.5 h-3.5" />
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      <Share2 className="w-3.5 h-3.5" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* TIKTOK STORY */}
+              {previewTab === 'STORY' && (
+                <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-gradient-to-b from-[#010101] via-[#161823] to-[#010101] rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  <div>
+                    <div className="h-0.5 w-full bg-semantic-info rounded-full mb-1.5"></div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-4 h-4 rounded-full bg-[#25F4EE] text-black flex items-center justify-center text-[7px] font-bold">
+                          TT
+                        </div>
+                        <span className="text-[9px] font-semibold text-white/90 truncate max-w-[100px]">
+                          {previewAccount.handle}
+                        </span>
+                        <span className="text-[7px] px-1 py-0.2 rounded bg-semantic-info/30 text-semantic-info font-bold">Story</span>
+                      </div>
+                      <X className="w-3 h-3 text-white/60" />
+                    </div>
+                  </div>
+
+                  <div className="my-auto text-center px-2">
+                    <p className="text-[10px] font-medium text-white/90 line-clamp-2">
+                      {workingTitle}
+                    </p>
+                  </div>
+
+                  <div className="h-6 rounded-full border border-white/20 px-2 flex items-center justify-between text-[9px] text-white/40 bg-black/30">
+                    <span>Quick reaction...</span>
+                    <div className="flex items-center gap-1 text-[9px]">
+                      <span>🔥</span>
+                      <span>😂</span>
+                      <span>🥰</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
           )}
 
           {/* Active Destinations Breakdown */}
