@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { 
   ChevronLeft, 
@@ -561,6 +561,27 @@ export default function EditorialCalendarPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [showAiPeakTimes, setShowAiPeakTimes] = useState(true);
   const [currentMonthStr, setCurrentMonthStr] = useState('October 2026');
+
+  // Collapsible Stats Toggle (Defaults to false so Calendar is HERO above the fold)
+  const [showStatsOverview, setShowStatsOverview] = useState(false);
+  const todayRef = useRef<HTMLDivElement>(null);
+
+  // Auto-scroll to today smoothly on load
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (todayRef.current) {
+        todayRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }, 150);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const handleScrollToToday = () => {
+    if (todayRef.current) {
+      todayRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    showToast('📍 โฟกัสไปยังวันนี้ (24 ต.ค. 2026)');
+  };
   
   // Slide-Over Event Inspector State
   const [selectedEvent, setSelectedEvent] = useState<CalendarEventItem | null>(null);
@@ -797,91 +818,133 @@ export default function EditorialCalendarPage() {
         }
       />
 
-      {/* Top Cadence KPI Ribbon */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card shadow-xs">
-          <div className="flex items-center justify-between text-ink-secondary text-[11px] font-mono mb-1">
-            <span>TOTAL DISPATCHES</span>
-            <CalendarDays className="w-3.5 h-3.5 text-brand-indigo" />
+      {/* Compact Cadence Intelligence Strip (Calendar First UX) */}
+      <div className="flex flex-wrap items-center justify-between gap-2 px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial text-xs shadow-2xs">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* Quick Metrics */}
+          <div className="flex items-center gap-1.5 font-mono">
+            <CalendarDays className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
+            <span className="font-bold text-ink-primary">{totalEventsCount} โพสต์</span>
+            <span className="text-[11px] text-semantic-success font-medium">({publishedCount} สด • {scheduledCount} ในคิว)</span>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="font-serif text-2xl font-bold text-ink-primary">{totalEventsCount}</span>
-            <span className="text-[11px] font-mono text-semantic-success">
-              {publishedCount} Live • {scheduledCount} Queued
-            </span>
+
+          <div className="hidden sm:flex items-center gap-1.5 text-ink-secondary font-mono border-l border-border-rule pl-3">
+            <TrendingUp className="w-3.5 h-3.5 text-semantic-success shrink-0" />
+            <span className="font-bold text-ink-primary">185.4K</span>
+            <span className="text-[10px] text-semantic-success font-semibold">(+24%)</span>
+          </div>
+
+          <div className="hidden md:flex items-center gap-1.5 text-ink-secondary font-mono border-l border-border-rule pl-3">
+            <Flame className="w-3.5 h-3.5 text-accent-terracotta shrink-0" />
+            <span>AI Match:</span>
+            <strong className="text-accent-terracotta">94%</strong>
+          </div>
+
+          <div className="hidden lg:flex items-center gap-1.5 text-ink-secondary font-mono border-l border-border-rule pl-3">
+            <span className="text-accent-terracotta font-semibold">⚡ ชั่วโมง Peak:</span>
+            <span className="text-ink-primary font-bold">08:30 / 11:30 / 19:30</span>
           </div>
         </div>
 
-        <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card shadow-xs">
-          <div className="flex items-center justify-between text-ink-secondary text-[11px] font-mono mb-1">
-            <span>ESTIMATED REACH</span>
-            <TrendingUp className="w-3.5 h-3.5 text-semantic-success" />
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="font-serif text-2xl font-bold text-ink-primary">185.4K</span>
-            <span className="text-[11px] font-mono text-ink-secondary">+24% vs last mo</span>
-          </div>
-        </div>
-
-        <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card shadow-xs">
-          <div className="flex items-center justify-between text-ink-secondary text-[11px] font-mono mb-1">
-            <span>FORMAT MIX RATIO</span>
-            <Layers className="w-3.5 h-3.5 text-accent-terracotta" />
-          </div>
-          <div className="flex items-center gap-2 font-mono text-xs mt-1">
-            <span className="px-1.5 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo font-bold">{feedCount} Feed</span>
-            <span className="px-1.5 py-0.5 rounded bg-accent-terracotta/10 text-accent-terracotta font-bold">{storyCount} Story</span>
-            <span className="px-1.5 py-0.5 rounded bg-semantic-info/10 text-semantic-info font-bold">{reelCount} Reel</span>
-          </div>
-        </div>
-
-        <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card shadow-xs">
-          <div className="flex items-center justify-between text-ink-secondary text-[11px] font-mono mb-1">
-            <span>AI PEAK ACCURACY</span>
-            <Flame className="w-3.5 h-3.5 text-accent-terracotta" />
-          </div>
-          <div className="flex items-baseline gap-2">
-            <span className="font-serif text-2xl font-bold text-accent-terracotta">94%</span>
-            <span className="text-[11px] font-mono text-ink-secondary">Prime Window Match</span>
-          </div>
-        </div>
-      </div>
-
-      {/* AI Peak Engagement Heatmap Ribbon */}
-      <div className="p-3.5 bg-gradient-to-r from-amber-500/10 via-accent-terracotta/5 to-transparent border border-accent-terracotta/20 rounded-card flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-accent-terracotta/15 flex items-center justify-center text-accent-terracotta shrink-0">
-            <Flame className="w-4 h-4 fill-accent-terracotta text-accent-terracotta" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="font-serif font-bold text-ink-primary text-sm">AI Peak Audience Engagement Windows</span>
-              <span className="px-1.5 py-0.2 rounded bg-accent-terracotta text-white font-mono text-[9px] uppercase font-bold">
-                Live Algorithm
-              </span>
-            </div>
-            <p className="text-ink-secondary text-[11px]">
-              Bangkok Audience Peak: <strong className="text-ink-primary">08:30 - 09:30 AM</strong> (Exec & Real Estate Feed) •{' '}
-              <strong className="text-ink-primary">11:30 AM - 13:00 PM</strong> (Lunch Story Swipes) •{' '}
-              <strong className="text-ink-primary">19:30 - 21:30 PM</strong> (Prime Evening Reels).
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 font-mono text-[11px] shrink-0">
+        <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setShowAiPeakTimes(!showAiPeakTimes)}
-            className={`px-3 py-1.5 rounded-editorial border transition-colors flex items-center gap-1.5 ${
+            className={`px-2 py-1 text-[11px] font-mono rounded border transition-colors flex items-center gap-1 cursor-pointer ${
               showAiPeakTimes
-                ? 'bg-accent-terracotta text-white border-accent-terracotta font-bold'
-                : 'bg-paper-raised text-ink-secondary border-border-rule hover:text-ink-primary'
+                ? 'bg-accent-terracotta text-white border-accent-terracotta font-semibold'
+                : 'bg-paper-canvas text-ink-secondary border-border-rule hover:text-ink-primary'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>{showAiPeakTimes ? 'Highlighting Peak Hours' : 'Show Peak Hours'}</span>
+            <Sparkles className="w-3 h-3" />
+            <span>{showAiPeakTimes ? 'เน้น Peak 🔥' : 'ชั่วโมง Peak'}</span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setShowStatsOverview(!showStatsOverview)}
+            className="px-2.5 py-1 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+          >
+            <BarChart3 className="w-3 h-3" />
+            <span>{showStatsOverview ? 'ย่อสรุป ▲' : 'ดูสถิติเต็ม (KPI) ▼'}</span>
           </button>
         </div>
       </div>
+
+      {/* Expanded Stats Drawer (Toggled by user) */}
+      {showStatsOverview && (
+        <div className="space-y-3 animate-in fade-in duration-200">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card shadow-xs">
+              <div className="flex items-center justify-between text-ink-secondary text-[11px] font-mono mb-1">
+                <span>TOTAL DISPATCHES</span>
+                <CalendarDays className="w-3.5 h-3.5 text-brand-indigo" />
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-serif text-2xl font-bold text-ink-primary">{totalEventsCount}</span>
+                <span className="text-[11px] font-mono text-semantic-success">
+                  {publishedCount} Live • {scheduledCount} Queued
+                </span>
+              </div>
+            </div>
+
+            <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card shadow-xs">
+              <div className="flex items-center justify-between text-ink-secondary text-[11px] font-mono mb-1">
+                <span>ESTIMATED REACH</span>
+                <TrendingUp className="w-3.5 h-3.5 text-semantic-success" />
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-serif text-2xl font-bold text-ink-primary">185.4K</span>
+                <span className="text-[11px] font-mono text-ink-secondary">+24% vs last mo</span>
+              </div>
+            </div>
+
+            <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card shadow-xs">
+              <div className="flex items-center justify-between text-ink-secondary text-[11px] font-mono mb-1">
+                <span>FORMAT MIX RATIO</span>
+                <Layers className="w-3.5 h-3.5 text-accent-terracotta" />
+              </div>
+              <div className="flex items-center gap-2 font-mono text-xs mt-1">
+                <span className="px-1.5 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo font-bold">{feedCount} Feed</span>
+                <span className="px-1.5 py-0.5 rounded bg-accent-terracotta/10 text-accent-terracotta font-bold">{storyCount} Story</span>
+                <span className="px-1.5 py-0.5 rounded bg-semantic-info/10 text-semantic-info font-bold">{reelCount} Reel</span>
+              </div>
+            </div>
+
+            <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card shadow-xs">
+              <div className="flex items-center justify-between text-ink-secondary text-[11px] font-mono mb-1">
+                <span>AI PEAK ACCURACY</span>
+                <Flame className="w-3.5 h-3.5 text-accent-terracotta" />
+              </div>
+              <div className="flex items-baseline gap-2">
+                <span className="font-serif text-2xl font-bold text-accent-terracotta">94%</span>
+                <span className="text-[11px] font-mono text-ink-secondary">Prime Window Match</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3.5 bg-gradient-to-r from-amber-500/10 via-accent-terracotta/5 to-transparent border border-accent-terracotta/20 rounded-card flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded-full bg-accent-terracotta/15 flex items-center justify-center text-accent-terracotta shrink-0">
+                <Flame className="w-4 h-4 fill-accent-terracotta text-accent-terracotta" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="font-serif font-bold text-ink-primary text-sm">AI Peak Audience Engagement Windows</span>
+                  <span className="px-1.5 py-0.2 rounded bg-accent-terracotta text-white font-mono text-[9px] uppercase font-bold">
+                    Live Algorithm
+                  </span>
+                </div>
+                <p className="text-ink-secondary text-[11px]">
+                  Bangkok Audience Peak: <strong className="text-ink-primary">08:30 - 09:30 AM</strong> (Exec & Real Estate Feed) •{' '}
+                  <strong className="text-ink-primary">11:30 AM - 13:00 PM</strong> (Lunch Story Swipes) •{' '}
+                  <strong className="text-ink-primary">19:30 - 21:30 PM</strong> (Prime Evening Reels).
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Workspace Filter Bar (Smart Hybrid: Top Active Pills + Searchable More Dropdown) */}
       <div className="pb-2 border-b border-border-rule">
@@ -934,10 +997,11 @@ export default function EditorialCalendarPage() {
           </div>
 
           <button
-            onClick={() => showToast('Returned to Today (Oct 24, 2026)')}
-            className="px-2.5 py-1.5 border border-border-rule rounded-editorial font-mono text-[11px] text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle transition-colors"
+            onClick={handleScrollToToday}
+            className="px-2.5 py-1.5 border border-brand-indigo/30 bg-brand-indigo/10 text-brand-indigo rounded-editorial font-mono text-[11px] font-bold hover:bg-brand-indigo hover:text-white transition-all shadow-2xs cursor-pointer flex items-center gap-1 active:scale-[0.98]"
+            title="คลิกเพื่อเลื่อนดูวันนี้และโพสต์สดทันที"
           >
-            Today
+            <span>🎯 Today (24 ต.ค.)</span>
           </button>
 
           <div className="flex items-center gap-1.5 font-mono text-[11px] text-ink-secondary border-l border-border-rule pl-3">
@@ -1071,19 +1135,23 @@ export default function EditorialCalendarPage() {
           {/* Days Grid */}
           <div className="grid grid-cols-7 divide-x divide-y divide-border-rule">
             {leadingBlanks.map((b) => (
-              <div key={`blank-${b}`} className="min-h-[140px] bg-paper-canvas/30 p-2 text-ink-muted/40 font-mono text-[10px]" />
+              <div key={`blank-${b}`} className="min-h-[58px] bg-paper-canvas/30 p-2 text-ink-muted/40 font-mono text-[10px]" />
             ))}
 
             {daysInMonth.map((day) => {
               const dayEvents = filteredEvents.filter((e) => e.dayOfMonth === day);
               const isToday = day === 24;
               const hasPeakTime = showAiPeakTimes && (day === 24 || day === 25 || day === 27);
+              const hasEvents = dayEvents.length > 0;
 
               return (
                 <div
                   key={`day-${day}`}
-                  className={`min-h-[145px] p-2 transition-all group relative flex flex-col justify-between ${
-                    isToday ? 'bg-brand-indigo/5' : 'hover:bg-paper-subtle/30'
+                  ref={isToday ? todayRef : undefined}
+                  className={`p-2 transition-all group relative flex flex-col justify-between ${
+                    hasEvents || isToday ? 'min-h-[145px]' : 'min-h-[58px]'
+                  } ${
+                    isToday ? 'bg-brand-indigo/10 ring-2 ring-brand-indigo ring-inset shadow-xs' : 'hover:bg-paper-subtle/30'
                   }`}
                 >
                   <div>
