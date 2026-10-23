@@ -38,6 +38,17 @@ import {
   BarChart3
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { 
+  SocialPlatformIcon, 
+  SocialMediaLiveButton, 
+  FacebookLogo, 
+  InstagramLogo, 
+  InstagramStoryLogo, 
+  YouTubeLogo, 
+  TikTokLogo, 
+  LineLogo, 
+  WebsiteLogo 
+} from '@/components/ui/social-icons';
 
 export type PostFormat = 'FEED_POST' | 'STORY' | 'VIDEO_REEL';
 export type PlatformType = 'FACEBOOK' | 'INSTAGRAM' | 'YOUTUBE' | 'TIKTOK';
@@ -1114,8 +1125,8 @@ export default function EditorialCalendarPage() {
                             className="p-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo hover:shadow-xs cursor-pointer transition-all text-[10px] group/card relative"
                           >
                             <div className="flex items-center justify-between mb-0.5">
-                              <span className="font-mono font-bold text-ink-secondary flex items-center gap-1">
-                                <span className={`w-1.5 h-1.5 rounded-full ${plat.dot}`} />
+                              <span className="font-mono font-bold text-ink-secondary flex items-center gap-1.5">
+                                <SocialPlatformIcon platform={ev.platform} format={ev.format} size={13} />
                                 <span>{ev.timeStr}</span>
                               </span>
                               <div className="flex items-center gap-1">
@@ -1272,9 +1283,9 @@ export default function EditorialCalendarPage() {
                               className="p-1 rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo text-[9px] shadow-2xs cursor-pointer group/card"
                             >
                               <div className="flex items-center justify-between font-mono">
-                                <span className="font-bold text-ink-primary flex items-center gap-1">
-                                  <span className={`w-1.5 h-1.5 rounded-full ${plat.dot}`} />
-                                  {ev.timeStr}
+                                <span className="font-bold text-ink-primary flex items-center gap-1.5">
+                                  <SocialPlatformIcon platform={ev.platform} format={ev.format} size={12} />
+                                  <span>{ev.timeStr}</span>
                                 </span>
                                 <span className={`px-1 py-0.2 rounded text-[7px] font-bold ${fmt.color}`}>
                                   {fmt.label}
@@ -1347,14 +1358,15 @@ export default function EditorialCalendarPage() {
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
                         <span className="font-bold text-ink-primary flex items-center gap-1.5">
-                          <span className={`w-2 h-2 rounded-full ${plat.dot}`} />
+                          <SocialPlatformIcon platform={ev.platform} format={ev.format} size={15} />
                           <span>{ev.dateStr} @ {ev.timeStr}</span>
                         </span>
                         <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${ws.color}`}>
                           {ws.icon} {ws.name}
                         </span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${plat.color}`}>
-                          {plat.name}
+                        <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border border-border-rule bg-paper-canvas flex items-center gap-1">
+                          <SocialPlatformIcon platform={ev.platform} format={ev.format} size={14} />
+                          <span>{plat.name}</span>
                         </span>
                         {ev.isPeakHour && (
                           <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-bold flex items-center gap-1">
@@ -1466,8 +1478,9 @@ export default function EditorialCalendarPage() {
                   <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${WORKSPACE_CONFIG[selectedEvent.workspace].color}`}>
                     {WORKSPACE_CONFIG[selectedEvent.workspace].icon} {WORKSPACE_CONFIG[selectedEvent.workspace].name}
                   </span>
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${getPlatformBadge(selectedEvent.platform).color}`}>
-                    {getPlatformBadge(selectedEvent.platform).name}
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border border-border-rule bg-paper-canvas flex items-center gap-1.5 shadow-2xs">
+                    <SocialPlatformIcon platform={selectedEvent.platform} format={selectedEvent.format} size={15} />
+                    <span>{getPlatformBadge(selectedEvent.platform).name}</span>
                   </span>
                   <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${getFormatBadge(selectedEvent.format).color}`}>
                     {getFormatBadge(selectedEvent.format).label}
@@ -1686,13 +1699,13 @@ export default function EditorialCalendarPage() {
                         href={selectedEvent.liveUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2 rounded bg-paper-canvas border border-brand-indigo/40 hover:border-brand-indigo text-brand-indigo font-bold flex items-center justify-between transition-colors"
+                        className="p-2 rounded bg-paper-canvas border border-brand-indigo/40 hover:border-brand-indigo text-brand-indigo font-bold flex items-center justify-between transition-colors shadow-2xs"
                       >
-                        <span className="flex items-center gap-1.5 truncate">
-                          <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                        <span className="flex items-center gap-2 truncate">
+                          <SocialPlatformIcon platform={selectedEvent.platform} format={selectedEvent.format} size={18} />
                           <span className="truncate">{selectedEvent.liveUrl}</span>
                         </span>
-                        <span className="text-[10px] shrink-0">Open Live ↗</span>
+                        <span className="text-[10px] shrink-0 font-mono">Open Live ↗</span>
                       </a>
                     ) : (
                       <div className="text-[11px] text-ink-muted italic">
@@ -1705,13 +1718,13 @@ export default function EditorialCalendarPage() {
                         href={selectedEvent.websiteUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2 rounded bg-paper-canvas border border-border-rule hover:border-ink-primary text-ink-primary flex items-center justify-between transition-colors"
+                        className="p-2 rounded bg-paper-canvas border border-emerald-300 hover:border-emerald-500 text-emerald-900 font-bold flex items-center justify-between transition-colors shadow-2xs"
                       >
-                        <span className="flex items-center gap-1.5 truncate">
-                          <Globe className="w-3.5 h-3.5 shrink-0 text-ink-secondary" />
+                        <span className="flex items-center gap-2 truncate">
+                          <WebsiteLogo size={18} />
                           <span className="truncate">{selectedEvent.websiteUrl}</span>
                         </span>
-                        <span className="text-[10px] text-ink-secondary shrink-0">Landing Page ↗</span>
+                        <span className="text-[10px] text-emerald-700 shrink-0 font-mono">Landing Page ↗</span>
                       </a>
                     )}
 
@@ -1720,10 +1733,10 @@ export default function EditorialCalendarPage() {
                         href={selectedEvent.storyLinkUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="p-2 rounded bg-paper-canvas border border-accent-terracotta/40 hover:border-accent-terracotta text-accent-terracotta font-bold flex items-center justify-between transition-colors"
+                        className="p-2 rounded bg-paper-canvas border border-accent-terracotta/40 hover:border-accent-terracotta text-accent-terracotta font-bold flex items-center justify-between transition-colors shadow-2xs"
                       >
-                        <span className="flex items-center gap-1.5 truncate">
-                          <Link2 className="w-3.5 h-3.5 shrink-0" />
+                        <span className="flex items-center gap-2 truncate">
+                          <InstagramStoryLogo size={18} />
                           <span className="truncate">Sticker: {selectedEvent.storyLinkUrl}</span>
                         </span>
                         <span className="text-[10px] shrink-0">Test Sticker ↗</span>

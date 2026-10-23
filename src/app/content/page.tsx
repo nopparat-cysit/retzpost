@@ -18,6 +18,10 @@ import {
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { StatusTag } from '@/components/ui/status-tag';
+import { 
+  SocialPlatformIcon, 
+  WebsiteLogo 
+} from '@/components/ui/social-icons';
 
 interface ContentChannel {
   platform: 'YOUTUBE' | 'TIKTOK' | 'INSTAGRAM' | 'FACEBOOK';
@@ -300,7 +304,8 @@ export default function ContentLibraryPage() {
               {/* Channels with Direct Live Links */}
               <div className="flex flex-wrap items-center gap-2 pt-0.5">
                 {item.channels.map((ch, idx) => (
-                  <div key={idx} className="flex items-center gap-1.5 font-mono text-[11px] bg-paper-canvas px-2 py-0.5 rounded border border-border-rule">
+                  <div key={idx} className="flex items-center gap-1.5 font-mono text-[11px] bg-paper-canvas px-2.5 py-1 rounded border border-border-rule shadow-2xs">
+                    <SocialPlatformIcon platform={ch.platform} size={15} />
                     <span className="font-semibold text-ink-primary">{ch.platform}:</span>
                     <span className="text-ink-secondary">{ch.detail}</span>
                     {ch.liveUrl && (
@@ -308,7 +313,7 @@ export default function ContentLibraryPage() {
                         href={ch.liveUrl}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-0.5 text-brand-indigo hover:underline font-semibold ml-1 cursor-pointer"
+                        className="inline-flex items-center gap-0.5 text-brand-indigo hover:underline font-bold ml-1 cursor-pointer"
                         title={`เปิดดูโพสต์จริงบน ${ch.platform}`}
                       >
                         <span>Live</span>
@@ -323,10 +328,11 @@ export default function ContentLibraryPage() {
                     href={item.websiteUrl}
                     target="_blank"
                     rel="noreferrer"
-                    className="inline-flex items-center gap-1 font-mono text-[11px] bg-brand-indigo/5 text-brand-indigo px-2 py-0.5 rounded border border-brand-indigo/20 hover:underline font-medium cursor-pointer"
+                    className="inline-flex items-center gap-1.5 font-mono text-[11px] bg-emerald-50 text-emerald-900 px-2.5 py-1 rounded border border-emerald-200 hover:underline font-medium cursor-pointer shadow-2xs"
                   >
-                    <span>🌐 เว็บโครงการ</span>
-                    <ExternalLink className="w-2.5 h-2.5" />
+                    <WebsiteLogo size={14} />
+                    <span>เว็บโครงการ</span>
+                    <ExternalLink className="w-2.5 h-2.5 text-emerald-700" />
                   </a>
                 )}
               </div>

@@ -54,6 +54,17 @@ import {
   downloadCsvFile,
   ExportableJob 
 } from '@/modules/publishing/export-csv';
+import { 
+  SocialPlatformIcon, 
+  SocialMediaLiveButton, 
+  FacebookLogo, 
+  InstagramLogo, 
+  InstagramStoryLogo, 
+  YouTubeLogo, 
+  TikTokLogo, 
+  LineLogo, 
+  WebsiteLogo 
+} from '@/components/ui/social-icons';
 
 interface DispatchPlacement {
   platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK';
@@ -1216,73 +1227,24 @@ export default function HomePage() {
                           <div className="flex flex-wrap items-center gap-2 pt-0.5">
                             {batch.placements
                               .filter((p) => p.liveUrl && p.status !== 'FAILED')
-                              .map((plc, pIdx) => {
-                                let emoji = '🔗';
-                                let btnColor = 'bg-paper-canvas text-ink-primary border-border-rule hover:border-brand-indigo';
-                                if (plc.platform === 'FACEBOOK') {
-                                  emoji = '📘';
-                                  btnColor = 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100 hover:border-blue-300';
-                                } else if (plc.platform === 'INSTAGRAM' && plc.format === 'STORY') {
-                                  emoji = '⚡';
-                                  btnColor = 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100 hover:border-amber-300';
-                                } else if (plc.platform === 'INSTAGRAM') {
-                                  emoji = '📸';
-                                  btnColor = 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100 hover:border-purple-300';
-                                } else if (plc.platform === 'YOUTUBE') {
-                                  emoji = '🔴';
-                                  btnColor = 'bg-red-50 text-red-800 border-red-200 hover:bg-red-100 hover:border-red-300';
-                                } else if (plc.platform === 'TIKTOK') {
-                                  emoji = '🎵';
-                                  btnColor = 'bg-neutral-900 text-cyan-300 border-neutral-700 hover:bg-black';
-                                }
-
-                                return (
-                                  <div key={pIdx} className="inline-flex items-center gap-0.5">
-                                    <a
-                                      href={plc.liveUrl}
-                                      target="_blank"
-                                      rel="noreferrer"
-                                      className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono font-bold border transition-all shadow-2xs hover:shadow-xs cursor-pointer ${btnColor}`}
-                                      title={`เปิดดูบน ${plc.platform}: ${plc.label}`}
-                                    >
-                                      <span>{emoji}</span>
-                                      <span>เปิดดูบน {plc.label}</span>
-                                      <ExternalLink className="w-3 h-3" />
-                                    </a>
-                                    <button
-                                      type="button"
-                                      onClick={() => handleCopyLink(plc.liveUrl!, plc.label)}
-                                      className="p-1 hover:bg-paper-subtle rounded text-ink-muted hover:text-ink-primary transition-colors cursor-pointer"
-                                      title="คัดลอกลิงก์"
-                                    >
-                                      <Copy className="w-2.5 h-2.5" />
-                                    </button>
-                                  </div>
-                                );
-                              })}
+                              .map((plc, pIdx) => (
+                                <SocialMediaLiveButton
+                                  key={pIdx}
+                                  platform={plc.platform}
+                                  format={plc.format}
+                                  label={plc.label}
+                                  url={plc.liveUrl!}
+                                  onCopy={handleCopyLink}
+                                />
+                              ))}
 
                             {batch.websiteUrl && (
-                              <div className="inline-flex items-center gap-0.5">
-                                <a
-                                  href={batch.websiteUrl}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all shadow-2xs hover:shadow-xs cursor-pointer"
-                                  title="เปิดหน้าเว็บจริงของโครงการ"
-                                >
-                                  <span>🌐</span>
-                                  <span>เปิดดูหน้าเว็บโครงการ</span>
-                                  <ExternalLink className="w-3 h-3 text-emerald-700" />
-                                </a>
-                                <button
-                                  type="button"
-                                  onClick={() => handleCopyLink(batch.websiteUrl!, 'เว็บโครงการ')}
-                                  className="p-1 hover:bg-paper-subtle rounded text-ink-muted hover:text-ink-primary transition-colors cursor-pointer"
-                                  title="คัดลอกลิงก์เว็บโครงการ"
-                                >
-                                  <Copy className="w-2.5 h-2.5" />
-                                </button>
-                              </div>
+                              <SocialMediaLiveButton
+                                platform="WEBSITE"
+                                label="หน้าเว็บโครงการ"
+                                url={batch.websiteUrl}
+                                onCopy={handleCopyLink}
+                              />
                             )}
                           </div>
                         </div>
@@ -1438,9 +1400,7 @@ export default function HomePage() {
                       className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between gap-2"
                     >
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className={`w-5 h-5 rounded flex items-center justify-center text-[9px] font-bold text-white shrink-0 ${ch.avatarBg}`}>
-                          {ch.avatarText}
-                        </div>
+                        <SocialPlatformIcon platform={ch.platform} size={22} className="shrink-0" />
                         <div className="truncate">
                           <p className="text-xs font-mono font-medium text-ink-primary truncate">
                             {ch.name}
@@ -1792,51 +1752,23 @@ export default function HomePage() {
 
                   <div className="flex flex-wrap items-center gap-2 pt-0.5">
                     {post.liveLinks.map((link, lIdx) => (
-                      <div key={lIdx} className="inline-flex items-center gap-0.5">
-                        <a
-                          href={link.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono font-bold border transition-all shadow-2xs hover:shadow-xs cursor-pointer ${link.btnColor}`}
-                          title={`เปิดดูบน ${link.platform}: ${link.label}`}
-                        >
-                          <span>{link.emoji}</span>
-                          <span>เปิดดูบน {link.label}</span>
-                          <ExternalLink className="w-3 h-3" />
-                        </a>
-                        <button
-                          type="button"
-                          onClick={() => handleCopyLink(link.url, link.label)}
-                          className="p-1 hover:bg-paper-subtle rounded text-ink-muted hover:text-ink-primary transition-colors cursor-pointer"
-                          title="คัดลอกลิงก์"
-                        >
-                          <Copy className="w-2.5 h-2.5" />
-                        </button>
-                      </div>
+                      <SocialMediaLiveButton
+                        key={lIdx}
+                        platform={link.platform}
+                        format={link.format}
+                        label={link.label}
+                        url={link.url}
+                        onCopy={handleCopyLink}
+                      />
                     ))}
 
                     {post.websiteUrl && (
-                      <div className="inline-flex items-center gap-0.5">
-                        <a
-                          href={post.websiteUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono font-bold bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300 transition-all shadow-2xs hover:shadow-xs cursor-pointer"
-                          title="เปิดหน้าเว็บจริงของโครงการ"
-                        >
-                          <span>🌐</span>
-                          <span>เปิดดูหน้าเว็บโครงการ</span>
-                          <ExternalLink className="w-3 h-3 text-emerald-700" />
-                        </a>
-                        <button
-                          type="button"
-                          onClick={() => handleCopyLink(post.websiteUrl!, 'เว็บโครงการ')}
-                          className="p-1 hover:bg-paper-subtle rounded text-ink-muted hover:text-ink-primary transition-colors cursor-pointer"
-                          title="คัดลอกลิงก์เว็บโครงการ"
-                        >
-                          <Copy className="w-2.5 h-2.5" />
-                        </button>
-                      </div>
+                      <SocialMediaLiveButton
+                        platform="WEBSITE"
+                        label={post.websiteLabel || 'หน้าเว็บโครงการ'}
+                        url={post.websiteUrl}
+                        onCopy={handleCopyLink}
+                      />
                     )}
                   </div>
                 </div>
@@ -1916,9 +1848,7 @@ export default function HomePage() {
                   className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between gap-3 hover:border-brand-indigo transition-colors"
                 >
                   <div className="flex items-center gap-2.5 min-w-0">
-                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold text-white shrink-0 ${plc.badgeBg}`}>
-                      {plc.platform}
-                    </span>
+                    <SocialPlatformIcon platform={plc.platform} format={plc.format} size={24} className="shrink-0" />
                     <div className="truncate">
                       <p className="font-medium text-ink-primary text-xs truncate">
                         {plc.label}
@@ -1954,13 +1884,16 @@ export default function HomePage() {
               {/* Website Project Landing Page */}
               {selectedLiveBatch.websiteUrl && (
                 <div className="mt-3 p-3 bg-brand-indigo/5 border border-brand-indigo/20 rounded-editorial flex items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <span className="text-[10px] font-mono uppercase text-brand-indigo font-bold block">
-                      🌐 เว็บไซต์โครงการ / Landing Page:
-                    </span>
-                    <p className="font-mono text-xs text-ink-primary truncate font-semibold mt-0.5">
-                      {selectedLiveBatch.websiteUrl}
-                    </p>
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <SocialPlatformIcon platform="WEBSITE" size={24} className="shrink-0" />
+                    <div className="min-w-0">
+                      <span className="text-[10px] font-mono uppercase text-brand-indigo font-bold block">
+                        เว็บไซต์โครงการ / Landing Page:
+                      </span>
+                      <p className="font-mono text-xs text-ink-primary truncate font-semibold mt-0.5">
+                        {selectedLiveBatch.websiteUrl}
+                      </p>
+                    </div>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
                     <button

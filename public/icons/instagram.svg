@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px">
+  <radialGradient id="ig-rg" cx="19.38" cy="42.035" r="44.899" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#fd5"/>
+    <stop offset=".328" stop-color="#ff543f"/>
+    <stop offset=".348" stop-color="#fc5245"/>
+    <stop offset=".509" stop-color="#e64771"/>
+    <stop offset=".68" stop-color="#d53e91"/>
+    <stop offset=".847" stop-color="#cc39a4"/>
+    <stop offset="1" stop-color="#c837ab"/>
+  </radialGradient>
+  <path fill="url(#ig-rg)" d="M34.017 41.99H13.983A7.992 7.992 0 0 1 6 34.007V13.973A7.992 7.992 0 0 1 13.983 5.99h20.034A7.992 7.992 0 0 1 42 13.973v20.034a7.992 7.992 0 0 1-7.983 7.983z"/>
+  <radialGradient id="ig-rg2" cx="11.786" cy="5.54" r="29.813" gradientTransform="matrix(1 0 0 .69 0 9.8)" gradientUnits="userSpaceOnUse">
+    <stop offset="0" stop-color="#4168c9"/>
+    <stop offset=".999" stop-color="#4168c9" stop-opacity="0"/>
+  </radialGradient>
+  <path fill="url(#ig-rg2)" d="M34.017 41.99H13.983A7.992 7.992 0 0 1 6 34.007V13.973A7.992 7.992 0 0 1 13.983 5.99h20.034A7.992 7.992 0 0 1 42 13.973v20.034a7.992 7.992 0 0 1-7.983 7.983z"/>
+  <path fill="#fff" d="M24 14.5a9.5 9.5 0 1 0 9.5 9.5 9.51 9.51 0 0 0-9.5-9.5zm0 15.5a6 6 0 1 1 6-6 6.007 6.007 0 0 1-6 6z"/>
+  <circle cx="33.8" cy="14.2" r="2.2" fill="#fff"/>
+  <path fill="#fff" d="M33 9H15a6 6 0 0 0-6 6v18a6 6 0 0 0 6 6h18a6 6 0 0 0 6-6V15a6 6 0 0 0-6-6zm2.5 24a2.5 2.5 0 0 1-2.5 2.5H15a2.5 2.5 0 0 1-2.5-2.5V15A2.5 2.5 0 0 1 15 12.5h18a2.5 2.5 0 0 1 2.5 2.5z"/>
+</svg>

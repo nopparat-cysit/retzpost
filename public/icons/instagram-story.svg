@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48px" height="48px">
+  <defs>
+    <linearGradient id="ig-story-ring" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FEE411"/>
+      <stop offset="25%" stop-color="#FEDB16"/>
+      <stop offset="50%" stop-color="#FD415B"/>
+      <stop offset="75%" stop-color="#D800B9"/>
+      <stop offset="100%" stop-color="#8E00D7"/>
+    </linearGradient>
+  </defs>
+  <!-- Gradient Ring -->
+  <circle cx="24" cy="24" r="21" fill="none" stroke="url(#ig-story-ring)" stroke-width="3.5" stroke-dasharray="8 3"/>
+  <!-- Inner circular badge -->
+  <circle cx="24" cy="24" r="16.5" fill="#161412"/>
+  <!-- Story glyph or camera -->
+  <path fill="#fff" d="M24 16c-4.4 0-8 3.6-8 8s3.6 8 8 8 8-3.6 8-8-3.6-8-8-8zm0 13c-2.8 0-5-2.2-5-5s2.2-5 5-5 5 2.2 5 5-2.2 5-5 5z"/>
+  <polygon fill="#FEE411" points="25,18 20.5,25 24,25 23,30 27.5,23 24,23"/>
+</svg>

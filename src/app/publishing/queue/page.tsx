@@ -23,6 +23,14 @@ import {
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { StatusTag } from '@/components/ui/status-tag';
+import { 
+  SocialPlatformIcon, 
+  SocialMediaLiveButton, 
+  FacebookLogo, 
+  InstagramLogo, 
+  YouTubeLogo, 
+  TikTokLogo 
+} from '@/components/ui/social-icons';
 import { JobStatus } from '@/modules/publishing/state-machine';
 import { 
   generateErrorLogCsv, 
@@ -421,19 +429,7 @@ export default function PublishingQueuePage() {
                       {/* Destination & Format */}
                       <td className="py-3.5 px-4 align-top">
                         <div className="flex items-start gap-2.5">
-                          <div
-                            className={`w-6 h-6 rounded-editorial flex items-center justify-center font-bold text-[10px] text-white shrink-0 mt-0.5 ${
-                              job.platform === 'INSTAGRAM'
-                                ? 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]'
-                                : job.platform === 'FACEBOOK'
-                                ? 'bg-[#1877F2]'
-                                : job.platform === 'YOUTUBE'
-                                ? 'bg-[#FF0000]'
-                                : 'bg-ink-primary'
-                            }`}
-                          >
-                            {job.platform === 'INSTAGRAM' ? 'IG' : job.platform === 'FACEBOOK' ? 'FB' : job.platform === 'YOUTUBE' ? 'YT' : 'TT'}
-                          </div>
+                          <SocialPlatformIcon platform={job.platform} format={job.format} size={24} className="mt-0.5 shrink-0" />
                           <div>
                             <div className="flex items-center gap-1.5">
                               <span className="font-mono text-ink-primary text-xs truncate max-w-[150px] font-semibold">
@@ -495,6 +491,7 @@ export default function PublishingQueuePage() {
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold text-brand-indigo hover:text-white hover:bg-brand-indigo bg-paper-canvas border border-brand-indigo/30 rounded-editorial transition-all shadow-2xs group cursor-pointer"
                               title={`เปิดดูโพสต์จริงบน ${job.platform}`}
                             >
+                              <SocialPlatformIcon platform={job.platform} format={job.format} size={15} />
                               <span>ดูบน {job.platform === 'FACEBOOK' ? 'Facebook' : job.platform === 'INSTAGRAM' ? 'Instagram' : job.platform === 'YOUTUBE' ? 'YouTube' : 'TikTok'}</span>
                               <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                             </a>
