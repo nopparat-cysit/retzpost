@@ -586,6 +586,16 @@ export default function CreatePostPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedGroupFilter, setSelectedGroupFilter] = useState<'ALL' | 'Instagram' | 'Facebook' | 'YouTube' | 'TikTok' | 'Other'>('ALL');
 
+  // Collapsible state per platform group in Column 1 (Destinations Accordion)
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
+
+  const toggleGroupCollapse = (groupName: string) => {
+    setCollapsedGroups(prev => ({
+      ...prev,
+      [groupName]: !prev[groupName]
+    }));
+  };
+
   // Sample Photos
   const [images, setImages] = useState<Array<{ id: string; name: string; size: string }>>([
     { id: 'img-1', name: 'editorial_hero_cover_01.jpg', size: '3.8 MB' },
@@ -1074,6 +1084,25 @@ export default function CreatePostPage() {
     return map;
   }, [filteredAccounts]);
 
+  // Check if all platform groups are currently collapsed
+  const isAllGroupsCollapsed = useMemo(() => {
+    const keys = Array.from(groupedAccounts.keys());
+    if (keys.length === 0) return false;
+    return keys.every((k) => collapsedGroups[k] === true);
+  }, [groupedAccounts, collapsedGroups]);
+
+  const toggleAllGroups = () => {
+    if (isAllGroupsCollapsed) {
+      setCollapsedGroups({});
+    } else {
+      const all: Record<string, boolean> = {};
+      Array.from(groupedAccounts.keys()).forEach((k) => {
+        all[k] = true;
+      });
+      setCollapsedGroups(all);
+    }
+  };
+
   // Active counts
   const totalActivePlacements = Object.entries(placements).filter(([key, val]) => {
     if (!val) return false;
@@ -1435,159 +1464,208 @@ export default function CreatePostPage() {
             })}
           </div>
 
+          {/* Quick Header: Channel Count & Collapse/Expand All Toggle */}
+          <div className="flex items-center justify-between text-[10px] font-mono text-ink-secondary px-0.5 pt-0.5">
+            <span>ช่องทางตามแพลตฟอร์ม ({filteredAccounts.length})</span>
+            {groupedAccounts.size > 1 && (
+              <button
+                type="button"
+                onClick={toggleAllGroups}
+                className="text-brand-indigo hover:underline font-semibold cursor-pointer flex items-center gap-0.5 transition-colors"
+                title={isAllGroupsCollapsed ? 'กางทุกแพลตฟอร์ม' : 'พับทุกแพลตฟอร์ม'}
+              >
+                <span>{isAllGroupsCollapsed ? '▾ กางทั้งหมด' : '▴ พับทั้งหมด'}</span>
+              </button>
+            )}
+          </div>
+
           {/* Scrollable Channel List Scoped to Active Project with 1-Click Card Activation */}
           <div className="max-h-[calc(100vh-320px)] overflow-y-auto pr-1 space-y-3">
-            {Array.from(groupedAccounts.entries()).map(([groupName, accounts]) => (
-              <div key={groupName} className="space-y-1">
-                {/* Group Subheader */}
-                <div className="flex items-center justify-between text-[10px] font-mono pb-0.5 border-b border-border-rule/70">
-                  <span className="font-bold text-ink-primary uppercase tracking-wider">
-                    {groupName} ({accounts.length})
-                  </span>
-                </div>
+            {Array.from(groupedAccounts.entries()).map(([groupName, accounts]) => {
+              const isCollapsed = collapsedGroups[groupName] === true;
+              const activeCountInGroup = accounts.reduce((accCount, acc) => {
+                const isFeed = placements[`${acc.id}_feed`];
+                const isStory = placements[`${acc.id}_story`];
+                const isReel = placements[`${acc.id}_reel`];
+                return accCount + (isFeed ? 1 : 0) + (isStory ? 1 : 0) + (isReel ? 1 : 0);
+              }, 0);
 
-                {/* Individual Channel Cards */}
-                <div className="space-y-1.5">
-                  {accounts.map((acc) => {
-                    const feedVal = getFormatValidation('feed', acc);
-                    const storyVal = getFormatValidation('story', acc);
-                    const reelVal = getFormatValidation('reel', acc);
-
-                    const isFeedActive = feedVal.eligible && placements[`${acc.id}_feed`];
-                    const isStoryActive = storyVal.eligible && placements[`${acc.id}_story`];
-                    const isReelActive = reelVal.eligible && placements[`${acc.id}_reel`];
-
-                    const isAnyActive = isFeedActive || isStoryActive || isReelActive;
-
-                    return (
-                      <div
-                        key={acc.id}
-                        className={`p-2 rounded-editorial border transition-all ${
-                          isAnyActive
-                            ? 'bg-paper-canvas border-brand-indigo/40 shadow-2xs ring-1 ring-brand-indigo/10'
-                            : 'bg-paper-subtle/30 border-border-rule opacity-75 hover:opacity-100'
+              return (
+                <div key={groupName} className="space-y-1">
+                  {/* Collapsible Group Header Button */}
+                  <button
+                    type="button"
+                    onClick={() => toggleGroupCollapse(groupName)}
+                    className="w-full flex items-center justify-between text-[10px] font-mono py-1 px-1 rounded hover:bg-paper-canvas border-b border-border-rule/80 transition-colors group/hdr cursor-pointer text-left"
+                    title={isCollapsed ? `คลิกเพื่อกาง ${groupName}` : `คลิกเพื่อพับ ${groupName}`}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <ChevronDown
+                        className={`w-3.5 h-3.5 text-ink-secondary group-hover/hdr:text-brand-indigo transition-transform duration-200 ${
+                          isCollapsed ? '-rotate-90' : ''
                         }`}
-                      >
-                        {/* 1-Click Account Row Header: Clicking toggles primary format */}
-                        <div 
-                          onClick={() => toggleAccountPrimary(acc)}
-                          className="flex items-center gap-2 mb-1.5 cursor-pointer group"
-                          title="Click to toggle channel"
-                        >
-                          <div className={`w-5 h-5 rounded-editorial ${acc.avatarBg} text-white flex items-center justify-center font-bold text-[9px] shrink-0`}>
-                            {acc.avatarText}
+                      />
+                      <span className="font-bold text-ink-primary uppercase tracking-wider group-hover/hdr:text-brand-indigo transition-colors">
+                        {groupName}
+                      </span>
+                      <span className="text-[9px] text-ink-secondary">
+                        ({accounts.length})
+                      </span>
+                    </div>
+
+                    {/* Active Placements Badge in this group */}
+                    {activeCountInGroup > 0 && (
+                      <span className="px-1.5 py-0.2 rounded-full bg-brand-indigo/15 text-brand-indigo font-bold text-[9px] border border-brand-indigo/20">
+                        {activeCountInGroup} Active
+                      </span>
+                    )}
+                  </button>
+
+                  {/* Individual Channel Cards (Visible when not collapsed) */}
+                  {!isCollapsed && (
+                    <div className="space-y-1.5 pt-0.5 animate-in fade-in duration-150">
+                      {accounts.map((acc) => {
+                        const feedVal = getFormatValidation('feed', acc);
+                        const storyVal = getFormatValidation('story', acc);
+                        const reelVal = getFormatValidation('reel', acc);
+
+                        const isFeedActive = feedVal.eligible && placements[`${acc.id}_feed`];
+                        const isStoryActive = storyVal.eligible && placements[`${acc.id}_story`];
+                        const isReelActive = reelVal.eligible && placements[`${acc.id}_reel`];
+
+                        const isAnyActive = isFeedActive || isStoryActive || isReelActive;
+
+                        return (
+                          <div
+                            key={acc.id}
+                            className={`p-2 rounded-editorial border transition-all ${
+                              isAnyActive
+                                ? 'bg-paper-canvas border-brand-indigo/40 shadow-2xs ring-1 ring-brand-indigo/10'
+                                : 'bg-paper-subtle/30 border-border-rule opacity-75 hover:opacity-100'
+                            }`}
+                          >
+                            {/* 1-Click Account Row Header: Clicking toggles primary format */}
+                            <div 
+                              onClick={() => toggleAccountPrimary(acc)}
+                              className="flex items-center gap-2 mb-1.5 cursor-pointer group"
+                              title="Click to toggle channel"
+                            >
+                              <div className={`w-5 h-5 rounded-editorial ${acc.avatarBg} text-white flex items-center justify-center font-bold text-[9px] shrink-0`}>
+                                {acc.avatarText}
+                              </div>
+                              <div className="min-w-0 flex-1">
+                                <p className="font-semibold text-xs text-ink-primary leading-tight truncate group-hover:text-brand-indigo transition-colors">
+                                  {acc.name}
+                                </p>
+                                <p className="text-[9px] font-mono text-ink-secondary truncate">
+                                  {acc.handle}
+                                </p>
+                              </div>
+                              <span className="text-[8px] font-mono px-1 py-0.2 rounded bg-paper-subtle border border-border-rule text-ink-secondary shrink-0">
+                                {acc.badge}
+                              </span>
+                            </div>
+
+                            {/* Format Pills Row */}
+                            <div className="flex items-center gap-1 justify-end">
+                              {/* Feed Pill */}
+                              {acc.capabilities.feed.supported ? (
+                                feedVal.eligible ? (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      togglePlacement(acc.id, 'feed', acc);
+                                    }}
+                                    className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium transition-all ${
+                                      isFeedActive
+                                        ? 'bg-brand-indigo text-white font-semibold shadow-2xs'
+                                        : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
+                                    }`}
+                                  >
+                                    {isFeedActive ? '✓ Feed' : '+ Feed'}
+                                  </button>
+                                ) : (
+                                  <span 
+                                    title={feedVal.reason}
+                                    className="inline-flex items-center gap-1 text-[9px] font-mono text-ink-secondary/50 bg-paper-subtle px-1.5 py-0.5 rounded cursor-not-allowed"
+                                  >
+                                    <Lock className="w-2.5 h-2.5" />
+                                    <span>No Pic</span>
+                                  </span>
+                                )
+                              ) : (
+                                <span className="text-[10px] font-mono text-ink-secondary/30 px-1">—</span>
+                              )}
+
+                              {/* Story Pill */}
+                              {acc.capabilities.story.supported ? (
+                                storyVal.eligible ? (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      togglePlacement(acc.id, 'story', acc);
+                                    }}
+                                    className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium transition-all ${
+                                      isStoryActive
+                                        ? 'bg-accent-terracotta text-white font-semibold shadow-2xs'
+                                        : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
+                                    }`}
+                                  >
+                                    {isStoryActive ? '✓ Story' : '+ Story'}
+                                  </button>
+                                ) : (
+                                  <span 
+                                    title={storyVal.reason}
+                                    className="inline-flex items-center gap-1 text-[9px] font-mono text-ink-secondary/50 bg-paper-subtle px-1.5 py-0.5 rounded cursor-not-allowed"
+                                  >
+                                    <Lock className="w-2.5 h-2.5" />
+                                    <span>No Media</span>
+                                  </span>
+                                )
+                              ) : (
+                                <span className="text-[10px] font-mono text-ink-secondary/30 px-1">—</span>
+                              )}
+
+                              {/* Reel / Shorts Pill */}
+                              {acc.capabilities.reel.supported ? (
+                                reelVal.eligible ? (
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      togglePlacement(acc.id, 'reel', acc);
+                                    }}
+                                    className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium transition-all ${
+                                      isReelActive
+                                        ? 'bg-semantic-info text-white font-semibold shadow-2xs'
+                                        : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
+                                    }`}
+                                  >
+                                    {isReelActive ? `✓ ${acc.capabilities.reel.label}` : `+ ${acc.capabilities.reel.label}`}
+                                  </button>
+                                ) : (
+                                  <span 
+                                    title={reelVal.reason}
+                                    className="inline-flex items-center gap-1 text-[9px] font-mono text-ink-secondary/50 bg-paper-subtle px-1.5 py-0.5 rounded cursor-not-allowed"
+                                  >
+                                    <Lock className="w-2.5 h-2.5" />
+                                    <span>Video Req.</span>
+                                  </span>
+                                )
+                              ) : (
+                                <span className="text-[10px] font-mono text-ink-secondary/30 px-1">—</span>
+                              )}
+                            </div>
                           </div>
-                          <div className="min-w-0 flex-1">
-                            <p className="font-semibold text-xs text-ink-primary leading-tight truncate group-hover:text-brand-indigo transition-colors">
-                              {acc.name}
-                            </p>
-                            <p className="text-[9px] font-mono text-ink-secondary truncate">
-                              {acc.handle}
-                            </p>
-                          </div>
-                          <span className="text-[8px] font-mono px-1 py-0.2 rounded bg-paper-subtle border border-border-rule text-ink-secondary shrink-0">
-                            {acc.badge}
-                          </span>
-                        </div>
-
-                        {/* Format Pills Row */}
-                        <div className="flex items-center gap-1 justify-end">
-                          {/* Feed Pill */}
-                          {acc.capabilities.feed.supported ? (
-                            feedVal.eligible ? (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  togglePlacement(acc.id, 'feed', acc);
-                                }}
-                                className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium transition-all ${
-                                  isFeedActive
-                                    ? 'bg-brand-indigo text-white font-semibold shadow-2xs'
-                                    : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
-                                }`}
-                              >
-                                {isFeedActive ? '✓ Feed' : '+ Feed'}
-                              </button>
-                            ) : (
-                              <span 
-                                title={feedVal.reason}
-                                className="inline-flex items-center gap-1 text-[9px] font-mono text-ink-secondary/50 bg-paper-subtle px-1.5 py-0.5 rounded cursor-not-allowed"
-                              >
-                                <Lock className="w-2.5 h-2.5" />
-                                <span>No Pic</span>
-                              </span>
-                            )
-                          ) : (
-                            <span className="text-[10px] font-mono text-ink-secondary/30 px-1">—</span>
-                          )}
-
-                          {/* Story Pill */}
-                          {acc.capabilities.story.supported ? (
-                            storyVal.eligible ? (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  togglePlacement(acc.id, 'story', acc);
-                                }}
-                                className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium transition-all ${
-                                  isStoryActive
-                                    ? 'bg-accent-terracotta text-white font-semibold shadow-2xs'
-                                    : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
-                                }`}
-                              >
-                                {isStoryActive ? '✓ Story' : '+ Story'}
-                              </button>
-                            ) : (
-                              <span 
-                                title={storyVal.reason}
-                                className="inline-flex items-center gap-1 text-[9px] font-mono text-ink-secondary/50 bg-paper-subtle px-1.5 py-0.5 rounded cursor-not-allowed"
-                              >
-                                <Lock className="w-2.5 h-2.5" />
-                                <span>No Media</span>
-                              </span>
-                            )
-                          ) : (
-                            <span className="text-[10px] font-mono text-ink-secondary/30 px-1">—</span>
-                          )}
-
-                          {/* Reel / Shorts Pill */}
-                          {acc.capabilities.reel.supported ? (
-                            reelVal.eligible ? (
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  togglePlacement(acc.id, 'reel', acc);
-                                }}
-                                className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium transition-all ${
-                                  isReelActive
-                                    ? 'bg-semantic-info text-white font-semibold shadow-2xs'
-                                    : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
-                                }`}
-                              >
-                                {isReelActive ? `✓ ${acc.capabilities.reel.label}` : `+ ${acc.capabilities.reel.label}`}
-                              </button>
-                            ) : (
-                              <span 
-                                title={reelVal.reason}
-                                className="inline-flex items-center gap-1 text-[9px] font-mono text-ink-secondary/50 bg-paper-subtle px-1.5 py-0.5 rounded cursor-not-allowed"
-                              >
-                                <Lock className="w-2.5 h-2.5" />
-                                <span>Video Req.</span>
-                              </span>
-                            )
-                          ) : (
-                            <span className="text-[10px] font-mono text-ink-secondary/30 px-1">—</span>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </aside>
 
