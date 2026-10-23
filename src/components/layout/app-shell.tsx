@@ -33,6 +33,7 @@ export interface WorkspaceItem {
 }
 
 export const WORKSPACES: WorkspaceItem[] = [
+  { id: 'ws_capitalone', name: 'Capital One Real Estate', category: 'Enterprise Portfolio', dotColor: 'bg-accent-terracotta', channelCount: 6 },
   { id: 'ws_acme', name: 'Acme Creator Studio', category: 'Personal Brand', dotColor: 'bg-brand-indigo', channelCount: 4 },
   { id: 'ws_retzpost', name: 'RetzPost Software', category: 'SaaS Product', dotColor: 'bg-semantic-info', channelCount: 4 },
   { id: 'ws_coffee', name: 'Coffee Craft BKK', category: 'Client Cafe SME', dotColor: 'bg-semantic-success', channelCount: 3 },
@@ -62,7 +63,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           label: 'Publishing Queue', 
           href: '/publishing/queue', 
           icon: ListOrdered,
-          badge: { text: '1 Retry', bg: 'bg-accent-terracotta text-white' }
+          badge: { text: '2 Issues', bg: 'bg-accent-terracotta text-white' }
         },
         { label: 'Editorial Calendar', href: '/calendar', icon: Calendar },
       ],
