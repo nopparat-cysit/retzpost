@@ -5,6 +5,7 @@ export type JobStatus =
   | 'PROCESSING'
   | 'PUBLISHED'
   | 'SENT_TO_INBOX'
+  | 'SKIPPED_BYPASS'
   | 'FAILED_RETRYABLE'
   | 'FAILED_FINAL'
   | 'UNKNOWN_RECONCILE'
@@ -21,9 +22,16 @@ export type BatchAggregateStatus =
 /**
  * Calculates the overall aggregate status of a PublishBatch from its individual destinations.
  * Invariant: Never reports global FAILED if one of the destinations succeeded.
+ * Invariant: Channels that were unselected/bypassed (SKIPPED_BYPASS) are ignored and do NOT trigger errors.
  */
 export function deriveBatchAggregateStatus(jobStatuses: JobStatus[]): BatchAggregateStatus {
   if (!jobStatuses || jobStatuses.length === 0) {
+    return 'PENDING';
+  }
+
+  // Filter out bypassed/unselected channels so they do not taint batch status
+  const activeJobs = jobStatuses.filter((s) => s !== 'SKIPPED_BYPASS');
+  if (activeJobs.length === 0) {
     return 'PENDING';
   }
 
@@ -34,11 +42,11 @@ export function deriveBatchAggregateStatus(jobStatuses: JobStatus[]): BatchAggre
   const isScheduled = (s: JobStatus) => s === 'SCHEDULED';
   const isCancelled = (s: JobStatus) => s === 'CANCELLED';
 
-  const hasSuccess = jobStatuses.some(isTerminalSuccess);
-  const hasFailure = jobStatuses.some(isTerminalFailure);
-  const hasInFlight = jobStatuses.some(isInFlight);
-  const hasScheduled = jobStatuses.some(isScheduled);
-  const allCancelled = jobStatuses.every(isCancelled);
+  const hasSuccess = activeJobs.some(isTerminalSuccess);
+  const hasFailure = activeJobs.some(isTerminalFailure);
+  const hasInFlight = activeJobs.some(isInFlight);
+  const hasScheduled = activeJobs.some(isScheduled);
+  const allCancelled = activeJobs.every(isCancelled);
 
   if (allCancelled) {
     return 'CANCELLED';
@@ -70,22 +78,22 @@ export function deriveBatchAggregateStatus(jobStatuses: JobStatus[]): BatchAggre
 
 /**
  * Validates whether a state transition for a PublishJob is legally permitted.
- * Invariant: Terminal states (PUBLISHED, SENT_TO_INBOX) cannot be mutated backwards.
+ * Invariant: Terminal states (PUBLISHED, SENT_TO_INBOX, SKIPPED_BYPASS) cannot be mutated backwards.
  */
 export function isLegalJobTransition(from: JobStatus, to: JobStatus): boolean {
   if (from === to) return true;
 
   // Terminal states cannot transition to anything
-  if (from === 'PUBLISHED' || from === 'SENT_TO_INBOX' || from === 'CANCELLED') {
+  if (from === 'PUBLISHED' || from === 'SENT_TO_INBOX' || from === 'CANCELLED' || from === 'SKIPPED_BYPASS') {
     return false;
   }
 
   switch (from) {
     case 'SCHEDULED':
-      return to === 'QUEUED' || to === 'CANCELLED';
+      return to === 'QUEUED' || to === 'CANCELLED' || to === 'SKIPPED_BYPASS';
 
     case 'QUEUED':
-      return to === 'UPLOADING' || to === 'CANCELLED';
+      return to === 'UPLOADING' || to === 'CANCELLED' || to === 'SKIPPED_BYPASS';
 
     case 'UPLOADING':
       return (

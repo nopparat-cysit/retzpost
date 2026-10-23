@@ -8,6 +8,12 @@ describe('Publishing State Machine', () => {
       expect(deriveBatchAggregateStatus(['PUBLISHED', 'SENT_TO_INBOX'])).toBe('PUBLISHED');
     });
 
+    it('should cleanly bypass unselected platforms (SKIPPED_BYPASS) without any error or partial failure', () => {
+      // If user only checked FB & IG, and skipped YT & TikTok, batch is 100% PUBLISHED (Zero Error)
+      expect(deriveBatchAggregateStatus(['PUBLISHED', 'PUBLISHED', 'SKIPPED_BYPASS', 'SKIPPED_BYPASS'])).toBe('PUBLISHED');
+      expect(deriveBatchAggregateStatus(['PUBLISHED', 'SKIPPED_BYPASS'])).toBe('PUBLISHED');
+    });
+
     it('should return PARTIALLY_PUBLISHED when one succeeds and another permanently fails', () => {
       expect(deriveBatchAggregateStatus(['PUBLISHED', 'FAILED_FINAL'])).toBe('PARTIALLY_PUBLISHED');
     });
