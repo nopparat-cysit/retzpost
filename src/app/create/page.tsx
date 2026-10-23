@@ -48,8 +48,15 @@ import {
 import { Masthead } from '@/components/ui/masthead';
 import { 
   PostTemplate, 
+  TemplateCategory,
+  CATEGORY_LABELS,
   BUILT_IN_TEMPLATES, 
   getInitialTemplates, 
+  createTemplate,
+  updateTemplate,
+  duplicateTemplate,
+  deleteTemplate,
+  resetTemplatesToDefault,
   saveCustomTemplate, 
   deleteCustomTemplate 
 } from '@/modules/publishing/templates';
@@ -619,6 +626,23 @@ export default function CreatePostPage() {
     storyLink: string;
   } | null>(null);
 
+  // Template CRUD & Modal View State
+  const [templateModalMode, setTemplateModalMode] = useState<'LIST' | 'FORM'>('LIST');
+  const [editingTemplateId, setEditingTemplateId] = useState<string | null>(null);
+  const [formTplName, setFormTplName] = useState('');
+  const [formTplCategory, setFormTplCategory] = useState<TemplateCategory>('CUSTOM');
+  const [formTplTitle, setFormTplTitle] = useState('');
+  const [formTplCaption, setFormTplCaption] = useState('');
+  const [formTplTags, setFormTplTags] = useState('');
+  const [formTplStoryLink, setFormTplStoryLink] = useState('');
+
+  // Search, Filter, Expand & Confirm states in Template Manager
+  const [tplSearchQuery, setTplSearchQuery] = useState('');
+  const [tplCategoryFilter, setTplCategoryFilter] = useState<'ALL' | string>('ALL');
+  const [expandedTplIds, setExpandedTplIds] = useState<Record<string, boolean>>({});
+  const [deleteConfirmTplId, setDeleteConfirmTplId] = useState<string | null>(null);
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+
   // Active Role State (RBAC Permissions)
   const [currentRole, setCurrentRole] = useState<WorkspaceRole>('MANAGER');
   const [submittedForApprovalNotice, setSubmittedForApprovalNotice] = useState<string | null>(null);
@@ -674,10 +698,155 @@ export default function CreatePostPage() {
   };
 
   const handleDeleteCustomTemplate = (id: string) => {
-    deleteCustomTemplate(id);
+    deleteTemplate(id);
     setTemplates(getInitialTemplates());
     if (selectedTemplateId === id) setSelectedTemplateId('');
   };
+
+  // Open Create Form in Modal
+  const handleOpenCreateTemplate = (prefillFromEditor = false) => {
+    setEditingTemplateId(null);
+    if (prefillFromEditor) {
+      setFormTplName(workingTitle ? `📝 ${workingTitle.slice(0, 32)}` : 'เทมเพลตจากร่างปัจจุบัน');
+      setFormTplCategory('CUSTOM');
+      setFormTplTitle(workingTitle);
+      setFormTplCaption(sharedCaption);
+      setFormTplTags(sharedTags);
+      setFormTplStoryLink(storyLinkUrl);
+    } else {
+      setFormTplName('');
+      setFormTplCategory('CUSTOM');
+      setFormTplTitle('');
+      setFormTplCaption('');
+      setFormTplTags('');
+      setFormTplStoryLink('');
+    }
+    setTemplateModalMode('FORM');
+  };
+
+  // Open Edit Form in Modal
+  const handleOpenEditTemplate = (tpl: PostTemplate) => {
+    setEditingTemplateId(tpl.id);
+    setFormTplName(tpl.name);
+    setFormTplCategory(tpl.category);
+    setFormTplTitle(tpl.title);
+    setFormTplCaption(tpl.caption);
+    setFormTplTags(tpl.tags);
+    setFormTplStoryLink(tpl.storyLink || '');
+    setTemplateModalMode('FORM');
+  };
+
+  // Prefill Form with current editor contents
+  const handlePrefillFormFromEditor = () => {
+    setFormTplTitle(workingTitle);
+    setFormTplCaption(sharedCaption);
+    setFormTplTags(sharedTags);
+    setFormTplStoryLink(storyLinkUrl);
+    if (!formTplName) {
+      setFormTplName(workingTitle ? `📝 ${workingTitle.slice(0, 32)}` : 'เทมเพลตจากร่างปัจจุบัน');
+    }
+    setTemplateAppliedNotice('✓ ดึงข้อความจากหน้าเขียนโพสต์มาใส่ในฟอร์มแล้ว');
+    setTimeout(() => setTemplateAppliedNotice(null), 3000);
+  };
+
+  // Save (Create or Update) Form submission
+  const handleSaveTemplateForm = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formTplName.trim()) return;
+
+    if (editingTemplateId) {
+      // UPDATE
+      const updated = updateTemplate(editingTemplateId, {
+        name: formTplName.trim(),
+        category: formTplCategory,
+        title: formTplTitle.trim(),
+        caption: formTplCaption.trim(),
+        tags: formTplTags.trim(),
+        storyLink: formTplStoryLink.trim() || undefined,
+      });
+      setTemplates(getInitialTemplates());
+      setTemplateModalMode('LIST');
+      setEditingTemplateId(null);
+      setTemplateAppliedNotice(`✓ อัปเดตเทมเพลต "${formTplName.trim()}" เรียบร้อยแล้ว`);
+      setTimeout(() => setTemplateAppliedNotice(null), 4000);
+    } else {
+      // CREATE
+      const created = createTemplate({
+        name: formTplName.trim(),
+        category: formTplCategory,
+        title: formTplTitle.trim(),
+        caption: formTplCaption.trim(),
+        tags: formTplTags.trim(),
+        storyLink: formTplStoryLink.trim() || undefined,
+      });
+      setTemplates(getInitialTemplates());
+      setTemplateModalMode('LIST');
+      setTemplateAppliedNotice(`✓ สร้างเทมเพลตใหม่ "${created.name}" เรียบร้อยแล้ว`);
+      setTimeout(() => setTemplateAppliedNotice(null), 4000);
+    }
+  };
+
+  // Duplicate template
+  const handleDuplicateTemplate = (id: string) => {
+    const cloned = duplicateTemplate(id);
+    if (cloned) {
+      setTemplates(getInitialTemplates());
+      setTemplateAppliedNotice(`✓ คัดลอกเทมเพลต "${cloned.name}" เรียบร้อยแล้ว`);
+      setTimeout(() => setTemplateAppliedNotice(null), 4000);
+    }
+  };
+
+  // Delete template
+  const handleDeleteTemplate = (id: string) => {
+    deleteTemplate(id);
+    setTemplates(getInitialTemplates());
+    if (selectedTemplateId === id) setSelectedTemplateId('');
+    setDeleteConfirmTplId(null);
+    setTemplateAppliedNotice('✓ ลบเทมเพลตออกจากคลังแล้ว');
+    setTimeout(() => setTemplateAppliedNotice(null), 4000);
+  };
+
+  // Reset all templates to defaults
+  const handleResetTemplates = () => {
+    const defaults = resetTemplatesToDefault();
+    setTemplates(defaults);
+    setResetConfirmOpen(false);
+    setTemplateAppliedNotice('✓ รีเซ็ตคลังเทมเพลตกลับเป็นค่าเริ่มต้นของระบบแล้ว');
+    setTimeout(() => setTemplateAppliedNotice(null), 4000);
+  };
+
+  // Filtered Templates for Manager Modal
+  const filteredTemplates = useMemo(() => {
+    return templates.filter((tpl) => {
+      const matchCategory =
+        tplCategoryFilter === 'ALL' ||
+        (tplCategoryFilter === 'CUSTOM' && (tpl.category === 'CUSTOM' || !tpl.isBuiltIn)) ||
+        tpl.category === tplCategoryFilter;
+
+      const q = tplSearchQuery.toLowerCase().trim();
+      const matchSearch =
+        !q ||
+        tpl.name.toLowerCase().includes(q) ||
+        tpl.title.toLowerCase().includes(q) ||
+        tpl.caption.toLowerCase().includes(q) ||
+        tpl.tags.toLowerCase().includes(q) ||
+        tpl.categoryLabel.toLowerCase().includes(q);
+
+      return matchCategory && matchSearch;
+    });
+  }, [templates, tplCategoryFilter, tplSearchQuery]);
+
+  // Category counts
+  const templateCategoryCounts = useMemo(() => {
+    return {
+      ALL: templates.length,
+      CUSTOM: templates.filter((t) => t.category === 'CUSTOM' || !t.isBuiltIn).length,
+      REAL_ESTATE: templates.filter((t) => t.category === 'REAL_ESTATE').length,
+      PROMOTION: templates.filter((t) => t.category === 'PROMOTION').length,
+      PRODUCT_LAUNCH: templates.filter((t) => t.category === 'PRODUCT_LAUNCH').length,
+      INSIGHTS: templates.filter((t) => t.category === 'INSIGHTS').length,
+    };
+  }, [templates]);
 
   const handleInsertAiMedia = (asset: { id: string; name: string; size: string }) => {
     setImages((prev) => [
@@ -2182,92 +2351,545 @@ export default function CreatePostPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL 2: MANAGE TEMPLATES                                                 */}
+      {/* MODAL 2: MANAGE TEMPLATES (FULL CRUD: Create • Read • Update • Delete)   */}
       {/* ========================================================================= */}
       {isManageTemplatesModalOpen && (
-        <div className="fixed inset-0 z-50 bg-ink-primary/40 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-paper-raised border border-border-rule rounded-card max-w-xl w-full p-6 shadow-xl space-y-4 animate-in fade-in zoom-in-95 duration-150 max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between pb-3 border-b border-border-rule shrink-0">
-              <div className="flex items-center gap-2">
-                <Sliders className="w-4 h-4 text-brand-indigo" />
-                <div>
-                  <h3 className="font-serif font-medium text-base text-ink-primary">
-                    คลังเทมเพลตข้อความทั้งหมด ({templates.length})
-                  </h3>
-                  <span className="text-[10px] font-mono text-ink-secondary block">
-                    เทมเพลตระบบ & เทมเพลตที่คุณบันทึกไว้
-                  </span>
-                </div>
-              </div>
-              <button
-                type="button"
-                onClick={() => setIsManageTemplatesModalOpen(false)}
-                className="p-1 rounded text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <div className="overflow-y-auto space-y-2.5 pr-1 flex-1">
-              {templates.map((tpl) => (
-                <div
-                  key={tpl.id}
-                  className="p-3 bg-paper-canvas border border-border-rule rounded-editorial hover:border-brand-indigo/40 transition-colors flex items-start justify-between gap-3"
-                >
-                  <div className="space-y-1 flex-1">
-                    <div className="flex items-center gap-2">
-                      <span className="font-serif font-medium text-ink-primary text-xs">
-                        {tpl.name}
-                      </span>
-                      <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-paper-subtle border border-border-rule text-ink-secondary">
-                        {tpl.categoryLabel}
-                      </span>
-                      {tpl.isBuiltIn && (
-                        <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-brand-indigo/10 text-brand-indigo font-semibold">
-                          System Default
-                        </span>
-                      )}
+        <div 
+          onClick={() => {
+            setIsManageTemplatesModalOpen(false);
+            setTemplateModalMode('LIST');
+            setEditingTemplateId(null);
+            setDeleteConfirmTplId(null);
+            setResetConfirmOpen(false);
+          }}
+          className="fixed inset-0 z-50 bg-ink-primary/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-paper-raised border border-border-rule rounded-card max-w-2xl sm:max-w-3xl w-full p-5 sm:p-6 shadow-2xl space-y-4 animate-in fade-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col cursor-default"
+          >
+            {/* VIEW 1: TEMPLATE LIST VIEW */}
+            {templateModalMode === 'LIST' ? (
+              <>
+                {/* Modal Header */}
+                <div className="flex items-start justify-between pb-3 border-b border-border-rule shrink-0 gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-brand-indigo/10 flex items-center justify-center text-brand-indigo shrink-0">
+                      <Sliders className="w-4 h-4" />
                     </div>
-                    <p className="text-[11px] font-sans text-ink-secondary line-clamp-2 leading-tight">
-                      {tpl.caption}
-                    </p>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-serif font-bold text-base sm:text-lg text-ink-primary">
+                          คลังเทมเพลตข้อความทั้งหมด ({templates.length})
+                        </h3>
+                        <span className="px-2 py-0.5 rounded-full bg-brand-indigo/10 text-brand-indigo text-[10px] font-mono font-bold">
+                          Full CRUD
+                        </span>
+                      </div>
+                      <span className="text-[11px] font-mono text-ink-secondary block">
+                        เทมเพลตระบบ & เทมเพลตที่คุณบันทึกไว้ (สร้าง • ค้นหา • แก้ไข • คัดลอก • ลบ)
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
                     <button
                       type="button"
-                      onClick={() => {
-                        handleApplyTemplate(tpl);
-                        setIsManageTemplatesModalOpen(false);
-                      }}
-                      className="px-2 py-1 bg-paper-raised hover:bg-brand-indigo hover:text-white text-ink-primary border border-border-rule rounded text-[10px] font-mono font-medium transition-colors cursor-pointer"
+                      onClick={() => handleOpenCreateTemplate(false)}
+                      className="px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
                     >
-                      นำไปใช้
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>สร้างเทมเพลตใหม่</span>
                     </button>
-                    {!tpl.isBuiltIn && (
+                    <button
+                      type="button"
+                      onClick={() => setIsManageTemplatesModalOpen(false)}
+                      className="p-1.5 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
+                      title="ปิดหน้าต่าง"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Reset Confirmation Banner */}
+                {resetConfirmOpen && (
+                  <div className="p-3 bg-accent-terracotta/10 border border-accent-terracotta/30 rounded-editorial flex items-center justify-between text-xs font-mono text-ink-primary animate-in fade-in">
+                    <div className="flex items-center gap-2">
+                      <AlertCircle className="w-4 h-4 text-accent-terracotta shrink-0" />
+                      <span>ต้องการรีเซ็ตคลังเทมเพลตกลับเป็นค่าเริ่มต้น 5 รายการของระบบหรือไม่?</span>
+                    </div>
+                    <div className="flex items-center gap-2">
                       <button
                         type="button"
-                        onClick={() => handleDeleteCustomTemplate(tpl.id)}
-                        className="p-1 text-ink-secondary hover:text-semantic-error transition-colors cursor-pointer"
-                        title="ลบเทมเพลตนี้"
+                        onClick={handleResetTemplates}
+                        className="px-2.5 py-1 bg-accent-terracotta text-white rounded text-xs font-bold hover:bg-accent-terracotta/90 cursor-pointer"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        ยืนยันรีเซ็ต
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setResetConfirmOpen(false)}
+                        className="px-2.5 py-1 border border-border-rule text-ink-secondary hover:text-ink-primary rounded text-xs cursor-pointer"
+                      >
+                        ยกเลิก
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Search & Category Filter Toolbar */}
+                <div className="space-y-2 shrink-0">
+                  {/* Search Bar */}
+                  <div className="relative">
+                    <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink-muted" />
+                    <input
+                      type="text"
+                      value={tplSearchQuery}
+                      onChange={(e) => setTplSearchQuery(e.target.value)}
+                      placeholder="🔍 ค้นหาตามชื่อเทมเพลต, เนื้อหาแคปชัน, แฮชแท็ก หรือหมวดหมู่..."
+                      className="w-full pl-9 pr-8 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"
+                    />
+                    {tplSearchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setTplSearchQuery('')}
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-muted hover:text-ink-primary p-0.5 cursor-pointer"
+                      >
+                        <X className="w-3.5 h-3.5" />
                       </button>
                     )}
                   </div>
-                </div>
-              ))}
-            </div>
 
-            <div className="pt-2 flex items-center justify-end border-t border-border-rule shrink-0">
-              <button
-                type="button"
-                onClick={() => setIsManageTemplatesModalOpen(false)}
-                className="px-3 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule rounded-editorial text-xs font-mono cursor-pointer"
-              >
-                ปิดหน้าต่าง
-              </button>
-            </div>
+                  {/* Category Pills */}
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] font-mono scrollbar-none">
+                    {[
+                      { id: 'ALL', label: 'ทั้งหมด', count: templateCategoryCounts.ALL },
+                      { id: 'CUSTOM', label: '⭐ ของฉัน', count: templateCategoryCounts.CUSTOM },
+                      { id: 'REAL_ESTATE', label: '🏢 อสังหาริมทรัพย์', count: templateCategoryCounts.REAL_ESTATE },
+                      { id: 'PROMOTION', label: '⚡ โปรโมชั่น', count: templateCategoryCounts.PROMOTION },
+                      { id: 'PRODUCT_LAUNCH', label: '🚀 เปิดตัวสินค้า', count: templateCategoryCounts.PRODUCT_LAUNCH },
+                      { id: 'INSIGHTS', label: '📊 บทวิเคราะห์', count: templateCategoryCounts.INSIGHTS },
+                    ].map((tab) => {
+                      const isActive = tplCategoryFilter === tab.id;
+                      return (
+                        <button
+                          key={tab.id}
+                          type="button"
+                          onClick={() => setTplCategoryFilter(tab.id)}
+                          className={`px-2.5 py-1 rounded-full border transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
+                            isActive
+                              ? 'bg-brand-indigo text-white border-brand-indigo font-bold shadow-2xs'
+                              : 'bg-paper-canvas text-ink-secondary border-border-rule hover:border-brand-indigo/40 hover:text-ink-primary'
+                          }`}
+                        >
+                          <span>{tab.label}</span>
+                          <span className={`px-1.5 py-0.2 rounded-full text-[9px] ${
+                            isActive ? 'bg-white/20 text-white' : 'bg-paper-subtle text-ink-muted'
+                          }`}>
+                            {tab.count}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Template Cards List */}
+                <div className="overflow-y-auto space-y-2.5 pr-1 flex-1">
+                  {filteredTemplates.length === 0 ? (
+                    <div className="py-12 text-center space-y-3 bg-paper-canvas border border-border-rule rounded-editorial p-6">
+                      <div className="w-10 h-10 rounded-full bg-paper-subtle border border-border-rule flex items-center justify-center mx-auto text-ink-muted">
+                        <Search className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="font-serif font-bold text-sm text-ink-primary">
+                          ไม่พบเทมเพลตที่ตรงกับเงื่อนไขการค้นหา
+                        </p>
+                        <p className="text-xs font-mono text-ink-muted mt-1">
+                          ลองปรับคำค้นหา หรือสร้างเทมเพลตใหม่สำหรับแคมเปญนี้
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          handleOpenCreateTemplate(false);
+                          if (tplSearchQuery) setFormTplName(tplSearchQuery);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-indigo text-white rounded-editorial font-mono text-xs font-semibold hover:bg-brand-indigo-hover transition-colors shadow-2xs cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                        <span>สร้างเทมเพลตใหม่ด้วยชื่อนี้</span>
+                      </button>
+                    </div>
+                  ) : (
+                    filteredTemplates.map((tpl) => {
+                      const isExpanded = expandedTplIds[tpl.id] ?? false;
+
+                      // Category badge style
+                      const categoryBadgeColor =
+                        tpl.category === 'REAL_ESTATE'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-300'
+                          : tpl.category === 'PROMOTION'
+                          ? 'bg-amber-50 text-amber-800 border-amber-300'
+                          : tpl.category === 'PRODUCT_LAUNCH'
+                          ? 'bg-purple-50 text-purple-800 border-purple-300'
+                          : tpl.category === 'INSIGHTS'
+                          ? 'bg-blue-50 text-blue-800 border-blue-300'
+                          : 'bg-brand-indigo/10 text-brand-indigo border-brand-indigo/20';
+
+                      return (
+                        <div
+                          key={tpl.id}
+                          className="p-3.5 bg-paper-canvas border border-border-rule rounded-editorial hover:border-brand-indigo/40 hover:shadow-xs transition-all space-y-2 group/card"
+                        >
+                          {/* Card Header */}
+                          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h4 className="font-serif font-bold text-ink-primary text-sm group-hover/card:text-brand-indigo transition-colors">
+                                {tpl.name}
+                              </h4>
+                              <span className={`px-2 py-0.5 rounded text-[9px] font-mono font-bold border ${categoryBadgeColor}`}>
+                                {tpl.categoryLabel}
+                              </span>
+                              {tpl.isBuiltIn ? (
+                                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-paper-subtle border border-border-rule text-ink-secondary">
+                                  System Default
+                                </span>
+                              ) : (
+                                <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-brand-indigo/15 text-brand-indigo font-bold border border-brand-indigo/20">
+                                  Custom Saved
+                                </span>
+                              )}
+                            </div>
+
+                            {/* Card Actions: Apply, Edit, Duplicate, Delete */}
+                            <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                              {/* Apply Button */}
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  handleApplyTemplate(tpl);
+                                  setIsManageTemplatesModalOpen(false);
+                                }}
+                                className="px-2.5 py-1 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded text-[11px] font-mono font-bold transition-colors cursor-pointer shadow-2xs flex items-center gap-1"
+                                title="นำเทมเพลตนี้ไปใส่ใน Studio Desk"
+                              >
+                                <span>นำไปใช้</span>
+                              </button>
+
+                              {/* Edit Button */}
+                              <button
+                                type="button"
+                                onClick={() => handleOpenEditTemplate(tpl)}
+                                className="px-2 py-1 bg-paper-raised hover:bg-paper-subtle text-ink-secondary hover:text-brand-indigo border border-border-rule rounded text-[11px] font-mono transition-colors cursor-pointer flex items-center gap-1"
+                                title="แก้ไขชื่อ หมวดหมู่ หรือเนื้อหาเทมเพลตนี้"
+                              >
+                                <Edit3 className="w-3 h-3" />
+                                <span className="hidden sm:inline">แก้ไข</span>
+                              </button>
+
+                              {/* Duplicate Button */}
+                              <button
+                                type="button"
+                                onClick={() => handleDuplicateTemplate(tpl.id)}
+                                className="p-1 bg-paper-raised hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule rounded transition-colors cursor-pointer"
+                                title="คัดลอกเป็นเทมเพลตใหม่"
+                              >
+                                <Copy className="w-3.5 h-3.5" />
+                              </button>
+
+                              {/* Delete Button with Inline Confirm */}
+                              {deleteConfirmTplId === tpl.id ? (
+                                <div className="flex items-center gap-1 bg-semantic-error/10 border border-semantic-error/30 rounded p-0.5 animate-in fade-in">
+                                  <span className="text-[10px] font-mono text-semantic-error px-1 font-bold">
+                                    ลบ?
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleDeleteTemplate(tpl.id)}
+                                    className="px-1.5 py-0.5 rounded bg-semantic-error text-white text-[10px] font-mono font-bold hover:bg-semantic-error/90 cursor-pointer"
+                                  >
+                                    ยืนยัน
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => setDeleteConfirmTplId(null)}
+                                    className="px-1.5 py-0.5 rounded border border-border-rule text-[10px] font-mono text-ink-secondary hover:text-ink-primary cursor-pointer"
+                                  >
+                                    ยกเลิก
+                                  </button>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => setDeleteConfirmTplId(tpl.id)}
+                                  className="p-1 text-ink-secondary hover:text-semantic-error border border-border-rule hover:border-semantic-error/40 rounded transition-colors cursor-pointer"
+                                  title="ลบเทมเพลตนี้ออกจากคลัง"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Caption Preview / Full Text */}
+                          <div className="bg-paper-subtle/60 border border-border-rule/80 rounded p-2.5 space-y-1.5">
+                            {isExpanded ? (
+                              <div className="space-y-2 text-xs font-sans text-ink-primary animate-in fade-in">
+                                {tpl.title && (
+                                  <div className="font-serif font-bold text-ink-primary border-b border-border-rule/60 pb-1 flex items-center gap-1.5">
+                                    <span className="text-[10px] font-mono text-ink-secondary uppercase">หัวข้อ:</span>
+                                    <span>{tpl.title}</span>
+                                  </div>
+                                )}
+                                <p className="leading-relaxed whitespace-pre-wrap font-sans text-xs">
+                                  {tpl.caption}
+                                </p>
+                                {(tpl.tags || tpl.storyLink) && (
+                                  <div className="pt-1.5 border-t border-border-rule/60 flex flex-wrap items-center gap-3 font-mono text-[10px] text-ink-secondary">
+                                    {tpl.tags && (
+                                      <span className="flex items-center gap-1 text-ink-secondary">
+                                        <Tag className="w-3 h-3 text-ink-muted" />
+                                        <span>{tpl.tags}</span>
+                                      </span>
+                                    )}
+                                    {tpl.storyLink && (
+                                      <span className="flex items-center gap-1 text-accent-terracotta font-medium">
+                                        <Link2 className="w-3 h-3" />
+                                        <span className="truncate max-w-[220px]">{tpl.storyLink}</span>
+                                      </span>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            ) : (
+                              <p className="text-[11px] font-sans text-ink-secondary line-clamp-2 leading-relaxed">
+                                {tpl.caption}
+                              </p>
+                            )}
+
+                            {/* Expand/Collapse Toggle Button */}
+                            <div className="flex items-center justify-between pt-0.5 text-[10px] font-mono">
+                              <button
+                                type="button"
+                                onClick={() => setExpandedTplIds((prev) => ({ ...prev, [tpl.id]: !prev[tpl.id] }))}
+                                className="text-brand-indigo hover:underline flex items-center gap-1 font-semibold cursor-pointer"
+                              >
+                                {isExpanded ? (
+                                  <>
+                                    <span>ย่อข้อความลง</span>
+                                    <ChevronUp className="w-3 h-3" />
+                                  </>
+                                ) : (
+                                  <>
+                                    <span>ดูข้อความเต็ม & รายละเอียด</span>
+                                    <ChevronDown className="w-3 h-3" />
+                                  </>
+                                )}
+                              </button>
+                              {tpl.storyLink && !isExpanded && (
+                                <span className="text-accent-terracotta flex items-center gap-1">
+                                  <Link2 className="w-2.5 h-2.5" />
+                                  <span>Story Link ติดมาด้วย</span>
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
+
+                {/* Modal Footer */}
+                <div className="pt-3 border-t border-border-rule flex items-center justify-between shrink-0 text-xs font-mono">
+                  <div className="flex items-center gap-3 text-ink-secondary">
+                    <span>💡 นำไปใช้เพื่อแทนที่ข้อความ หรือกด ✏️ เพื่อแก้ไข</span>
+                    <button
+                      type="button"
+                      onClick={() => setResetConfirmOpen(true)}
+                      className="text-ink-muted hover:text-ink-primary underline transition-colors cursor-pointer"
+                    >
+                      รีเซ็ตค่าเริ่มต้นระบบ
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsManageTemplatesModalOpen(false)}
+                    className="px-4 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule rounded-editorial font-mono text-xs cursor-pointer transition-colors"
+                  >
+                    ปิดหน้าต่าง
+                  </button>
+                </div>
+              </>
+            ) : (
+              /* VIEW 2: CREATE / EDIT FORM VIEW */
+              <form onSubmit={handleSaveTemplateForm} className="space-y-4 flex flex-col flex-1 overflow-hidden">
+                {/* Form Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-border-rule shrink-0">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-brand-indigo/10 flex items-center justify-center text-brand-indigo shrink-0">
+                      {editingTemplateId ? <Edit3 className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+                    </div>
+                    <div>
+                      <h3 className="font-serif font-bold text-base sm:text-lg text-ink-primary">
+                        {editingTemplateId ? 'แก้ไขเทมเพลตข้อความ' : 'สร้างเทมเพลตใหม่'}
+                      </h3>
+                      <p className="text-[11px] font-mono text-ink-secondary">
+                        {editingTemplateId
+                          ? 'ปรับปรุงข้อความและรายละเอียดเทมเพลตเพื่อบันทึกซ้ำ'
+                          : 'สร้างเทมเพลตสำหรับใช้งานซ้ำในแคมเปญต่างๆ'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handlePrefillFormFromEditor}
+                      className="px-2.5 py-1.5 bg-paper-subtle hover:bg-paper-canvas border border-border-rule text-brand-indigo font-mono text-xs rounded-editorial transition-colors flex items-center gap-1 cursor-pointer"
+                      title="คัดลอกหัวข้อและแคปชันปัจจุบันจาก Studio Desk มาใส่ในฟอร์ม"
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      <span>ดึงจากร่างปัจจุบัน</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTemplateModalMode('LIST');
+                        setEditingTemplateId(null);
+                      }}
+                      className="px-2.5 py-1.5 text-ink-secondary hover:text-ink-primary font-mono text-xs cursor-pointer"
+                    >
+                      ← กลับไปรายการ
+                    </button>
+                  </div>
+                </div>
+
+                {/* Form Inputs Container */}
+                <div className="overflow-y-auto space-y-3.5 pr-1 flex-1 text-xs">
+                  {/* Row 1: Template Name & Category */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div className="sm:col-span-2">
+                      <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1">
+                        ชื่อเทมเพลต (Template Display Name) *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        autoFocus
+                        placeholder="เช่น: 🏢 คอนโดหรูติด BTS (Capital One Deal)"
+                        value={formTplName}
+                        onChange={(e) => setFormTplName(e.target.value)}
+                        className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-serif text-sm text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1">
+                        หมวดหมู่ (Category)
+                      </label>
+                      <select
+                        value={formTplCategory}
+                        onChange={(e) => setFormTplCategory(e.target.value as any)}
+                        className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo cursor-pointer"
+                      >
+                        <option value="REAL_ESTATE">🏢 อสังหาริมทรัพย์</option>
+                        <option value="PROMOTION">⚡ โปรโมชั่น / Flash Sale</option>
+                        <option value="PRODUCT_LAUNCH">🚀 เปิดตัวสินค้า / Tech</option>
+                        <option value="INSIGHTS">📊 บทวิเคราะห์ & บทความ</option>
+                        <option value="CUSTOM">⭐ เทมเพลตของฉัน (Custom)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Row 2: Working Title */}
+                  <div>
+                    <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1">
+                      หัวข้อแคมเปญ / โพสต์ (Campaign Working Title)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="เช่น: [HOT DEAL] ขาย/ให้เช่าคอนโดหรูใจกลางสุขุมวิท พร้อมเข้าอยู่"
+                      value={formTplTitle}
+                      onChange={(e) => setFormTplTitle(e.target.value)}
+                      className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"
+                    />
+                  </div>
+
+                  {/* Row 3: Caption TextArea */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block font-mono text-[11px] uppercase text-ink-secondary">
+                        เนื้อหาแคปชันโพสต์ (Post Caption & Copy) *
+                      </label>
+                      <span className="font-mono text-[10px] text-ink-muted">
+                        {formTplCaption.length} ตัวอักษร
+                      </span>
+                    </div>
+                    <textarea
+                      required
+                      rows={7}
+                      placeholder="พิมพ์หรือวางเนื้อหาข้อความ รายละเอียด จุดเด่น การติดต่อ และ Call-to-action ของเทมเพลตนี้..."
+                      value={formTplCaption}
+                      onChange={(e) => setFormTplCaption(e.target.value)}
+                      className="w-full p-3 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo leading-relaxed whitespace-pre-wrap"
+                    />
+                  </div>
+
+                  {/* Row 4: Tags & Story Link Sticker */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1 flex items-center gap-1">
+                        <Tag className="w-3 h-3" />
+                        <span>แฮชแท็ก (Tags)</span>
+                      </label>
+                      <input
+                        type="text"
+                        placeholder="เช่น: คอนโดติดbts, อสังหาหรู, CapitalOne"
+                        value={formTplTags}
+                        onChange={(e) => setFormTplTags(e.target.value)}
+                        className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"
+                      />
+                    </div>
+                    <div>
+                      <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1 flex items-center gap-1">
+                        <Link2 className="w-3 h-3 text-accent-terracotta" />
+                        <span>Story Link Sticker / Landing URL</span>
+                      </label>
+                      <input
+                        type="url"
+                        placeholder="https://capitalone.co.th/hot-deal"
+                        value={formTplStoryLink}
+                        onChange={(e) => setFormTplStoryLink(e.target.value)}
+                        className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-accent-terracotta"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Form Footer Actions */}
+                <div className="pt-3 border-t border-border-rule flex items-center justify-end gap-2 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setTemplateModalMode('LIST');
+                      setEditingTemplateId(null);
+                    }}
+                    className="px-4 py-2 border border-border-rule rounded-editorial text-xs font-mono text-ink-secondary hover:text-ink-primary cursor-pointer transition-colors"
+                  >
+                    ยกเลิก
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-5 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-xs cursor-pointer flex items-center gap-1.5"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    <span>{editingTemplateId ? 'บันทึกการแก้ไข' : 'บันทึกเทมเพลตใหม่'}</span>
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

@@ -1,14 +1,25 @@
+export type TemplateCategory = 'REAL_ESTATE' | 'PROMOTION' | 'PRODUCT_LAUNCH' | 'INSIGHTS' | 'CUSTOM' | string;
+
 export interface PostTemplate {
   id: string;
   name: string;
-  category: 'REAL_ESTATE' | 'PROMOTION' | 'PRODUCT_LAUNCH' | 'INSIGHTS' | 'CUSTOM';
+  category: TemplateCategory;
   categoryLabel: string;
   title: string;
   caption: string;
   tags: string;
   storyLink?: string;
   isBuiltIn: boolean;
+  updatedAt?: string;
 }
+
+export const CATEGORY_LABELS: Record<string, string> = {
+  REAL_ESTATE: 'อสังหาริมทรัพย์',
+  PROMOTION: 'โปรโมชั่น',
+  PRODUCT_LAUNCH: 'เปิดตัวสินค้า',
+  INSIGHTS: 'บทวิเคราะห์',
+  CUSTOM: 'เทมเพลตของฉัน',
+};
 
 export const BUILT_IN_TEMPLATES: PostTemplate[] = [
   {
@@ -68,53 +79,206 @@ export const BUILT_IN_TEMPLATES: PostTemplate[] = [
   },
 ];
 
+const STORAGE_KEY = 'retzpost_all_templates';
+const LEGACY_STORAGE_KEY = 'retzpost_custom_templates';
+
+// In-memory fallback for SSR / testing environments
+let inMemoryStore: Record<string, string> = {};
+
+function getStorage() {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    return window.localStorage;
+  }
+  return {
+    getItem: (key: string) => inMemoryStore[key] || null,
+    setItem: (key: string, value: string) => {
+      inMemoryStore[key] = value;
+    },
+    removeItem: (key: string) => {
+      delete inMemoryStore[key];
+    },
+    clear: () => {
+      inMemoryStore = {};
+    },
+  };
+}
+
+export function _clearTemplateStorageForTesting() {
+  getStorage().clear();
+}
+
+/**
+ * READ: Fetch all templates (with persistence and built-in fallback)
+ */
 export function getInitialTemplates(): PostTemplate[] {
-  if (typeof window === 'undefined') return BUILT_IN_TEMPLATES;
+  const storage = getStorage();
   try {
-    const saved = localStorage.getItem('retzpost_custom_templates');
+    const saved = storage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed: PostTemplate[] = JSON.parse(saved);
-      return [...BUILT_IN_TEMPLATES, ...parsed];
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
     }
+
+    // Check legacy storage
+    const legacy = storage.getItem(LEGACY_STORAGE_KEY);
+    if (legacy) {
+      const custom: PostTemplate[] = JSON.parse(legacy);
+      const combined = [...custom, ...BUILT_IN_TEMPLATES];
+      storage.setItem(STORAGE_KEY, JSON.stringify(combined));
+      return combined;
+    }
+
+    // Default initialization
+    storage.setItem(STORAGE_KEY, JSON.stringify(BUILT_IN_TEMPLATES));
   } catch {
-    // fallback to built-ins
+    // fallback
   }
   return BUILT_IN_TEMPLATES;
 }
 
-export function saveCustomTemplate(template: Omit<PostTemplate, 'id' | 'isBuiltIn' | 'category' | 'categoryLabel'>): PostTemplate {
+/**
+ * CREATE: Add a new template to the collection
+ */
+export function createTemplate(
+  template: Omit<PostTemplate, 'id' | 'isBuiltIn' | 'categoryLabel'> & { categoryLabel?: string }
+): PostTemplate {
+  const storage = getStorage();
+  const categoryLabel = template.categoryLabel || CATEGORY_LABELS[template.category] || 'เทมเพลตของฉัน';
   const newTpl: PostTemplate = {
     ...template,
-    id: `tpl-custom-${Date.now()}`,
-    category: 'CUSTOM',
-    categoryLabel: 'เทมเพลตของฉัน',
+    id: `tpl-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    categoryLabel,
     isBuiltIn: false,
+    updatedAt: new Date().toISOString(),
   };
 
-  if (typeof window !== 'undefined') {
-    try {
-      const existing = localStorage.getItem('retzpost_custom_templates');
-      const list: PostTemplate[] = existing ? JSON.parse(existing) : [];
-      list.unshift(newTpl);
-      localStorage.setItem('retzpost_custom_templates', JSON.stringify(list));
-    } catch {
-      // storage failed or quota exceeded
-    }
+  try {
+    const current = getInitialTemplates();
+    const updated = [newTpl, ...current];
+    storage.setItem(STORAGE_KEY, JSON.stringify(updated));
+  } catch {
+    // ignore quota
   }
 
   return newTpl;
 }
 
-export function deleteCustomTemplate(id: string): void {
-  if (typeof window === 'undefined') return;
+/**
+ * Alias for backward compatibility
+ */
+export function saveCustomTemplate(
+  template: Omit<PostTemplate, 'id' | 'isBuiltIn' | 'category' | 'categoryLabel'> & {
+    category?: TemplateCategory;
+    categoryLabel?: string;
+  }
+): PostTemplate {
+  return createTemplate({
+    ...template,
+    category: template.category || 'CUSTOM',
+    categoryLabel: template.categoryLabel || 'เทมเพลตของฉัน',
+  });
+}
+
+/**
+ * UPDATE: Update an existing template by id
+ */
+export function updateTemplate(
+  id: string,
+  updates: Partial<Omit<PostTemplate, 'id'>>
+): PostTemplate | null {
+  const storage = getStorage();
   try {
-    const existing = localStorage.getItem('retzpost_custom_templates');
-    if (existing) {
-      const list: PostTemplate[] = JSON.parse(existing);
-      const filtered = list.filter((t) => t.id !== id);
-      localStorage.setItem('retzpost_custom_templates', JSON.stringify(filtered));
-    }
+    const list = getInitialTemplates();
+    const index = list.findIndex((t) => t.id === id);
+    if (index === -1) return null;
+
+    const existing = list[index];
+    const updatedCategory = updates.category || existing.category;
+    const updatedLabel = updates.categoryLabel || (updates.category ? CATEGORY_LABELS[updates.category] : existing.categoryLabel);
+
+    const updatedItem: PostTemplate = {
+      ...existing,
+      ...updates,
+      category: updatedCategory,
+      categoryLabel: updatedLabel || existing.categoryLabel,
+      updatedAt: new Date().toISOString(),
+      // If a built-in template is edited by user, it becomes a customized template
+      isBuiltIn: false,
+    };
+
+    const nextList = [...list];
+    nextList[index] = updatedItem;
+    storage.setItem(STORAGE_KEY, JSON.stringify(nextList));
+    return updatedItem;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * DUPLICATE: Clone an existing template
+ */
+export function duplicateTemplate(id: string): PostTemplate | null {
+  const storage = getStorage();
+  try {
+    const list = getInitialTemplates();
+    const target = list.find((t) => t.id === id);
+    if (!target) return null;
+
+    const clone: PostTemplate = {
+      ...target,
+      id: `tpl-copy-${Date.now()}`,
+      name: `${target.name} (สำเนา)`,
+      isBuiltIn: false,
+      category: target.category === 'REAL_ESTATE' || target.category === 'PROMOTION' ? target.category : 'CUSTOM',
+      categoryLabel: target.categoryLabel || 'เทมเพลตของฉัน',
+      updatedAt: new Date().toISOString(),
+    };
+
+    const updated = [clone, ...list];
+    storage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    return clone;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * DELETE: Delete a template by id
+ */
+export function deleteTemplate(id: string): boolean {
+  const storage = getStorage();
+  try {
+    const list = getInitialTemplates();
+    const filtered = list.filter((t) => t.id !== id);
+    if (filtered.length === list.length) return false;
+
+    storage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Alias for backward compatibility
+ */
+export function deleteCustomTemplate(id: string): void {
+  deleteTemplate(id);
+}
+
+/**
+ * RESET: Reset all templates back to system defaults
+ */
+export function resetTemplatesToDefault(): PostTemplate[] {
+  const storage = getStorage();
+  try {
+    storage.setItem(STORAGE_KEY, JSON.stringify(BUILT_IN_TEMPLATES));
+    storage.removeItem(LEGACY_STORAGE_KEY);
   } catch {
     // ignore
   }
+  return BUILT_IN_TEMPLATES;
 }
