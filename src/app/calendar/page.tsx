@@ -605,9 +605,6 @@ export default function EditorialCalendarPage() {
   const [rescheduleDate, setRescheduleDate] = useState('');
   const [rescheduleTime, setRescheduleTime] = useState('');
 
-  // Inline expanded days state in Month view (แก้ปัญหาปุ่ม more)
-  const [expandedDays, setExpandedDays] = useState<Record<number, boolean>>({});
-
   // Day dispatches list modal state
   const [dayModal, setDayModal] = useState<{ day: number; dateStr: string; events: CalendarEventItem[] } | null>(null);
 
@@ -1218,10 +1215,11 @@ export default function EditorialCalendarPage() {
                       </div>
                     </div>
 
-                    {/* Events List for this Day with inline expansion & more button */}
+                    {/* Events List for this Day - Fixed Max Visible (2 Items) + Modal for the rest */}
                     {(() => {
-                      const isExpanded = expandedDays[day] ?? false;
-                      const displayedEvents = isExpanded ? dayEvents : dayEvents.slice(0, 3);
+                      const MAX_VISIBLE_EVENTS = 2;
+                      const displayedEvents = dayEvents.slice(0, MAX_VISIBLE_EVENTS);
+                      const remainingCount = dayEvents.length - MAX_VISIBLE_EVENTS;
 
                       return (
                         <div className="space-y-1.5">
@@ -1276,39 +1274,24 @@ export default function EditorialCalendarPage() {
                             );
                           })}
 
-                          {dayEvents.length > 3 && (
-                            <div className="flex items-center gap-1 pt-0.5">
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setExpandedDays((prev) => ({ ...prev, [day]: !prev[day] }));
-                                }}
-                                className="flex-1 text-center py-1 px-1 rounded bg-brand-indigo/5 hover:bg-brand-indigo/15 text-[9px] font-mono text-brand-indigo font-bold transition-colors flex items-center justify-center gap-1 cursor-pointer"
-                                title={isExpanded ? 'ย่อรายการโพสต์ลง' : `กางดูโพสต์ทั้งหมดอีก ${dayEvents.length - 3} รายการ`}
-                              >
-                                {isExpanded ? (
-                                  <span>▴ ย่อลง</span>
-                                ) : (
-                                  <span>+ {dayEvents.length - 3} more</span>
-                                )}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setDayModal({
-                                    day,
-                                    dateStr: `2026-10-${String(day).padStart(2, '0')}`,
-                                    events: dayEvents,
-                                  });
-                                }}
-                                title="เปิดดูรายการสรุปทั้งหมดของวันนี้ในหน้าต่างแยก"
-                                className="p-1 rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-brand-indigo text-[9px] font-mono cursor-pointer"
-                              >
-                                <List className="w-2.5 h-2.5" />
-                              </button>
-                            </div>
+                          {/* Fixed View: Show Modal Button instead of inline expansion */}
+                          {remainingCount > 0 && (
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setDayModal({
+                                  day,
+                                  dateStr: `2026-10-${String(day).padStart(2, '0')}`,
+                                  events: dayEvents,
+                                });
+                              }}
+                              className="w-full text-center py-1 px-1.5 rounded-editorial bg-brand-indigo/10 hover:bg-brand-indigo text-brand-indigo hover:text-white text-[9px] font-mono font-bold transition-all flex items-center justify-center gap-1 shadow-2xs cursor-pointer border border-brand-indigo/20 active:scale-[0.98]"
+                              title={`คลิกเพื่อเปิด Modal ดูรายการโพสต์ทั้งหมดอีก ${remainingCount} รายการของวันที่ ${day}`}
+                            >
+                              <Layers className="w-3 h-3 shrink-0" />
+                              <span>+ {remainingCount} more (ดูใน Modal)</span>
+                            </button>
                           )}
                         </div>
                       );
