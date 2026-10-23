@@ -17,7 +17,9 @@ import {
   ChevronDown,
   Check,
   Building2,
-  Sparkles
+  Sparkles,
+  Users,
+  Shield
 } from 'lucide-react';
 
 interface AppShellProps {
@@ -76,6 +78,12 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           href: '/accounts', 
           icon: Share2,
           badge: { text: `${activeWorkspace.channelCount} Live`, bg: 'bg-brand-indigo/15 text-brand-indigo border border-brand-indigo/20' }
+        },
+        {
+          label: 'Team & Permissions',
+          href: '/settings/team',
+          icon: Users,
+          badge: { text: 'RBAC', bg: 'bg-semantic-info/15 text-semantic-info border border-semantic-info/20' }
         },
         { label: 'Settings & Defaults', href: '/settings', icon: Settings },
       ],
@@ -265,16 +273,24 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <div className="w-7 h-7 rounded-full bg-brand-indigo text-white flex items-center justify-center font-serif text-xs font-bold ring-1 ring-brand-indigo/30">
-                AR
+                {activeWorkspaceId === 'ws_capitalone' ? 'NC' : 'AR'}
               </div>
-              <div>
-                <p className="font-semibold text-ink-primary text-xs leading-tight">Alex Rivera</p>
-                <p className="text-[10px] text-ink-secondary font-mono">{activeWorkspace.name}</p>
+              <div className="min-w-0">
+                <p className="font-semibold text-ink-primary text-xs leading-tight truncate">
+                  {activeWorkspaceId === 'ws_capitalone' ? 'Nopparat C.' : 'Alex Rivera'}
+                </p>
+                <p className="text-[10px] text-ink-secondary font-mono truncate max-w-[120px]">
+                  {activeWorkspace.name}
+                </p>
               </div>
             </div>
-            <span className="text-[9px] font-mono text-semantic-success px-1.5 py-0.5 bg-semantic-success-bg border border-semantic-success/20 rounded font-semibold">
-              Live
-            </span>
+            <Link
+              href="/settings/team"
+              className="text-[9px] font-mono text-brand-indigo hover:underline px-1.5 py-0.5 bg-brand-indigo/10 border border-brand-indigo/20 rounded font-semibold shrink-0"
+              title="View Role & Permissions"
+            >
+              {activeWorkspaceId === 'ws_capitalone' ? 'Role: Mgr' : 'Role: Owner'}
+            </Link>
           </div>
         </div>
       </aside>

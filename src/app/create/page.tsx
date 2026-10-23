@@ -53,6 +53,7 @@ import {
   saveCustomTemplate, 
   deleteCustomTemplate 
 } from '@/modules/publishing/templates';
+import { WorkspaceRole, hasPermission } from '@/modules/workspaces/team-roles';
 
 type MediaTypeMode = 'PHOTOS' | 'VIDEO' | 'TEXT_ONLY';
 
@@ -618,6 +619,10 @@ export default function CreatePostPage() {
     storyLink: string;
   } | null>(null);
 
+  // Active Role State (RBAC Permissions)
+  const [currentRole, setCurrentRole] = useState<WorkspaceRole>('MANAGER');
+  const [submittedForApprovalNotice, setSubmittedForApprovalNotice] = useState<string | null>(null);
+
   // AI Media Hub Modal State
   const [isAiMediaModalOpen, setIsAiMediaModalOpen] = useState(false);
 
@@ -902,6 +907,60 @@ export default function CreatePostPage() {
           </div>
         }
       />
+
+      {/* TEAM ROLE BANNER (Mirroring Boss's Session Identity) */}
+      <div className="p-2.5 bg-paper-raised border border-border-rule rounded-editorial flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs shadow-2xs">
+        <div className="flex items-center gap-2.5">
+          <div className="w-6 h-6 rounded-full bg-semantic-info/15 text-semantic-info flex items-center justify-center font-bold text-[10px] shrink-0 border border-semantic-info/30">
+            NC
+          </div>
+          <span className="text-ink-primary font-medium">
+            ทำงานในทีม <strong className="text-brand-indigo">{activeWorkspace.name}</strong> ในบทบาท:{' '}
+            <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
+              currentRole === 'CONTRIBUTOR'
+                ? 'bg-accent-terracotta text-white'
+                : currentRole === 'VIEWER'
+                ? 'bg-paper-subtle text-ink-secondary border border-border-rule'
+                : 'bg-semantic-info text-white'
+            }`}>
+              {currentRole === 'OWNER' ? '👑 Owner' : currentRole === 'MANAGER' ? '⭐ Manager' : currentRole === 'EDITOR' ? '✍️ Editor' : currentRole === 'CONTRIBUTOR' ? '👀 Contributor' : '🔍 Viewer'}
+            </span>
+          </span>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <span className="text-[10px] font-mono text-ink-secondary">ทดสอบสิทธิ์:</span>
+          <select
+            value={currentRole}
+            onChange={(e) => setCurrentRole(e.target.value as WorkspaceRole)}
+            className="px-2 py-0.5 bg-paper-canvas border border-border-rule rounded text-[11px] font-mono text-ink-primary focus:outline-none focus:border-brand-indigo cursor-pointer"
+          >
+            <option value="MANAGER">⭐ Manager (ผู้จัดการ - ยิงสดได้ทันที)</option>
+            <option value="EDITOR">✍️ Editor (ครีเอเตอร์ - ยิงสดได้ทันที)</option>
+            <option value="CONTRIBUTOR">👀 Contributor (รออนุมัติ - Approval Flow)</option>
+            <option value="VIEWER">🔍 Viewer (ผู้ตรวจงาน - อ่านอย่างเดียว)</option>
+          </select>
+          <Link
+            href="/settings/team"
+            className="text-[11px] font-mono text-brand-indigo hover:underline flex items-center gap-1 font-semibold ml-1"
+          >
+            <span>จัดการทีม →</span>
+          </Link>
+        </div>
+      </div>
+
+      {/* APPROVAL SUBMITTED TOAST NOTIFICATION */}
+      {submittedForApprovalNotice && (
+        <div className="p-3 bg-semantic-success/10 border border-semantic-success/30 text-semantic-success rounded-editorial text-xs font-mono flex items-center justify-between animate-in fade-in duration-200">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 shrink-0" />
+            <span>{submittedForApprovalNotice}</span>
+          </div>
+          <button onClick={() => setSubmittedForApprovalNotice(null)} className="hover:opacity-75 cursor-pointer">
+            <X className="w-3.5 h-3.5" />
+          </button>
+        </div>
+      )}
 
       {/* MOBILE / TABLET RESPONSIVE TAB SWITCHER */}
       <div className="xl:hidden flex items-center p-1 bg-paper-raised border border-border-rule rounded-editorial text-xs">
@@ -1989,22 +2048,59 @@ export default function CreatePostPage() {
             </div>
           </div>
 
-          {/* Master Primary Action Button */}
-          <button
-            disabled={totalActivePlacements === 0}
-            className={`w-full py-2.5 px-4 text-xs font-semibold rounded-editorial flex items-center justify-center gap-2 shadow-xs transition-all ${
-              totalActivePlacements > 0
-                ? 'bg-brand-indigo hover:bg-brand-indigo-hover text-white cursor-pointer active:scale-[0.98]'
-                : 'bg-paper-subtle text-ink-secondary border border-border-rule cursor-not-allowed opacity-60'
-            }`}
-          >
-            <span>
-              {publishMode === 'NOW'
-                ? `Publish to ${totalActivePlacements} Destinations`
-                : `Schedule Dispatch (${totalActivePlacements} Destinations)`}
-            </span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+          {/* Master Primary Action Button (Adaptive to RBAC Role) */}
+          {currentRole === 'CONTRIBUTOR' ? (
+            <div className="space-y-1.5">
+              <button
+                type="button"
+                disabled={totalActivePlacements === 0}
+                onClick={() => {
+                  setSubmittedForApprovalNotice(`ส่งโพสต์ "${workingTitle}" ให้ Manager ตรวจสอบและอนุมัติเรียบร้อยแล้ว (Pending Review)`);
+                  setTimeout(() => setSubmittedForApprovalNotice(null), 4500);
+                }}
+                className={`w-full py-2.5 px-4 text-xs font-semibold rounded-editorial flex items-center justify-center gap-2 shadow-xs transition-all ${
+                  totalActivePlacements > 0
+                    ? 'bg-accent-terracotta hover:bg-accent-terracotta/90 text-white cursor-pointer active:scale-[0.98]'
+                    : 'bg-paper-subtle text-ink-secondary border border-border-rule cursor-not-allowed opacity-60'
+                }`}
+              >
+                <Send className="w-4 h-4" />
+                <span>
+                  ส่งให้ Manager อนุมัติ ({totalActivePlacements} Placements)
+                </span>
+              </button>
+              <p className="text-[10px] text-accent-terracotta font-sans text-center leading-tight">
+                🛡️ บทบาท Contributor: ต้องผ่านการอนุมัติก่อนยิงขึ้นช่องทางจริง
+              </p>
+            </div>
+          ) : currentRole === 'VIEWER' ? (
+            <div className="space-y-1.5">
+              <div className="w-full py-2.5 px-4 text-xs font-semibold rounded-editorial flex items-center justify-center gap-2 bg-paper-subtle border border-border-rule text-ink-secondary cursor-not-allowed">
+                <Lock className="w-4 h-4" />
+                <span>โหมดผู้ตรวจงาน / ลูกค้า (Read-Only)</span>
+              </div>
+              <p className="text-[10px] text-ink-secondary font-sans text-center leading-tight">
+                สามารถดู Live Phone Mockup และกำหนดการได้เท่านั้น
+              </p>
+            </div>
+          ) : (
+            <button
+              type="button"
+              disabled={totalActivePlacements === 0}
+              className={`w-full py-2.5 px-4 text-xs font-semibold rounded-editorial flex items-center justify-center gap-2 shadow-xs transition-all ${
+                totalActivePlacements > 0
+                  ? 'bg-brand-indigo hover:bg-brand-indigo-hover text-white cursor-pointer active:scale-[0.98]'
+                  : 'bg-paper-subtle text-ink-secondary border border-border-rule cursor-not-allowed opacity-60'
+              }`}
+            >
+              <span>
+                {publishMode === 'NOW'
+                  ? `Publish to ${totalActivePlacements} Destinations`
+                  : `Schedule Dispatch (${totalActivePlacements} Destinations)`}
+              </span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          )}
         </section>
 
       </div>
