@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { 
   Plus, 
@@ -12,10 +12,19 @@ import {
   AlertCircle,
   Clock,
   CheckCircle2,
-  Play
+  Play,
+  Copy,
+  Globe
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { StatusTag } from '@/components/ui/status-tag';
+
+interface ContentChannel {
+  platform: 'YOUTUBE' | 'TIKTOK' | 'INSTAGRAM' | 'FACEBOOK';
+  status: string;
+  detail?: string;
+  liveUrl?: string;
+}
 
 interface ContentItem {
   id: string;
@@ -26,17 +35,44 @@ interface ContentItem {
   aspectRatio?: string;
   resolution?: string;
   sizeMb?: string;
-  channels: {
-    platform: 'YOUTUBE' | 'TIKTOK';
-    status: string;
-    detail?: string;
-  }[];
+  channels: ContentChannel[];
   dateText: string;
   actionLabel: string;
   actionHref: string;
+  liveUrl?: string;
+  websiteUrl?: string;
 }
 
 const DEFAULT_SAMPLE_ITEMS: ContentItem[] = [
+  {
+    id: 'sample-c1-rich-rama9',
+    workingTitle: 'The Rich Rama 9-Srinakarin Luxury 2-Bed Unit',
+    status: 'PUBLISHED',
+    assetId: 'C1-89501',
+    duration: 'Photo Album',
+    aspectRatio: '1:1 / 9:16',
+    resolution: '1080x1080 / 1080x1920',
+    sizeMb: '34.2 MB',
+    channels: [
+      { 
+        platform: 'FACEBOOK', 
+        status: 'PUBLISHED', 
+        detail: 'Capital One Thailand Album (6)', 
+        liveUrl: 'https://www.facebook.com/capitalonethailand/posts/991283' 
+      },
+      { 
+        platform: 'INSTAGRAM', 
+        status: 'PUBLISHED', 
+        detail: 'IG Carousel & 24h Story', 
+        liveUrl: 'https://www.instagram.com/p/C1RichRama9/' 
+      },
+    ],
+    dateText: 'Today 08:30 AM',
+    actionLabel: 'Edit Adaptations',
+    actionHref: '/create?id=sample-c1-rich-rama9',
+    liveUrl: 'https://www.facebook.com/capitalonethailand/posts/991283',
+    websiteUrl: 'https://capitalone.co.th/the-rich-rama9',
+  },
   {
     id: 'sample-1',
     workingTitle: 'Behind the Scenes: Studio Redesign Tour',
@@ -47,12 +83,29 @@ const DEFAULT_SAMPLE_ITEMS: ContentItem[] = [
     resolution: '1080x1920',
     sizeMb: '69.2 MB',
     channels: [
-      { platform: 'YOUTUBE', status: 'PUBLISHED', detail: 'Shorts: 09:15 AM' },
-      { platform: 'TIKTOK', status: 'FAILED_RETRYABLE', detail: 'Audio Limit Exceeded (46s)' },
+      { 
+        platform: 'YOUTUBE', 
+        status: 'PUBLISHED', 
+        detail: 'Shorts: 09:15 AM', 
+        liveUrl: 'https://youtube.com/shorts/dQw4w9WgXcQ' 
+      },
+      { 
+        platform: 'INSTAGRAM', 
+        status: 'PUBLISHED', 
+        detail: 'IG Feed & 24h Story', 
+        liveUrl: 'https://www.instagram.com/p/example-carousel' 
+      },
+      { 
+        platform: 'TIKTOK', 
+        status: 'FAILED_RETRYABLE', 
+        detail: 'Audio Limit Exceeded (46s)' 
+      },
     ],
     dateText: 'Today 09:15 AM',
     actionLabel: 'Resolve & Retry',
     actionHref: '/create?id=sample-1',
+    liveUrl: 'https://youtube.com/shorts/dQw4w9WgXcQ',
+    websiteUrl: 'https://alexrivera.studio/redesign-tour',
   },
   {
     id: 'sample-2',
@@ -81,11 +134,24 @@ const DEFAULT_SAMPLE_ITEMS: ContentItem[] = [
     resolution: '1920x1080',
     sizeMb: '142 MB',
     channels: [
-      { platform: 'YOUTUBE', status: 'PUBLISHED', detail: '14.8k views' },
+      { 
+        platform: 'YOUTUBE', 
+        status: 'PUBLISHED', 
+        detail: '14.8k views', 
+        liveUrl: 'https://youtu.be/dQw4w9WgXcQ' 
+      },
+      { 
+        platform: 'FACEBOOK', 
+        status: 'PUBLISHED', 
+        detail: 'Page Video', 
+        liveUrl: 'https://www.facebook.com/retzpost/posts/202610' 
+      },
     ],
     dateText: '2 days ago',
     actionLabel: 'View Analytics',
     actionHref: '/content/sample-3',
+    liveUrl: 'https://youtu.be/dQw4w9WgXcQ',
+    websiteUrl: 'https://retzpost.io/whats-new',
   },
   {
     id: 'sample-4',
@@ -108,13 +174,24 @@ export default function ContentLibraryPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [items, setItems] = useState<ContentItem[]>(DEFAULT_SAMPLE_ITEMS);
 
+  const filteredItems = items.filter((item) => {
+    if (activeTab === 'PUBLISHED' && !['PUBLISHED', 'PARTIALLY_PUBLISHED'].includes(item.status)) return false;
+    if (activeTab === 'SCHEDULED' && item.status !== 'READY') return false;
+    if (activeTab === 'DRAFTS' && item.status !== 'DRAFT') return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      return item.workingTitle.toLowerCase().includes(q) || (item.assetId && item.assetId.toLowerCase().includes(q));
+    }
+    return true;
+  });
+
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
       <Masthead
         folio="ARCHIVE INDEX / DISPATCH LEDGER"
         editionDate="VOL. 24"
         title="Content Archive & Dispatches"
-        subtitle="Curated master video assets, multi-platform adaptations, and synchronized syndication records."
+        subtitle="Curated master assets, multi-platform adaptations, and direct links to view live posts on social media."
         actions={
           <div className="flex items-center gap-3">
             <Link
@@ -161,13 +238,13 @@ export default function ContentLibraryPage() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-3 py-1.5 rounded-editorial transition-colors ${
+              className={`px-3 py-1.5 rounded-editorial transition-colors cursor-pointer ${
                 activeTab === tab
                   ? 'bg-paper-raised text-brand-indigo font-bold border border-border-rule shadow-xs'
                   : 'text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle'
               }`}
             >
-              {tab === 'ALL' ? 'All Works (24)' : tab}
+              {tab === 'ALL' ? `All Works (${items.length})` : tab}
             </button>
           ))}
         </div>
@@ -179,14 +256,14 @@ export default function ContentLibraryPage() {
             placeholder="Search headlines, asset IDs..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-paper-raised border border-border-rule rounded-editorial placeholder:text-ink-secondary focus:outline-none focus:border-brand-indigo"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-paper-raised border border-border-rule rounded-editorial placeholder:text-ink-secondary focus:outline-none focus:border-brand-indigo font-mono"
           />
         </div>
       </div>
 
       {/* Editorial Ledger List */}
       <div className="space-y-3">
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <div
             key={item.id}
             className="bg-paper-raised border border-border-rule rounded-card p-4 hover:border-brand-indigo/40 transition-colors flex flex-col md:flex-row items-start md:items-center gap-4"
@@ -205,41 +282,80 @@ export default function ContentLibraryPage() {
             </div>
 
             {/* Middle Info & Channels */}
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 text-[10px] font-mono text-ink-secondary mb-1">
+            <div className="flex-1 min-w-0 space-y-1.5">
+              <div className="flex items-center gap-2 text-[10px] font-mono text-ink-secondary">
                 <span>{item.assetId}</span>
                 <span>•</span>
                 <span>{item.resolution}</span>
                 <span>•</span>
                 <span>{item.sizeMb}</span>
+                <span>•</span>
+                <span>{item.dateText}</span>
               </div>
 
-              <h2 className="font-serif font-medium text-base text-ink-primary truncate mb-2">
+              <h2 className="font-serif font-medium text-base text-ink-primary truncate">
                 {item.workingTitle}
               </h2>
 
-              <div className="flex flex-wrap items-center gap-3 text-xs">
+              {/* Channels with Direct Live Links */}
+              <div className="flex flex-wrap items-center gap-2 pt-0.5">
                 {item.channels.map((ch, idx) => (
-                  <div key={idx} className="flex items-center gap-1.5 font-mono text-[11px] text-ink-secondary">
+                  <div key={idx} className="flex items-center gap-1.5 font-mono text-[11px] bg-paper-canvas px-2 py-0.5 rounded border border-border-rule">
                     <span className="font-semibold text-ink-primary">{ch.platform}:</span>
-                    <span>{ch.detail}</span>
+                    <span className="text-ink-secondary">{ch.detail}</span>
+                    {ch.liveUrl && (
+                      <a
+                        href={ch.liveUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-0.5 text-brand-indigo hover:underline font-semibold ml-1 cursor-pointer"
+                        title={`เปิดดูโพสต์จริงบน ${ch.platform}`}
+                      >
+                        <span>Live</span>
+                        <ExternalLink className="w-2.5 h-2.5" />
+                      </a>
+                    )}
                   </div>
                 ))}
+
+                {item.websiteUrl && (
+                  <a
+                    href={item.websiteUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 font-mono text-[11px] bg-brand-indigo/5 text-brand-indigo px-2 py-0.5 rounded border border-brand-indigo/20 hover:underline font-medium cursor-pointer"
+                  >
+                    <span>🌐 เว็บโครงการ</span>
+                    <ExternalLink className="w-2.5 h-2.5" />
+                  </a>
+                )}
               </div>
             </div>
 
             {/* Right Action & Status */}
-            <div className="flex items-center gap-3 self-end md:self-center shrink-0">
+            <div className="flex items-center gap-2.5 self-end md:self-center shrink-0">
               <StatusTag status={item.status} />
 
-              <Link
-                href={item.actionHref}
-                className="px-3 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary text-xs font-medium rounded-editorial border border-border-rule transition-colors"
-              >
-                {item.actionLabel}
-              </Link>
+              {item.liveUrl ? (
+                <a
+                  href={item.liveUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-indigo text-white hover:bg-brand-indigo-hover text-xs font-mono font-semibold rounded-editorial shadow-2xs transition-colors cursor-pointer"
+                >
+                  <span>เปิดดูโพสต์จริง</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              ) : (
+                <Link
+                  href={item.actionHref}
+                  className="px-3 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary text-xs font-medium rounded-editorial border border-border-rule transition-colors"
+                >
+                  {item.actionLabel}
+                </Link>
+              )}
 
-              <button className="p-1.5 text-ink-secondary hover:text-ink-primary">
+              <button className="p-1.5 text-ink-secondary hover:text-ink-primary cursor-pointer">
                 <MoreVertical className="w-4 h-4" />
               </button>
             </div>

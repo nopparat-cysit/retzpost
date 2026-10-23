@@ -487,15 +487,22 @@ export default function PublishingQueuePage() {
                       {/* Actions / Live Links */}
                       <td className="py-3.5 px-4 text-right align-top">
                         {job.status === 'PUBLISHED' && job.liveUrl && (
-                          <a
-                            href={job.liveUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono text-brand-indigo hover:text-brand-indigo-hover hover:underline"
-                          >
-                            <span>Live</span>
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
+                          <div className="flex flex-col items-end gap-1">
+                            <a
+                              href={job.liveUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold text-brand-indigo hover:text-white hover:bg-brand-indigo bg-paper-canvas border border-brand-indigo/30 rounded-editorial transition-all shadow-2xs group cursor-pointer"
+                              title={`เปิดดูโพสต์จริงบน ${job.platform}`}
+                            >
+                              <span>ดูบน {job.platform === 'FACEBOOK' ? 'Facebook' : job.platform === 'INSTAGRAM' ? 'Instagram' : job.platform === 'YOUTUBE' ? 'YouTube' : 'TikTok'}</span>
+                              <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                            </a>
+                            <span className="text-[9px] font-mono text-semantic-success flex items-center gap-1 font-medium">
+                              <span className="w-1.5 h-1.5 rounded-full bg-semantic-success" />
+                              <span>Live on Web</span>
+                            </span>
+                          </div>
                         )}
 
                         {job.status === 'FAILED_RETRYABLE' && (

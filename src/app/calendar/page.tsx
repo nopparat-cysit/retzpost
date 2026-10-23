@@ -25,9 +25,22 @@ interface CalendarEventItem {
   handle: string;
   durationOrPhotos: string;
   status: 'SCHEDULED' | 'PUBLISHED';
+  liveUrl?: string;
 }
 
 const SAMPLE_EVENTS: CalendarEventItem[] = [
+  {
+    id: 'ev-c1',
+    dayOfMonth: 24,
+    timeStr: '08:30 AM',
+    title: 'The Rich Rama 9 Luxury 2-Bed Unit',
+    platform: 'FACEBOOK',
+    format: 'FEED_POST',
+    handle: 'Capital One Thailand',
+    durationOrPhotos: 'Album (6)',
+    status: 'PUBLISHED',
+    liveUrl: 'https://www.facebook.com/capitalonethailand/posts/991283',
+  },
   {
     id: 'ev-1',
     dayOfMonth: 24,
@@ -82,6 +95,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     handle: '@AlexRiveraStudio',
     durationOrPhotos: '00:58',
     status: 'PUBLISHED',
+    liveUrl: 'https://youtube.com/shorts/dQw4w9WgXcQ',
   },
 ];
 
@@ -205,43 +219,76 @@ export default function EditorialCalendarPage() {
                 </div>
 
                 <div className="space-y-1.5">
-                  {dayEvents.map((ev) => (
-                    <div
-                      key={ev.id}
-                      className="p-1.5 rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/50 transition-colors cursor-pointer text-[10px]"
-                    >
-                      <div className="flex items-center justify-between mb-0.5">
-                        <span className="font-mono font-bold text-ink-secondary flex items-center gap-1">
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              ev.platform === 'INSTAGRAM'
-                                ? 'bg-[#DD2A7B]'
-                                : ev.platform === 'FACEBOOK'
-                                ? 'bg-[#1877F2]'
-                                : ev.platform === 'YOUTUBE'
-                                ? 'bg-[#FF0000]'
-                                : 'bg-ink-primary'
-                            }`}
-                          />
-                          {ev.timeStr}
-                        </span>
-                        <span
-                          className={`px-1 py-0.2 rounded text-[8px] font-mono font-bold uppercase ${
-                            ev.format === 'STORY'
-                              ? 'bg-accent-terracotta/10 text-accent-terracotta'
-                              : ev.format === 'FEED_POST'
-                              ? 'bg-brand-indigo/10 text-brand-indigo'
-                              : 'bg-semantic-info/10 text-semantic-info'
-                          }`}
-                        >
-                          {ev.format === 'STORY' ? 'Story' : ev.format === 'FEED_POST' ? 'Feed' : 'Reel'}
-                        </span>
+                  {dayEvents.map((ev) => {
+                    const cardContent = (
+                      <div className="p-1.5 rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/50 transition-colors text-[10px] group">
+                        <div className="flex items-center justify-between mb-0.5">
+                          <span className="font-mono font-bold text-ink-secondary flex items-center gap-1">
+                            <span
+                              className={`w-1.5 h-1.5 rounded-full ${
+                                ev.platform === 'INSTAGRAM'
+                                  ? 'bg-[#DD2A7B]'
+                                  : ev.platform === 'FACEBOOK'
+                                  ? 'bg-[#1877F2]'
+                                  : ev.platform === 'YOUTUBE'
+                                  ? 'bg-[#FF0000]'
+                                  : 'bg-ink-primary'
+                              }`}
+                            />
+                            {ev.timeStr}
+                          </span>
+                          <div className="flex items-center gap-1">
+                            <span
+                              className={`px-1 py-0.2 rounded text-[8px] font-mono font-bold uppercase ${
+                                ev.format === 'STORY'
+                                  ? 'bg-accent-terracotta text-white'
+                                  : ev.format === 'FEED_POST'
+                                  ? 'bg-brand-indigo text-white'
+                                  : 'bg-semantic-info text-white'
+                              }`}
+                            >
+                              {ev.format === 'STORY' ? 'Story' : ev.format === 'FEED_POST' ? 'Feed' : 'Reel'}
+                            </span>
+                            {ev.liveUrl && (
+                              <ExternalLink className="w-2.5 h-2.5 text-brand-indigo opacity-80 group-hover:opacity-100" />
+                            )}
+                          </div>
+                        </div>
+                        <p className="font-serif font-medium text-ink-primary line-clamp-1 leading-tight">
+                          {ev.title}
+                        </p>
+                        <div className="flex items-center justify-between text-[8px] font-mono text-ink-secondary mt-0.5">
+                          <span className="truncate max-w-[75px]">{ev.handle}</span>
+                          {ev.liveUrl ? (
+                            <span className="text-brand-indigo font-bold">Live ↗</span>
+                          ) : (
+                            <span>{ev.durationOrPhotos}</span>
+                          )}
+                        </div>
                       </div>
-                      <p className="font-serif font-medium text-ink-primary line-clamp-1 leading-tight">
-                        {ev.title}
-                      </p>
-                    </div>
-                  ))}
+                    );
+
+                    if (ev.liveUrl) {
+                      return (
+                        <a
+                          key={ev.id}
+                          href={ev.liveUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          title={`เปิดดูโพสต์จริงบนเว็บ (${ev.platform}): ${ev.title}`}
+                          className="block cursor-pointer"
+                        >
+                          {cardContent}
+                        </a>
+                      );
+                    }
+
+                    return (
+                      <div key={ev.id} className="cursor-pointer">
+                        {cardContent}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             );

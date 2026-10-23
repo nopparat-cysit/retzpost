@@ -35,7 +35,9 @@ import {
   Check,
   X,
   Sliders,
-  Send
+  Send,
+  Copy,
+  Globe
 } from 'lucide-react';
 import { 
   generateErrorLogCsv, 
@@ -44,6 +46,16 @@ import {
   ExportableJob 
 } from '@/modules/publishing/export-csv';
 
+interface DispatchPlacement {
+  platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK';
+  format: 'FEED' | 'STORY' | 'REEL';
+  label: string;
+  badgeBg: string;
+  status: 'PUBLISHED' | 'FAILED' | 'PENDING';
+  liveUrl?: string;
+  error?: string;
+}
+
 interface DispatchBatch {
   id: string;
   workspaceId: string;
@@ -51,14 +63,9 @@ interface DispatchBatch {
   title: string;
   timestamp: string;
   status: 'PUBLISHED' | 'PARTIALLY_PUBLISHED' | 'SCHEDULED' | 'FAILED_RETRYABLE' | 'FAILED_FINAL';
-  placements: Array<{
-    platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK';
-    format: 'FEED' | 'STORY' | 'REEL';
-    label: string;
-    badgeBg: string;
-    status: 'PUBLISHED' | 'FAILED' | 'PENDING';
-    error?: string;
-  }>;
+  websiteUrl?: string;
+  lineContactUrl?: string;
+  placements: DispatchPlacement[];
   liveUrl?: string;
 }
 
@@ -70,13 +77,43 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
     title: 'The Rich Rama 9-Srinakarin Luxury 2-Bed Unit',
     timestamp: 'Today 08:30 AM',
     status: 'PARTIALLY_PUBLISHED',
+    websiteUrl: 'https://capitalone.co.th/the-rich-rama9',
+    lineContactUrl: 'https://line.me/ti/p/@capitalone',
+    liveUrl: 'https://www.facebook.com/capitalonethailand/posts/991283',
     placements: [
-      { platform: 'FACEBOOK', format: 'FEED', label: 'FB Thailand Album (6)', badgeBg: 'bg-[#1877F2]', status: 'PUBLISHED' },
-      { platform: 'INSTAGRAM', format: 'FEED', label: 'IG Carousel (6)', badgeBg: 'bg-brand-indigo', status: 'PUBLISHED' },
-      { platform: 'FACEBOOK', format: 'FEED', label: 'Oknus FB Page', badgeBg: 'bg-accent-terracotta', status: 'FAILED', error: 'Token Expired (Code: 190)' },
-      { platform: 'INSTAGRAM', format: 'STORY', label: 'IG Story 24h + Link', badgeBg: 'bg-accent-terracotta', status: 'FAILED', error: 'Aspect Ratio 1:1 vs 9:16' },
+      { 
+        platform: 'FACEBOOK', 
+        format: 'FEED', 
+        label: 'FB Thailand Album (6)', 
+        badgeBg: 'bg-[#1877F2]', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.facebook.com/capitalonethailand/posts/991283'
+      },
+      { 
+        platform: 'INSTAGRAM', 
+        format: 'FEED', 
+        label: 'IG Carousel (6)', 
+        badgeBg: 'bg-brand-indigo', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.instagram.com/p/C1RichRama9/'
+      },
+      { 
+        platform: 'FACEBOOK', 
+        format: 'FEED', 
+        label: 'Oknus FB Page', 
+        badgeBg: 'bg-accent-terracotta', 
+        status: 'FAILED', 
+        error: 'Token Expired (Code: 190)' 
+      },
+      { 
+        platform: 'INSTAGRAM', 
+        format: 'STORY', 
+        label: 'IG Story 24h + Link', 
+        badgeBg: 'bg-accent-terracotta', 
+        status: 'FAILED', 
+        error: 'Aspect Ratio 1:1 vs 9:16' 
+      },
     ],
-    liveUrl: 'https://facebook.com/capitalonethailand/posts/991283',
   },
   {
     id: 'MP-BATCH-892',
@@ -85,14 +122,50 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
     title: 'Behind the Scenes: Studio Redesign Tour',
     timestamp: 'Today 09:15 AM',
     status: 'PARTIALLY_PUBLISHED',
+    websiteUrl: 'https://alexrivera.studio/redesign-tour',
+    liveUrl: 'https://youtube.com/shorts/dQw4w9WgXcQ',
     placements: [
-      { platform: 'INSTAGRAM', format: 'FEED', label: 'IG Feed (3 Photos)', badgeBg: 'bg-brand-indigo', status: 'PUBLISHED' },
-      { platform: 'INSTAGRAM', format: 'STORY', label: 'IG Story (24h)', badgeBg: 'bg-accent-terracotta', status: 'PUBLISHED' },
-      { platform: 'FACEBOOK', format: 'FEED', label: 'FB Page Album', badgeBg: 'bg-[#1877F2]', status: 'PUBLISHED' },
-      { platform: 'YOUTUBE', format: 'REEL', label: 'YT Shorts (00:58)', badgeBg: 'bg-semantic-info', status: 'PUBLISHED' },
-      { platform: 'TIKTOK', format: 'REEL', label: 'TikTok Direct Post', badgeBg: 'bg-accent-terracotta', status: 'FAILED', error: 'Rate limit 429' },
+      { 
+        platform: 'INSTAGRAM', 
+        format: 'FEED', 
+        label: 'IG Feed (3 Photos)', 
+        badgeBg: 'bg-brand-indigo', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.instagram.com/p/example-carousel'
+      },
+      { 
+        platform: 'INSTAGRAM', 
+        format: 'STORY', 
+        label: 'IG Story (24h)', 
+        badgeBg: 'bg-accent-terracotta', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.instagram.com/stories/alexrivera_official/'
+      },
+      { 
+        platform: 'FACEBOOK', 
+        format: 'FEED', 
+        label: 'FB Page Album', 
+        badgeBg: 'bg-[#1877F2]', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.facebook.com/alexriverastudio/posts/89201'
+      },
+      { 
+        platform: 'YOUTUBE', 
+        format: 'REEL', 
+        label: 'YT Shorts (00:58)', 
+        badgeBg: 'bg-semantic-info', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://youtube.com/shorts/dQw4w9WgXcQ'
+      },
+      { 
+        platform: 'TIKTOK', 
+        format: 'REEL', 
+        label: 'TikTok Direct Post', 
+        badgeBg: 'bg-accent-terracotta', 
+        status: 'FAILED', 
+        error: 'Rate limit 429' 
+      },
     ],
-    liveUrl: 'https://instagram.com/p/example-carousel',
   },
   {
     id: 'MP-BATCH-890',
@@ -101,13 +174,42 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
     title: 'The Penthouse Collection: Private Pool & Panoramic View',
     timestamp: 'Yesterday 04:30 PM',
     status: 'PUBLISHED',
+    websiteUrl: 'https://capitalone.co.th/penthouse-collection',
+    liveUrl: 'https://www.facebook.com/kwluxurythailand/posts/449102',
     placements: [
-      { platform: 'FACEBOOK', format: 'FEED', label: 'KW Luxury Thailand', badgeBg: 'bg-[#1877F2]', status: 'PUBLISHED' },
-      { platform: 'FACEBOOK', format: 'FEED', label: 'Capital One Taiwan', badgeBg: 'bg-[#1877F2]', status: 'PUBLISHED' },
-      { platform: 'INSTAGRAM', format: 'STORY', label: 'IG Story 24h + Link', badgeBg: 'bg-accent-terracotta', status: 'PUBLISHED' },
-      { platform: 'INSTAGRAM', format: 'FEED', label: 'IG Carousel (4)', badgeBg: 'bg-brand-indigo', status: 'PUBLISHED' },
+      { 
+        platform: 'FACEBOOK', 
+        format: 'FEED', 
+        label: 'KW Luxury Thailand', 
+        badgeBg: 'bg-[#1877F2]', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.facebook.com/kwluxurythailand/posts/449102'
+      },
+      { 
+        platform: 'FACEBOOK', 
+        format: 'FEED', 
+        label: 'Capital One Taiwan', 
+        badgeBg: 'bg-[#1877F2]', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.facebook.com/capitalonetaiwan/posts/110293'
+      },
+      { 
+        platform: 'INSTAGRAM', 
+        format: 'STORY', 
+        label: 'IG Story 24h + Link', 
+        badgeBg: 'bg-accent-terracotta', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.instagram.com/stories/kwcapitalone/'
+      },
+      { 
+        platform: 'INSTAGRAM', 
+        format: 'FEED', 
+        label: 'IG Carousel (4)', 
+        badgeBg: 'bg-brand-indigo', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.instagram.com/p/C1PenthouseKW/'
+      },
     ],
-    liveUrl: 'https://instagram.com/p/C1RichRama9',
   },
   {
     id: 'MP-BATCH-888',
@@ -116,12 +218,34 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
     title: 'Introducing Next-Gen Multi-Placement Publishing Studio',
     timestamp: 'Oct 22, 10:00 AM',
     status: 'PUBLISHED',
-    placements: [
-      { platform: 'FACEBOOK', format: 'FEED', label: 'Product Desk Page', badgeBg: 'bg-[#1877F2]', status: 'PUBLISHED' },
-      { platform: 'YOUTUBE', format: 'REEL', label: 'YT Shorts (00:48)', badgeBg: 'bg-semantic-info', status: 'PUBLISHED' },
-      { platform: 'INSTAGRAM', format: 'STORY', label: 'Changelog Story', badgeBg: 'bg-accent-terracotta', status: 'PUBLISHED' },
-    ],
+    websiteUrl: 'https://retzpost.io/whats-new',
     liveUrl: 'https://retzpost.io/whats-new',
+    placements: [
+      { 
+        platform: 'FACEBOOK', 
+        format: 'FEED', 
+        label: 'Product Desk Page', 
+        badgeBg: 'bg-[#1877F2]', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.facebook.com/retzpost/posts/202610'
+      },
+      { 
+        platform: 'YOUTUBE', 
+        format: 'REEL', 
+        label: 'YT Shorts (00:48)', 
+        badgeBg: 'bg-semantic-info', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://youtube.com/shorts/dQw4w9WgXcQ'
+      },
+      { 
+        platform: 'INSTAGRAM', 
+        format: 'STORY', 
+        label: 'Changelog Story', 
+        badgeBg: 'bg-accent-terracotta', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.instagram.com/stories/retzpost_app/'
+      },
+    ],
   },
   {
     id: 'MP-BATCH-885',
@@ -130,12 +254,34 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
     title: 'Weekend Cold Brew Roasting & Bakery Specials',
     timestamp: 'Oct 21, 08:00 AM',
     status: 'PUBLISHED',
+    websiteUrl: 'https://coffeecraft.bkk/menu',
+    liveUrl: 'https://www.instagram.com/p/coffeecraft/',
     placements: [
-      { platform: 'FACEBOOK', format: 'FEED', label: 'Cafe Main Page', badgeBg: 'bg-[#1877F2]', status: 'PUBLISHED' },
-      { platform: 'INSTAGRAM', format: 'FEED', label: 'Cafe IG Feed', badgeBg: 'bg-brand-indigo', status: 'PUBLISHED' },
-      { platform: 'INSTAGRAM', format: 'STORY', label: 'Story + Location Tag', badgeBg: 'bg-accent-terracotta', status: 'PUBLISHED' },
+      { 
+        platform: 'FACEBOOK', 
+        format: 'FEED', 
+        label: 'Cafe Main Page', 
+        badgeBg: 'bg-[#1877F2]', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.facebook.com/coffeecraftbkk/posts/33109'
+      },
+      { 
+        platform: 'INSTAGRAM', 
+        format: 'FEED', 
+        label: 'Cafe IG Feed', 
+        badgeBg: 'bg-brand-indigo', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.instagram.com/p/coffeecraft/'
+      },
+      { 
+        platform: 'INSTAGRAM', 
+        format: 'STORY', 
+        label: 'Story + Location Tag', 
+        badgeBg: 'bg-accent-terracotta', 
+        status: 'PUBLISHED',
+        liveUrl: 'https://www.instagram.com/stories/coffeecraft.bkk/'
+      },
     ],
-    liveUrl: 'https://instagram.com/p/coffeecraft',
   },
 ];
 
@@ -244,6 +390,14 @@ export default function HomePage() {
   const [workspaceFilter, setWorkspaceFilter] = useState<'ALL' | 'ws_capitalone' | 'ws_acme' | 'ws_retzpost' | 'ws_coffee'>('ALL');
   const [batchTab, setBatchTab] = useState<'ALL' | 'CAPITAL_ONE' | 'ACME' | 'NEEDS_ATTENTION'>('ALL');
   const [downloadToast, setDownloadToast] = useState<string | null>(null);
+  const [selectedLiveBatch, setSelectedLiveBatch] = useState<DispatchBatch | null>(null);
+  const [copiedLinkNotice, setCopiedLinkNotice] = useState<string | null>(null);
+
+  const handleCopyLink = (url: string, label: string) => {
+    navigator.clipboard.writeText(url);
+    setCopiedLinkNotice(`คัดลอกลิงก์ "${label}" แล้ว`);
+    setTimeout(() => setCopiedLinkNotice(null), 2500);
+  };
 
   // Filtered batches
   const filteredBatches = SAMPLE_BATCHES.filter((b) => {
@@ -623,46 +777,69 @@ export default function HomePage() {
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-2.5 shrink-0">
+                      <div className="flex items-center gap-2 shrink-0">
                         <StatusTag status={batch.status as any} />
-                        {batch.liveUrl ? (
-                          <a
-                            href={batch.liveUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-mono text-brand-indigo hover:text-brand-indigo-hover hover:underline bg-paper-canvas border border-border-rule rounded-editorial"
-                          >
-                            <span>Live</span>
-                            <ExternalLink className="w-3 h-3" />
-                          </a>
-                        ) : (
-                          <Link
-                            href="/publishing/queue"
-                            className="px-2.5 py-1 text-xs font-mono text-ink-primary hover:bg-paper-canvas bg-paper-subtle border border-border-rule rounded-editorial"
-                          >
-                            Inspect
-                          </Link>
-                        )}
+                        
+                        <button
+                          type="button"
+                          onClick={() => setSelectedLiveBatch(batch)}
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-medium text-brand-indigo hover:text-white hover:bg-brand-indigo bg-paper-canvas border border-brand-indigo/30 rounded-editorial transition-all shadow-2xs cursor-pointer group"
+                        >
+                          <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                          <span>ดูโพสต์จริง ({batch.placements.filter(p => p.liveUrl).length} ช่องทาง)</span>
+                        </button>
                       </div>
                     </div>
 
-                    {/* Placements Breakdown Badges */}
+                    {/* Placements Breakdown Badges (Clickable Directly to Live Posts) */}
                     <div className="flex flex-wrap items-center gap-1.5 pt-1">
-                      {batch.placements.map((plc, idx) => (
-                        <span
-                          key={idx}
-                          className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium text-white flex items-center gap-1 ${
-                            plc.status === 'FAILED' ? 'bg-accent-terracotta' : plc.badgeBg
-                          }`}
+                      {batch.placements.map((plc, idx) => {
+                        const isFailed = plc.status === 'FAILED';
+                        if (plc.liveUrl && !isFailed) {
+                          return (
+                            <a
+                              key={idx}
+                              href={plc.liveUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              title={`คลิกเพื่อเปิดดูโพสต์จริงบน ${plc.platform}: ${plc.label}`}
+                              className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium text-white flex items-center gap-1 hover:brightness-110 hover:shadow-xs transition-all cursor-pointer ${plc.badgeBg} group`}
+                            >
+                              <span>{plc.label}</span>
+                              <ExternalLink className="w-2.5 h-2.5 opacity-75 group-hover:opacity-100 group-hover:translate-x-0.5 transition-transform" />
+                            </a>
+                          );
+                        }
+
+                        return (
+                          <span
+                            key={idx}
+                            className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium text-white flex items-center gap-1 ${
+                              isFailed ? 'bg-accent-terracotta' : plc.badgeBg
+                            }`}
+                          >
+                            <span>{plc.label}</span>
+                            {isFailed && (
+                              <span className="text-[8px] bg-white/20 px-1 rounded uppercase font-bold">
+                                Error
+                              </span>
+                            )}
+                          </span>
+                        );
+                      })}
+
+                      {batch.websiteUrl && (
+                        <a
+                          href={batch.websiteUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          title="เปิดหน้าเว็บจริงของโครงการ"
+                          className="px-2 py-0.5 rounded text-[10px] font-mono font-medium text-ink-primary bg-paper-subtle border border-border-rule hover:border-brand-indigo flex items-center gap-1 transition-colors cursor-pointer"
                         >
-                          <span>{plc.label}</span>
-                          {plc.status === 'FAILED' && (
-                            <span className="text-[8px] bg-white/20 px-1 rounded uppercase font-bold">
-                              Error
-                            </span>
-                          )}
-                        </span>
-                      ))}
+                          <span>🌐 เว็บไซต์โครงการ</span>
+                          <ExternalLink className="w-2.5 h-2.5 text-brand-indigo" />
+                        </a>
+                      )}
                     </div>
                   </div>
                 ))
@@ -935,6 +1112,135 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ========================================================================= */}
+      {/* LIVE POSTS & WEB DIRECTORY MODAL                                          */}
+      {/* ========================================================================= */}
+      {selectedLiveBatch && (
+        <div className="fixed inset-0 z-50 bg-ink-primary/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-paper-raised border border-border-rule rounded-card max-w-lg w-full p-6 shadow-xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-border-rule">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center">
+                  <ExternalLink className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-medium text-base text-ink-primary">
+                    เปิดดูโพสต์จริงบนเว็บ (Live Social Links)
+                  </h3>
+                  <span className="text-[10px] font-mono text-ink-secondary block">
+                    {selectedLiveBatch.title} • {selectedLiveBatch.workspaceName}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedLiveBatch(null)}
+                className="p-1 rounded text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {copiedLinkNotice && (
+              <div className="p-2 bg-semantic-success/10 border border-semantic-success/30 text-semantic-success rounded-editorial text-xs font-mono flex items-center gap-1.5 animate-in fade-in">
+                <Check className="w-3.5 h-3.5" />
+                <span>{copiedLinkNotice}</span>
+              </div>
+            )}
+
+            <div className="space-y-2.5 text-xs">
+              <span className="text-[10px] font-mono uppercase text-ink-secondary block font-semibold">
+                ช่องทางโซเชียลที่เผยแพร่แล้ว (Published Destinations):
+              </span>
+
+              {selectedLiveBatch.placements.filter((p) => p.liveUrl).map((plc, idx) => (
+                <div
+                  key={idx}
+                  className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between gap-3 hover:border-brand-indigo transition-colors"
+                >
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold text-white shrink-0 ${plc.badgeBg}`}>
+                      {plc.platform}
+                    </span>
+                    <div className="truncate">
+                      <p className="font-medium text-ink-primary text-xs truncate">
+                        {plc.label}
+                      </p>
+                      <span className="font-mono text-[10px] text-ink-secondary truncate block">
+                        {plc.liveUrl}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleCopyLink(plc.liveUrl!, plc.label)}
+                      className="p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle rounded border border-border-rule transition-colors cursor-pointer"
+                      title="คัดลอกลิงก์"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
+                    <a
+                      href={plc.liveUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded text-xs font-mono font-medium transition-colors cursor-pointer shadow-2xs"
+                    >
+                      <span>เปิดดูโพสต์</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              ))}
+
+              {/* Website Project Landing Page */}
+              {selectedLiveBatch.websiteUrl && (
+                <div className="mt-3 p-3 bg-brand-indigo/5 border border-brand-indigo/20 rounded-editorial flex items-center justify-between gap-3">
+                  <div className="min-w-0">
+                    <span className="text-[10px] font-mono uppercase text-brand-indigo font-bold block">
+                      🌐 เว็บไซต์โครงการ / Landing Page:
+                    </span>
+                    <p className="font-mono text-xs text-ink-primary truncate font-semibold mt-0.5">
+                      {selectedLiveBatch.websiteUrl}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => handleCopyLink(selectedLiveBatch.websiteUrl!, 'Landing Webpage')}
+                      className="p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-paper-canvas rounded border border-border-rule transition-colors cursor-pointer"
+                      title="คัดลอกลิงก์"
+                    >
+                      <Copy className="w-3.5 h-3.5" />
+                    </button>
+                    <a
+                      href={selectedLiveBatch.websiteUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-brand-indigo border border-brand-indigo/30 rounded text-xs font-mono font-semibold transition-colors cursor-pointer shadow-2xs"
+                    >
+                      <span>เปิดดูเว็บ</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="pt-2 flex items-center justify-end border-t border-border-rule">
+              <button
+                type="button"
+                onClick={() => setSelectedLiveBatch(null)}
+                className="px-3 py-1.5 text-ink-secondary hover:text-ink-primary text-xs font-mono cursor-pointer"
+              >
+                ปิด
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }
