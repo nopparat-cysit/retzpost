@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   UploadCloud, 
@@ -878,12 +878,37 @@ export default function CreatePostPage() {
   // Active Custom Presets for this Workspace
   const activePresets = customPresetsMap[activeWorkspaceId] || [];
 
+  // Listen to Global Workspace changes from AppShell Sidebar
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('retzpost_active_workspace_id');
+      if (saved && WORKSPACES_DATA.some(w => w.id === saved)) {
+        handleSwitchWorkspace(saved, false);
+      }
+      const handleWorkspaceSync = (e: Event) => {
+        const customEvent = e as CustomEvent<string>;
+        if (customEvent.detail && WORKSPACES_DATA.some(w => w.id === customEvent.detail)) {
+          handleSwitchWorkspace(customEvent.detail, false);
+        }
+      };
+      window.addEventListener('retzpost:workspace-change', handleWorkspaceSync);
+      return () => {
+        window.removeEventListener('retzpost:workspace-change', handleWorkspaceSync);
+      };
+    }
+  }, []);
+
   // Switch Workspace Handler
-  const handleSwitchWorkspace = (workspaceId: string) => {
+  const handleSwitchWorkspace = (workspaceId: string, broadcast = true) => {
     setActiveWorkspaceId(workspaceId);
     setIsWorkspaceMenuOpen(false);
     setSearchQuery('');
     setSelectedGroupFilter('ALL');
+
+    if (broadcast && typeof window !== 'undefined') {
+      localStorage.setItem('retzpost_active_workspace_id', workspaceId);
+      window.dispatchEvent(new CustomEvent('retzpost:workspace-change', { detail: workspaceId }));
+    }
 
     // Automatically load default preset or first preset of that workspace
     const presets = customPresetsMap[workspaceId] || [];
@@ -1069,54 +1094,52 @@ export default function CreatePostPage() {
         title="Universal Content Studio"
         subtitle="Publish seamlessly across multiple projects. 1-click presets adapt instantly to your project's channels."
         actions={
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-mono text-brand-indigo font-semibold px-2.5 py-1 bg-brand-indigo/10 rounded-editorial border border-brand-indigo/20">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Identity & Role Tester */}
+            <div className="flex items-center gap-2 px-2.5 py-1 bg-paper-raised border border-border-rule rounded-editorial text-xs shadow-2xs">
+              <div className="w-5 h-5 rounded-full bg-semantic-info/15 text-semantic-info flex items-center justify-center font-bold text-[9px] shrink-0 border border-semantic-info/30">
+                NC
+              </div>
+              <span className="text-ink-secondary text-[11px] font-sans">
+                บทบาท:
+              </span>
+              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
+                currentRole === 'CONTRIBUTOR'
+                  ? 'bg-accent-terracotta text-white'
+                  : currentRole === 'VIEWER'
+                  ? 'bg-paper-subtle text-ink-secondary border border-border-rule'
+                  : 'bg-semantic-info text-white'
+              }`}>
+                {currentRole === 'OWNER' ? '👑 Owner' : currentRole === 'MANAGER' ? '⭐ Manager' : currentRole === 'EDITOR' ? '✍️ Editor' : currentRole === 'CONTRIBUTOR' ? '👀 Contributor' : '🔍 Viewer'}
+              </span>
+
+              <select
+                value={currentRole}
+                onChange={(e) => setCurrentRole(e.target.value as WorkspaceRole)}
+                className="px-1.5 py-0.5 bg-paper-canvas border border-border-rule rounded text-[10px] font-mono text-ink-primary focus:outline-none focus:border-brand-indigo cursor-pointer"
+                title="ทดสอบสิทธิ์ผู้ใช้งาน"
+              >
+                <option value="MANAGER">⭐ Manager (ยิงสด)</option>
+                <option value="EDITOR">✍️ Editor (ยิงสด)</option>
+                <option value="CONTRIBUTOR">👀 Contributor (รออนุมัติ)</option>
+                <option value="VIEWER">🔍 Viewer (อ่านอย่างเดียว)</option>
+              </select>
+
+              <Link
+                href="/settings/team"
+                className="text-[10px] font-mono text-brand-indigo hover:underline font-semibold ml-0.5"
+                title="จัดการสิทธิ์ทีม"
+              >
+                ทีม →
+              </Link>
+            </div>
+
+            <span className="text-xs font-mono text-brand-indigo font-semibold px-2.5 py-1.5 bg-brand-indigo/10 rounded-editorial border border-brand-indigo/20">
               {totalActivePlacements} Active Placements
             </span>
           </div>
         }
       />
-
-      {/* TEAM ROLE BANNER (Mirroring Boss's Session Identity) */}
-      <div className="p-2.5 bg-paper-raised border border-border-rule rounded-editorial flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs shadow-2xs">
-        <div className="flex items-center gap-2.5">
-          <div className="w-6 h-6 rounded-full bg-semantic-info/15 text-semantic-info flex items-center justify-center font-bold text-[10px] shrink-0 border border-semantic-info/30">
-            NC
-          </div>
-          <span className="text-ink-primary font-medium">
-            ทำงานในทีม <strong className="text-brand-indigo">{activeWorkspace.name}</strong> ในบทบาท:{' '}
-            <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
-              currentRole === 'CONTRIBUTOR'
-                ? 'bg-accent-terracotta text-white'
-                : currentRole === 'VIEWER'
-                ? 'bg-paper-subtle text-ink-secondary border border-border-rule'
-                : 'bg-semantic-info text-white'
-            }`}>
-              {currentRole === 'OWNER' ? '👑 Owner' : currentRole === 'MANAGER' ? '⭐ Manager' : currentRole === 'EDITOR' ? '✍️ Editor' : currentRole === 'CONTRIBUTOR' ? '👀 Contributor' : '🔍 Viewer'}
-            </span>
-          </span>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[10px] font-mono text-ink-secondary">ทดสอบสิทธิ์:</span>
-          <select
-            value={currentRole}
-            onChange={(e) => setCurrentRole(e.target.value as WorkspaceRole)}
-            className="px-2 py-0.5 bg-paper-canvas border border-border-rule rounded text-[11px] font-mono text-ink-primary focus:outline-none focus:border-brand-indigo cursor-pointer"
-          >
-            <option value="MANAGER">⭐ Manager (ผู้จัดการ - ยิงสดได้ทันที)</option>
-            <option value="EDITOR">✍️ Editor (ครีเอเตอร์ - ยิงสดได้ทันที)</option>
-            <option value="CONTRIBUTOR">👀 Contributor (รออนุมัติ - Approval Flow)</option>
-            <option value="VIEWER">🔍 Viewer (ผู้ตรวจงาน - อ่านอย่างเดียว)</option>
-          </select>
-          <Link
-            href="/settings/team"
-            className="text-[11px] font-mono text-brand-indigo hover:underline flex items-center gap-1 font-semibold ml-1"
-          >
-            <span>จัดการทีม →</span>
-          </Link>
-        </div>
-      </div>
 
       {/* APPROVAL SUBMITTED TOAST NOTIFICATION */}
       {submittedForApprovalNotice && (
@@ -1179,76 +1202,69 @@ export default function CreatePostPage() {
             mobileTab !== 'DESTINATIONS' ? 'hidden xl:block' : 'block'
           }`}
         >
-          {/* Top Bar: Workspace Project Selector + Clear All */}
-          <div className="space-y-2 pb-2.5 border-b border-border-rule">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold">
-                Active Project Workspace:
+          {/* Column 1 Clean Header: Target Channels + Project Pill Badge + Clear */}
+          <div className="flex items-center justify-between pb-2.5 border-b border-border-rule">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="text-xs font-bold font-sans text-ink-primary shrink-0">
+                🎯 Target Channels
               </span>
-              <button
-                type="button"
-                onClick={() => applyUniversalPreset('CLEAR')}
-                className="text-[10px] font-mono text-accent-terracotta hover:underline font-semibold flex items-center gap-1"
-                title="Deselect all channels"
-              >
-                <RotateCcw className="w-2.5 h-2.5" />
-                <span>Clear All (0)</span>
-              </button>
-            </div>
 
-            {/* In-Studio Workspace Dropdown */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => setIsWorkspaceMenuOpen(!isWorkspaceMenuOpen)}
-                className="w-full p-2 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between text-xs hover:border-brand-indigo/60 transition-colors shadow-2xs group text-left"
-              >
-                <div className="flex items-center gap-2 truncate">
-                  <div className={`w-2.5 h-2.5 rounded-full ${activeWorkspace.badgeColor} shrink-0`} />
-                  <div className="truncate">
-                    <p className="font-semibold text-xs text-ink-primary leading-tight truncate">
-                      {activeWorkspace.name}
-                    </p>
-                    <p className="text-[9px] font-mono text-ink-secondary leading-none mt-0.5 truncate">
-                      {activeWorkspace.category} • {workspaceChannels.length} channels
-                    </p>
-                  </div>
-                </div>
-                <ChevronDown className="w-3.5 h-3.5 text-ink-secondary group-hover:text-ink-primary shrink-0 transition-colors" />
-              </button>
+              {/* Compact Project Switcher Pill */}
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setIsWorkspaceMenuOpen(!isWorkspaceMenuOpen)}
+                  className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-brand-indigo/10 hover:bg-brand-indigo/15 text-brand-indigo border border-brand-indigo/20 transition-colors cursor-pointer truncate max-w-[170px]"
+                  title="คลิกเพื่อสลับโปรเจกต์"
+                >
+                  <span className={`w-1.5 h-1.5 rounded-full ${activeWorkspace.badgeColor} shrink-0`} />
+                  <span className="truncate">{activeWorkspace.name}</span>
+                  <ChevronDown className="w-2.5 h-2.5 opacity-60 shrink-0" />
+                </button>
 
-              {/* Dropdown Options */}
-              {isWorkspaceMenuOpen && (
-                <div className="absolute left-0 right-0 top-full mt-1 bg-paper-raised border border-border-strong rounded-editorial shadow-lg p-1.5 z-40 space-y-1">
-                  <div className="px-2 py-0.5 text-[9px] font-mono uppercase text-ink-secondary font-bold">
-                    Switch Active Project:
-                  </div>
-                  {WORKSPACES_DATA.map(ws => (
-                    <button
-                      key={ws.id}
-                      type="button"
-                      onClick={() => handleSwitchWorkspace(ws.id)}
-                      className={`w-full flex items-center justify-between p-2 rounded text-left transition-colors text-xs ${
-                        ws.id === activeWorkspaceId
-                          ? 'bg-paper-canvas text-brand-indigo font-semibold shadow-2xs border border-border-rule'
-                          : 'hover:bg-paper-subtle text-ink-primary'
-                      }`}
-                    >
-                      <div className="flex items-center gap-2 truncate">
-                        <div className={`w-2 h-2 rounded-full ${ws.badgeColor} shrink-0`} />
-                        <div className="truncate">
-                          <p className="leading-tight truncate">{ws.name}</p>
-                          <p className="text-[9px] font-mono text-ink-secondary">{ws.category}</p>
+                {/* Compact Popover if user clicks the pill */}
+                {isWorkspaceMenuOpen && (
+                  <div className="absolute left-0 top-full mt-1.5 w-60 bg-paper-raised border border-border-strong rounded-editorial shadow-lg p-1.5 z-40 space-y-1">
+                    <div className="px-2 py-0.5 text-[9px] font-mono uppercase text-ink-secondary font-bold">
+                      Switch Project:
+                    </div>
+                    {WORKSPACES_DATA.map((ws) => (
+                      <button
+                        key={ws.id}
+                        type="button"
+                        onClick={() => handleSwitchWorkspace(ws.id)}
+                        className={`w-full flex items-center justify-between p-1.5 rounded text-left transition-colors text-xs ${
+                          ws.id === activeWorkspaceId
+                            ? 'bg-paper-canvas text-brand-indigo font-semibold shadow-2xs border border-border-rule'
+                            : 'hover:bg-paper-subtle text-ink-primary'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 truncate">
+                          <div className={`w-2 h-2 rounded-full ${ws.badgeColor} shrink-0`} />
+                          <div className="truncate">
+                            <p className="leading-tight truncate text-[11px]">{ws.name}</p>
+                            <p className="text-[9px] font-mono text-ink-secondary">{ws.category}</p>
+                          </div>
                         </div>
-                      </div>
-                      {ws.id === activeWorkspaceId && (
-                        <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
+                        {ws.id === activeWorkspaceId && (
+                          <Check className="w-3 h-3 text-brand-indigo shrink-0" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
+
+            <button
+              type="button"
+              onClick={() => applyUniversalPreset('CLEAR')}
+              className="text-[10px] font-mono text-ink-secondary hover:text-accent-terracotta hover:underline font-semibold flex items-center gap-1 cursor-pointer shrink-0"
+              title="Deselect all channels"
+            >
+              <RotateCcw className="w-2.5 h-2.5 text-accent-terracotta" />
+              <span>Clear</span>
+            </button>
           </div>
 
           {/* PROJECT-SCOPED PRESETS & RECIPES BAR */}
@@ -1314,7 +1330,7 @@ export default function CreatePostPage() {
             {activePresets.length > 0 && (
               <div className="space-y-1 pt-1 border-t border-border-rule/60">
                 <span className="text-[8px] font-mono text-ink-secondary uppercase block font-semibold">
-                  Saved for {activeWorkspace.name}:
+                  Custom Recipes:
                 </span>
                 <div className="flex flex-wrap gap-1">
                   {activePresets.map((recipe) => (
@@ -2184,7 +2200,7 @@ export default function CreatePostPage() {
           <div className="p-2.5 bg-paper-subtle rounded-editorial border border-border-rule text-xs space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-[9px] font-mono text-ink-secondary uppercase block font-semibold">
-                Destinations in {activeWorkspace.name} ({totalActivePlacements})
+                Active Destinations ({totalActivePlacements})
               </span>
             </div>
 

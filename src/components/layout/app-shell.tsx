@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -46,6 +46,34 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeWorkspaceId, setActiveWorkspaceId] = useState('ws_acme');
   const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const saved = localStorage.getItem('retzpost_active_workspace_id');
+      if (saved && WORKSPACES.some((w) => w.id === saved)) {
+        setActiveWorkspaceId(saved);
+      }
+      const handleSync = (e: Event) => {
+        const custom = e as CustomEvent<string>;
+        if (custom.detail && WORKSPACES.some((w) => w.id === custom.detail)) {
+          setActiveWorkspaceId(custom.detail);
+        }
+      };
+      window.addEventListener('retzpost:workspace-change', handleSync);
+      return () => {
+        window.removeEventListener('retzpost:workspace-change', handleSync);
+      };
+    }
+  }, []);
+
+  const handleSelectWorkspace = (id: string) => {
+    setActiveWorkspaceId(id);
+    setIsWorkspaceDropdownOpen(false);
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('retzpost_active_workspace_id', id);
+      window.dispatchEvent(new CustomEvent('retzpost:workspace-change', { detail: id }));
+    }
+  };
 
   const activeWorkspace = WORKSPACES.find(w => w.id === activeWorkspaceId) || WORKSPACES[0];
 
@@ -173,10 +201,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                     <button
                       key={ws.id}
                       type="button"
-                      onClick={() => {
-                        setActiveWorkspaceId(ws.id);
-                        setIsWorkspaceDropdownOpen(false);
-                      }}
+                      onClick={() => handleSelectWorkspace(ws.id)}
                       className={`w-full flex items-center justify-between p-2 rounded text-left transition-colors text-xs ${
                         ws.id === activeWorkspaceId
                           ? 'bg-paper-canvas text-brand-indigo font-semibold shadow-2xs border border-border-rule'
