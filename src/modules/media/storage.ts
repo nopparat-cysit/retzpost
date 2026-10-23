@@ -6,7 +6,6 @@ import {
   HeadObjectCommand 
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import crypto from 'crypto';
 
 // Supported MIME types for social video distribution
 export const ALLOWED_VIDEO_MIME_TYPES = [
@@ -15,10 +14,25 @@ export const ALLOWED_VIDEO_MIME_TYPES = [
   'video/webm',
 ] as const;
 
-export type AllowedVideoMimeType = (typeof ALLOWED_VIDEO_MIME_TYPES)[number];
+// Supported MIME types for images (Feed posts, Carousels, Stories)
+export const ALLOWED_IMAGE_MIME_TYPES = [
+  'image/jpeg',
+  'image/png',
+  'image/webp',
+] as const;
 
-// Default max upload size: 2 GB (configurable via env)
+export const ALLOWED_MEDIA_MIME_TYPES = [
+  ...ALLOWED_VIDEO_MIME_TYPES,
+  ...ALLOWED_IMAGE_MIME_TYPES,
+] as const;
+
+export type AllowedVideoMimeType = (typeof ALLOWED_VIDEO_MIME_TYPES)[number];
+export type AllowedImageMimeType = (typeof ALLOWED_IMAGE_MIME_TYPES)[number];
+export type AllowedMediaMimeType = (typeof ALLOWED_MEDIA_MIME_TYPES)[number];
+
+// Size constraints
 export const MAX_VIDEO_SIZE_BYTES = 2 * 1024 * 1024 * 1024; // 2 GB
+export const MAX_IMAGE_SIZE_BYTES = 25 * 1024 * 1024;        // 25 MB per photo
 
 export interface PresignedUploadResult {
   assetId: string;
@@ -33,7 +47,7 @@ export class StorageService {
 
   constructor() {
     this.bucket = process.env.STORAGE_BUCKET || 'retzpost-assets';
-    const endpoint = process.env.STORAGE_ENDPOINT; // e.g. "http://localhost:9000" for MinIO or R2 endpoint
+    const endpoint = process.env.STORAGE_ENDPOINT;
     const region = process.env.STORAGE_REGION || 'auto';
     const accessKeyId = process.env.STORAGE_ACCESS_KEY || 'minioadmin';
     const secretAccessKey = process.env.STORAGE_SECRET_KEY || 'minioadminpassword';
@@ -41,7 +55,7 @@ export class StorageService {
     this.client = new S3Client({
       region,
       endpoint: endpoint || undefined,
-      forcePathStyle: Boolean(endpoint && endpoint.includes('localhost')), // MinIO requires path-style access
+      forcePathStyle: Boolean(endpoint && endpoint.includes('localhost')),
       credentials: {
         accessKeyId,
         secretAccessKey,
@@ -49,16 +63,22 @@ export class StorageService {
     });
   }
 
-  /**
-   * Validates if the given MIME type is permitted for video publishing.
-   */
   public isAllowedVideoMime(mime: string): mime is AllowedVideoMimeType {
     return ALLOWED_VIDEO_MIME_TYPES.includes(mime as AllowedVideoMimeType);
   }
 
-  /**
-   * Extracts safe file extension from MIME or filename.
-   */
+  public isAllowedImageMime(mime: string): mime is AllowedImageMimeType {
+    return ALLOWED_IMAGE_MIME_TYPES.includes(mime as AllowedImageMimeType);
+  }
+
+  public isAllowedMediaMime(mime: string): mime is AllowedMediaMimeType {
+    return ALLOWED_MEDIA_MIME_TYPES.includes(mime as AllowedMediaMimeType);
+  }
+
+  public getMediaType(mime: string): 'VIDEO' | 'IMAGE' {
+    return this.isAllowedImageMime(mime) ? 'IMAGE' : 'VIDEO';
+  }
+
   public getExtension(filename: string, mime: string): string {
     const extFromMime: Record<string, string> = {
       'video/mp4': 'mp4',
@@ -74,43 +94,35 @@ export class StorageService {
     }
 
     const match = filename.match(/\.([a-zA-Z0-9]+)$/);
-    return match ? match[1].toLowerCase() : 'mp4';
+    return match ? match[1].toLowerCase() : 'bin';
   }
 
-  /**
-   * Generates a multi-tenant isolated storage key.
-   * Path: workspaces/{workspaceId}/assets/{assetId}/source.{ext}
-   */
   public generateAssetStorageKey(workspaceId: string, assetId: string, extension: string): string {
     return `workspaces/${workspaceId}/assets/${assetId}/source.${extension}`;
   }
 
-  /**
-   * Generates a storage key for poster / thumbnail images.
-   */
   public generatePosterStorageKey(workspaceId: string, assetId: string, extension: string = 'jpg'): string {
     return `workspaces/${workspaceId}/assets/${assetId}/poster.${extension}`;
   }
 
-  /**
-   * Creates a Presigned PUT URL allowing the browser to upload directly to object storage.
-   */
   public async createPresignedUploadUrl(
     workspaceId: string,
     assetId: string,
     filename: string,
     mimeType: string,
     sizeBytes: number,
-    expiresInSeconds: number = 1800 // 30 minutes
+    expiresInSeconds: number = 1800
   ): Promise<PresignedUploadResult> {
-    if (!this.isAllowedVideoMime(mimeType)) {
-      throw new Error(`Unsupported MIME type: '${mimeType}'. Allowed formats: MP4, MOV, WebM.`);
+    if (!this.isAllowedMediaMime(mimeType)) {
+      throw new Error(`Unsupported media format: '${mimeType}'. Supported formats: MP4, MOV, WebM, JPEG, PNG, WebP.`);
     }
 
-    if (sizeBytes > MAX_VIDEO_SIZE_BYTES) {
-      throw new Error(
-        `File size exceeds maximum limit of ${(MAX_VIDEO_SIZE_BYTES / (1024 * 1024 * 1024)).toFixed(1)} GB.`
-      );
+    const isImage = this.isAllowedImageMime(mimeType);
+    const maxLimit = isImage ? MAX_IMAGE_SIZE_BYTES : MAX_VIDEO_SIZE_BYTES;
+
+    if (sizeBytes > maxLimit) {
+      const limitMb = Math.round(maxLimit / (1024 * 1024));
+      throw new Error(`File size exceeds maximum limit of ${limitMb} MB for ${isImage ? 'images' : 'videos'}.`);
     }
 
     const ext = this.getExtension(filename, mimeType);
@@ -124,6 +136,7 @@ export class StorageService {
       Metadata: {
         workspaceId,
         assetId,
+        mediaType: isImage ? 'IMAGE' : 'VIDEO',
         originalFilename: encodeURIComponent(filename),
       },
     });
@@ -140,9 +153,6 @@ export class StorageService {
     };
   }
 
-  /**
-   * Creates a Presigned GET URL for secure video preview or download without making the bucket public.
-   */
   public async getPresignedDownloadUrl(storageKey: string, expiresInSeconds: number = 3600): Promise<string> {
     const command = new GetObjectCommand({
       Bucket: this.bucket,
@@ -154,9 +164,6 @@ export class StorageService {
     });
   }
 
-  /**
-   * Verifies that the uploaded object exists and retrieves its actual size.
-   */
   public async getObjectMetadata(storageKey: string): Promise<{ sizeBytes: number; contentType?: string }> {
     const command = new HeadObjectCommand({
       Bucket: this.bucket,
@@ -170,9 +177,6 @@ export class StorageService {
     };
   }
 
-  /**
-   * Uploads a Buffer directly to object storage (e.g. for generated thumbnails/posters).
-   */
   public async uploadBuffer(storageKey: string, buffer: Buffer, mimeType: string): Promise<void> {
     const command = new PutObjectCommand({
       Bucket: this.bucket,
@@ -184,9 +188,6 @@ export class StorageService {
     await this.client.send(command);
   }
 
-  /**
-   * Deletes an object from storage.
-   */
   public async deleteObject(storageKey: string): Promise<void> {
     const command = new DeleteObjectCommand({
       Bucket: this.bucket,
@@ -197,5 +198,4 @@ export class StorageService {
   }
 }
 
-// Singleton storage service instance
 export const storageService = new StorageService();

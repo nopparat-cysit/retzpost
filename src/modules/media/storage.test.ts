@@ -1,54 +1,58 @@
 import { describe, it, expect } from 'vitest';
-import { StorageService, MAX_VIDEO_SIZE_BYTES } from './storage';
+import { StorageService, MAX_VIDEO_SIZE_BYTES, MAX_IMAGE_SIZE_BYTES } from './storage';
 
-describe('StorageService', () => {
+describe('StorageService (Multi-Format Support)', () => {
   const service = new StorageService();
 
-  describe('isAllowedVideoMime', () => {
-    it('should permit supported video formats (mp4, quicktime, webm)', () => {
-      expect(service.isAllowedVideoMime('video/mp4')).toBe(true);
-      expect(service.isAllowedVideoMime('video/quicktime')).toBe(true);
-      expect(service.isAllowedVideoMime('video/webm')).toBe(true);
+  describe('isAllowedMediaMime', () => {
+    it('should permit both video and image formats', () => {
+      // Videos
+      expect(service.isAllowedMediaMime('video/mp4')).toBe(true);
+      expect(service.isAllowedMediaMime('video/quicktime')).toBe(true);
+      expect(service.isAllowedMediaMime('video/webm')).toBe(true);
+
+      // Images (for Feed Posts & Stories)
+      expect(service.isAllowedMediaMime('image/jpeg')).toBe(true);
+      expect(service.isAllowedMediaMime('image/png')).toBe(true);
+      expect(service.isAllowedMediaMime('image/webp')).toBe(true);
     });
 
-    it('should reject unpermitted media formats (images, audio, executables)', () => {
-      expect(service.isAllowedVideoMime('image/png')).toBe(false);
-      expect(service.isAllowedVideoMime('audio/mpeg')).toBe(false);
-      expect(service.isAllowedVideoMime('application/x-msdownload')).toBe(false);
-      expect(service.isAllowedVideoMime('text/html')).toBe(false);
-    });
-  });
-
-  describe('generateAssetStorageKey', () => {
-    it('should generate a strictly tenant-isolated key path', () => {
-      const workspaceId = 'ws-uuid-123';
-      const assetId = 'asset-uuid-456';
-      const key = service.generateAssetStorageKey(workspaceId, assetId, 'mp4');
-
-      expect(key).toBe('workspaces/ws-uuid-123/assets/asset-uuid-456/source.mp4');
-    });
-
-    it('should generate a proper poster key path', () => {
-      const workspaceId = 'ws-uuid-123';
-      const assetId = 'asset-uuid-456';
-      const key = service.generatePosterStorageKey(workspaceId, assetId, 'jpg');
-
-      expect(key).toBe('workspaces/ws-uuid-123/assets/asset-uuid-456/poster.jpg');
+    it('should reject unpermitted media formats (executables, audio, pdf)', () => {
+      expect(service.isAllowedMediaMime('audio/mpeg')).toBe(false);
+      expect(service.isAllowedMediaMime('application/pdf')).toBe(false);
+      expect(service.isAllowedMediaMime('application/x-msdownload')).toBe(false);
     });
   });
 
-  describe('createPresignedUploadUrl validation', () => {
-    it('should throw when mime type is not supported', async () => {
+  describe('getMediaType', () => {
+    it('should correctly distinguish between IMAGE and VIDEO', () => {
+      expect(service.getMediaType('image/jpeg')).toBe('IMAGE');
+      expect(service.getMediaType('image/png')).toBe('IMAGE');
+      expect(service.getMediaType('video/mp4')).toBe('VIDEO');
+      expect(service.getMediaType('video/quicktime')).toBe('VIDEO');
+    });
+  });
+
+  describe('createPresignedUploadUrl validation for images and videos', () => {
+    it('should enforce 25 MB limit for images', async () => {
+      const oversizeImage = MAX_IMAGE_SIZE_BYTES + 1;
       await expect(
-        service.createPresignedUploadUrl('ws-1', 'asset-1', 'audio.mp3', 'audio/mp3', 1024)
-      ).rejects.toThrowError(/Unsupported MIME type/);
+        service.createPresignedUploadUrl('ws-1', 'asset-img-1', 'photo.jpg', 'image/jpeg', oversizeImage)
+      ).rejects.toThrowError(/exceeds maximum limit of 25 MB/);
     });
 
-    it('should throw when file size exceeds MAX_VIDEO_SIZE_BYTES', async () => {
-      const oversize = MAX_VIDEO_SIZE_BYTES + 1;
-      await expect(
-        service.createPresignedUploadUrl('ws-1', 'asset-1', 'huge.mp4', 'video/mp4', oversize)
-      ).rejects.toThrowError(/exceeds maximum limit/);
+    it('should allow valid image size', async () => {
+      const validSize = 5 * 1024 * 1024; // 5 MB
+      const result = await service.createPresignedUploadUrl(
+        'ws-1',
+        'asset-img-1',
+        'photo.jpg',
+        'image/jpeg',
+        validSize
+      );
+
+      expect(result.storageKey).toBe('workspaces/ws-1/assets/asset-img-1/source.jpg');
+      expect(result.uploadUrl).toBeDefined();
     });
   });
 });

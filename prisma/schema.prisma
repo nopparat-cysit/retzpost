@@ -21,6 +21,19 @@ enum Role {
 enum Platform {
   YOUTUBE
   TIKTOK
+  INSTAGRAM
+  FACEBOOK
+}
+
+enum PostFormat {
+  FEED_POST      // โพสต์ปกติลงฟีด (รูปเดี่ยว / หลายรูป / ข้อความ)
+  STORY          // สตอรี่ 24 ชั่วโมง (รูป/วิดีโอแนวตั้ง 9:16)
+  VIDEO_REEL     // วิดีโอยาว หรือคลิปสั้น Reels / Shorts / TikTok
+}
+
+enum MediaType {
+  VIDEO
+  IMAGE
 }
 
 enum ConnectionStatus {
@@ -173,12 +186,12 @@ model PlatformAccount {
   workspaceId          String           @map("workspace_id") @db.Uuid
   connectionId         String           @map("connection_id") @db.Uuid
   platform             Platform
-  providerAccountId    String           @map("provider_account_id") // YouTube Channel ID or TikTok OpenID
+  providerAccountId    String           @map("provider_account_id") // YouTube Channel ID, TikTok OpenID, IG User ID, FB Page ID
   handle               String
   displayName          String           @map("display_name")
   avatarUrl            String?          @map("avatar_url")
   
-  // Dynamic capabilities cache (e.g., creator_info from TikTok or YouTube upload permissions)
+  // Dynamic capabilities cache (supported formats, limits, permissions)
   capabilitiesCache    Json?            @map("capabilities_cache")
   capabilitiesFetchedAt DateTime?       @map("capabilities_fetched_at") @db.Timestamptz
   isActive             Boolean          @default(true) @map("is_active")
@@ -197,12 +210,13 @@ model PlatformAccount {
 }
 
 // -------------------------------------------------------------
-// MEDIA & CONTENT DRAFTS
+// MEDIA & MULTI-FORMAT CONTENT DRAFTS
 // -------------------------------------------------------------
 
 model MediaAsset {
   id                String       @id @default(uuid()) @db.Uuid
   workspaceId       String       @map("workspace_id") @db.Uuid
+  mediaType         MediaType    @default(VIDEO) @map("media_type")
   storageKey        String       @unique @map("storage_key")
   posterStorageKey  String?      @map("poster_storage_key")
   originalFilename  String       @map("original_filename")
@@ -210,11 +224,11 @@ model MediaAsset {
   sizeBytes         BigInt       @map("size_bytes")
   sha256Checksum    String?      @map("sha256_checksum")
   
-  // Probed metadata via ffprobe
+  // Probed metadata (for video or image)
   durationSec       Decimal?     @map("duration_sec") @db.Decimal(10, 3)
   width             Int?
   height            Int?
-  aspectRatio       String?      @map("aspect_ratio") // "9:16", "16:9", "1:1"
+  aspectRatio       String?      @map("aspect_ratio") // "9:16", "16:9", "1:1", "4:5"
   videoCodec        String?      @map("video_codec")
   audioCodec        String?      @map("audio_codec")
   
@@ -223,35 +237,52 @@ model MediaAsset {
   createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
   updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz
 
-  workspace         Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  workspace         Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
   contents          Content[]
+  contentMediaItems ContentMediaItem[]
 
   @@index([workspaceId, status])
   @@map("media_assets")
 }
 
 model Content {
-  id                 String           @id @default(uuid()) @db.Uuid
-  workspaceId        String           @map("workspace_id") @db.Uuid
-  primaryAssetId     String?          @map("primary_asset_id") @db.Uuid
-  workingTitle       String           @default("Untitled Story") @map("working_title")
-  sharedCaption      String?          @map("shared_caption")
-  sharedDescription  String?          @map("shared_description")
-  sharedTags         Json             @default("[]") @map("shared_tags") // string[]
+  id                 String             @id @default(uuid()) @db.Uuid
+  workspaceId        String             @map("workspace_id") @db.Uuid
+  postFormat         PostFormat         @default(FEED_POST) @map("post_format")
+  primaryAssetId     String?            @map("primary_asset_id") @db.Uuid
+  workingTitle       String             @default("Untitled Story") @map("working_title")
+  sharedCaption      String?            @map("shared_caption")
+  sharedDescription  String?            @map("shared_description")
+  sharedTags         Json               @default("[]") @map("shared_tags") // string[]
   
-  status             ContentStatus    @default(DRAFT)
-  version            Int              @default(1) // Optimistic concurrency lock
-  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz
-  updatedAt          DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+  status             ContentStatus      @default(DRAFT)
+  version            Int                @default(1) // Optimistic concurrency lock
+  createdAt          DateTime           @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime           @updatedAt @map("updated_at") @db.Timestamptz
 
-  workspace          Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
-  primaryAsset       MediaAsset?      @relation(fields: [primaryAssetId], references: [id], onDelete: SetNull)
+  workspace          Workspace          @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  primaryAsset       MediaAsset?        @relation(fields: [primaryAssetId], references: [id], onDelete: SetNull)
+  mediaItems         ContentMediaItem[] // Multi-image / Carousel ordering
   editions           ContentEdition[]
   publishBatches     PublishBatch[]
   publishJobs        PublishJob[]
 
   @@index([workspaceId, status, updatedAt(sort: Desc)])
   @@map("contents")
+}
+
+model ContentMediaItem {
+  id          String     @id @default(uuid()) @db.Uuid
+  contentId   String     @map("content_id") @db.Uuid
+  assetId     String     @map("asset_id") @db.Uuid
+  orderIndex  Int        @default(0) @map("order_index") // 0 = First image, 1 = Second image...
+
+  content     Content    @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  asset       MediaAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, orderIndex])
+  @@index([contentId])
+  @@map("content_media_items")
 }
 
 model ContentEdition {
@@ -261,9 +292,7 @@ model ContentEdition {
   platformAccountId  String          @map("platform_account_id") @db.Uuid
   platform           Platform
   
-  // Tracks which fields diverge from Shared Story (e.g. ["title", "privacyLevel"])
   overriddenFields   Json            @default("[]") @map("overridden_fields")
-  // Platform-specific custom payload (title, privacy, tags, cover timestamp, consent)
   editionPayload     Json            @default("{}") @map("edition_payload")
   isValid            Boolean         @default(true) @map("is_valid")
   validationIssues   Json            @default("[]") @map("validation_issues")
@@ -315,8 +344,9 @@ model PublishJob {
   contentId             String               @map("content_id") @db.Uuid
   platformAccountId     String               @map("platform_account_id") @db.Uuid
   platform              Platform
+  targetFormat          PostFormat           @default(FEED_POST) @map("target_format")
   
-  // Immutable frozen snapshot: asset keys, resolved metadata, creator info snapshot & consent
+  // Immutable frozen snapshot: asset keys, resolved metadata, format, creator info & consent
   frozenPayload         Json                 @map("frozen_payload")
   scheduledForUtc       DateTime?            @map("scheduled_for_utc") @db.Timestamptz
   status                JobStatus            @default(QUEUED)
@@ -352,8 +382,7 @@ model PublishAttempt {
   startedAt            DateTime      @default(now()) @map("started_at") @db.Timestamptz
   finishedAt           DateTime?     @map("finished_at") @db.Timestamptz
   
-  // Remote session/task IDs for resumability & reconciliation
-  remoteSessionUri     String?       @map("remote_session_uri") // YouTube resumable upload URI or TikTok publish_id
+  remoteSessionUri     String?       @map("remote_session_uri")
   bytesUploaded        BigInt        @default(0) @map("bytes_uploaded")
   errorCategory        ErrorCategory? @map("error_category")
   rawProviderCode      String?       @map("raw_provider_code")
@@ -371,7 +400,7 @@ model PlatformPublication {
   jobId              String          @unique @map("job_id") @db.Uuid
   platformAccountId  String          @map("platform_account_id") @db.Uuid
   platform           Platform
-  remotePostId       String          @map("remote_post_id") // YouTube Video ID or TikTok Item ID
+  remotePostId       String          @map("remote_post_id")
   remotePermalink    String          @map("remote_permalink")
   remoteVisibility   String          @default("public") @map("remote_visibility")
   publishedAt        DateTime        @default(now()) @map("published_at") @db.Timestamptz
@@ -392,8 +421,8 @@ model AuditEvent {
   id          String    @id @default(uuid()) @db.Uuid
   workspaceId String    @map("workspace_id") @db.Uuid
   userId      String?   @map("user_id") @db.Uuid
-  action      String    // e.g. "batch.create", "account.connect", "job.retry"
-  resource    String    // e.g. "publish_batch:uuid"
+  action      String
+  resource    String
   details     Json      @default("{}")
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
 

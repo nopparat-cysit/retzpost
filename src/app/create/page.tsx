@@ -10,153 +10,298 @@ import {
   ChevronDown, 
   ChevronUp, 
   Video, 
+  Image as ImageIcon,
+  Layers,
+  Sparkles,
   Share2, 
   Calendar as CalendarIcon, 
   Eye,
   ArrowRight,
   ShieldCheck,
-  RefreshCw
+  RefreshCw,
+  Plus,
+  Trash2
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 
+export type PostFormatType = 'FEED_POST' | 'STORY' | 'VIDEO_REEL';
+
 export default function CreatePostPage() {
-  // Section 01: Media State
-  const [videoFile, setVideoFile] = useState<File | null>(null);
-  const [uploadProgress, setUploadProgress] = useState<number>(100);
-  const [mediaAsset, setMediaAsset] = useState({
+  // Format Switcher State (Core Feature)
+  const [postFormat, setPostFormat] = useState<PostFormatType>('FEED_POST');
+
+  // Media Gallery State (Supports single or multiple images for Carousel or video)
+  const [images, setImages] = useState<Array<{ id: string; name: string; size: string; url?: string }>>([
+    { id: 'img-1', name: 'editorial_hero_cover_01.jpg', size: '3.4 MB' },
+    { id: 'img-2', name: 'diagram_architecture_flow_02.png', size: '2.1 MB' },
+    { id: 'img-3', name: 'studio_workspace_setup_03.jpg', size: '4.8 MB' },
+  ]);
+
+  const [videoAsset, setVideoAsset] = useState({
     filename: 'v2026_creator_workflow_1080_find_cut_master.mp4',
     duration: '00:58',
     aspectRatio: '9:16 Vertical Master',
     resolution: '1080 x 1920 Pixels',
     size: '69.2 MB',
-    isVerified: true,
   });
 
-  // Section 02: Distribution Accounts
+  // Target Channels Selection
   const [selectedChannels, setSelectedChannels] = useState<{
+    instagram: boolean;
+    facebook: boolean;
     youtube: boolean;
     tiktok: boolean;
   }>({
-    youtube: true,
-    tiktok: true,
+    instagram: true,
+    facebook: true,
+    youtube: false,
+    tiktok: false,
   });
 
-  // Section 03: Shared Story
-  const [workingTitle, setWorkingTitle] = useState('The Modern Creator Ledger: How We Produce 83 Dispatches');
+  // Shared Story Fields
+  const [workingTitle, setWorkingTitle] = useState('New Editorial Dispatch: Architecture Breakdown');
   const [sharedCaption, setSharedCaption] = useState(
-    'Stop treating syndication like an afterthought. High-velocity publishing requires the discipline of mechanical broadcast protocols combined with automated distribution logic.\n\nIn this comprehensive workflow breakdown we inspect our end-to-end architecture from initial cut to multi-channel dispatch.'
+    'Architecture over aesthetics. In this issue we break down our modular publishing pipeline designed for multi-format content.\n\nSwipe to explore the system diagrams and full stack schema.'
   );
-  const [sharedTags, setSharedTags] = useState('architecture, workflow, engineering, creator-economy');
-  const [autosaveStatus, setAutosaveStatus] = useState<'SAVED' | 'SAVING'>('SAVED');
+  const [sharedTags, setSharedTags] = useState('architecture, publishing, tech, design-system');
 
-  // Section 04: Platform Editions Accordion
-  const [openAccordion, setOpenAccordion] = useState<'YOUTUBE' | 'TIKTOK' | null>('YOUTUBE');
+  // Platform Overrides Accordion
+  const [openAccordion, setOpenAccordion] = useState<string | null>('INSTAGRAM');
 
-  // YouTube Specific Overrides
-  const [ytCustomized, setYtCustomized] = useState(true);
-  const [ytTitle, setYtTitle] = useState('How We Dispatch 83 Pieces of Content Weekly (Modern OS)');
-  const [ytPrivacy, setYtPrivacy] = useState<'public' | 'unlisted' | 'private'>('public');
-  const [ytMadeForKids, setYtMadeForKids] = useState<boolean>(false);
+  // Instagram Specific Options
+  const [igPlacement, setIgPlacement] = useState<'FEED_CAROUSEL' | 'STORY' | 'REEL'>('FEED_CAROUSEL');
+  const [igStoryLinkUrl, setIgStoryLinkUrl] = useState('');
 
-  // TikTok Specific Overrides
-  const [ttCustomized, setTtCustomized] = useState(false);
-  const [ttCaption, setTtCaption] = useState(
-    'Stop treating multi-posting like an afterthought. The 2026 dispatch architecture is live #creator #workflow #tech'
-  );
-  const [ttPrivacy, setTtPrivacy] = useState<'PUBLIC_TO_EVERYONE' | 'MUTUAL_FOLLOW_FRIENDS' | 'SELF_ONLY'>('PUBLIC_TO_EVERYONE');
-  const [ttAllowComments, setTtAllowComments] = useState(true);
-  const [ttAllowDuet, setTtAllowDuet] = useState(true);
-  const [ttAllowStitch, setTtAllowStitch] = useState(true);
-  const [ttConsentGiven, setTtConsentGiven] = useState(true);
+  // Facebook Specific Options
+  const [fbPostAsAlbum, setFbPostAsAlbum] = useState(true);
 
-  // Section 05: Cadence
-  const [publishMode, setPublishMode] = useState<'NOW' | 'SCHEDULED'>('SCHEDULED');
+  // Cadence
+  const [publishMode, setPublishMode] = useState<'NOW' | 'SCHEDULED'>('NOW');
   const [scheduledDate, setScheduledDate] = useState('2026-10-24');
   const [scheduledTime, setScheduledTime] = useState('09:15');
   const [timezone, setTimezone] = useState('Asia/Bangkok (UTC+7)');
 
-  const selectedCount = (selectedChannels.youtube ? 1 : 0) + (selectedChannels.tiktok ? 1 : 0);
+  // Dynamic eligibility calculation
+  const isChannelEligible = (platform: 'instagram' | 'facebook' | 'youtube' | 'tiktok') => {
+    if (postFormat === 'STORY') {
+      return platform === 'instagram' || platform === 'facebook';
+    }
+    if (postFormat === 'FEED_POST') {
+      return platform === 'instagram' || platform === 'facebook';
+    }
+    return true; // VIDEO_REEL supports all 4
+  };
+
+  const activeSelectedCount = Object.entries(selectedChannels).filter(
+    ([platform, isSelected]) => isSelected && isChannelEligible(platform as any)
+  ).length;
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-8">
       <Masthead
-        folio="DISPATCH COMPOSER / WORKFLOW 2026"
-        editionDate="VOL. IV"
-        title="Editorial Post & Dispatch Composer"
-        subtitle="Synthesize master content, adapt multi-format platform editions, and execute automated syndication across active press endpoints."
+        folio="UNIVERSAL PUBLISHING DESK / V2.0"
+        editionDate="MULTI-FORMAT ENGINE"
+        title="Universal Content Composer"
+        subtitle="Publish Feed Posts (single & carousels), 24h Stories, and Short/Long Videos across Meta, YouTube, and TikTok."
         actions={
           <div className="flex items-center gap-3">
             <span className="text-xs font-mono text-ink-secondary flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-semantic-success" />
-              <span>Draft Saved Automatically</span>
+              <span>Multi-Format Ready</span>
             </span>
           </div>
         }
       />
 
-      {/* 2-Column Layout */}
+      {/* CORE FEATURE: POST FORMAT SWITCHER TABS */}
+      <div className="mb-8 p-1.5 bg-paper-raised border border-border-rule rounded-card grid grid-cols-1 md:grid-cols-3 gap-2 shadow-xs">
+        <button
+          onClick={() => {
+            setPostFormat('FEED_POST');
+            setSelectedChannels({ instagram: true, facebook: true, youtube: false, tiktok: false });
+          }}
+          className={`flex items-center justify-center gap-2.5 py-3 px-4 rounded-editorial transition-all text-xs font-serif ${
+            postFormat === 'FEED_POST'
+              ? 'bg-paper-canvas text-brand-indigo font-bold border border-border-rule shadow-xs'
+              : 'text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle'
+          }`}
+        >
+          <ImageIcon className="w-4 h-4 text-brand-indigo" />
+          <div className="text-left">
+            <p className="font-semibold text-sm">โพสต์ฟีดปกติ (Feed Post)</p>
+            <p className="text-[10px] font-mono text-ink-secondary">รูปเดี่ยว • อัลบั้ม Carousel • ข้อความ</p>
+          </div>
+        </button>
+
+        <button
+          onClick={() => {
+            setPostFormat('STORY');
+            setSelectedChannels({ instagram: true, facebook: true, youtube: false, tiktok: false });
+          }}
+          className={`flex items-center justify-center gap-2.5 py-3 px-4 rounded-editorial transition-all text-xs font-serif ${
+            postFormat === 'STORY'
+              ? 'bg-paper-canvas text-brand-indigo font-bold border border-border-rule shadow-xs'
+              : 'text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle'
+          }`}
+        >
+          <Sparkles className="w-4 h-4 text-accent-terracotta" />
+          <div className="text-left">
+            <p className="font-semibold text-sm">สตอรี่ 24 ชั่วโมง (Story)</p>
+            <p className="text-[10px] font-mono text-ink-secondary">เต็มจอ 9:16 • รูป / คลิปสั้น Instagram & FB</p>
+          </div>
+        </button>
+
+        <button
+          onClick={() => {
+            setPostFormat('VIDEO_REEL');
+            setSelectedChannels({ instagram: true, facebook: true, youtube: true, tiktok: true });
+          }}
+          className={`flex items-center justify-center gap-2.5 py-3 px-4 rounded-editorial transition-all text-xs font-serif ${
+            postFormat === 'VIDEO_REEL'
+              ? 'bg-paper-canvas text-brand-indigo font-bold border border-border-rule shadow-xs'
+              : 'text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle'
+          }`}
+        >
+          <Video className="w-4 h-4 text-semantic-info" />
+          <div className="text-left">
+            <p className="font-semibold text-sm">คลิปสั้น & วิดีโอ (Reels / Shorts)</p>
+            <p className="text-[10px] font-mono text-ink-secondary">YouTube Shorts • TikTok • IG Reels</p>
+          </div>
+        </button>
+      </div>
+
+      {/* 2-Column Main Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-        {/* Main Column (60%) */}
+        {/* Left Column (60%) */}
         <div className="lg:col-span-8 space-y-8">
-          {/* SECTION 01: MEDIA INTAKE */}
+          {/* SECTION 01: MEDIA INTAKE ACCORDING TO FORMAT */}
           <section className="bg-paper-raised border border-border-rule rounded-card p-6 shadow-xs">
             <div className="flex items-baseline justify-between mb-4 pb-2 border-b border-border-rule">
               <div className="flex items-baseline gap-2">
                 <span className="font-mono text-xs font-bold text-brand-indigo">[SEC. 01]</span>
-                <h2 className="font-serif font-medium text-lg text-ink-primary">Master Media Intake & Telemetry</h2>
+                <h2 className="font-serif font-medium text-lg text-ink-primary">
+                  {postFormat === 'FEED_POST' && 'Media Gallery (Single or Carousel Album)'}
+                  {postFormat === 'STORY' && 'Story Visual Asset (9:16 Full Screen)'}
+                  {postFormat === 'VIDEO_REEL' && 'Master Video Intake & Telemetry'}
+                </h2>
               </div>
-              <span className="text-[11px] font-mono text-semantic-success flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Verified by Media Probe</span>
+              <span className="text-[11px] font-mono text-ink-secondary">
+                {postFormat === 'FEED_POST' && `${images.length} Photos Attached (Max 10)`}
+                {postFormat === 'STORY' && 'Ephemeral (Expires in 24 Hours)'}
+                {postFormat === 'VIDEO_REEL' && '9:16 Vertical Master'}
               </span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
-              {/* Video Thumbnail Box */}
-              <div className="relative aspect-[9/16] max-h-52 bg-paper-subtle border border-border-rule rounded-editorial flex items-center justify-center overflow-hidden">
-                <div className="text-center p-3">
-                  <Video className="w-8 h-8 text-brand-indigo mx-auto mb-1 opacity-80" />
-                  <p className="text-[10px] font-mono text-ink-secondary">9:16 Master Preview</p>
+            {/* FEED POST: MULTI-IMAGE CAROUSEL DROPZONE */}
+            {postFormat === 'FEED_POST' && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {images.map((img, idx) => (
+                    <div
+                      key={img.id}
+                      className="relative aspect-square bg-paper-subtle border border-border-rule rounded-editorial p-2 flex flex-col justify-between group overflow-hidden"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="w-5 h-5 rounded-full bg-brand-indigo text-white flex items-center justify-center font-mono text-[10px] font-bold">
+                          {idx + 1}
+                        </span>
+                        <button
+                          onClick={() => setImages(images.filter((i) => i.id !== img.id))}
+                          className="p-1 text-ink-secondary hover:text-semantic-error opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                      <div className="text-center my-auto">
+                        <ImageIcon className="w-6 h-6 text-brand-indigo mx-auto opacity-70 mb-1" />
+                        <p className="text-[10px] font-mono text-ink-secondary truncate">{img.name}</p>
+                      </div>
+                      <span className="text-[9px] font-mono text-ink-secondary">{img.size}</span>
+                    </div>
+                  ))}
+
+                  {images.length < 10 && (
+                    <div className="aspect-square border-2 border-dashed border-border-rule rounded-editorial flex flex-col items-center justify-center p-3 text-center cursor-pointer hover:border-brand-indigo/60 transition-colors">
+                      <Plus className="w-5 h-5 text-brand-indigo mb-1" />
+                      <span className="text-xs font-serif font-medium text-ink-primary">Add Photo</span>
+                      <span className="text-[10px] font-mono text-ink-secondary">JPG, PNG, WebP</span>
+                    </div>
+                  )}
                 </div>
-                <div className="absolute top-2 left-2 px-1.5 py-0.5 bg-paper-raised/90 text-ink-primary text-[10px] font-mono rounded">
-                  00:58
+                <p className="text-[11px] text-ink-secondary font-mono">
+                  💡 Tip: Images are published as a multi-card Carousel Album on Instagram and Facebook Feed.
+                </p>
+              </div>
+            )}
+
+            {/* STORY: 9:16 FULL SCREEN VISUAL */}
+            {postFormat === 'STORY' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                <div className="relative aspect-[9/16] max-h-56 bg-paper-subtle border border-border-rule rounded-editorial flex items-center justify-center overflow-hidden">
+                  <div className="text-center p-3">
+                    <Sparkles className="w-8 h-8 text-accent-terracotta mx-auto mb-1 opacity-80" />
+                    <p className="text-[10px] font-mono text-ink-secondary">9:16 Story Frame</p>
+                  </div>
+                  <span className="absolute top-2 left-2 px-1.5 py-0.5 bg-paper-raised/90 text-ink-primary text-[10px] font-mono rounded">
+                    24h Story
+                  </span>
+                </div>
+
+                <div className="md:col-span-2 space-y-2 text-xs">
+                  <div className="p-3 bg-paper-subtle rounded-editorial font-mono text-[11px] text-ink-primary">
+                    story_hero_announcement_916.jpg
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                    <div className="p-2 bg-paper-canvas rounded border border-border-rule">
+                      <span className="text-ink-secondary text-[10px] block">TARGET FORMAT</span>
+                      <span className="font-semibold">Instagram & FB Story</span>
+                    </div>
+                    <div className="p-2 bg-paper-canvas rounded border border-border-rule">
+                      <span className="text-ink-secondary text-[10px] block">ASPECT RATIO</span>
+                      <span className="font-semibold">9:16 (Auto-padded)</span>
+                    </div>
+                  </div>
+                  <button className="text-[11px] text-brand-indigo hover:underline font-mono inline-flex items-center gap-1 mt-1">
+                    <span>Upload New Story Media</span>
+                    <ArrowRight className="w-3 h-3" />
+                  </button>
                 </div>
               </div>
+            )}
 
-              {/* Media Specs Table */}
-              <div className="md:col-span-2 space-y-2 text-xs">
-                <div className="p-2.5 bg-paper-subtle rounded-editorial font-mono text-[11px] truncate text-ink-primary">
-                  {mediaAsset.filename}
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 text-xs font-mono">
-                  <div className="p-2 bg-paper-canvas rounded border border-border-rule">
-                    <span className="text-ink-secondary text-[10px] block">DURATION</span>
-                    <span className="font-semibold">{mediaAsset.duration} (Eligible)</span>
+            {/* VIDEO / REEL: VIDEO INTAKE */}
+            {postFormat === 'VIDEO_REEL' && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+                <div className="relative aspect-[9/16] max-h-52 bg-paper-subtle border border-border-rule rounded-editorial flex items-center justify-center overflow-hidden">
+                  <div className="text-center p-3">
+                    <Video className="w-8 h-8 text-brand-indigo mx-auto mb-1 opacity-80" />
+                    <p className="text-[10px] font-mono text-ink-secondary">Reels/Shorts Preview</p>
                   </div>
-                  <div className="p-2 bg-paper-canvas rounded border border-border-rule">
-                    <span className="text-ink-secondary text-[10px] block">RATIO</span>
-                    <span className="font-semibold">{mediaAsset.aspectRatio}</span>
-                  </div>
-                  <div className="p-2 bg-paper-canvas rounded border border-border-rule">
-                    <span className="text-ink-secondary text-[10px] block">DIMENSIONS</span>
-                    <span className="font-semibold">{mediaAsset.resolution}</span>
-                  </div>
-                  <div className="p-2 bg-paper-canvas rounded border border-border-rule">
-                    <span className="text-ink-secondary text-[10px] block">FILE SIZE</span>
-                    <span className="font-semibold">{mediaAsset.size}</span>
+                  <div className="absolute top-2 left-2 px-1.5 py-0.5 bg-paper-raised/90 text-ink-primary text-[10px] font-mono rounded">
+                    00:58
                   </div>
                 </div>
 
-                <button className="text-[11px] text-brand-indigo hover:underline font-mono inline-flex items-center gap-1 mt-1">
-                  <span>Replace Video Asset</span>
-                  <ArrowRight className="w-3 h-3" />
-                </button>
+                <div className="md:col-span-2 space-y-2 text-xs">
+                  <div className="p-2.5 bg-paper-subtle rounded-editorial font-mono text-[11px] truncate text-ink-primary">
+                    {videoAsset.filename}
+                  </div>
+                  <div className="grid grid-cols-2 gap-2 text-xs font-mono">
+                    <div className="p-2 bg-paper-canvas rounded border border-border-rule">
+                      <span className="text-ink-secondary text-[10px] block">DURATION</span>
+                      <span className="font-semibold">{videoAsset.duration}</span>
+                    </div>
+                    <div className="p-2 bg-paper-canvas rounded border border-border-rule">
+                      <span className="text-ink-secondary text-[10px] block">RATIO</span>
+                      <span className="font-semibold">9:16 Vertical</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
           </section>
 
-          {/* SECTION 02: TARGET CHANNELS */}
+          {/* SECTION 02: DYNAMIC CHANNELS SELECTOR */}
           <section className="bg-paper-raised border border-border-rule rounded-card p-6 shadow-xs">
             <div className="flex items-baseline justify-between mb-4 pb-2 border-b border-border-rule">
               <div className="flex items-baseline gap-2">
@@ -164,18 +309,100 @@ export default function CreatePostPage() {
                 <h2 className="font-serif font-medium text-lg text-ink-primary">Target Publication Endpoints</h2>
               </div>
               <span className="text-[11px] font-mono text-ink-secondary">
-                {selectedCount} of 2 Channels Active
+                {activeSelectedCount} Channels Selected for this Format
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* YouTube Card */}
+              {/* Instagram Card */}
               <div
-                onClick={() => setSelectedChannels({ ...selectedChannels, youtube: !selectedChannels.youtube })}
+                onClick={() =>
+                  setSelectedChannels({ ...selectedChannels, instagram: !selectedChannels.instagram })
+                }
                 className={`p-4 rounded-card border cursor-pointer transition-all ${
-                  selectedChannels.youtube
+                  selectedChannels.instagram
                     ? 'border-brand-indigo bg-paper-canvas shadow-xs'
                     : 'border-border-rule bg-paper-subtle/50 opacity-60'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-editorial bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF] text-white flex items-center justify-center font-bold text-xs">
+                      IG
+                    </div>
+                    <div>
+                      <p className="font-semibold text-xs text-ink-primary">Instagram Professional</p>
+                      <p className="text-[10px] font-mono text-ink-secondary">@alexrivera_official</p>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={selectedChannels.instagram}
+                    onChange={() => {}}
+                    className="w-4 h-4 text-brand-indigo rounded focus:ring-0"
+                  />
+                </div>
+                <div className="text-[10px] font-mono text-semantic-success flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-semantic-success" />
+                  <span>
+                    {postFormat === 'STORY' && 'Supports 24h Instagram Stories'}
+                    {postFormat === 'FEED_POST' && 'Supports Single Photos & Carousels'}
+                    {postFormat === 'VIDEO_REEL' && 'Supports Instagram Reels'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Facebook Page Card */}
+              <div
+                onClick={() =>
+                  setSelectedChannels({ ...selectedChannels, facebook: !selectedChannels.facebook })
+                }
+                className={`p-4 rounded-card border cursor-pointer transition-all ${
+                  selectedChannels.facebook
+                    ? 'border-brand-indigo bg-paper-canvas shadow-xs'
+                    : 'border-border-rule bg-paper-subtle/50 opacity-60'
+                }`}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-editorial bg-[#1877F2] text-white flex items-center justify-center font-bold text-xs">
+                      FB
+                    </div>
+                    <div>
+                      <p className="font-semibold text-xs text-ink-primary">Facebook Page</p>
+                      <p className="text-[10px] font-mono text-ink-secondary">Alex Rivera Media Studio</p>
+                    </div>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={selectedChannels.facebook}
+                    onChange={() => {}}
+                    className="w-4 h-4 text-brand-indigo rounded focus:ring-0"
+                  />
+                </div>
+                <div className="text-[10px] font-mono text-semantic-success flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-semantic-success" />
+                  <span>
+                    {postFormat === 'STORY' && 'Supports Facebook Page Stories'}
+                    {postFormat === 'FEED_POST' && 'Supports Photo Album & Status'}
+                    {postFormat === 'VIDEO_REEL' && 'Supports Page Video & Reels'}
+                  </span>
+                </div>
+              </div>
+
+              {/* YouTube Card (Disabled if Story or Feed Post) */}
+              <div
+                onClick={() => {
+                  if (isChannelEligible('youtube')) {
+                    setSelectedChannels({ ...selectedChannels, youtube: !selectedChannels.youtube });
+                  }
+                }}
+                className={`p-4 rounded-card border transition-all ${
+                  !isChannelEligible('youtube')
+                    ? 'border-border-rule bg-paper-subtle/40 opacity-40 cursor-not-allowed'
+                    : selectedChannels.youtube
+                    ? 'border-brand-indigo bg-paper-canvas shadow-xs cursor-pointer'
+                    : 'border-border-rule bg-paper-subtle/50 opacity-60 cursor-pointer'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -184,30 +411,38 @@ export default function CreatePostPage() {
                       YT
                     </div>
                     <div>
-                      <p className="font-semibold text-xs text-ink-primary">YouTube Shorts & Long</p>
+                      <p className="font-semibold text-xs text-ink-primary">YouTube Channel</p>
                       <p className="text-[10px] font-mono text-ink-secondary">@AlexRiveraStudio</p>
                     </div>
                   </div>
                   <input
                     type="checkbox"
-                    checked={selectedChannels.youtube}
+                    disabled={!isChannelEligible('youtube')}
+                    checked={selectedChannels.youtube && isChannelEligible('youtube')}
                     onChange={() => {}}
                     className="w-4 h-4 text-brand-indigo rounded focus:ring-0"
                   />
                 </div>
-                <div className="text-[10px] font-mono text-semantic-success flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-semantic-success" />
-                  <span>Channel Quota Active (Healthy)</span>
+                <div className="text-[10px] font-mono text-ink-secondary">
+                  {!isChannelEligible('youtube')
+                    ? '⚠️ YouTube API does not support Stories or Image Feed'
+                    : 'Supports Shorts & Video Uploads'}
                 </div>
               </div>
 
-              {/* TikTok Card */}
+              {/* TikTok Card (Disabled if Story) */}
               <div
-                onClick={() => setSelectedChannels({ ...selectedChannels, tiktok: !selectedChannels.tiktok })}
-                className={`p-4 rounded-card border cursor-pointer transition-all ${
-                  selectedChannels.tiktok
-                    ? 'border-brand-indigo bg-paper-canvas shadow-xs'
-                    : 'border-border-rule bg-paper-subtle/50 opacity-60'
+                onClick={() => {
+                  if (isChannelEligible('tiktok')) {
+                    setSelectedChannels({ ...selectedChannels, tiktok: !selectedChannels.tiktok });
+                  }
+                }}
+                className={`p-4 rounded-card border transition-all ${
+                  !isChannelEligible('tiktok')
+                    ? 'border-border-rule bg-paper-subtle/40 opacity-40 cursor-not-allowed'
+                    : selectedChannels.tiktok
+                    ? 'border-brand-indigo bg-paper-canvas shadow-xs cursor-pointer'
+                    : 'border-border-rule bg-paper-subtle/50 opacity-60 cursor-pointer'
                 }`}
               >
                 <div className="flex items-center justify-between mb-2">
@@ -216,253 +451,148 @@ export default function CreatePostPage() {
                       TT
                     </div>
                     <div>
-                      <p className="font-semibold text-xs text-ink-primary">TikTok Direct Post</p>
+                      <p className="font-semibold text-xs text-ink-primary">TikTok Account</p>
                       <p className="text-[10px] font-mono text-ink-secondary">@alexrivera_official</p>
                     </div>
                   </div>
                   <input
                     type="checkbox"
-                    checked={selectedChannels.tiktok}
+                    disabled={!isChannelEligible('tiktok')}
+                    checked={selectedChannels.tiktok && isChannelEligible('tiktok')}
                     onChange={() => {}}
                     className="w-4 h-4 text-brand-indigo rounded focus:ring-0"
                   />
                 </div>
-                <div className="text-[10px] font-mono text-semantic-success flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-semantic-success" />
-                  <span>Max Duration: 600s (Eligible)</span>
+                <div className="text-[10px] font-mono text-ink-secondary">
+                  {!isChannelEligible('tiktok')
+                    ? '⚠️ TikTok does not support 24h Stories via API'
+                    : 'Supports Direct Post & Video Upload'}
                 </div>
               </div>
             </div>
           </section>
 
-          {/* SECTION 03: SHARED STORY */}
-          <section className="bg-paper-raised border border-border-rule rounded-card p-6 shadow-xs">
-            <div className="flex items-baseline justify-between mb-4 pb-2 border-b border-border-rule">
-              <div className="flex items-baseline gap-2">
-                <span className="font-mono text-xs font-bold text-brand-indigo">[SEC. 03]</span>
-                <h2 className="font-serif font-medium text-lg text-ink-primary">Shared Story & Editorial Baseline</h2>
-              </div>
-              <span className="text-[11px] font-mono text-ink-secondary">Cascades to Selected Channels</span>
-            </div>
-
-            <div className="space-y-4 text-xs">
-              <div>
-                <label className="block text-ink-secondary text-[11px] font-mono uppercase mb-1">
-                  Master Headline / Working Title
-                </label>
-                <input
-                  type="text"
-                  value={workingTitle}
-                  onChange={(e) => setWorkingTitle(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary font-medium focus:outline-none focus:border-brand-indigo"
-                />
+          {/* SECTION 03: SHARED STORY (HIDDEN IF STORY FORMAT) */}
+          {postFormat !== 'STORY' && (
+            <section className="bg-paper-raised border border-border-rule rounded-card p-6 shadow-xs">
+              <div className="flex items-baseline justify-between mb-4 pb-2 border-b border-border-rule">
+                <div className="flex items-baseline gap-2">
+                  <span className="font-mono text-xs font-bold text-brand-indigo">[SEC. 03]</span>
+                  <h2 className="font-serif font-medium text-lg text-ink-primary">Shared Story & Caption</h2>
+                </div>
+                <span className="text-[11px] font-mono text-ink-secondary">Cascades to Facebook & Instagram</span>
               </div>
 
-              <div>
-                <label className="block text-ink-secondary text-[11px] font-mono uppercase mb-1">
-                  Master Caption / Story Narrative
-                </label>
-                <textarea
-                  rows={4}
-                  value={sharedCaption}
-                  onChange={(e) => setSharedCaption(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary focus:outline-none focus:border-brand-indigo leading-relaxed"
-                />
-              </div>
+              <div className="space-y-4 text-xs">
+                <div>
+                  <label className="block text-ink-secondary text-[11px] font-mono uppercase mb-1">
+                    Master Caption / Text
+                  </label>
+                  <textarea
+                    rows={4}
+                    value={sharedCaption}
+                    onChange={(e) => setSharedCaption(e.target.value)}
+                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary focus:outline-none focus:border-brand-indigo leading-relaxed"
+                  />
+                </div>
 
-              <div>
-                <label className="block text-ink-secondary text-[11px] font-mono uppercase mb-1">
-                  Shared Tags & Topics (Comma Separated)
-                </label>
-                <input
-                  type="text"
-                  value={sharedTags}
-                  onChange={(e) => setSharedTags(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary font-mono focus:outline-none focus:border-brand-indigo"
-                />
+                <div>
+                  <label className="block text-ink-secondary text-[11px] font-mono uppercase mb-1">
+                    Hashtags & Topics
+                  </label>
+                  <input
+                    type="text"
+                    value={sharedTags}
+                    onChange={(e) => setSharedTags(e.target.value)}
+                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary font-mono focus:outline-none focus:border-brand-indigo"
+                  />
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* SECTION 04: PLATFORM EDITIONS ACCORDION */}
           <section className="bg-paper-raised border border-border-rule rounded-card p-6 shadow-xs">
             <div className="flex items-baseline justify-between mb-4 pb-2 border-b border-border-rule">
               <div className="flex items-baseline gap-2">
                 <span className="font-mono text-xs font-bold text-brand-indigo">[SEC. 04]</span>
-                <h2 className="font-serif font-medium text-lg text-ink-primary">Platform Editions & Channel Overrides</h2>
+                <h2 className="font-serif font-medium text-lg text-ink-primary">Platform Specific Adjustments</h2>
               </div>
-              <span className="text-[11px] font-mono text-ink-secondary">Single-Active Accordion</span>
+              <span className="text-[11px] font-mono text-ink-secondary">Meta Editions</span>
             </div>
 
-            {/* Accordion Tabs */}
             <div className="space-y-3">
-              {/* YouTube Tab */}
-              {selectedChannels.youtube && (
+              {/* Instagram Edition Accordion */}
+              {selectedChannels.instagram && (
                 <div className="border border-border-rule rounded-card overflow-hidden">
                   <button
-                    onClick={() => setOpenAccordion(openAccordion === 'YOUTUBE' ? null : 'YOUTUBE')}
+                    onClick={() => setOpenAccordion(openAccordion === 'INSTAGRAM' ? null : 'INSTAGRAM')}
                     className="w-full p-4 bg-paper-subtle flex items-center justify-between text-left text-xs font-medium"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-ink-primary">YouTube Edition</span>
+                      <span className="font-bold text-ink-primary">Instagram Settings</span>
                       <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-brand-indigo/10 text-brand-indigo font-semibold">
-                        Customized (1 Override)
+                        {postFormat === 'STORY' ? 'Story Mode' : 'Feed Carousel'}
                       </span>
                     </div>
-                    {openAccordion === 'YOUTUBE' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    {openAccordion === 'INSTAGRAM' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
 
-                  {openAccordion === 'YOUTUBE' && (
+                  {openAccordion === 'INSTAGRAM' && (
                     <div className="p-4 space-y-4 bg-paper-canvas text-xs border-t border-border-rule">
-                      <div>
-                        <div className="flex justify-between items-center mb-1">
-                          <label className="text-ink-secondary text-[11px] font-mono uppercase">
-                            YouTube Optimized Title (Max 100 Characters)
-                          </label>
-                          <span className="text-[10px] font-mono text-ink-secondary">{ytTitle.length} / 100</span>
-                        </div>
-                        <input
-                          type="text"
-                          value={ytTitle}
-                          onChange={(e) => setYtTitle(e.target.value)}
-                          maxLength={100}
-                          className="w-full px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial font-medium focus:outline-none focus:border-brand-indigo"
-                        />
-                      </div>
-
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {postFormat === 'STORY' ? (
                         <div>
                           <label className="block text-ink-secondary text-[11px] font-mono uppercase mb-1">
-                            Privacy Level
+                            Optional Story Swipe-up / Link Sticker URL
                           </label>
-                          <select
-                            value={ytPrivacy}
-                            onChange={(e) => setYtPrivacy(e.target.value as any)}
-                            className="w-full px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial focus:outline-none focus:border-brand-indigo"
-                          >
-                            <option value="public">Public (Standard)</option>
-                            <option value="unlisted">Unlisted</option>
-                            <option value="private">Private</option>
-                          </select>
+                          <input
+                            type="url"
+                            placeholder="https://yourbrand.com/special-article"
+                            value={igStoryLinkUrl}
+                            onChange={(e) => setIgStoryLinkUrl(e.target.value)}
+                            className="w-full px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial font-mono focus:outline-none focus:border-brand-indigo"
+                          />
                         </div>
-
+                      ) : (
                         <div>
-                          <label className="block text-ink-secondary text-[11px] font-mono uppercase mb-1">
-                            COPPA Child Audience Protection
-                          </label>
-                          <select
-                            value={ytMadeForKids ? 'yes' : 'no'}
-                            onChange={(e) => setYtMadeForKids(e.target.value === 'yes')}
-                            className="w-full px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial focus:outline-none focus:border-brand-indigo"
-                          >
-                            <option value="no">No, Not Made for Kids (Required)</option>
-                            <option value="yes">Yes, Made for Kids</option>
-                          </select>
+                          <p className="text-ink-secondary text-[11px] font-mono leading-relaxed">
+                            ✓ Published as an Instagram Carousel Album with {images.length} photos.
+                            <br />✓ Square/Portrait crops are verified.
+                          </p>
                         </div>
-                      </div>
+                      )}
                     </div>
                   )}
                 </div>
               )}
 
-              {/* TikTok Tab */}
-              {selectedChannels.tiktok && (
+              {/* Facebook Edition Accordion */}
+              {selectedChannels.facebook && (
                 <div className="border border-border-rule rounded-card overflow-hidden">
                   <button
-                    onClick={() => setOpenAccordion(openAccordion === 'TIKTOK' ? null : 'TIKTOK')}
+                    onClick={() => setOpenAccordion(openAccordion === 'FACEBOOK' ? null : 'FACEBOOK')}
                     className="w-full p-4 bg-paper-subtle flex items-center justify-between text-left text-xs font-medium"
                   >
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-ink-primary">TikTok Edition</span>
+                      <span className="font-bold text-ink-primary">Facebook Page Settings</span>
                       <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-paper-canvas text-ink-secondary border border-border-rule">
-                        Inherited from Story
+                        Default Page Feed
                       </span>
                     </div>
-                    {openAccordion === 'TIKTOK' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                    {openAccordion === 'FACEBOOK' ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
                   </button>
 
-                  {openAccordion === 'TIKTOK' && (
-                    <div className="p-4 space-y-4 bg-paper-canvas text-xs border-t border-border-rule">
-                      <div>
-                        <div className="flex justify-between items-center mb-1">
-                          <label className="text-ink-secondary text-[11px] font-mono uppercase">
-                            TikTok Caption & Hashtags (Max 2,200 Runes)
-                          </label>
-                          <span className="text-[10px] font-mono text-ink-secondary">{ttCaption.length} / 2200</span>
-                        </div>
-                        <textarea
-                          rows={3}
-                          value={ttCaption}
-                          onChange={(e) => setTtCaption(e.target.value)}
-                          className="w-full px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial focus:outline-none focus:border-brand-indigo"
+                  {openAccordion === 'FACEBOOK' && (
+                    <div className="p-4 space-y-3 bg-paper-canvas text-xs border-t border-border-rule">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={fbPostAsAlbum}
+                          onChange={(e) => setFbPostAsAlbum(e.target.checked)}
+                          className="rounded text-brand-indigo"
                         />
-                      </div>
-
-                      <div>
-                        <label className="block text-ink-secondary text-[11px] font-mono uppercase mb-1">
-                          Privacy Level (Fetched from Creator Profile — No Default)
-                        </label>
-                        <select
-                          value={ttPrivacy}
-                          onChange={(e) => setTtPrivacy(e.target.value as any)}
-                          className="w-full px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial focus:outline-none focus:border-brand-indigo"
-                        >
-                          <option value="PUBLIC_TO_EVERYONE">Public to Everyone</option>
-                          <option value="MUTUAL_FOLLOW_FRIENDS">Mutual Follow Friends Only</option>
-                          <option value="SELF_ONLY">Private (Only Me)</option>
-                        </select>
-                      </div>
-
-                      {/* Interaction Controls */}
-                      <div className="p-3 bg-paper-raised border border-border-rule rounded-editorial space-y-2">
-                        <span className="text-[11px] font-mono uppercase text-ink-secondary block font-semibold">
-                          Interaction Controls
-                        </span>
-                        <div className="flex flex-wrap items-center gap-6 text-xs">
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={ttAllowComments}
-                              onChange={(e) => setTtAllowComments(e.target.checked)}
-                              className="rounded text-brand-indigo"
-                            />
-                            <span>Allow Comments</span>
-                          </label>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={ttAllowDuet}
-                              onChange={(e) => setTtAllowDuet(e.target.checked)}
-                              className="rounded text-brand-indigo"
-                            />
-                            <span>Allow Duet</span>
-                          </label>
-                          <label className="flex items-center gap-2 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={ttAllowStitch}
-                              onChange={(e) => setTtAllowStitch(e.target.checked)}
-                              className="rounded text-brand-indigo"
-                            />
-                            <span>Allow Stitch</span>
-                          </label>
-                        </div>
-                      </div>
-
-                      {/* TikTok Explicit User Consent */}
-                      <div className="p-3 bg-paper-subtle rounded-editorial text-[11px] text-ink-secondary leading-relaxed border border-border-rule">
-                        <label className="flex items-start gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={ttConsentGiven}
-                            onChange={(e) => setTtConsentGiven(e.target.checked)}
-                            className="mt-0.5 rounded text-brand-indigo"
-                          />
-                          <span>
-                            I confirm this media complies with TikTok Content Sharing Guidelines. I acknowledge that direct public posting will enter TikTok processing and moderation before becoming visible.
-                          </span>
-                        </label>
-                      </div>
+                        <span>Publish attached photos as a grouped Photo Album on Page timeline</span>
+                      </label>
                     </div>
                   )}
                 </div>
@@ -470,14 +600,14 @@ export default function CreatePostPage() {
             </div>
           </section>
 
-          {/* SECTION 05: CADENCE & SCHEDULING */}
+          {/* SECTION 05: CADENCE */}
           <section className="bg-paper-raised border border-border-rule rounded-card p-6 shadow-xs">
             <div className="flex items-baseline justify-between mb-4 pb-2 border-b border-border-rule">
               <div className="flex items-baseline gap-2">
                 <span className="font-mono text-xs font-bold text-brand-indigo">[SEC. 05]</span>
                 <h2 className="font-serif font-medium text-lg text-ink-primary">Publishing Cadence & Timing</h2>
               </div>
-              <span className="text-[11px] font-mono text-ink-secondary">Timezone Enforced: {timezone}</span>
+              <span className="text-[11px] font-mono text-ink-secondary">Timezone: {timezone}</span>
             </div>
 
             <div className="flex items-center gap-4 mb-4">
@@ -504,7 +634,7 @@ export default function CreatePostPage() {
             </div>
 
             {publishMode === 'SCHEDULED' && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
                 <div>
                   <label className="block text-ink-secondary text-[11px] font-mono uppercase mb-1">Target Date</label>
                   <input
@@ -523,19 +653,6 @@ export default function CreatePostPage() {
                     className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono focus:outline-none focus:border-brand-indigo"
                   />
                 </div>
-                <div>
-                  <label className="block text-ink-secondary text-[11px] font-mono uppercase mb-1">Timezone</label>
-                  <select
-                    value={timezone}
-                    onChange={(e) => setTimezone(e.target.value)}
-                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono focus:outline-none focus:border-brand-indigo"
-                  >
-                    <option value="Asia/Bangkok (UTC+7)">Asia/Bangkok (UTC+7)</option>
-                    <option value="America/New_York (UTC-5)">America/New_York (UTC-5)</option>
-                    <option value="Europe/London (UTC+0)">Europe/London (UTC+0)</option>
-                    <option value="Asia/Tokyo (UTC+9)">Asia/Tokyo (UTC+9)</option>
-                  </select>
-                </div>
               </div>
             )}
           </section>
@@ -548,83 +665,74 @@ export default function CreatePostPage() {
               <span className="font-mono text-xs font-bold text-brand-indigo">[SEC. 06] Pre-Flight Review</span>
               <span className="text-[10px] font-mono text-semantic-success flex items-center gap-1 font-semibold">
                 <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>Ready for Queue</span>
+                <span>Ready</span>
               </span>
             </div>
 
             {/* Content Snapshot Card */}
             <div className="p-3 bg-paper-subtle rounded-editorial mb-4 border border-border-rule text-xs space-y-1.5">
-              <span className="text-[10px] font-mono text-ink-secondary uppercase block">Primary Payload</span>
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono text-ink-secondary uppercase">Format Type</span>
+                <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-indigo text-white">
+                  {postFormat.replace('_', ' ')}
+                </span>
+              </div>
               <p className="font-serif font-bold text-ink-primary text-sm line-clamp-2">
-                {workingTitle}
+                {postFormat === 'STORY' ? 'Instagram & Facebook 24h Story' : workingTitle}
               </p>
               <p className="text-[11px] font-mono text-ink-secondary">
-                Duration: {mediaAsset.duration} • Ratio: 9:16
+                {postFormat === 'FEED_POST' && `${images.length} Photos for Carousel Album`}
+                {postFormat === 'STORY' && '9:16 Full Screen Vertical'}
+                {postFormat === 'VIDEO_REEL' && '58s Video Reel'}
               </p>
             </div>
 
             {/* Targeted Endpoints Readiness */}
             <div className="space-y-2 mb-5">
               <span className="text-[11px] font-mono uppercase text-ink-secondary block font-semibold">
-                Target Channels ({selectedCount})
+                Active Destinations ({activeSelectedCount})
               </span>
 
-              {selectedChannels.youtube && (
+              {selectedChannels.instagram && isChannelEligible('instagram') && (
                 <div className="p-2.5 bg-paper-canvas rounded-editorial border border-border-rule flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-semantic-success" />
-                    <span className="font-medium">YouTube Shorts</span>
+                    <span className="font-medium">
+                      Instagram {postFormat === 'STORY' ? 'Story' : 'Feed'}
+                    </span>
                   </div>
-                  <span className="text-[10px] font-mono text-ink-secondary">Title: 59c</span>
+                  <span className="text-[10px] font-mono text-ink-secondary">Active Token</span>
                 </div>
               )}
 
-              {selectedChannels.tiktok && (
+              {selectedChannels.facebook && isChannelEligible('facebook') && (
                 <div className="p-2.5 bg-paper-canvas rounded-editorial border border-border-rule flex items-center justify-between text-xs">
                   <div className="flex items-center gap-2">
                     <span className="w-2 h-2 rounded-full bg-semantic-success" />
-                    <span className="font-medium">TikTok Direct</span>
+                    <span className="font-medium">
+                      Facebook {postFormat === 'STORY' ? 'Story' : 'Page Feed'}
+                    </span>
                   </div>
-                  <span className="text-[10px] font-mono text-ink-secondary">Public</span>
+                  <span className="text-[10px] font-mono text-ink-secondary">Page Admin</span>
                 </div>
               )}
-            </div>
-
-            {/* Pre-flight Checks */}
-            <div className="space-y-1.5 text-[11px] font-mono text-ink-secondary mb-6 pt-3 border-t border-border-rule">
-              <div className="flex items-center gap-2 text-semantic-success">
-                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                <span>Video validated & ready in storage</span>
-              </div>
-              <div className="flex items-center gap-2 text-semantic-success">
-                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                <span>OAuth tokens active for {selectedCount} channels</span>
-              </div>
-              <div className="flex items-center gap-2 text-semantic-success">
-                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
-                <span>Duration eligible across destinations</span>
-              </div>
             </div>
 
             {/* Primary Action Button */}
             <button
-              disabled={selectedCount === 0 || !ttConsentGiven}
+              disabled={activeSelectedCount === 0}
               className={`w-full py-3 px-4 text-xs font-semibold rounded-editorial flex items-center justify-center gap-2 shadow-xs transition-all ${
-                selectedCount > 0 && ttConsentGiven
+                activeSelectedCount > 0
                   ? 'bg-brand-indigo hover:bg-brand-indigo-hover text-white cursor-pointer'
                   : 'bg-paper-subtle text-ink-secondary border border-border-rule cursor-not-allowed opacity-60'
               }`}
             >
               <span>
                 {publishMode === 'NOW'
-                  ? `Publish Immediately to ${selectedCount} Channels`
-                  : `Schedule Dispatch (${selectedCount} Channels)`}
+                  ? `Publish ${postFormat === 'STORY' ? 'Story' : 'Post'} to ${activeSelectedCount} Channels`
+                  : `Schedule Dispatch (${activeSelectedCount} Channels)`}
               </span>
               <ArrowRight className="w-4 h-4" />
-            </button>
-
-            <button className="w-full mt-2 py-2 text-xs font-medium text-ink-secondary hover:text-ink-primary text-center">
-              Save Draft Folio
             </button>
           </div>
         </div>
