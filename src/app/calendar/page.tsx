@@ -38,6 +38,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { SmartFilterBar } from '@/components/ui/smart-filter-bar';
 import { 
   SocialPlatformIcon, 
   SocialMediaLiveButton, 
@@ -879,44 +880,30 @@ export default function EditorialCalendarPage() {
         </div>
       </div>
 
-      {/* Workspace Filter Bar */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none border-b border-border-rule">
-        <button
-          onClick={() => setSelectedWorkspace('ALL')}
-          className={`px-3 py-1.5 rounded-t-editorial text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 ${
-            selectedWorkspace === 'ALL'
-              ? 'border-b-2 border-brand-indigo font-bold text-brand-indigo bg-paper-raised'
-              : 'text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle/50'
-          }`}
-        >
-          <span>🌐 All Workspaces</span>
-          <span className="px-1.5 py-0.2 text-[10px] rounded-full bg-paper-subtle border border-border-rule">
-            {events.length}
-          </span>
-        </button>
-
-        {(['CAPITAL_ONE', 'ACME_CREATOR', 'RETZPOST', 'COFFEE_CRAFT'] as const).map((wsKey) => {
-          const cfg = WORKSPACE_CONFIG[wsKey];
-          const count = events.filter((e) => e.workspace === wsKey).length;
-          const isSelected = selectedWorkspace === wsKey;
-          return (
-            <button
-              key={wsKey}
-              onClick={() => setSelectedWorkspace(wsKey)}
-              className={`px-3 py-1.5 rounded-t-editorial text-xs font-mono transition-all flex items-center gap-1.5 shrink-0 ${
-                isSelected
-                  ? 'border-b-2 border-brand-indigo font-bold text-brand-indigo bg-paper-raised'
-                  : 'text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle/50'
-              }`}
-            >
-              <span>{cfg.icon}</span>
-              <span>{cfg.name}</span>
-              <span className="px-1.5 py-0.2 text-[10px] rounded-full bg-paper-subtle border border-border-rule">
-                {count}
-              </span>
-            </button>
-          );
-        })}
+      {/* Workspace Filter Bar (Smart Hybrid: Top Active Pills + Searchable More Dropdown) */}
+      <div className="pb-2 border-b border-border-rule">
+        <SmartFilterBar
+          label={
+            <span className="text-[10px] font-mono uppercase font-bold text-ink-secondary flex items-center gap-1.5 mr-1.5">
+              <Globe className="w-3.5 h-3.5 text-brand-indigo" />
+              <span>Workspace:</span>
+            </span>
+          }
+          items={[
+            { id: 'ALL', label: 'All Workspaces', count: events.length, icon: <span>🌐</span> },
+            ...(['CAPITAL_ONE', 'ACME_CREATOR', 'RETZPOST', 'COFFEE_CRAFT'] as const).map((wsKey) => ({
+              id: wsKey,
+              label: WORKSPACE_CONFIG[wsKey].name,
+              count: events.filter((e) => e.workspace === wsKey).length,
+              icon: <span>{WORKSPACE_CONFIG[wsKey].icon}</span>,
+            })),
+          ]}
+          selectedId={selectedWorkspace}
+          onSelect={(id) => setSelectedWorkspace(id as any)}
+          maxVisiblePills={4}
+          moreButtonText="โครงการอื่นๆ"
+          searchPlaceholder="🔍 ค้นหา Workspace..."
+        />
       </div>
 
       {/* Control Toolbar: Navigation, View Modes & Filters */}

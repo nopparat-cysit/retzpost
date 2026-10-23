@@ -9,6 +9,9 @@ import {
   StatusTag 
 } from '@/components/ui/status-tag';
 import { 
+  SmartFilterBar 
+} from '@/components/ui/smart-filter-bar';
+import { 
   ArrowRight, 
   Plus, 
   Layers, 
@@ -669,7 +672,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
 
 export default function HomePage() {
   const [dashboardMode, setDashboardMode] = useState<'OPERATIONS' | 'TRACKING'>('OPERATIONS');
-  const [workspaceFilter, setWorkspaceFilter] = useState<'ALL' | 'ws_capitalone' | 'ws_acme' | 'ws_retzpost' | 'ws_coffee'>('ALL');
+  const [workspaceFilter, setWorkspaceFilter] = useState<string>('ALL');
   const [batchTab, setBatchTab] = useState<'ALL' | 'CAPITAL_ONE' | 'ACME' | 'NEEDS_ATTENTION'>('ALL');
   const [downloadToast, setDownloadToast] = useState<string | null>(null);
   const [selectedLiveBatch, setSelectedLiveBatch] = useState<DispatchBatch | null>(null);
@@ -966,35 +969,35 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* WORKSPACE & PROJECT FILTER BAR (SHARED ACROSS BOTH MODES) */}
-      <div className="flex items-center justify-between gap-2 pb-2 border-b border-border-rule text-xs overflow-x-auto">
-        <div className="flex items-center gap-1.5 shrink-0">
-          <span className="text-[10px] font-mono uppercase font-bold text-ink-secondary flex items-center gap-1">
-            <Building2 className="w-3 h-3 text-brand-indigo" />
-            <span>Workspace:</span>
-          </span>
-          {[
-            { id: 'ALL', label: 'All Projects (17 Channels)' },
-            { id: 'ws_capitalone', label: 'Capital One Real Estate (6)' },
-            { id: 'ws_acme', label: 'Acme Studio (4)' },
-            { id: 'ws_retzpost', label: 'RetzPost Software (4)' },
-            { id: 'ws_coffee', label: 'Coffee Craft (3)' },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setWorkspaceFilter(tab.id as any)}
-              className={`px-2.5 py-1 rounded text-xs font-mono transition-colors cursor-pointer ${
-                workspaceFilter === tab.id
-                  ? 'bg-brand-indigo text-white font-semibold shadow-2xs'
-                  : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+      {/* WORKSPACE & PROJECT FILTER BAR (SMART HYBRID: ADAPTIVE PILLS + SEARCHABLE MORE DROPDOWN) */}
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-2.5 border-b border-border-rule text-xs">
+        <SmartFilterBar
+          label={
+            <span className="text-[10px] font-mono uppercase font-bold text-ink-secondary flex items-center gap-1.5 mr-1.5">
+              <Building2 className="w-3.5 h-3.5 text-brand-indigo" />
+              <span>Workspace:</span>
+            </span>
+          }
+          items={[
+            { id: 'ALL', label: 'All Projects', count: '17 Channels', icon: <Building2 className="w-3 h-3 text-brand-indigo" /> },
+            { id: 'ws_capitalone', label: 'Capital One Real Estate', count: 6, icon: <span>🏢</span> },
+            { id: 'ws_acme', label: 'Acme Studio', count: 4, icon: <span>🎙️</span> },
+            { id: 'ws_retzpost', label: 'RetzPost Software', count: 4, icon: <span>⚡</span> },
+            { id: 'ws_coffee', label: 'Coffee Craft', count: 3, icon: <span>☕</span> },
+            { id: 'ws_whizdom', label: 'Whizdom Inspire Sukhumvit', count: 5, icon: <span>🏙️</span> },
+            { id: 'ws_ashton', label: 'Ashton Asoke Suites', count: 4, icon: <span>🏰</span> },
+            { id: 'ws_siam_craft', label: 'Siam Craft Roastery', count: 2, icon: <span>🥐</span> },
+            { id: 'ws_bkk_residence', label: 'The Bangkok Residence', count: 6, icon: <span>🏢</span> },
+            { id: 'ws_nordic_living', label: 'Nordic Living Thailand', count: 3, icon: <span>🏡</span> },
+          ]}
+          selectedId={workspaceFilter}
+          onSelect={(id) => setWorkspaceFilter(id)}
+          maxVisiblePills={4}
+          moreButtonText="โครงการอื่นๆ"
+          searchPlaceholder="🔍 ค้นหาชื่อโครงการ หรือ Workspace..."
+        />
 
-        <div className="hidden lg:flex items-center gap-2 text-[11px] font-mono text-ink-secondary">
+        <div className="hidden lg:flex items-center gap-2 text-[11px] font-mono text-ink-secondary shrink-0">
           <span className="w-2 h-2 rounded-full bg-semantic-success inline-block animate-pulse" />
           <span>Meta Graph & TikTok APIs Live (99.98% SLA)</span>
         </div>
