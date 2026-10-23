@@ -1,0 +1,418 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -------------------------------------------------------------
+// ENUMS
+// -------------------------------------------------------------
+
+enum Role {
+  OWNER
+  ADMIN
+  EDITOR
+  VIEWER
+}
+
+enum Platform {
+  YOUTUBE
+  TIKTOK
+}
+
+enum ConnectionStatus {
+  ACTIVE
+  EXPIRING
+  EXPIRED
+  REVOKED
+  ERROR
+}
+
+enum AssetStatus {
+  UPLOADING
+  VALIDATING
+  READY
+  REJECTED
+  DELETED
+}
+
+enum ContentStatus {
+  DRAFT
+  READY
+  ARCHIVED
+}
+
+enum PublishMode {
+  PUBLISH_NOW
+  SCHEDULED
+}
+
+enum BatchAggregateStatus {
+  PENDING
+  IN_PROGRESS
+  PUBLISHED
+  PARTIALLY_PUBLISHED
+  FAILED
+  CANCELLED
+}
+
+enum JobStatus {
+  SCHEDULED
+  QUEUED
+  UPLOADING
+  PROCESSING
+  PUBLISHED
+  SENT_TO_INBOX
+  FAILED_RETRYABLE
+  FAILED_FINAL
+  UNKNOWN_RECONCILE
+  CANCELLED
+}
+
+enum ErrorCategory {
+  TRANSIENT_NETWORK
+  RATE_LIMIT_OR_QUOTA
+  AUTH_OR_PERMISSION
+  VALIDATION_OR_MEDIA
+  POLICY_OR_MODERATION
+  UNKNOWN_OUTCOME
+}
+
+// -------------------------------------------------------------
+// WORKSPACE & AUTH
+// -------------------------------------------------------------
+
+model User {
+  id            String       @id @default(uuid()) @db.Uuid
+  email         String       @unique
+  name          String?
+  avatarUrl     String?      @map("avatar_url")
+  createdAt     DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt     DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  memberships   Membership[]
+  publishBatches PublishBatch[]
+  auditEvents   AuditEvent[]
+
+  @@map("users")
+}
+
+model Workspace {
+  id              String       @id @default(uuid()) @db.Uuid
+  name            String
+  slug            String       @unique
+  defaultTimezone String       @default("Asia/Bangkok") @map("default_timezone")
+  createdAt       DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  memberships       Membership[]
+  connections       SocialConnection[]
+  platformAccounts  PlatformAccount[]
+  mediaAssets       MediaAsset[]
+  contents          Content[]
+  contentEditions   ContentEdition[]
+  publishBatches    PublishBatch[]
+  publishJobs       PublishJob[]
+  publications      PlatformPublication[]
+  auditEvents       AuditEvent[]
+
+  @@map("workspaces")
+}
+
+model Membership {
+  id          String    @id @default(uuid()) @db.Uuid
+  workspaceId String    @map("workspace_id") @db.Uuid
+  userId      String    @map("user_id") @db.Uuid
+  role        Role      @default(OWNER)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@index([userId])
+  @@map("memberships")
+}
+
+// -------------------------------------------------------------
+// SOCIAL CONNECTIONS & PLATFORM ACCOUNTS
+// -------------------------------------------------------------
+
+model SocialConnection {
+  id                     String           @id @default(uuid()) @db.Uuid
+  workspaceId            String           @map("workspace_id") @db.Uuid
+  platform               Platform
+  providerUserId         String           @map("provider_user_id")
+  
+  // Encrypted tokens via AES-256-GCM (TokenVaultService)
+  encryptedAccessToken   String           @map("encrypted_access_token")
+  encryptedRefreshToken  String?          @map("encrypted_refresh_token")
+  keyVersion             String           @default("v1") @map("key_version")
+  
+  accessTokenExpiresAt   DateTime?        @map("access_token_expires_at") @db.Timestamptz
+  refreshTokenExpiresAt  DateTime?        @map("refresh_token_expires_at") @db.Timestamptz
+  grantedScopes          Json             @default("[]") @map("granted_scopes")
+  status                 ConnectionStatus @default(ACTIVE)
+  lastError              String?          @map("last_error")
+  createdAt              DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt              DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+
+  workspace              Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  platformAccounts       PlatformAccount[]
+
+  @@unique([workspaceId, platform, providerUserId])
+  @@index([workspaceId, platform])
+  @@map("social_connections")
+}
+
+model PlatformAccount {
+  id                   String           @id @default(uuid()) @db.Uuid
+  workspaceId          String           @map("workspace_id") @db.Uuid
+  connectionId         String           @map("connection_id") @db.Uuid
+  platform             Platform
+  providerAccountId    String           @map("provider_account_id") // YouTube Channel ID or TikTok OpenID
+  handle               String
+  displayName          String           @map("display_name")
+  avatarUrl            String?          @map("avatar_url")
+  
+  // Dynamic capabilities cache (e.g., creator_info from TikTok or YouTube upload permissions)
+  capabilitiesCache    Json?            @map("capabilities_cache")
+  capabilitiesFetchedAt DateTime?       @map("capabilities_fetched_at") @db.Timestamptz
+  isActive             Boolean          @default(true) @map("is_active")
+  createdAt            DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+
+  workspace            Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  connection           SocialConnection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  contentEditions      ContentEdition[]
+  publishJobs          PublishJob[]
+  publications         PlatformPublication[]
+
+  @@unique([workspaceId, platform, providerAccountId])
+  @@index([workspaceId, platform])
+  @@map("platform_accounts")
+}
+
+// -------------------------------------------------------------
+// MEDIA & CONTENT DRAFTS
+// -------------------------------------------------------------
+
+model MediaAsset {
+  id                String       @id @default(uuid()) @db.Uuid
+  workspaceId       String       @map("workspace_id") @db.Uuid
+  storageKey        String       @unique @map("storage_key")
+  posterStorageKey  String?      @map("poster_storage_key")
+  originalFilename  String       @map("original_filename")
+  mimeType          String       @map("mime_type")
+  sizeBytes         BigInt       @map("size_bytes")
+  sha256Checksum    String?      @map("sha256_checksum")
+  
+  // Probed metadata via ffprobe
+  durationSec       Decimal?     @map("duration_sec") @db.Decimal(10, 3)
+  width             Int?
+  height            Int?
+  aspectRatio       String?      @map("aspect_ratio") // "9:16", "16:9", "1:1"
+  videoCodec        String?      @map("video_codec")
+  audioCodec        String?      @map("audio_codec")
+  
+  status            AssetStatus  @default(UPLOADING)
+  rejectionReason   String?      @map("rejection_reason")
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  workspace         Workspace    @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  contents          Content[]
+
+  @@index([workspaceId, status])
+  @@map("media_assets")
+}
+
+model Content {
+  id                 String           @id @default(uuid()) @db.Uuid
+  workspaceId        String           @map("workspace_id") @db.Uuid
+  primaryAssetId     String?          @map("primary_asset_id") @db.Uuid
+  workingTitle       String           @default("Untitled Story") @map("working_title")
+  sharedCaption      String?          @map("shared_caption")
+  sharedDescription  String?          @map("shared_description")
+  sharedTags         Json             @default("[]") @map("shared_tags") // string[]
+  
+  status             ContentStatus    @default(DRAFT)
+  version            Int              @default(1) // Optimistic concurrency lock
+  createdAt          DateTime         @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt          DateTime         @updatedAt @map("updated_at") @db.Timestamptz
+
+  workspace          Workspace        @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  primaryAsset       MediaAsset?      @relation(fields: [primaryAssetId], references: [id], onDelete: SetNull)
+  editions           ContentEdition[]
+  publishBatches     PublishBatch[]
+  publishJobs        PublishJob[]
+
+  @@index([workspaceId, status, updatedAt(sort: Desc)])
+  @@map("contents")
+}
+
+model ContentEdition {
+  id                 String          @id @default(uuid()) @db.Uuid
+  workspaceId        String          @map("workspace_id") @db.Uuid
+  contentId          String          @map("content_id") @db.Uuid
+  platformAccountId  String          @map("platform_account_id") @db.Uuid
+  platform           Platform
+  
+  // Tracks which fields diverge from Shared Story (e.g. ["title", "privacyLevel"])
+  overriddenFields   Json            @default("[]") @map("overridden_fields")
+  // Platform-specific custom payload (title, privacy, tags, cover timestamp, consent)
+  editionPayload     Json            @default("{}") @map("edition_payload")
+  isValid            Boolean         @default(true) @map("is_valid")
+  validationIssues   Json            @default("[]") @map("validation_issues")
+  updatedAt          DateTime        @updatedAt @map("updated_at") @db.Timestamptz
+
+  workspace          Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  content            Content         @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  platformAccount    PlatformAccount @relation(fields: [platformAccountId], references: [id], onDelete: Cascade)
+
+  @@unique([contentId, platformAccountId])
+  @@index([workspaceId, contentId])
+  @@map("content_editions")
+}
+
+// -------------------------------------------------------------
+// PUBLISHING BATCHES & JOBS
+// -------------------------------------------------------------
+
+model PublishBatch {
+  id                      String               @id @default(uuid()) @db.Uuid
+  workspaceId             String               @map("workspace_id") @db.Uuid
+  contentId               String               @map("content_id") @db.Uuid
+  requestedByUserId       String?              @map("requested_by_user_id") @db.Uuid
+  idempotencyKey          String               @map("idempotency_key")
+  
+  mode                    PublishMode          @default(PUBLISH_NOW)
+  requestedTimezone       String               @default("Asia/Bangkok") @map("requested_timezone")
+  requestedLocalWallTime  String?              @map("requested_local_wall_time")
+  scheduledForUtc         DateTime?            @map("scheduled_for_utc") @db.Timestamptz
+  
+  aggregateStatus         BatchAggregateStatus @default(PENDING) @map("aggregate_status")
+  createdAt               DateTime             @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt               DateTime             @updatedAt @map("updated_at") @db.Timestamptz
+
+  workspace               Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  content                 Content              @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  requestedByUser         User?                @relation(fields: [requestedByUserId], references: [id], onDelete: SetNull)
+  jobs                    PublishJob[]
+
+  @@unique([workspaceId, idempotencyKey])
+  @@index([workspaceId, aggregateStatus, createdAt(sort: Desc)])
+  @@map("publish_batches")
+}
+
+model PublishJob {
+  id                    String               @id @default(uuid()) @db.Uuid
+  workspaceId           String               @map("workspace_id") @db.Uuid
+  batchId               String               @map("batch_id") @db.Uuid
+  contentId             String               @map("content_id") @db.Uuid
+  platformAccountId     String               @map("platform_account_id") @db.Uuid
+  platform              Platform
+  
+  // Immutable frozen snapshot: asset keys, resolved metadata, creator info snapshot & consent
+  frozenPayload         Json                 @map("frozen_payload")
+  scheduledForUtc       DateTime?            @map("scheduled_for_utc") @db.Timestamptz
+  status                JobStatus            @default(QUEUED)
+  
+  attemptCount          Int                  @default(0) @map("attempt_count")
+  maxAttempts           Int                  @default(4) @map("max_attempts")
+  nextRetryAt           DateTime?            @map("next_retry_at") @db.Timestamptz
+  lastErrorCode         String?              @map("last_error_code")
+  lastErrorSafeMessage  String?              @map("last_error_safe_message")
+  
+  lockToken             String?              @map("lock_token")
+  lockedUntil           DateTime?            @map("locked_until") @db.Timestamptz
+  createdAt             DateTime             @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime             @updatedAt @map("updated_at") @db.Timestamptz
+
+  workspace             Workspace            @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  batch                 PublishBatch         @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  content               Content              @relation(fields: [contentId], references: [id], onDelete: Cascade)
+  platformAccount       PlatformAccount      @relation(fields: [platformAccountId], references: [id], onDelete: Cascade)
+  attempts              PublishAttempt[]
+  publication           PlatformPublication?
+
+  @@unique([batchId, platformAccountId])
+  @@index([workspaceId, status, scheduledForUtc])
+  @@index([contentId, platformAccountId])
+  @@map("publish_jobs")
+}
+
+model PublishAttempt {
+  id                   String        @id @default(uuid()) @db.Uuid
+  jobId                String        @map("job_id") @db.Uuid
+  attemptNumber        Int           @map("attempt_number")
+  startedAt            DateTime      @default(now()) @map("started_at") @db.Timestamptz
+  finishedAt           DateTime?     @map("finished_at") @db.Timestamptz
+  
+  // Remote session/task IDs for resumability & reconciliation
+  remoteSessionUri     String?       @map("remote_session_uri") // YouTube resumable upload URI or TikTok publish_id
+  bytesUploaded        BigInt        @default(0) @map("bytes_uploaded")
+  errorCategory        ErrorCategory? @map("error_category")
+  rawProviderCode      String?       @map("raw_provider_code")
+  sanitizedDiagnostics Json?         @map("sanitized_diagnostics")
+
+  job                  PublishJob    @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId, attemptNumber])
+  @@map("publish_attempts")
+}
+
+model PlatformPublication {
+  id                 String          @id @default(uuid()) @db.Uuid
+  workspaceId        String          @map("workspace_id") @db.Uuid
+  jobId              String          @unique @map("job_id") @db.Uuid
+  platformAccountId  String          @map("platform_account_id") @db.Uuid
+  platform           Platform
+  remotePostId       String          @map("remote_post_id") // YouTube Video ID or TikTok Item ID
+  remotePermalink    String          @map("remote_permalink")
+  remoteVisibility   String          @default("public") @map("remote_visibility")
+  publishedAt        DateTime        @default(now()) @map("published_at") @db.Timestamptz
+
+  workspace          Workspace       @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  job                PublishJob      @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  platformAccount    PlatformAccount @relation(fields: [platformAccountId], references: [id], onDelete: Cascade)
+
+  @@index([workspaceId, platform, remotePostId])
+  @@map("platform_publications")
+}
+
+// -------------------------------------------------------------
+// AUDIT & WEBHOOK INBOX
+// -------------------------------------------------------------
+
+model AuditEvent {
+  id          String    @id @default(uuid()) @db.Uuid
+  workspaceId String    @map("workspace_id") @db.Uuid
+  userId      String?   @map("user_id") @db.Uuid
+  action      String    // e.g. "batch.create", "account.connect", "job.retry"
+  resource    String    // e.g. "publish_batch:uuid"
+  details     Json      @default("{}")
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz
+
+  workspace   Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user        User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([workspaceId, createdAt(sort: Desc)])
+  @@map("audit_events")
+}
+
+model WebhookEvent {
+  id             String    @id @default(uuid()) @db.Uuid
+  provider       Platform
+  eventId        String    @map("event_id")
+  payload        Json
+  receivedAt     DateTime  @default(now()) @map("received_at") @db.Timestamptz
+  processedAt    DateTime? @map("processed_at") @db.Timestamptz
+  isProcessed    Boolean   @default(false) @map("is_processed")
+
+  @@unique([provider, eventId])
+  @@map("webhook_events")
+}
