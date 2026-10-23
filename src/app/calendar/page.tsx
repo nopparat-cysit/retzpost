@@ -1908,19 +1908,37 @@ export default function EditorialCalendarPage() {
               </div>
 
               {/* Platform & Format Grid */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-3">
                 <div>
-                  <label className="block font-mono text-[11px] text-ink-secondary mb-1">Channel Platform</label>
-                  <select
-                    value={quickPlatform}
-                    onChange={(e) => setQuickPlatform(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
-                  >
-                    <option value="FACEBOOK">Facebook Page</option>
-                    <option value="INSTAGRAM">Instagram Professional</option>
-                    <option value="YOUTUBE">YouTube Channel</option>
-                    <option value="TIKTOK">TikTok Creator</option>
-                  </select>
+                  <label className="block font-mono text-[11px] text-ink-secondary mb-1.5">
+                    Channel Platform (เลือกเฉพาะช่องทางที่ต้องการใช้ในโพสต์นี้)
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {[
+                      { id: 'FACEBOOK', label: 'Facebook' },
+                      { id: 'INSTAGRAM', label: 'Instagram' },
+                      { id: 'YOUTUBE', label: 'YouTube' },
+                      { id: 'TIKTOK', label: 'TikTok' },
+                    ].map((p) => {
+                      const isSelected = quickPlatform === p.id;
+                      return (
+                        <button
+                          key={p.id}
+                          type="button"
+                          onClick={() => setQuickPlatform(p.id as any)}
+                          className={`flex items-center gap-2 p-2 rounded-editorial border text-xs font-mono transition-all ${
+                            isSelected
+                              ? 'bg-paper-canvas border-brand-indigo font-bold text-brand-indigo shadow-xs ring-1 ring-brand-indigo/30'
+                              : 'bg-paper-subtle/80 border-border-rule text-ink-secondary hover:text-ink-primary hover:bg-paper-canvas'
+                          }`}
+                        >
+                          <SocialPlatformIcon platform={p.id} size={16} />
+                          <span className="truncate">{p.label}</span>
+                          {isSelected && <Check className="w-3 h-3 ml-auto text-brand-indigo shrink-0" />}
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
 
                 <div>
@@ -1930,8 +1948,8 @@ export default function EditorialCalendarPage() {
                     onChange={(e) => setQuickFormat(e.target.value as any)}
                     className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
                   >
-                    <option value="FEED_POST">Feed Post / Album</option>
-                    <option value="STORY">24h Ephemeral Story</option>
+                    <option value="FEED_POST">Feed Post / Photo Album</option>
+                    <option value="STORY">24h Ephemeral Story (รองรับ Link Sticker)</option>
                     <option value="VIDEO_REEL">Video Reel / Shorts (9:16)</option>
                   </select>
                 </div>
