@@ -36,19 +36,31 @@ import {
   ChevronUp,
   Tag,
   Share2,
-  Edit3
+  Edit3,
+  BookmarkPlus,
+  RotateCcw,
+  Building2,
+  Sliders
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 
 type MediaTypeMode = 'PHOTOS' | 'VIDEO' | 'TEXT_ONLY';
 
-interface DestinationAccount {
+export interface ProjectWorkspace {
   id: string;
+  name: string;
+  category: string;
+  badgeColor: string;
+}
+
+export interface DestinationAccount {
+  id: string;
+  workspaceId: string;
   platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK' | 'THREADS' | 'TWITTER';
   platformGroup: 'Instagram' | 'Facebook' | 'YouTube' | 'TikTok' | 'Other';
   name: string;
   handle: string;
-  badge: string; // e.g., 'Personal', 'Brand Studio', 'Clips & Shorts', 'Community'
+  badge: string;
   avatarBg: string;
   avatarText: string;
   capabilities: {
@@ -58,16 +70,37 @@ interface DestinationAccount {
   };
 }
 
-// Multi-Channel Dataset: Demonstrates multiple channels per platform
-const CONNECTED_ACCOUNTS: DestinationAccount[] = [
-  // 1. Instagram: 2 Accounts
+export interface PresetRecipe {
+  id: string;
+  workspaceId: string;
+  title: string;
+  description: string;
+  icon: string;
+  targetPlacements: Record<string, boolean>;
+}
+
+// -------------------------------------------------------------
+// WORKSPACES DATASET
+// -------------------------------------------------------------
+const WORKSPACES_DATA: ProjectWorkspace[] = [
+  { id: 'ws_acme', name: 'Acme Creator Studio', category: 'Personal Brand', badgeColor: 'bg-brand-indigo' },
+  { id: 'ws_retzpost', name: 'RetzPost Software', category: 'SaaS Product', badgeColor: 'bg-semantic-info' },
+  { id: 'ws_coffee', name: 'Coffee Craft BKK', category: 'Client Cafe SME', badgeColor: 'bg-semantic-success' },
+];
+
+// -------------------------------------------------------------
+// CHANNELS SCOPED PER WORKSPACE (Strict Isolation)
+// -------------------------------------------------------------
+const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
+  // 1. Acme Creator Studio Channels (Personal Brand)
   {
-    id: 'ig_personal',
+    id: 'acme_ig',
+    workspaceId: 'ws_acme',
     platform: 'INSTAGRAM',
     platformGroup: 'Instagram',
     name: 'Alex Rivera (Personal)',
     handle: '@alexrivera_official',
-    badge: 'Personal',
+    badge: 'Creator IG',
     avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
     avatarText: 'IG',
     capabilities: {
@@ -77,29 +110,13 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
     },
   },
   {
-    id: 'ig_brand',
-    platform: 'INSTAGRAM',
-    platformGroup: 'Instagram',
-    name: 'RetzPost HQ (Brand Studio)',
-    handle: '@retzpost_app',
-    badge: 'Brand Studio',
-    avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
-    avatarText: 'IG',
-    capabilities: {
-      feed: { supported: true, label: 'Feed' },
-      story: { supported: true, label: 'Story' },
-      reel: { supported: true, label: 'Reel' },
-    },
-  },
-
-  // 2. Facebook: 3 Pages
-  {
-    id: 'fb_personal',
+    id: 'acme_fb',
+    workspaceId: 'ws_acme',
     platform: 'FACEBOOK',
     platformGroup: 'Facebook',
     name: 'Alex Rivera Media Studio',
-    handle: 'Alex Rivera Studio',
-    badge: 'Creator Page',
+    handle: 'Alex Rivera Studio Page',
+    badge: 'Creator FB',
     avatarBg: 'bg-[#1877F2]',
     avatarText: 'FB',
     capabilities: {
@@ -109,44 +126,13 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
     },
   },
   {
-    id: 'fb_brand',
-    platform: 'FACEBOOK',
-    platformGroup: 'Facebook',
-    name: 'RetzPost Official Page',
-    handle: 'RetzPost Multi-Publishing',
-    badge: 'Product Page',
-    avatarBg: 'bg-[#1877F2]',
-    avatarText: 'FB',
-    capabilities: {
-      feed: { supported: true, label: 'Feed' },
-      story: { supported: true, label: 'Story' },
-      reel: { supported: true, label: 'Reel' },
-    },
-  },
-  {
-    id: 'fb_community',
-    platform: 'FACEBOOK',
-    platformGroup: 'Facebook',
-    name: 'Tech & Creator Thailand',
-    handle: 'Tech Creators Club TH',
-    badge: 'Community Page',
-    avatarBg: 'bg-[#1877F2]',
-    avatarText: 'FB',
-    capabilities: {
-      feed: { supported: true, label: 'Feed' },
-      story: { supported: true, label: 'Story' },
-      reel: { supported: true, label: 'Reel' },
-    },
-  },
-
-  // 3. YouTube: 2 Channels
-  {
-    id: 'yt_main',
+    id: 'acme_yt',
+    workspaceId: 'ws_acme',
     platform: 'YOUTUBE',
     platformGroup: 'YouTube',
     name: 'Alex Rivera Studio (Main)',
     handle: '@AlexRiveraStudio',
-    badge: 'Main Channel',
+    badge: 'Shorts/Long',
     avatarBg: 'bg-[#FF0000]',
     avatarText: 'YT',
     capabilities: {
@@ -156,12 +142,113 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
     },
   },
   {
-    id: 'yt_shorts',
+    id: 'acme_tt',
+    workspaceId: 'ws_acme',
+    platform: 'TIKTOK',
+    platformGroup: 'TikTok',
+    name: 'Alex Rivera Official',
+    handle: '@alexrivera_official',
+    badge: 'TikTok Creator',
+    avatarBg: 'bg-ink-primary',
+    avatarText: 'TT',
+    capabilities: {
+      feed: { supported: true, label: 'Photos' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Video' },
+    },
+  },
+
+  // 2. Coffee Craft BKK Channels (Client Cafe SME)
+  {
+    id: 'coffee_fb',
+    workspaceId: 'ws_coffee',
+    platform: 'FACEBOOK',
+    platformGroup: 'Facebook',
+    name: 'Coffee Craft Bangkok (Main)',
+    handle: 'Coffee Craft Cafe & Roasters',
+    badge: 'Official Page',
+    avatarBg: 'bg-[#1877F2]',
+    avatarText: 'FB',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+  {
+    id: 'coffee_ig',
+    workspaceId: 'ws_coffee',
+    platform: 'INSTAGRAM',
+    platformGroup: 'Instagram',
+    name: 'Coffee Craft BKK',
+    handle: '@coffeecraft.bkk',
+    badge: 'Cafe IG',
+    avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
+    avatarText: 'IG',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+  {
+    id: 'coffee_tt',
+    workspaceId: 'ws_coffee',
+    platform: 'TIKTOK',
+    platformGroup: 'TikTok',
+    name: 'Coffee Craft Thailand',
+    handle: '@coffeecraft_th',
+    badge: 'Cafe TikTok',
+    avatarBg: 'bg-ink-primary',
+    avatarText: 'TT',
+    capabilities: {
+      feed: { supported: true, label: 'Photos' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Video' },
+    },
+  },
+
+  // 3. RetzPost Software Channels (SaaS Product)
+  {
+    id: 'retz_fb',
+    workspaceId: 'ws_retzpost',
+    platform: 'FACEBOOK',
+    platformGroup: 'Facebook',
+    name: 'RetzPost Software Page',
+    handle: 'RetzPost Product Desk',
+    badge: 'SaaS Official',
+    avatarBg: 'bg-[#1877F2]',
+    avatarText: 'FB',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+  {
+    id: 'retz_ig',
+    workspaceId: 'ws_retzpost',
+    platform: 'INSTAGRAM',
+    platformGroup: 'Instagram',
+    name: 'RetzPost HQ',
+    handle: '@retzpost_app',
+    badge: 'SaaS IG',
+    avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
+    avatarText: 'IG',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+  {
+    id: 'retz_yt',
+    workspaceId: 'ws_retzpost',
     platform: 'YOUTUBE',
     platformGroup: 'YouTube',
-    name: 'Alex Clips & Highlights',
-    handle: '@AlexClips',
-    badge: 'Clips & Shorts',
+    name: 'RetzPost Tutorials & Clips',
+    handle: '@RetzPostClips',
+    badge: 'SaaS Shorts',
     avatarBg: 'bg-[#FF0000]',
     avatarText: 'YT',
     capabilities: {
@@ -170,47 +257,14 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
       reel: { supported: true, label: 'Shorts' },
     },
   },
-
-  // 4. TikTok: 2 Accounts
   {
-    id: 'tt_personal',
-    platform: 'TIKTOK',
-    platformGroup: 'TikTok',
-    name: 'Alex Rivera (Personal)',
-    handle: '@alexrivera_official',
-    badge: 'Personal',
-    avatarBg: 'bg-ink-primary',
-    avatarText: 'TT',
-    capabilities: {
-      feed: { supported: true, label: 'Photos' },
-      story: { supported: true, label: 'Story' },
-      reel: { supported: true, label: 'Video' },
-    },
-  },
-  {
-    id: 'tt_brand',
-    platform: 'TIKTOK',
-    platformGroup: 'TikTok',
-    name: 'RetzPost Quick Tips',
-    handle: '@retzpost_clips',
-    badge: 'Brand Clips',
-    avatarBg: 'bg-ink-primary',
-    avatarText: 'TT',
-    capabilities: {
-      feed: { supported: true, label: 'Photos' },
-      story: { supported: true, label: 'Story' },
-      reel: { supported: true, label: 'Video' },
-    },
-  },
-
-  // 5. Threads & X: 2 Accounts
-  {
-    id: 'th_personal',
+    id: 'retz_th',
+    workspaceId: 'ws_retzpost',
     platform: 'THREADS',
     platformGroup: 'Other',
-    name: 'Alex Rivera on Threads',
-    handle: '@alexrivera',
-    badge: 'Personal',
+    name: 'RetzPost on Threads',
+    handle: '@retzpost_app',
+    badge: 'Threads',
     avatarBg: 'bg-black',
     avatarText: 'TH',
     capabilities: {
@@ -220,12 +274,13 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
     },
   },
   {
-    id: 'x_personal',
+    id: 'retz_x',
+    workspaceId: 'ws_retzpost',
     platform: 'TWITTER',
     platformGroup: 'Other',
-    name: 'Alex Rivera on X',
-    handle: '@alexrivera',
-    badge: 'Personal',
+    name: 'RetzPost App on X',
+    handle: '@retzpost',
+    badge: 'Twitter/X',
     avatarBg: 'bg-[#0f1419]',
     avatarText: '𝕏',
     capabilities: {
@@ -236,7 +291,97 @@ const CONNECTED_ACCOUNTS: DestinationAccount[] = [
   },
 ];
 
+// -------------------------------------------------------------
+// PRESETS DATASET SCOPED PER WORKSPACE
+// -------------------------------------------------------------
+const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
+  ws_acme: [
+    {
+      id: 'pre_acme_daily',
+      workspaceId: 'ws_acme',
+      title: 'Daily Creator Combo',
+      description: 'IG Feed + IG Story + FB Page Feed',
+      icon: '✨',
+      targetPlacements: {
+        'acme_ig_feed': true,
+        'acme_ig_story': true,
+        'acme_fb_feed': true,
+      },
+    },
+    {
+      id: 'pre_acme_viral',
+      workspaceId: 'ws_acme',
+      title: 'Viral Shorts Blast',
+      description: 'YT Shorts + TikTok + IG Reels',
+      icon: '🎬',
+      targetPlacements: {
+        'acme_yt_reel': true,
+        'acme_tt_reel': true,
+        'acme_ig_reel': true,
+      },
+    },
+  ],
+  ws_coffee: [
+    {
+      id: 'pre_coffee_morning',
+      workspaceId: 'ws_coffee',
+      title: 'Morning Cafe Vibe',
+      description: 'IG Story (with Map Sticker) + FB Page Feed',
+      icon: '☕',
+      targetPlacements: {
+        'coffee_ig_story': true,
+        'coffee_fb_feed': true,
+      },
+    },
+    {
+      id: 'pre_coffee_promo',
+      workspaceId: 'ws_coffee',
+      title: 'Weekend Promo Album',
+      description: 'FB Photo Album + IG Feed Carousel',
+      icon: '🥐',
+      targetPlacements: {
+        'coffee_fb_feed': true,
+        'coffee_ig_feed': true,
+      },
+    },
+  ],
+  ws_retzpost: [
+    {
+      id: 'pre_retz_release',
+      workspaceId: 'ws_retzpost',
+      title: 'Product Changelog Release',
+      description: 'FB Page + Threads + X Tweet',
+      icon: '🚀',
+      targetPlacements: {
+        'retz_fb_feed': true,
+        'retz_th_feed': true,
+        'retz_x_feed': true,
+      },
+    },
+    {
+      id: 'pre_retz_demo',
+      workspaceId: 'ws_retzpost',
+      title: 'Feature Demo Shorts',
+      description: 'YT Shorts + IG Reel',
+      icon: '📱',
+      targetPlacements: {
+        'retz_yt_reel': true,
+        'retz_ig_reel': true,
+      },
+    },
+  ],
+};
+
 export default function CreatePostPage() {
+  // Active Project Workspace Context
+  const [activeWorkspaceId, setActiveWorkspaceId] = useState('ws_acme');
+  const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
+
+  // Custom Presets State (Editable / Saveable)
+  const [customPresetsMap, setCustomPresetsMap] = useState<Record<string, PresetRecipe[]>>(INITIAL_PRESETS_BY_WORKSPACE);
+  const [isSavePresetModalOpen, setIsSavePresetModalOpen] = useState(false);
+  const [newPresetName, setNewPresetName] = useState('');
+
   // Mobile/Tablet Tab Switcher for narrow screens
   const [mobileTab, setMobileTab] = useState<'DESTINATIONS' | 'CANVAS' | 'PROOF'>('CANVAS');
 
@@ -263,19 +408,9 @@ export default function CreatePostPage() {
 
   // Placements State Dictionary: [accountId_format]: boolean
   const [placements, setPlacements] = useState<Record<string, boolean>>({
-    'ig_personal_feed': true,
-    'ig_personal_story': true,
-    'ig_brand_feed': false,
-    'fb_personal_feed': true,
-    'fb_brand_feed': true,
-    'fb_brand_story': false,
-    'fb_community_feed': false,
-    'yt_main_reel': false,
-    'yt_shorts_reel': false,
-    'tt_personal_feed': false,
-    'tt_brand_feed': false,
-    'th_personal_feed': false,
-    'x_personal_feed': false,
+    'acme_ig_feed': true,
+    'acme_ig_story': true,
+    'acme_fb_feed': true,
   });
 
   // Content Fields (Column 2)
@@ -293,6 +428,33 @@ export default function CreatePostPage() {
   const [publishMode, setPublishMode] = useState<'NOW' | 'SCHEDULED'>('NOW');
   const [scheduledDate, setScheduledDate] = useState('2026-10-24');
   const [scheduledTime, setScheduledTime] = useState('09:15');
+
+  // Active Workspace Entity
+  const activeWorkspace = WORKSPACES_DATA.find(w => w.id === activeWorkspaceId) || WORKSPACES_DATA[0];
+
+  // Active Channels Filtered by Workspace
+  const workspaceChannels = useMemo(() => {
+    return CHANNELS_BY_WORKSPACE.filter(ch => ch.workspaceId === activeWorkspaceId);
+  }, [activeWorkspaceId]);
+
+  // Active Custom Presets for this Workspace
+  const activePresets = customPresetsMap[activeWorkspaceId] || [];
+
+  // Switch Workspace Handler
+  const handleSwitchWorkspace = (workspaceId: string) => {
+    setActiveWorkspaceId(workspaceId);
+    setIsWorkspaceMenuOpen(false);
+    setSearchQuery('');
+    setSelectedGroupFilter('ALL');
+
+    // Automatically load default preset or first preset of that workspace
+    const presets = customPresetsMap[workspaceId] || [];
+    if (presets.length > 0) {
+      setPlacements(presets[0].targetPlacements);
+    } else {
+      setPlacements({});
+    }
+  };
 
   // Smart Validation Helper
   const getFormatValidation = (format: 'feed' | 'story' | 'reel', account: DestinationAccount) => {
@@ -334,61 +496,106 @@ export default function CreatePostPage() {
     setPlacements((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Bulk Column Toggles with Smart Validation
-  const toggleAllForFormat = (format: 'feed' | 'story' | 'reel') => {
-    const eligibleAccounts = filteredAccounts.filter(
-      (acc) => getFormatValidation(format, acc).eligible
-    );
-    if (eligibleAccounts.length === 0) return;
-
-    const areAllSelected = eligibleAccounts.every(
-      (acc) => placements[`${acc.id}_${format}`]
-    );
-
-    setPlacements((prev) => {
-      const next = { ...prev };
-      eligibleAccounts.forEach((acc) => {
-        next[`${acc.id}_${format}`] = !areAllSelected;
+  // 1-Click Card Row Toggle: Activates primary format
+  const toggleAccountPrimary = (account: DestinationAccount) => {
+    // If account has active placements, turn all off
+    const isAnyActive = ['feed', 'story', 'reel'].some(f => placements[`${account.id}_${f}`]);
+    if (isAnyActive) {
+      setPlacements(prev => {
+        const next = { ...prev };
+        delete next[`${account.id}_feed`];
+        delete next[`${account.id}_story`];
+        delete next[`${account.id}_reel`];
+        return next;
       });
-      return next;
-    });
+      return;
+    }
+
+    // Otherwise, turn on preferred format based on mediaMode
+    let preferredFormat: 'feed' | 'story' | 'reel' = 'feed';
+    if (mediaMode === 'VIDEO' && account.capabilities.reel.supported) {
+      preferredFormat = 'reel';
+    } else if (account.capabilities.feed.supported) {
+      preferredFormat = 'feed';
+    } else if (account.capabilities.reel.supported) {
+      preferredFormat = 'reel';
+    }
+
+    const val = getFormatValidation(preferredFormat, account);
+    if (val.eligible) {
+      setPlacements(prev => ({ ...prev, [`${account.id}_${preferredFormat}`]: true }));
+    }
   };
 
-  // Toggle All Valid Placements for an Entire Platform Group
-  const togglePlatformGroup = (group: string) => {
-    const groupAccounts = CONNECTED_ACCOUNTS.filter((acc) => acc.platformGroup === group);
-    
-    let allSelected = true;
-    groupAccounts.forEach((acc) => {
-      (['feed', 'story', 'reel'] as const).forEach((fmt) => {
-        if (getFormatValidation(fmt, acc).eligible && !placements[`${acc.id}_${fmt}`]) {
-          allSelected = false;
-        }
-      });
+  // 1-Click Preset Activation
+  const applyPreset = (recipe: PresetRecipe) => {
+    // Merge only eligible placements for current media mode
+    const newPlacements: Record<string, boolean> = {};
+    Object.entries(recipe.targetPlacements).forEach(([key, val]) => {
+      if (!val) return;
+      const [accId, format] = key.split('_') as [string, 'feed' | 'story' | 'reel'];
+      const acc = workspaceChannels.find(a => a.id === accId);
+      if (acc && getFormatValidation(format, acc).eligible) {
+        newPlacements[key] = true;
+      }
     });
+    setPlacements(newPlacements);
+  };
 
-    setPlacements((prev) => {
-      const next = { ...prev };
-      groupAccounts.forEach((acc) => {
-        (['feed', 'story', 'reel'] as const).forEach((fmt) => {
-          if (getFormatValidation(fmt, acc).eligible) {
-            next[`${acc.id}_${fmt}`] = !allSelected;
-          }
-        });
-      });
-      return next;
+  // Universal Smart Presets
+  const applyUniversalPreset = (type: 'REELS' | 'STORIES' | 'FEEDS' | 'ALL' | 'CLEAR') => {
+    if (type === 'CLEAR') {
+      setPlacements({});
+      return;
+    }
+
+    const next: Record<string, boolean> = {};
+    workspaceChannels.forEach(acc => {
+      if ((type === 'REELS' || type === 'ALL') && getFormatValidation('reel', acc).eligible) {
+        next[`${acc.id}_reel`] = true;
+      }
+      if ((type === 'STORIES' || type === 'ALL') && getFormatValidation('story', acc).eligible) {
+        next[`${acc.id}_story`] = true;
+      }
+      if ((type === 'FEEDS' || type === 'ALL') && getFormatValidation('feed', acc).eligible) {
+        next[`${acc.id}_feed`] = true;
+      }
     });
+    setPlacements(next);
+  };
+
+  // Save Current Selection as Project Recipe
+  const handleSaveCurrentAsPreset = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPresetName.trim()) return;
+
+    const newRecipe: PresetRecipe = {
+      id: `pre_${Date.now()}`,
+      workspaceId: activeWorkspaceId,
+      title: newPresetName.trim(),
+      description: `${Object.values(placements).filter(Boolean).length} destinations selected`,
+      icon: '⭐',
+      targetPlacements: { ...placements },
+    };
+
+    setCustomPresetsMap(prev => ({
+      ...prev,
+      [activeWorkspaceId]: [...(prev[activeWorkspaceId] || []), newRecipe],
+    }));
+
+    setNewPresetName('');
+    setIsSavePresetModalOpen(false);
   };
 
   // Filtered Accounts by search & group
   const filteredAccounts = useMemo(() => {
-    return CONNECTED_ACCOUNTS.filter((acc) => {
+    return workspaceChannels.filter((acc) => {
       const matchesGroup = selectedGroupFilter === 'ALL' || acc.platformGroup === selectedGroupFilter;
       const q = searchQuery.toLowerCase().trim();
       const matchesSearch = !q || acc.name.toLowerCase().includes(q) || acc.handle.toLowerCase().includes(q) || acc.badge.toLowerCase().includes(q);
       return matchesGroup && matchesSearch;
     });
-  }, [searchQuery, selectedGroupFilter]);
+  }, [workspaceChannels, searchQuery, selectedGroupFilter]);
 
   // Group accounts by platformGroup for presentation
   const groupedAccounts = useMemo(() => {
@@ -405,12 +612,12 @@ export default function CreatePostPage() {
   const totalActivePlacements = Object.entries(placements).filter(([key, val]) => {
     if (!val) return false;
     const [accId, format] = key.split('_') as [string, 'feed' | 'story' | 'reel'];
-    const acc = CONNECTED_ACCOUNTS.find((a) => a.id === accId);
+    const acc = workspaceChannels.find((a) => a.id === accId);
     if (!acc) return false;
     return getFormatValidation(format, acc).eligible;
   }).length;
 
-  const isAnyStoryActive = CONNECTED_ACCOUNTS.some((acc) => {
+  const isAnyStoryActive = workspaceChannels.some((acc) => {
     const val = getFormatValidation('story', acc);
     return val.eligible && placements[`${acc.id}_story`];
   });
@@ -420,9 +627,9 @@ export default function CreatePostPage() {
       {/* Masthead Header */}
       <Masthead
         folio="STUDIO DESK / 3-COLUMN WORKBENCH"
-        editionDate="OMNI-FORMAT PUBLISHER"
+        editionDate="MULTI-PROJECT & PRESETS READY"
         title="Universal Content Studio"
-        subtitle="Compose fluidly across media and narrative. Dispatch simultaneously to Feed, Stories, and Reels with smart validation."
+        subtitle="Publish seamlessly across multiple projects. 1-click presets adapt instantly to your project's channels."
         actions={
           <div className="flex items-center gap-2">
             <span className="text-xs font-mono text-brand-indigo font-semibold px-2.5 py-1 bg-brand-indigo/10 rounded-editorial border border-brand-indigo/20">
@@ -432,7 +639,7 @@ export default function CreatePostPage() {
         }
       />
 
-      {/* MOBILE / TABLET RESPONSIVE TAB SWITCHER (Hidden on xl: 1280px+) */}
+      {/* MOBILE / TABLET RESPONSIVE TAB SWITCHER */}
       <div className="xl:hidden flex items-center p-1 bg-paper-raised border border-border-rule rounded-editorial text-xs">
         <button
           type="button"
@@ -473,32 +680,217 @@ export default function CreatePostPage() {
       <div className="grid grid-cols-1 lg:grid-cols-12 xl:grid-cols-12 gap-5 items-start">
         
         {/* ========================================================================= */}
-        {/* COLUMN 1: DESTINATIONS & PLACEMENTS (30% on xl / 4-cols on lg)           */}
+        {/* COLUMN 1: DESTINATIONS & PROJECT-SCOPED PRESETS (30% on xl)               */}
         {/* ========================================================================= */}
         <aside
           className={`lg:col-span-5 xl:col-span-3 bg-paper-raised border border-border-rule rounded-card p-4 shadow-xs space-y-3.5 ${
             mobileTab !== 'DESTINATIONS' ? 'hidden xl:block' : 'block'
           }`}
         >
-          {/* Header */}
-          <div className="flex items-center justify-between pb-2.5 border-b border-border-rule">
-            <div className="flex items-center gap-2">
-              <Share2 className="w-4 h-4 text-brand-indigo" />
-              <h2 className="font-serif font-medium text-sm text-ink-primary">
-                Destinations
-              </h2>
+          {/* Top Bar: Workspace Project Selector + Clear All */}
+          <div className="space-y-2 pb-2.5 border-b border-border-rule">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold">
+                Active Project Workspace:
+              </span>
+              <button
+                type="button"
+                onClick={() => applyUniversalPreset('CLEAR')}
+                className="text-[10px] font-mono text-accent-terracotta hover:underline font-semibold flex items-center gap-1"
+                title="Deselect all channels"
+              >
+                <RotateCcw className="w-2.5 h-2.5" />
+                <span>Clear All (0)</span>
+              </button>
             </div>
-            <span className="text-[10px] font-mono text-ink-secondary bg-paper-subtle px-1.5 py-0.5 rounded border border-border-rule">
-              {totalActivePlacements} active
-            </span>
+
+            {/* In-Studio Workspace Dropdown */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsWorkspaceMenuOpen(!isWorkspaceMenuOpen)}
+                className="w-full p-2 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between text-xs hover:border-brand-indigo/60 transition-colors shadow-2xs group text-left"
+              >
+                <div className="flex items-center gap-2 truncate">
+                  <div className={`w-2.5 h-2.5 rounded-full ${activeWorkspace.badgeColor} shrink-0`} />
+                  <div className="truncate">
+                    <p className="font-semibold text-xs text-ink-primary leading-tight truncate">
+                      {activeWorkspace.name}
+                    </p>
+                    <p className="text-[9px] font-mono text-ink-secondary leading-none mt-0.5 truncate">
+                      {activeWorkspace.category} • {workspaceChannels.length} channels
+                    </p>
+                  </div>
+                </div>
+                <ChevronDown className="w-3.5 h-3.5 text-ink-secondary group-hover:text-ink-primary shrink-0 transition-colors" />
+              </button>
+
+              {/* Dropdown Options */}
+              {isWorkspaceMenuOpen && (
+                <div className="absolute left-0 right-0 top-full mt-1 bg-paper-raised border border-border-strong rounded-editorial shadow-lg p-1.5 z-40 space-y-1">
+                  <div className="px-2 py-0.5 text-[9px] font-mono uppercase text-ink-secondary font-bold">
+                    Switch Active Project:
+                  </div>
+                  {WORKSPACES_DATA.map(ws => (
+                    <button
+                      key={ws.id}
+                      type="button"
+                      onClick={() => handleSwitchWorkspace(ws.id)}
+                      className={`w-full flex items-center justify-between p-2 rounded text-left transition-colors text-xs ${
+                        ws.id === activeWorkspaceId
+                          ? 'bg-paper-canvas text-brand-indigo font-semibold shadow-2xs border border-border-rule'
+                          : 'hover:bg-paper-subtle text-ink-primary'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        <div className={`w-2 h-2 rounded-full ${ws.badgeColor} shrink-0`} />
+                        <div className="truncate">
+                          <p className="leading-tight truncate">{ws.name}</p>
+                          <p className="text-[9px] font-mono text-ink-secondary">{ws.category}</p>
+                        </div>
+                      </div>
+                      {ws.id === activeWorkspaceId && (
+                        <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
+
+          {/* PROJECT-SCOPED PRESETS & RECIPES BAR */}
+          <div className="p-2.5 bg-paper-subtle rounded-editorial border border-border-rule space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-ink-secondary uppercase font-bold tracking-wider">
+                1-Click Project Presets:
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsSavePresetModalOpen(true)}
+                disabled={totalActivePlacements === 0}
+                className={`text-[9px] font-mono flex items-center gap-1 font-semibold ${
+                  totalActivePlacements > 0
+                    ? 'text-brand-indigo hover:underline cursor-pointer'
+                    : 'text-ink-secondary/40 cursor-not-allowed'
+                }`}
+              >
+                <BookmarkPlus className="w-2.5 h-2.5" />
+                <span>+ Save Preset</span>
+              </button>
+            </div>
+
+            {/* Level 1: Universal Smart Buttons */}
+            <div className="grid grid-cols-3 gap-1">
+              <button
+                type="button"
+                onClick={() => applyUniversalPreset('FEEDS')}
+                className="py-1 px-1 rounded text-[10px] font-mono font-semibold bg-brand-indigo text-white hover:bg-brand-indigo-hover transition-colors shadow-2xs text-center truncate"
+                title="Select all Feed placements in this workspace"
+              >
+                📰 All Feeds
+              </button>
+              <button
+                type="button"
+                disabled={mediaMode === 'TEXT_ONLY'}
+                onClick={() => applyUniversalPreset('STORIES')}
+                className={`py-1 px-1 rounded text-[10px] font-mono font-semibold transition-colors shadow-2xs text-center truncate ${
+                  mediaMode !== 'TEXT_ONLY'
+                    ? 'bg-accent-terracotta text-white hover:opacity-90'
+                    : 'bg-paper-canvas text-ink-secondary/40 border border-border-rule cursor-not-allowed'
+                }`}
+                title="Select all Stories in this workspace"
+              >
+                📱 All Stories
+              </button>
+              <button
+                type="button"
+                disabled={mediaMode !== 'VIDEO'}
+                onClick={() => applyUniversalPreset('REELS')}
+                className={`py-1 px-1 rounded text-[10px] font-mono font-semibold transition-colors shadow-2xs text-center truncate ${
+                  mediaMode === 'VIDEO'
+                    ? 'bg-semantic-info text-white hover:opacity-90'
+                    : 'bg-paper-canvas text-ink-secondary/40 border border-border-rule cursor-not-allowed'
+                }`}
+                title="Select all Reels/Shorts in this workspace"
+              >
+                🎬 All Reels
+              </button>
+            </div>
+
+            {/* Level 2: Project-Specific Custom Recipes */}
+            {activePresets.length > 0 && (
+              <div className="space-y-1 pt-1 border-t border-border-rule/60">
+                <span className="text-[8px] font-mono text-ink-secondary uppercase block font-semibold">
+                  Saved for {activeWorkspace.name}:
+                </span>
+                <div className="flex flex-wrap gap-1">
+                  {activePresets.map((recipe) => (
+                    <button
+                      key={recipe.id}
+                      type="button"
+                      onClick={() => applyPreset(recipe)}
+                      className="px-2 py-0.5 rounded text-[10px] font-mono bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-primary transition-colors flex items-center gap-1 shadow-2xs text-left"
+                      title={recipe.description}
+                    >
+                      <span>{recipe.icon}</span>
+                      <span className="font-medium truncate max-w-[120px]">{recipe.title}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Modal for Saving New Custom Preset */}
+          {isSavePresetModalOpen && (
+            <div className="p-2.5 bg-paper-canvas border border-brand-indigo/40 rounded-editorial shadow-xs space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-mono text-brand-indigo font-bold uppercase">
+                  Save {totalActivePlacements} Selected as Preset
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setIsSavePresetModalOpen(false)}
+                  className="text-ink-secondary hover:text-ink-primary"
+                >
+                  ✕
+                </button>
+              </div>
+              <form onSubmit={handleSaveCurrentAsPreset} className="space-y-2">
+                <input
+                  type="text"
+                  placeholder="e.g. Daily Promo Combo..."
+                  value={newPresetName}
+                  onChange={(e) => setNewPresetName(e.target.value)}
+                  autoFocus
+                  className="w-full px-2 py-1 text-xs bg-paper-subtle border border-border-rule rounded font-mono focus:outline-none focus:border-brand-indigo"
+                />
+                <div className="flex justify-end gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setIsSavePresetModalOpen(false)}
+                    className="px-2 py-0.5 rounded text-[10px] font-mono text-ink-secondary hover:bg-paper-subtle"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-2.5 py-0.5 rounded text-[10px] font-mono bg-brand-indigo text-white font-semibold"
+                  >
+                    Save Recipe
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
 
           {/* Search Box */}
           <div className="relative">
             <Search className="w-3.5 h-3.5 text-ink-secondary absolute left-2.5 top-2.5" />
             <input
               type="text"
-              placeholder="Search channels..."
+              placeholder={`Search ${workspaceChannels.length} channels...`}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-8 pr-2.5 py-1.5 text-[11px] bg-paper-canvas border border-border-rule rounded-editorial font-mono text-ink-primary placeholder:text-ink-secondary/50 focus:outline-none focus:border-brand-indigo"
@@ -509,8 +901,9 @@ export default function CreatePostPage() {
           <div className="flex flex-wrap items-center gap-1 text-[10px] font-mono">
             {(['ALL', 'Instagram', 'Facebook', 'YouTube', 'TikTok'] as const).map((grp) => {
               const count = grp === 'ALL' 
-                ? CONNECTED_ACCOUNTS.length 
-                : CONNECTED_ACCOUNTS.filter(a => a.platformGroup === grp).length;
+                ? workspaceChannels.length 
+                : workspaceChannels.filter(a => a.platformGroup === grp).length;
+              if (grp !== 'ALL' && count === 0) return null; // Hide platform tabs with 0 channels in this workspace
               
               return (
                 <button
@@ -529,64 +922,15 @@ export default function CreatePostPage() {
             })}
           </div>
 
-          {/* Quick Column Bulk Selectors */}
-          <div className="p-2 bg-paper-subtle rounded-editorial border border-border-rule space-y-1.5">
-            <span className="text-[9px] font-mono text-ink-secondary uppercase block font-semibold">
-              Bulk Placement Toggles:
-            </span>
-            <div className="flex items-center gap-1.5">
-              <button
-                type="button"
-                onClick={() => toggleAllForFormat('feed')}
-                className="flex-1 py-1 rounded text-[10px] font-mono font-semibold bg-brand-indigo text-white hover:bg-brand-indigo-hover transition-colors shadow-2xs text-center"
-              >
-                Feed
-              </button>
-
-              <button
-                type="button"
-                disabled={mediaMode === 'TEXT_ONLY'}
-                onClick={() => toggleAllForFormat('story')}
-                className={`flex-1 py-1 rounded text-[10px] font-mono font-semibold transition-colors shadow-2xs text-center ${
-                  mediaMode !== 'TEXT_ONLY'
-                    ? 'bg-accent-terracotta text-white hover:opacity-90'
-                    : 'bg-paper-canvas text-ink-secondary/40 border border-border-rule cursor-not-allowed'
-                }`}
-              >
-                Stories
-              </button>
-
-              <button
-                type="button"
-                disabled={mediaMode !== 'VIDEO'}
-                onClick={() => toggleAllForFormat('reel')}
-                className={`flex-1 py-1 rounded text-[10px] font-mono font-semibold transition-colors shadow-2xs text-center ${
-                  mediaMode === 'VIDEO'
-                    ? 'bg-semantic-info text-white hover:opacity-90'
-                    : 'bg-paper-canvas text-ink-secondary/40 border border-border-rule cursor-not-allowed'
-                }`}
-              >
-                Reels
-              </button>
-            </div>
-          </div>
-
-          {/* Scrollable Channel Group List with Internal Scrollbar */}
-          <div className="max-h-[calc(100vh-270px)] overflow-y-auto pr-1 space-y-3.5">
+          {/* Scrollable Channel List Scoped to Active Project with 1-Click Card Activation */}
+          <div className="max-h-[calc(100vh-320px)] overflow-y-auto pr-1 space-y-3">
             {Array.from(groupedAccounts.entries()).map(([groupName, accounts]) => (
-              <div key={groupName} className="space-y-1.5">
+              <div key={groupName} className="space-y-1">
                 {/* Group Subheader */}
-                <div className="flex items-center justify-between text-[10px] font-mono pb-1 border-b border-border-rule/70">
+                <div className="flex items-center justify-between text-[10px] font-mono pb-0.5 border-b border-border-rule/70">
                   <span className="font-bold text-ink-primary uppercase tracking-wider">
                     {groupName} ({accounts.length})
                   </span>
-                  <button
-                    type="button"
-                    onClick={() => togglePlatformGroup(groupName)}
-                    className="text-brand-indigo hover:underline font-semibold"
-                  >
-                    Toggle All
-                  </button>
                 </div>
 
                 {/* Individual Channel Cards */}
@@ -607,17 +951,21 @@ export default function CreatePostPage() {
                         key={acc.id}
                         className={`p-2 rounded-editorial border transition-all ${
                           isAnyActive
-                            ? 'bg-paper-canvas border-border-strong shadow-2xs'
-                            : 'bg-paper-subtle/30 border-border-rule opacity-70'
+                            ? 'bg-paper-canvas border-brand-indigo/40 shadow-2xs ring-1 ring-brand-indigo/10'
+                            : 'bg-paper-subtle/30 border-border-rule opacity-75 hover:opacity-100'
                         }`}
                       >
-                        {/* Channel Header */}
-                        <div className="flex items-center gap-2 mb-2">
+                        {/* 1-Click Account Row Header: Clicking toggles primary format */}
+                        <div 
+                          onClick={() => toggleAccountPrimary(acc)}
+                          className="flex items-center gap-2 mb-1.5 cursor-pointer group"
+                          title="Click to toggle channel"
+                        >
                           <div className={`w-5 h-5 rounded-editorial ${acc.avatarBg} text-white flex items-center justify-center font-bold text-[9px] shrink-0`}>
                             {acc.avatarText}
                           </div>
                           <div className="min-w-0 flex-1">
-                            <p className="font-semibold text-xs text-ink-primary leading-tight truncate">
+                            <p className="font-semibold text-xs text-ink-primary leading-tight truncate group-hover:text-brand-indigo transition-colors">
                               {acc.name}
                             </p>
                             <p className="text-[9px] font-mono text-ink-secondary truncate">
@@ -636,7 +984,10 @@ export default function CreatePostPage() {
                             feedVal.eligible ? (
                               <button
                                 type="button"
-                                onClick={() => togglePlacement(acc.id, 'feed', acc)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  togglePlacement(acc.id, 'feed', acc);
+                                }}
                                 className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium transition-all ${
                                   isFeedActive
                                     ? 'bg-brand-indigo text-white font-semibold shadow-2xs'
@@ -663,7 +1014,10 @@ export default function CreatePostPage() {
                             storyVal.eligible ? (
                               <button
                                 type="button"
-                                onClick={() => togglePlacement(acc.id, 'story', acc)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  togglePlacement(acc.id, 'story', acc);
+                                }}
                                 className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium transition-all ${
                                   isStoryActive
                                     ? 'bg-accent-terracotta text-white font-semibold shadow-2xs'
@@ -690,7 +1044,10 @@ export default function CreatePostPage() {
                             reelVal.eligible ? (
                               <button
                                 type="button"
-                                onClick={() => togglePlacement(acc.id, 'reel', acc)}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  togglePlacement(acc.id, 'reel', acc);
+                                }}
                                 className={`px-2 py-0.5 rounded text-[10px] font-mono font-medium transition-all ${
                                   isReelActive
                                     ? 'bg-semantic-info text-white font-semibold shadow-2xs'
@@ -719,16 +1076,10 @@ export default function CreatePostPage() {
               </div>
             ))}
           </div>
-
-          {/* Validation Notice footer */}
-          <div className="pt-2 border-t border-border-rule flex items-center gap-1.5 text-[9px] font-mono text-ink-secondary">
-            <Info className="w-3 h-3 text-brand-indigo shrink-0" />
-            <span>Pills auto-lock based on media in Canvas</span>
-          </div>
         </aside>
 
         {/* ========================================================================= */}
-        {/* COLUMN 2: THE CREATIVE CANVAS (42% on xl / 7-cols on lg)                  */}
+        {/* COLUMN 2: THE CREATIVE CANVAS (42% on xl / unified media + narrative)     */}
         {/* ========================================================================= */}
         <main
           className={`lg:col-span-7 xl:col-span-5 space-y-4 ${
@@ -867,7 +1218,7 @@ export default function CreatePostPage() {
             )}
           </div>
 
-          {/* NARRATIVE & COPY BOX (Unified with Media) */}
+          {/* NARRATIVE & COPY BOX */}
           <div className="bg-paper-raised border border-border-rule rounded-card p-4 shadow-xs space-y-3.5">
             <div className="flex items-center justify-between pb-2 border-b border-border-rule">
               <div className="flex items-center gap-2">
@@ -926,7 +1277,7 @@ export default function CreatePostPage() {
               />
             </div>
 
-            {/* CONTEXTUAL STORY LINK STICKER (Only displays when a Story placement is active!) */}
+            {/* CONTEXTUAL STORY LINK STICKER */}
             {isAnyStoryActive && (
               <div className="pt-3 border-t border-border-rule/80">
                 <div className="flex items-center gap-1.5 mb-1">
@@ -1077,8 +1428,12 @@ export default function CreatePostPage() {
                     AR
                   </div>
                   <div>
-                    <p className="text-xs font-semibold text-ink-primary leading-none">alexrivera_official</p>
-                    <p className="text-[8px] font-mono text-ink-secondary">Feed Post • Carousel ({images.length})</p>
+                    <p className="text-xs font-semibold text-ink-primary leading-none truncate max-w-[150px]">
+                      {workspaceChannels[0]?.handle || '@channel'}
+                    </p>
+                    <p className="text-[8px] font-mono text-ink-secondary">
+                      Feed Post • {mediaMode === 'PHOTOS' ? `Carousel (${images.length})` : mediaMode === 'VIDEO' ? 'Video Post' : 'Text'}
+                    </p>
                   </div>
                 </div>
                 <span className="text-[10px] font-mono text-ink-secondary">•••</span>
@@ -1122,7 +1477,7 @@ export default function CreatePostPage() {
                   {workingTitle}
                 </p>
                 <p className="text-ink-secondary text-[10px] line-clamp-2 leading-relaxed">
-                  <span className="font-semibold text-ink-primary mr-1">alexrivera_official</span>
+                  <span className="font-semibold text-ink-primary mr-1">{workspaceChannels[0]?.handle || '@channel'}</span>
                   {sharedCaption}
                 </p>
               </div>
@@ -1141,7 +1496,9 @@ export default function CreatePostPage() {
                   <div className="w-4 h-4 rounded-full bg-accent-terracotta text-white flex items-center justify-center text-[7px] font-bold ring-1 ring-white">
                     AR
                   </div>
-                  <span className="text-[9px] font-semibold text-white/90">alexrivera_official</span>
+                  <span className="text-[9px] font-semibold text-white/90 truncate max-w-[110px]">
+                    {workspaceChannels[0]?.handle || '@channel'}
+                  </span>
                   <span className="text-[8px] text-white/50">24h</span>
                 </div>
               </div>
@@ -1206,7 +1563,7 @@ export default function CreatePostPage() {
 
               <div className="flex items-end justify-between">
                 <div className="space-y-0.5 max-w-[120px]">
-                  <p className="text-[10px] font-bold line-clamp-1">@alexrivera_official</p>
+                  <p className="text-[10px] font-bold line-clamp-1">{workspaceChannels[0]?.handle || '@channel'}</p>
                   <p className="text-[9px] text-white/80 line-clamp-2">{workingTitle}</p>
                 </div>
                 <div className="flex flex-col items-center gap-2 text-white/90">
@@ -1220,12 +1577,14 @@ export default function CreatePostPage() {
 
           {/* Active Destinations Breakdown */}
           <div className="p-2.5 bg-paper-subtle rounded-editorial border border-border-rule text-xs space-y-1.5">
-            <span className="text-[9px] font-mono text-ink-secondary uppercase block font-semibold">
-              Active Destinations ({totalActivePlacements})
-            </span>
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-mono text-ink-secondary uppercase block font-semibold">
+                Destinations in {activeWorkspace.name} ({totalActivePlacements})
+              </span>
+            </div>
 
             <div className="flex flex-wrap gap-1">
-              {CONNECTED_ACCOUNTS.map((acc) => (
+              {workspaceChannels.map((acc) => (
                 <React.Fragment key={acc.id}>
                   {getFormatValidation('feed', acc).eligible && placements[`${acc.id}_feed`] && (
                     <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-brand-indigo text-white font-medium">
@@ -1247,7 +1606,7 @@ export default function CreatePostPage() {
 
               {totalActivePlacements === 0 && (
                 <span className="text-[9px] font-mono text-ink-secondary italic">
-                  No destinations selected. Enable channels on the left.
+                  No destinations selected. Enable channels on the left or click a Preset.
                 </span>
               )}
             </div>
@@ -1267,7 +1626,7 @@ export default function CreatePostPage() {
                 ? `Publish to ${totalActivePlacements} Destinations`
                 : `Schedule Dispatch (${totalActivePlacements} Destinations)`}
             </span>
-            <ArrowRight className="w-3.5 h-3.5" />
+            <ArrowRight className="w-4 h-4" />
           </button>
         </section>
 
