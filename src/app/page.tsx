@@ -49,8 +49,20 @@ import {
   Trophy,
   Award,
   Flame,
-  Filter
+  Filter,
+  Users,
+  Target,
+  ShieldCheck
 } from 'lucide-react';
+import { 
+  getEmployeeKPIs, 
+  getDepartmentSummary, 
+  EmployeeKPI 
+} from '@/modules/analytics/kpi-engine';
+import { 
+  getPostDiagnosis, 
+  PostDiagnosisInsight 
+} from '@/modules/analytics/ai-insights';
 import { 
   generateErrorLogCsv, 
   generateAllDispatchesCsv, 
@@ -671,7 +683,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
 ];
 
 export default function HomePage() {
-  const [dashboardMode, setDashboardMode] = useState<'OPERATIONS' | 'TRACKING'>('OPERATIONS');
+  const [dashboardMode, setDashboardMode] = useState<'OPERATIONS' | 'TRACKING' | 'TEAM_KPI'>('OPERATIONS');
   const [workspaceFilter, setWorkspaceFilter] = useState<string>('ALL');
   const [batchTab, setBatchTab] = useState<'ALL' | 'CAPITAL_ONE' | 'ACME' | 'NEEDS_ATTENTION'>('ALL');
   const [downloadToast, setDownloadToast] = useState<string | null>(null);
@@ -681,6 +693,20 @@ export default function HomePage() {
   // Performance Tracking States
   const [trackingSort, setTrackingSort] = useState<'OVERALL' | 'VIEWS' | 'ENGAGEMENT' | 'CLICKS'>('OVERALL');
   const [trackingTimeframe, setTrackingTimeframe] = useState<'30D' | '7D' | 'ALL'>('30D');
+
+  // Employee KPI & AI Post Diagnosis States
+  const [selectedEmployeeKpi, setSelectedEmployeeKpi] = useState<EmployeeKPI | null>(null);
+  const [selectedPostDiagnosis, setSelectedPostDiagnosis] = useState<PostDiagnosisInsight | null>(null);
+  const [kpiTimeframe, setKpiTimeframe] = useState<'THIS_MONTH' | 'LAST_MONTH' | 'Q3_2026'>('THIS_MONTH');
+
+  // Employee KPI Queries
+  const employeeKpis = useMemo(() => {
+    return getEmployeeKPIs(workspaceFilter);
+  }, [workspaceFilter]);
+
+  const departmentSummary = useMemo(() => {
+    return getDepartmentSummary(workspaceFilter);
+  }, [workspaceFilter]);
 
   const handleCopyLink = (url: string, label: string) => {
     navigator.clipboard.writeText(url);
@@ -928,12 +954,12 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* DUAL-MODE MASTER SWITCHER (OPERATIONS VS TRACKING TELEMETRY) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2 bg-paper-raised border border-border-rule rounded-card shadow-xs">
-        <div className="flex items-center gap-1.5 p-1 bg-paper-subtle rounded-editorial font-mono text-xs">
+      {/* TRIPLE-MODE MASTER SWITCHER (OPERATIONS VS CONTENT TRACKING VS STAFF KPI) */}
+      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 p-2 bg-paper-raised border border-border-rule rounded-card shadow-xs">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-paper-subtle rounded-editorial font-mono text-xs">
           <button
             onClick={() => setDashboardMode('OPERATIONS')}
-            className={`flex items-center gap-2 px-4 py-2 rounded transition-all font-semibold ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded transition-all font-semibold cursor-pointer ${
               dashboardMode === 'OPERATIONS'
                 ? 'bg-paper-canvas text-brand-indigo shadow-xs border border-brand-indigo/30'
                 : 'text-ink-secondary hover:text-ink-primary'
@@ -945,16 +971,31 @@ export default function HomePage() {
 
           <button
             onClick={() => setDashboardMode('TRACKING')}
-            className={`flex items-center gap-2 px-4 py-2 rounded transition-all font-semibold ${
+            className={`flex items-center gap-2 px-3.5 py-2 rounded transition-all font-semibold cursor-pointer ${
               dashboardMode === 'TRACKING'
                 ? 'bg-paper-canvas text-brand-indigo shadow-xs border border-brand-indigo/30'
                 : 'text-ink-secondary hover:text-ink-primary'
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5 text-accent-terracotta" />
-            <span>📊 Performance & Tracking (คนดู • คนไลค์ • คลิกลิงก์)</span>
+            <span>📊 Content Telemetry (คนดู • ไลค์ • คลิกลิงก์)</span>
             <span className="px-1.5 py-0.2 rounded bg-accent-terracotta text-white text-[9px] font-bold">
               LIVE
+            </span>
+          </button>
+
+          <button
+            onClick={() => setDashboardMode('TEAM_KPI')}
+            className={`flex items-center gap-2 px-3.5 py-2 rounded transition-all font-semibold cursor-pointer ${
+              dashboardMode === 'TEAM_KPI'
+                ? 'bg-paper-canvas text-emerald-800 shadow-xs border border-emerald-500/40'
+                : 'text-ink-secondary hover:text-ink-primary'
+            }`}
+          >
+            <Users className="w-3.5 h-3.5 text-emerald-700" />
+            <span>👥 Staff & Creator KPI (วัดผลพนักงาน)</span>
+            <span className="px-1.5 py-0.2 rounded bg-emerald-700 text-white text-[9px] font-bold">
+              KPI
             </span>
           </button>
         </div>
@@ -1704,8 +1745,17 @@ export default function HomePage() {
                     </div>
                   </div>
 
-                  {/* High-level Engagement Badge */}
-                  <div className="flex items-center gap-2 self-start lg:self-center font-mono text-xs">
+                  {/* High-level Engagement Badge + AI Diagnosis Trigger */}
+                  <div className="flex flex-wrap items-center gap-2 self-start lg:self-center font-mono text-xs">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedPostDiagnosis(getPostDiagnosis(post.id, post.title))}
+                      className="px-2.5 py-1 rounded bg-brand-indigo/10 hover:bg-brand-indigo hover:text-white border border-brand-indigo/30 text-brand-indigo font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
+                      title="วิเคราะห์ปัจจัยความสำเร็จด้วย AI: ทำไมถึงได้ยอด และแนวทางต่อยอด"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-accent-terracotta" />
+                      <span>🤖 ทำไมถึงปัง? (AI Diagnosis)</span>
+                    </button>
                     <span className="px-2.5 py-1 rounded bg-semantic-success/10 border border-semantic-success/20 text-semantic-success font-bold flex items-center gap-1">
                       <Flame className="w-3.5 h-3.5 fill-semantic-success text-semantic-success" />
                       <span>{post.engagementRate} Engagement Rate</span>
@@ -1805,7 +1855,322 @@ export default function HomePage() {
       )}
 
       {/* ========================================================================= */}
-      {/* LIVE POSTS & WEB DIRECTORY MODAL                                          */}
+      {/* MODE 3: STAFF & CREATOR KPI TELEMETRY                                    */}
+      {/* ========================================================================= */}
+      {dashboardMode === 'TEAM_KPI' && (
+        <div className="space-y-7 animate-in fade-in duration-200">
+          {/* HEADER ALERT & MOCK REGISTRY NOTICE */}
+          <div className="p-4 bg-paper-raised border border-border-rule rounded-card flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center shrink-0">
+                <Users className="w-5 h-5" />
+              </div>
+              <div className="space-y-0.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h3 className="font-serif font-bold text-base text-ink-primary">
+                    ระบบวัดผล KPI ประสิทธิภาพทีมงานและครีเอเตอร์ (Staff & Creator KPI Telemetry)
+                  </h3>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold flex items-center gap-1">
+                    <span>🧪 MOCK DATA / SIMULATION</span>
+                  </span>
+                </div>
+                <p className="text-xs font-mono text-ink-secondary">
+                  ติดตามยอดการผลิตโพสต์ (Target vs Actual), ความตรงต่อเวลา, อัตราผ่านงานรอบแรก, ยอด Reach ที่ทำได้ และคะแนนประเมินรายบุคคล
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 shrink-0 self-end md:self-center font-mono text-xs">
+              <div className="flex items-center gap-1 bg-paper-subtle border border-border-rule rounded-editorial p-0.5 text-[11px]">
+                <button
+                  type="button"
+                  onClick={() => setKpiTimeframe('THIS_MONTH')}
+                  className={`px-2.5 py-1 rounded transition-colors ${
+                    kpiTimeframe === 'THIS_MONTH'
+                      ? 'bg-paper-canvas text-brand-indigo font-bold shadow-2xs'
+                      : 'text-ink-secondary hover:text-ink-primary'
+                  }`}
+                >
+                  เดือนนี้ (ต.ค. 2026)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setKpiTimeframe('LAST_MONTH')}
+                  className={`px-2.5 py-1 rounded transition-colors ${
+                    kpiTimeframe === 'LAST_MONTH'
+                      ? 'bg-paper-canvas text-brand-indigo font-bold shadow-2xs'
+                      : 'text-ink-secondary hover:text-ink-primary'
+                  }`}
+                >
+                  ก.ย. 2026
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setKpiTimeframe('Q3_2026')}
+                  className={`px-2.5 py-1 rounded transition-colors ${
+                    kpiTimeframe === 'Q3_2026'
+                      ? 'bg-paper-canvas text-brand-indigo font-bold shadow-2xs'
+                      : 'text-ink-secondary hover:text-ink-primary'
+                  }`}
+                >
+                  ไตรมาส 3
+                </button>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setDownloadToast('✓ ส่งออกตารางประเมินผล KPI บุคลากรเป็นไฟล์ CSV เรียบร้อยแล้ว');
+                  setTimeout(() => setDownloadToast(null), 3000);
+                }}
+                className="px-3 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+              >
+                <Download className="w-3.5 h-3.5 text-brand-indigo" />
+                <span>Export CSV</span>
+              </button>
+            </div>
+          </div>
+
+          {/* TOP 4 DEPARTMENT KPI PULSE METRICS */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {/* Metric 1: Department Output */}
+            <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
+              <div className="flex items-center justify-between text-ink-secondary mb-2">
+                <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                  📦 ยอดผลิตโพสต์รวม (OUTPUT)
+                </span>
+                <Target className="w-3.5 h-3.5 text-brand-indigo" />
+              </div>
+              <div className="flex items-baseline justify-between">
+                <p className="font-serif font-bold text-2xl text-ink-primary">
+                  {departmentSummary.totalActualPosts} / {departmentSummary.totalTargetPosts}
+                </p>
+                <span className="text-[10px] font-mono text-semantic-success font-semibold">
+                  {departmentSummary.overallCompletionRate}% Target
+                </span>
+              </div>
+              <p className="text-[10px] text-ink-secondary mt-1 font-mono">
+                +{departmentSummary.totalActualPosts - departmentSummary.totalTargetPosts} งาน เกินเป้าหมายประจำเดือน 🔥
+              </p>
+            </div>
+
+            {/* Metric 2: On-Time Dispatch Adherence */}
+            <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
+              <div className="flex items-center justify-between text-ink-secondary mb-2">
+                <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                  ⏰ ความตรงต่อเวลา (ON-TIME RATE)
+                </span>
+                <Clock className="w-3.5 h-3.5 text-semantic-success" />
+              </div>
+              <div className="flex items-baseline justify-between">
+                <p className="font-serif font-bold text-2xl text-ink-primary">
+                  {departmentSummary.avgOnTime}%
+                </p>
+                <span className="text-[10px] font-mono text-semantic-success font-semibold">
+                  Excellent
+                </span>
+              </div>
+              <p className="text-[10px] text-ink-secondary mt-1 font-mono">
+                ปล่อยโพสต์ตรงตามเวลาทอง (Peak Hours)
+              </p>
+            </div>
+
+            {/* Metric 3: Total Reach Delivered */}
+            <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
+              <div className="flex items-center justify-between text-ink-secondary mb-2">
+                <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
+                  👁️ ยอด REACH ที่ทีมสร้างได้
+                </span>
+                <TrendingUp className="w-3.5 h-3.5 text-accent-terracotta" />
+              </div>
+              <div className="flex items-baseline justify-between">
+                <p className="font-serif font-bold text-2xl text-ink-primary">
+                  {(departmentSummary.totalImpressions / 1000).toFixed(0)}K
+                </p>
+                <span className="text-[10px] font-mono text-accent-terracotta font-semibold">
+                  {(departmentSummary.totalEngagements / 1000).toFixed(1)}K Engaged
+                </span>
+              </div>
+              <p className="text-[10px] text-ink-secondary mt-1 font-mono">
+                สร้างผลลัพธ์ผ่าน 4 ช่องทางหลัก
+              </p>
+            </div>
+
+            {/* Metric 4: Top Performer */}
+            <div className="bg-paper-raised p-4 rounded-card border border-emerald-300 shadow-2xs bg-gradient-to-br from-paper-raised to-emerald-50/40">
+              <div className="flex items-center justify-between text-ink-secondary mb-2">
+                <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-emerald-800">
+                  🏆 ครีเอเตอร์ยอดเยี่ยม
+                </span>
+                <Trophy className="w-3.5 h-3.5 text-amber-500" />
+              </div>
+              <div className="flex items-baseline justify-between">
+                <p className="font-serif font-bold text-lg text-ink-primary truncate max-w-[150px]">
+                  {departmentSummary.topPerformer?.name.split(' ')[0]}
+                </p>
+                <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white">
+                  Score {departmentSummary.topPerformer?.overallKpiScore} (A+)
+                </span>
+              </div>
+              <p className="text-[10px] text-ink-secondary mt-1 font-mono truncate">
+                {departmentSummary.topPerformer?.roleTh}
+              </p>
+            </div>
+          </div>
+
+          {/* STAFF KPI LEADERBOARD TABLE */}
+          <div className="bg-paper-raised border border-border-rule rounded-card overflow-hidden shadow-xs">
+            <div className="p-4 border-b border-border-rule flex items-center justify-between">
+              <div>
+                <h4 className="font-serif font-bold text-base text-ink-primary">
+                  ตารางประเมินผล KPI รายบุคคล (Employee Scorecard & Post Attribution)
+                </h4>
+                <p className="text-[11px] font-mono text-ink-secondary">
+                  แสดง {employeeKpis.length} บุคลากรใน Workspace ที่เลือก • คลิกที่แถวเพื่อดูงานโพสต์จริงและข้อเสนอแนะโค้ชชิ่ง
+                </p>
+              </div>
+              <span className="text-[10px] font-mono text-ink-muted hidden sm:inline-block">
+                Evaluation Cycle: Monthly (Q4-2026)
+              </span>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left font-mono text-xs">
+                <thead className="bg-paper-subtle text-[11px] text-ink-secondary uppercase border-b border-border-rule">
+                  <tr>
+                    <th className="py-3 px-4 font-semibold">อันดับ & พนักงาน</th>
+                    <th className="py-3 px-4 font-semibold">เป้าหมาย vs งานจริง</th>
+                    <th className="py-3 px-4 font-semibold">ความตรงต่อเวลา</th>
+                    <th className="py-3 px-4 font-semibold">ยอด Reach ที่สร้างได้</th>
+                    <th className="py-3 px-4 font-semibold">ผ่านรอบแรก</th>
+                    <th className="py-3 px-4 font-semibold">เกรด & คะแนนรวม</th>
+                    <th className="py-3 px-4 font-semibold text-right">การประเมิน</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-rule">
+                  {employeeKpis.map((emp) => {
+                    const isExceeding = emp.postsCompletionRate >= 100;
+                    const gradeColor =
+                      emp.grade === 'A+'
+                        ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                        : emp.grade === 'A'
+                        ? 'bg-blue-100 text-blue-900 border-blue-300'
+                        : emp.grade === 'B+'
+                        ? 'bg-amber-100 text-amber-900 border-amber-300'
+                        : 'bg-red-100 text-red-900 border-red-300';
+
+                    return (
+                      <tr 
+                        key={emp.memberId}
+                        onClick={() => setSelectedEmployeeKpi(emp)}
+                        className="hover:bg-paper-canvas/80 transition-colors cursor-pointer group"
+                      >
+                        {/* Member & Rank */}
+                        <td className="py-3.5 px-4">
+                          <div className="flex items-center gap-3">
+                            <span className="w-5 h-5 rounded-full bg-paper-subtle text-ink-secondary text-[10px] font-bold flex items-center justify-center shrink-0 border border-border-rule">
+                              #{emp.rank}
+                            </span>
+                            <div className={`w-8 h-8 rounded-full ${emp.avatarBg} text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs`}>
+                              {emp.avatarText}
+                            </div>
+                            <div className="min-w-0">
+                              <p className="font-serif font-bold text-sm text-ink-primary group-hover:text-brand-indigo transition-colors truncate">
+                                {emp.name}
+                              </p>
+                              <div className="flex items-center gap-1.5 text-[10px] text-ink-secondary">
+                                <span className="truncate">{emp.roleTh}</span>
+                                <span>•</span>
+                                <span className="truncate">{emp.workspaceName}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Target vs Actual */}
+                        <td className="py-3.5 px-4">
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between text-xs font-bold">
+                              <span>{emp.actualPosts} / {emp.targetPosts} โพสต์</span>
+                              <span className={isExceeding ? 'text-semantic-success' : 'text-semantic-error'}>
+                                {emp.postsCompletionRate}%
+                              </span>
+                            </div>
+                            <div className="w-28 h-1.5 rounded-full bg-paper-subtle overflow-hidden border border-border-rule">
+                              <div
+                                className={`h-full rounded-full ${
+                                  emp.postsCompletionRate >= 100
+                                    ? 'bg-semantic-success'
+                                    : emp.postsCompletionRate >= 80
+                                    ? 'bg-amber-500'
+                                    : 'bg-semantic-error'
+                                }`}
+                                style={{ width: `${Math.min(emp.postsCompletionRate, 100)}%` }}
+                              />
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* On-Time Rate */}
+                        <td className="py-3.5 px-4 font-bold text-ink-primary">
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3.5 h-3.5 text-brand-indigo" />
+                            <span>{emp.onTimePublishingRate}%</span>
+                          </span>
+                        </td>
+
+                        {/* Total Reach & Engagements */}
+                        <td className="py-3.5 px-4">
+                          <span className="block font-bold text-ink-primary">
+                            {(emp.totalImpressions / 1000).toFixed(1)}K Views
+                          </span>
+                          <span className="text-[10px] text-ink-secondary">
+                            {(emp.totalEngagements / 1000).toFixed(1)}K Engaged ({emp.avgEngagementRate})
+                          </span>
+                        </td>
+
+                        {/* First-pass approval */}
+                        <td className="py-3.5 px-4 font-semibold text-ink-primary">
+                          <span className="flex items-center gap-1">
+                            <ShieldCheck className="w-3.5 h-3.5 text-semantic-success" />
+                            <span>{emp.firstPassApprovalRate}%</span>
+                          </span>
+                        </td>
+
+                        {/* Grade & Score */}
+                        <td className="py-3.5 px-4">
+                          <div className="flex items-center gap-2">
+                            <span className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold border ${gradeColor}`}>
+                              เกรด {emp.grade}
+                            </span>
+                            <span className="font-serif font-bold text-sm text-ink-primary">
+                              {emp.overallKpiScore}/100
+                            </span>
+                          </div>
+                        </td>
+
+                        {/* Action Drilldown */}
+                        <td className="py-3.5 px-4 text-right">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSelectedEmployeeKpi(emp);
+                            }}
+                            className="px-2.5 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary text-xs font-semibold hover:text-brand-indigo transition-colors shadow-2xs"
+                          >
+                            <span>ดู Scorecard ↗</span>
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
       {/* ========================================================================= */}
       {selectedLiveBatch && (
         <div className="fixed inset-0 z-50 bg-ink-primary/40 backdrop-blur-xs flex items-center justify-center p-4">
@@ -1928,6 +2293,356 @@ export default function HomePage() {
                 className="px-3 py-1.5 text-ink-secondary hover:text-ink-primary text-xs font-mono cursor-pointer"
               >
                 ปิด
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: EMPLOYEE KPI SCORECARD & WORK DRILL-DOWN                           */}
+      {/* ========================================================================= */}
+      {selectedEmployeeKpi && (
+        <div 
+          onClick={() => setSelectedEmployeeKpi(null)}
+          className="fixed inset-0 z-50 bg-ink-primary/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-paper-raised border border-border-rule rounded-card max-w-2xl w-full shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col cursor-default"
+          >
+            {/* Modal Header */}
+            <div className="p-5 border-b border-border-rule bg-paper-canvas flex items-start justify-between">
+              <div className="flex items-center gap-3.5">
+                <div className={`w-12 h-12 rounded-full ${selectedEmployeeKpi.avatarBg} text-white font-bold text-base flex items-center justify-center shrink-0 shadow-md`}>
+                  {selectedEmployeeKpi.avatarText}
+                </div>
+                <div>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <h3 className="font-serif font-bold text-lg text-ink-primary">
+                      {selectedEmployeeKpi.name}
+                    </h3>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
+                      เกรด {selectedEmployeeKpi.grade} ({selectedEmployeeKpi.overallKpiScore}/100)
+                    </span>
+                    <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-paper-subtle border border-border-rule text-ink-secondary">
+                      🧪 MOCK KPI SCORECARD
+                    </span>
+                  </div>
+                  <p className="text-xs font-mono text-ink-secondary mt-0.5">
+                    {selectedEmployeeKpi.roleTh} • {selectedEmployeeKpi.workspaceName}
+                  </p>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedEmployeeKpi(null)}
+                className="p-1.5 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
+                title="ปิดหน้าต่าง (ESC)"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 overflow-y-auto space-y-5 flex-1 font-mono text-xs">
+              {/* 4 Score Dimensions Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
+                  <span className="text-[10px] text-ink-secondary block uppercase">เป้าหมายงาน</span>
+                  <p className="font-serif font-bold text-lg text-ink-primary">
+                    {selectedEmployeeKpi.actualPosts} / {selectedEmployeeKpi.targetPosts}
+                  </p>
+                  <span className="text-[10px] text-semantic-success block font-bold">
+                    สำเร็จ {selectedEmployeeKpi.postsCompletionRate}%
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
+                  <span className="text-[10px] text-ink-secondary block uppercase">ตรงต่อเวลา</span>
+                  <p className="font-serif font-bold text-lg text-ink-primary">
+                    {selectedEmployeeKpi.onTimePublishingRate}%
+                  </p>
+                  <span className="text-[10px] text-semantic-success block font-bold">
+                    On-Time Adherence
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
+                  <span className="text-[10px] text-ink-secondary block uppercase">ผ่านงานรอบแรก</span>
+                  <p className="font-serif font-bold text-lg text-ink-primary">
+                    {selectedEmployeeKpi.firstPassApprovalRate}%
+                  </p>
+                  <span className="text-[10px] text-brand-indigo block font-bold">
+                    First-Pass Quality
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
+                  <span className="text-[10px] text-ink-secondary block uppercase">ยอดคนดูรวม</span>
+                  <p className="font-serif font-bold text-lg text-ink-primary">
+                    {(selectedEmployeeKpi.totalImpressions / 1000).toFixed(0)}K
+                  </p>
+                  <span className="text-[10px] text-accent-terracotta block font-bold">
+                    {selectedEmployeeKpi.avgEngagementRate} Avg ER
+                  </span>
+                </div>
+              </div>
+
+              {/* Strengths & Coaching Notes */}
+              <div className="p-4 bg-paper-canvas border border-border-rule rounded-editorial space-y-3 font-sans">
+                <div className="space-y-1">
+                  <span className="font-mono text-xs font-bold text-emerald-800 flex items-center gap-1.5 uppercase">
+                    <Award className="w-4 h-4 text-emerald-600" />
+                    <span>จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):</span>
+                  </span>
+                  <p className="text-xs text-ink-primary leading-relaxed pl-5">
+                    {selectedEmployeeKpi.strengthsTh}
+                  </p>
+                </div>
+
+                <div className="pt-2.5 border-t border-border-rule space-y-1">
+                  <span className="font-mono text-xs font-bold text-brand-indigo flex items-center gap-1.5 uppercase">
+                    <FileText className="w-4 h-4 text-brand-indigo" />
+                    <span>ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):</span>
+                  </span>
+                  <p className="text-xs text-ink-secondary leading-relaxed pl-5">
+                    {selectedEmployeeKpi.coachingNotesTh}
+                  </p>
+                </div>
+              </div>
+
+              {/* Recent Dispatches by this Employee */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-xs font-bold text-ink-primary uppercase tracking-wider">
+                    ผลงานโพสต์ที่สร้างและเผยแพร่ ({selectedEmployeeKpi.recentPosts.length} รายการล่าสุด):
+                  </span>
+                  <span className="text-[10px] text-ink-muted">Recorded in audit ledger</span>
+                </div>
+
+                <div className="space-y-2">
+                  {selectedEmployeeKpi.recentPosts.map((post) => (
+                    <div
+                      key={post.id}
+                      className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between gap-3 hover:border-brand-indigo/40 transition-colors"
+                    >
+                      <div className="space-y-0.5 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <SocialPlatformIcon platform={post.platform} size={15} />
+                          <h4 className="font-serif font-bold text-xs text-ink-primary truncate">
+                            {post.title}
+                          </h4>
+                        </div>
+                        <p className="text-[10px] text-ink-secondary">
+                          เผยแพร่เมื่อ: {post.dateStr}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-3 shrink-0 text-[11px] font-mono">
+                        <span className="text-ink-primary font-bold">
+                          👁️ {post.views.toLocaleString()}
+                        </span>
+                        <span className="text-semantic-success font-bold">
+                          ❤️ {post.likes.toLocaleString()}
+                        </span>
+                        <span className="text-brand-indigo font-bold">
+                          🔁 {post.shares.toLocaleString()}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-border-rule bg-paper-canvas flex items-center justify-between text-xs font-mono">
+              <span className="text-[10px] text-ink-muted">
+                เกณฑ์การวัดผล: Productivity (40%) + Punctuality (30%) + Quality (30%)
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedEmployeeKpi(null)}
+                className="px-4 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule cursor-pointer"
+              >
+                ปิดหน้าต่าง
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: AI POST PERFORMANCE DIAGNOSIS & ACTIONABLE PLAYBOOK                */}
+      {/* ========================================================================= */}
+      {selectedPostDiagnosis && (
+        <div 
+          onClick={() => setSelectedPostDiagnosis(null)}
+          className="fixed inset-0 z-50 bg-ink-primary/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-paper-raised border border-border-rule rounded-card max-w-2xl w-full shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col cursor-default"
+          >
+            {/* Modal Header */}
+            <div className="p-5 border-b border-border-rule bg-paper-canvas flex items-start justify-between">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-gradient-to-tr from-accent-terracotta to-brand-indigo flex items-center justify-center text-white text-xs">
+                    <Sparkles className="w-3.5 h-3.5" />
+                  </div>
+                  <h3 className="font-serif font-bold text-base sm:text-lg text-ink-primary">
+                    AI Content Performance Diagnosis & Playbook
+                  </h3>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                    🧪 AI MOCK ENGINE
+                  </span>
+                </div>
+                <p className="text-xs font-mono text-ink-secondary">
+                  วิเคราะห์ว่า <strong>&quot;ทำไมถึงดี หรือได้ยอด&quot;</strong> พร้อม <strong>&quot;แนวทางต่อยอด&quot;</strong> สำหรับแคมเปญถัดไป
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedPostDiagnosis(null)}
+                className="p-1.5 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
+                title="ปิดหน้าต่าง (ESC)"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 overflow-y-auto space-y-5 flex-1 text-xs">
+              {/* Target Post Header Banner */}
+              <div className="p-4 rounded-editorial bg-paper-canvas border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="space-y-1 min-w-0">
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-ink-secondary">
+                    <SocialPlatformIcon platform={selectedPostDiagnosis.platform} size={15} />
+                    <span>{selectedPostDiagnosis.workspaceName}</span>
+                  </div>
+                  <h4 className="font-serif font-bold text-sm text-ink-primary">
+                    {selectedPostDiagnosis.postTitle}
+                  </h4>
+                </div>
+
+                <div className="flex items-center gap-3 shrink-0 font-mono text-xs">
+                  <div className="text-right">
+                    <span className="text-[10px] text-ink-secondary block">ยอดคนดู / วิว</span>
+                    <span className="font-bold text-ink-primary">{selectedPostDiagnosis.views.toLocaleString()}</span>
+                  </div>
+                  <div className="text-right pl-3 border-l border-border-rule">
+                    <span className="text-[10px] text-ink-secondary block">คะแนนความสำเร็จ</span>
+                    <span className="font-bold text-semantic-success">{selectedPostDiagnosis.overallSuccessScore}/100 🔥</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Executive Summary */}
+              <div className="p-4 bg-brand-indigo/5 border border-brand-indigo/20 rounded-editorial space-y-1.5">
+                <span className="font-mono text-[11px] font-bold text-brand-indigo flex items-center gap-1.5 uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5 text-brand-indigo" />
+                  <span>สรุปผลการวิเคราะห์ด้วย AI (Executive Diagnosis):</span>
+                </span>
+                <p className="text-xs font-sans text-ink-primary leading-relaxed">
+                  {selectedPostDiagnosis.executiveSummaryTh}
+                </p>
+              </div>
+
+              {/* SECTION 1: ทำไมถึงดี หรือได้ยอด (ATTRIBUTION SUCCESS DRIVERS) */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between border-b border-border-rule pb-1.5">
+                  <h4 className="font-mono text-xs font-bold text-ink-primary flex items-center gap-1.5 uppercase">
+                    <span>💡 ปัจจัยความสำเร็จ: ทำไมโพสต์นี้ถึงได้ยอด? (Attribution Drivers)</span>
+                  </h4>
+                  <span className="text-[10px] font-mono text-semantic-success font-semibold">
+                    {selectedPostDiagnosis.attributionDrivers.length} ปัจจัยหลัก
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                  {selectedPostDiagnosis.attributionDrivers.map((driver, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1.5 hover:border-brand-indigo/40 transition-colors"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-paper-subtle border border-border-rule text-ink-secondary font-bold flex items-center gap-1">
+                          <span>{driver.icon}</span>
+                          <span>{driver.categoryLabelTh}</span>
+                        </span>
+                        <span className="text-[9px] font-mono font-bold text-semantic-success">
+                          Impact: {driver.impactScore}/100
+                        </span>
+                      </div>
+
+                      <h5 className="font-serif font-bold text-xs text-ink-primary">
+                        {driver.titleTh}
+                      </h5>
+
+                      <p className="text-[11px] text-ink-secondary leading-relaxed font-sans">
+                        {driver.descriptionTh}
+                      </p>
+
+                      <div className="pt-1 border-t border-border-rule/60 text-[10px] font-mono text-brand-indigo font-bold">
+                        ★ {driver.metricHighlight}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* SECTION 2: แนวทางต่อยอด (ACTIONABLE PLAYBOOK) */}
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between border-b border-border-rule pb-1.5">
+                  <h4 className="font-mono text-xs font-bold text-ink-primary flex items-center gap-1.5 uppercase">
+                    <span>🎯 แนวทางต่อยอดและแผนการดำเนินการถัดไป (Actionable Playbook)</span>
+                  </h4>
+                  <span className="text-[10px] font-mono text-accent-terracotta font-semibold">
+                    AI Recommended Playbook
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  {selectedPostDiagnosis.actionablePlaybook.map((play) => (
+                    <div
+                      key={play.step}
+                      className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1 flex items-start gap-3 hover:border-accent-terracotta/40 transition-colors"
+                    >
+                      <div className="w-6 h-6 rounded-full bg-accent-terracotta/15 text-accent-terracotta font-mono font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">
+                        {play.step}
+                      </div>
+                      <div className="space-y-1 flex-1">
+                        <h5 className="font-serif font-bold text-xs text-ink-primary">
+                          {play.titleTh}
+                        </h5>
+                        <p className="text-[11px] text-ink-secondary leading-relaxed font-sans">
+                          {play.actionTh}
+                        </p>
+                        <p className="text-[10px] font-mono text-semantic-success font-semibold">
+                          ↳ ผลลัพธ์ที่คาดการณ์: {play.expectedOutcomeTh}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-border-rule bg-paper-canvas flex items-center justify-between text-xs font-mono">
+              <span className="text-[10px] text-ink-muted">
+                บันทึกใน docs/MOCKUP_REGISTRY.md สำหรับสลับไปต่อกับ Live Gemini 1.5 API
+              </span>
+              <button
+                type="button"
+                onClick={() => setSelectedPostDiagnosis(null)}
+                className="px-4 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule cursor-pointer"
+              >
+                ปิดหน้าต่าง
               </button>
             </div>
           </div>
