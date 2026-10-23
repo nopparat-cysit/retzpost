@@ -101,16 +101,16 @@ export default function HomePage() {
             <AlertTriangle className="w-3.5 h-3.5 text-accent-terracotta" />
           </div>
           <div className="flex items-baseline justify-between">
-            <p className="font-serif font-bold text-2xl text-accent-terracotta">1</p>
+            <p className="font-serif font-bold text-2xl text-accent-terracotta">2</p>
             <Link 
               href="/publishing/queue" 
               className="text-[10px] font-mono text-accent-terracotta hover:underline font-semibold"
             >
-              Resolve & Retry →
+              Export & Retry →
             </Link>
           </div>
           <p className="text-[10px] text-ink-secondary mt-1 font-mono truncate">
-            TikTok 429 Rate Limit (Retry ready)
+            FB Token Expired & IG Story Aspect
           </p>
         </div>
       </section>

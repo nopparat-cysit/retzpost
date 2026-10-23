@@ -40,9 +40,19 @@ import {
   BookmarkPlus,
   RotateCcw,
   Building2,
-  Sliders
+  Sliders,
+  X,
+  Copy,
+  FolderOpen
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { 
+  PostTemplate, 
+  BUILT_IN_TEMPLATES, 
+  getInitialTemplates, 
+  saveCustomTemplate, 
+  deleteCustomTemplate 
+} from '@/modules/publishing/templates';
 
 type MediaTypeMode = 'PHOTOS' | 'VIDEO' | 'TEXT_ONLY';
 
@@ -83,6 +93,7 @@ export interface PresetRecipe {
 // WORKSPACES DATASET
 // -------------------------------------------------------------
 const WORKSPACES_DATA: ProjectWorkspace[] = [
+  { id: 'ws_capitalone', name: 'Capital One Real Estate', category: 'Enterprise Portfolio', badgeColor: 'bg-accent-terracotta' },
   { id: 'ws_acme', name: 'Acme Creator Studio', category: 'Personal Brand', badgeColor: 'bg-brand-indigo' },
   { id: 'ws_retzpost', name: 'RetzPost Software', category: 'SaaS Product', badgeColor: 'bg-semantic-info' },
   { id: 'ws_coffee', name: 'Coffee Craft BKK', category: 'Client Cafe SME', badgeColor: 'bg-semantic-success' },
@@ -289,6 +300,104 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
       reel: { supported: false, label: '—' },
     },
   },
+
+  // 4. Capital One Real Estate Channels (Enterprise Portfolio)
+  {
+    id: 'c1_fb_th',
+    workspaceId: 'ws_capitalone',
+    platform: 'FACEBOOK',
+    platformGroup: 'Facebook',
+    name: 'Capital One Thailand',
+    handle: 'Capital One Real Estate Thailand',
+    badge: 'Main Page',
+    avatarBg: 'bg-[#1877F2]',
+    avatarText: 'FB',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+  {
+    id: 'c1_fb_tw',
+    workspaceId: 'ws_capitalone',
+    platform: 'FACEBOOK',
+    platformGroup: 'Facebook',
+    name: 'Capital One Taiwan',
+    handle: 'Capital One Real Estate - Taiwan',
+    badge: 'Regional FB',
+    avatarBg: 'bg-[#1877F2]',
+    avatarText: 'FB',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: false, label: '—' },
+    },
+  },
+  {
+    id: 'c1_fb_kw_lux',
+    workspaceId: 'ws_capitalone',
+    platform: 'FACEBOOK',
+    platformGroup: 'Facebook',
+    name: 'KW Luxury Thailand',
+    handle: 'Keller Williams Luxury Thailand',
+    badge: 'Luxury FB',
+    avatarBg: 'bg-[#1877F2]',
+    avatarText: 'FB',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+  {
+    id: 'c1_fb_oknus',
+    workspaceId: 'ws_capitalone',
+    platform: 'FACEBOOK',
+    platformGroup: 'Facebook',
+    name: 'Oknus Real Estate',
+    handle: 'Oknus Real Estate Agency',
+    badge: 'Partner FB',
+    avatarBg: 'bg-[#1877F2]',
+    avatarText: 'FB',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+  {
+    id: 'c1_ig_main',
+    workspaceId: 'ws_capitalone',
+    platform: 'INSTAGRAM',
+    platformGroup: 'Instagram',
+    name: 'Capital One IG',
+    handle: '@capitalonerealestate',
+    badge: 'Official IG',
+    avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
+    avatarText: 'IG',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
+  {
+    id: 'c1_ig_prop',
+    workspaceId: 'ws_capitalone',
+    platform: 'INSTAGRAM',
+    platformGroup: 'Instagram',
+    name: 'Thailand Prop C1',
+    handle: '@thailandprop.c1',
+    badge: 'Property IG',
+    avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
+    avatarText: 'IG',
+    capabilities: {
+      feed: { supported: true, label: 'Feed' },
+      story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Reel' },
+    },
+  },
 ];
 
 // -------------------------------------------------------------
@@ -370,7 +479,81 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
       },
     },
   ],
+  ws_capitalone: [
+    {
+      id: 'pre_c1_luxury_launch',
+      workspaceId: 'ws_capitalone',
+      title: 'Bangkok Luxury Condo Launch',
+      description: 'FB Thailand + KW Luxury + capitalonerealestate Feed & Story',
+      icon: '🏢',
+      targetPlacements: {
+        'c1_fb_th_feed': true,
+        'c1_fb_kw_lux_feed': true,
+        'c1_ig_main_feed': true,
+        'c1_ig_main_story': true,
+        'c1_ig_prop_story': true,
+      },
+    },
+    {
+      id: 'pre_c1_all_stories',
+      workspaceId: 'ws_capitalone',
+      title: 'Daily Property 24h Stories',
+      description: 'All Capital One IG & FB Stories with Link Sticker',
+      icon: '⚡',
+      targetPlacements: {
+        'c1_fb_th_story': true,
+        'c1_fb_kw_lux_story': true,
+        'c1_ig_main_story': true,
+        'c1_ig_prop_story': true,
+      },
+    },
+    {
+      id: 'pre_c1_all_feeds',
+      workspaceId: 'ws_capitalone',
+      title: 'Universal C1 Feed Push',
+      description: 'Dispatches feed album to all Thai & partner agencies',
+      icon: '📢',
+      targetPlacements: {
+        'c1_fb_th_feed': true,
+        'c1_fb_tw_feed': true,
+        'c1_fb_kw_lux_feed': true,
+        'c1_fb_oknus_feed': true,
+        'c1_ig_main_feed': true,
+      },
+    },
+  ],
 };
+
+const AI_MEDIA_LIBRARY_ASSETS = [
+  {
+    id: 'ai-asset-1',
+    name: 'the_rich_rama9_living_room_concept.jpg',
+    size: '4.2 MB',
+    category: 'Real Estate Interior',
+    description: 'Ultra-modern Bangkok luxury condo living room, double-height ceiling, floor-to-ceiling glass window with sunset skyline view.',
+  },
+  {
+    id: 'ai-asset-2',
+    name: 'sukhumvit_sky_pool_architectural_render.jpg',
+    size: '5.1 MB',
+    category: 'Architecture / Exterior',
+    description: 'Rooftop infinity swimming pool at twilight on 45th floor in Bangkok, cinematic ambient lighting, ultra-luxury aesthetic.',
+  },
+  {
+    id: 'ai-asset-3',
+    name: 'penthouse_marble_dining_suite.jpg',
+    size: '3.9 MB',
+    category: 'Luxury Suite',
+    description: 'Private duplex penthouse dining room with Italian Calacatta marble table, contemporary chandelier, city lights bokeh.',
+  },
+  {
+    id: 'ai-asset-4',
+    name: 'creator_studio_desk_setup_v2.png',
+    size: '2.8 MB',
+    category: 'Tech / Studio',
+    description: 'Ergonomic creator workstation with mechanical keyboard, curved monitor showing editorial timeline, warm tungsten desk lamp.',
+  },
+];
 
 export default function CreatePostPage() {
   // Active Project Workspace Context
@@ -420,6 +603,87 @@ export default function CreatePostPage() {
   );
   const [sharedTags, setSharedTags] = useState('architecture, publishing, tech, design-system');
   const [storyLinkUrl, setStoryLinkUrl] = useState('https://retzpost.com/announcement');
+
+  // Post Text Templates State (Column 2)
+  const [templates, setTemplates] = useState<PostTemplate[]>(() => getInitialTemplates());
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
+  const [isSaveTemplateModalOpen, setIsSaveTemplateModalOpen] = useState(false);
+  const [isManageTemplatesModalOpen, setIsManageTemplatesModalOpen] = useState(false);
+  const [newTemplateTitle, setNewTemplateTitle] = useState('');
+  const [templateAppliedNotice, setTemplateAppliedNotice] = useState<string | null>(null);
+  const [previousContentState, setPreviousContentState] = useState<{
+    title: string;
+    caption: string;
+    tags: string;
+    storyLink: string;
+  } | null>(null);
+
+  // AI Media Hub Modal State
+  const [isAiMediaModalOpen, setIsAiMediaModalOpen] = useState(false);
+
+  const handleApplyTemplate = (tpl: PostTemplate) => {
+    setPreviousContentState({
+      title: workingTitle,
+      caption: sharedCaption,
+      tags: sharedTags,
+      storyLink: storyLinkUrl,
+    });
+    setWorkingTitle(tpl.title);
+    setSharedCaption(tpl.caption);
+    setSharedTags(tpl.tags);
+    if (tpl.storyLink) {
+      setStoryLinkUrl(tpl.storyLink);
+    }
+    setSelectedTemplateId(tpl.id);
+    setTemplateAppliedNotice(`นำเทมเพลต "${tpl.name}" ไปใช้แล้ว`);
+    setTimeout(() => setTemplateAppliedNotice(null), 4000);
+  };
+
+  const handleUndoTemplate = () => {
+    if (previousContentState) {
+      setWorkingTitle(previousContentState.title);
+      setSharedCaption(previousContentState.caption);
+      setSharedTags(previousContentState.tags);
+      setStoryLinkUrl(previousContentState.storyLink);
+      setPreviousContentState(null);
+      setTemplateAppliedNotice('ย้อนกลับข้อความเดิมเรียบร้อยแล้ว');
+      setTimeout(() => setTemplateAppliedNotice(null), 3000);
+    }
+  };
+
+  const handleSaveCustomTemplate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTemplateTitle.trim()) return;
+    const created = saveCustomTemplate({
+      name: newTemplateTitle.trim(),
+      title: workingTitle,
+      caption: sharedCaption,
+      tags: sharedTags,
+      storyLink: storyLinkUrl,
+    });
+    setTemplates(getInitialTemplates());
+    setIsSaveTemplateModalOpen(false);
+    setNewTemplateTitle('');
+    setTemplateAppliedNotice(`บันทึกเทมเพลต "${created.name}" เรียบร้อยแล้ว`);
+    setTimeout(() => setTemplateAppliedNotice(null), 4000);
+  };
+
+  const handleDeleteCustomTemplate = (id: string) => {
+    deleteCustomTemplate(id);
+    setTemplates(getInitialTemplates());
+    if (selectedTemplateId === id) setSelectedTemplateId('');
+  };
+
+  const handleInsertAiMedia = (asset: { id: string; name: string; size: string }) => {
+    setImages((prev) => [
+      ...prev,
+      { id: `ai-${Date.now()}`, name: asset.name, size: asset.size },
+    ]);
+    setIsAiMediaModalOpen(false);
+    if (mediaMode !== 'PHOTOS') {
+      setMediaMode('PHOTOS');
+    }
+  };
 
   // Preview Mode in Right Rail (Column 3)
   const [previewTab, setPreviewTab] = useState<'FEED' | 'STORY' | 'REEL'>('FEED');
@@ -1185,6 +1449,17 @@ export default function CreatePostPage() {
                     <span className="text-[9px] font-mono text-ink-secondary">JPG, PNG</span>
                   </div>
                 )}
+
+                {/* AI Media Hub Button */}
+                <button
+                  type="button"
+                  onClick={() => setIsAiMediaModalOpen(true)}
+                  className="aspect-square border-2 border-dashed border-brand-indigo/40 rounded-editorial flex flex-col items-center justify-center p-2 text-center cursor-pointer hover:border-brand-indigo hover:bg-brand-indigo/5 transition-colors bg-paper-canvas/30 group"
+                >
+                  <Sparkles className="w-4 h-4 text-brand-indigo mb-0.5 group-hover:scale-110 transition-transform" />
+                  <span className="text-[11px] font-serif font-medium text-brand-indigo">เลือกจากคลัง AI</span>
+                  <span className="text-[9px] font-mono text-ink-secondary">AI Assets Hub</span>
+                </button>
               </div>
             )}
 
@@ -1231,6 +1506,108 @@ export default function CreatePostPage() {
                 {sharedCaption.length} chars
               </span>
             </div>
+
+            {/* TEMPLATE PICKER & ACTIONS BAR (Boss's System Upgrade) */}
+            <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial space-y-2.5">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                <div className="flex items-center gap-2 flex-1">
+                  <span className="text-[10px] font-mono uppercase font-bold text-ink-secondary shrink-0">
+                    📑 ใช้เทมเพลต:
+                  </span>
+                  <select
+                    value={selectedTemplateId}
+                    onChange={(e) => {
+                      const found = templates.find((t) => t.id === e.target.value);
+                      if (found) handleApplyTemplate(found);
+                    }}
+                    className="flex-1 px-2.5 py-1.5 bg-paper-raised border border-border-rule rounded text-xs font-mono text-ink-primary focus:outline-none focus:border-brand-indigo cursor-pointer"
+                  >
+                    <option value="">-- เลือกเทมเพลตข้อความสำเร็จรูป --</option>
+                    {['REAL_ESTATE', 'PROMOTION', 'PRODUCT_LAUNCH', 'INSIGHTS', 'CUSTOM'].map((cat) => {
+                      const catTemplates = templates.filter((t) => t.category === cat);
+                      if (catTemplates.length === 0) return null;
+                      const label =
+                        cat === 'REAL_ESTATE'
+                          ? '🏢 อสังหาริมทรัพย์ (Capital One Deals)'
+                          : cat === 'PROMOTION'
+                          ? '⚡ โปรโมชั่น (Flash Deals)'
+                          : cat === 'PRODUCT_LAUNCH'
+                          ? '🚀 เปิดตัวสินค้า (Tech Launch)'
+                          : cat === 'INSIGHTS'
+                          ? '📊 บทวิเคราะห์ & บทความ (Insights)'
+                          : '⭐ เทมเพลตของฉัน (Custom Saved)';
+                      return (
+                        <optgroup key={cat} label={label}>
+                          {catTemplates.map((tpl) => (
+                            <option key={tpl.id} value={tpl.id}>
+                              {tpl.name}
+                            </option>
+                          ))}
+                        </optgroup>
+                      );
+                    })}
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-center">
+                  <button
+                    type="button"
+                    onClick={() => setIsSaveTemplateModalOpen(true)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-mono text-brand-indigo hover:bg-brand-indigo/10 rounded border border-brand-indigo/30 transition-colors cursor-pointer"
+                  >
+                    <BookmarkPlus className="w-3 h-3" />
+                    <span>บันทึกเทมเพลต</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsManageTemplatesModalOpen(true)}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] font-mono text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle rounded border border-border-rule transition-colors cursor-pointer"
+                  >
+                    <Sliders className="w-3 h-3" />
+                    <span>จัดการ</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* QUICK TEMPLATE PILLS */}
+              <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                <span className="text-[9px] font-mono uppercase text-ink-secondary">ด่วน:</span>
+                {templates.slice(0, 4).map((tpl) => (
+                  <button
+                    key={tpl.id}
+                    type="button"
+                    onClick={() => handleApplyTemplate(tpl)}
+                    className={`px-2 py-0.5 rounded text-[10px] font-mono transition-colors border cursor-pointer ${
+                      selectedTemplateId === tpl.id
+                        ? 'bg-brand-indigo text-white border-brand-indigo font-semibold'
+                        : 'bg-paper-raised text-ink-secondary hover:text-ink-primary border-border-rule hover:border-brand-indigo/40'
+                    }`}
+                  >
+                    {tpl.name.split(' ')[0]} {tpl.name.split(' ')[1] || ''}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* TEMPLATE APPLIED NOTIFICATION BANNER */}
+            {templateAppliedNotice && (
+              <div className="p-2.5 bg-brand-indigo/5 border border-brand-indigo/30 rounded-editorial flex items-center justify-between text-xs font-mono text-brand-indigo animate-in fade-in duration-200">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-brand-indigo shrink-0" />
+                  <span className="truncate">{templateAppliedNotice}</span>
+                </div>
+                {previousContentState && (
+                  <button
+                    type="button"
+                    onClick={handleUndoTemplate}
+                    className="inline-flex items-center gap-1 text-[11px] text-accent-terracotta hover:underline font-semibold ml-2 shrink-0 cursor-pointer"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    <span>Undo</span>
+                  </button>
+                )}
+              </div>
+            )}
 
             {/* Working Title / Headline */}
             <div>
@@ -1631,6 +2008,256 @@ export default function CreatePostPage() {
         </section>
 
       </div>
+
+      {/* ========================================================================= */}
+      {/* MODAL 1: SAVE AS CUSTOM TEMPLATE                                          */}
+      {/* ========================================================================= */}
+      {isSaveTemplateModalOpen && (
+        <div className="fixed inset-0 z-50 bg-ink-primary/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-paper-raised border border-border-rule rounded-card max-w-md w-full p-6 shadow-xl space-y-4 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-border-rule">
+              <div className="flex items-center gap-2">
+                <BookmarkPlus className="w-4 h-4 text-brand-indigo" />
+                <h3 className="font-serif font-medium text-base text-ink-primary">
+                  บันทึกเป็นเทมเพลตใหม่
+                </h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsSaveTemplateModalOpen(false)}
+                className="p-1 rounded text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveCustomTemplate} className="space-y-4">
+              <div>
+                <label className="block text-[10px] font-mono uppercase text-ink-secondary mb-1">
+                  ชื่อเทมเพลต (Template Name)
+                </label>
+                <input
+                  type="text"
+                  required
+                  autoFocus
+                  placeholder="เช่น: คอนโด Rich Rama 9 โพสต์ด่วน..."
+                  value={newTemplateTitle}
+                  onChange={(e) => setNewTemplateTitle(e.target.value)}
+                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary font-mono text-xs focus:outline-none focus:border-brand-indigo"
+                />
+              </div>
+
+              {/* Preview of current draft payload */}
+              <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial space-y-1.5 text-xs">
+                <span className="text-[9px] font-mono uppercase text-ink-secondary block font-semibold">
+                  เนื้อหาที่จะถูกบันทึก:
+                </span>
+                <p className="font-medium text-ink-primary truncate text-xs">
+                  📌 {workingTitle || 'Untitled Post'}
+                </p>
+                <p className="text-ink-secondary line-clamp-3 text-[11px] leading-relaxed">
+                  {sharedCaption}
+                </p>
+                {storyLinkUrl && (
+                  <p className="font-mono text-[10px] text-accent-terracotta truncate">
+                    🔗 {storyLinkUrl}
+                  </p>
+                )}
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-border-rule">
+                <button
+                  type="button"
+                  onClick={() => setIsSaveTemplateModalOpen(false)}
+                  className="px-3 py-1.5 text-ink-secondary hover:text-ink-primary text-xs font-mono cursor-pointer"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  className="px-3.5 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-2xs cursor-pointer"
+                >
+                  บันทึกเทมเพลต
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 2: MANAGE TEMPLATES                                                 */}
+      {/* ========================================================================= */}
+      {isManageTemplatesModalOpen && (
+        <div className="fixed inset-0 z-50 bg-ink-primary/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-paper-raised border border-border-rule rounded-card max-w-xl w-full p-6 shadow-xl space-y-4 animate-in fade-in zoom-in-95 duration-150 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-border-rule shrink-0">
+              <div className="flex items-center gap-2">
+                <Sliders className="w-4 h-4 text-brand-indigo" />
+                <div>
+                  <h3 className="font-serif font-medium text-base text-ink-primary">
+                    คลังเทมเพลตข้อความทั้งหมด ({templates.length})
+                  </h3>
+                  <span className="text-[10px] font-mono text-ink-secondary block">
+                    เทมเพลตระบบ & เทมเพลตที่คุณบันทึกไว้
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsManageTemplatesModalOpen(false)}
+                className="p-1 rounded text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="overflow-y-auto space-y-2.5 pr-1 flex-1">
+              {templates.map((tpl) => (
+                <div
+                  key={tpl.id}
+                  className="p-3 bg-paper-canvas border border-border-rule rounded-editorial hover:border-brand-indigo/40 transition-colors flex items-start justify-between gap-3"
+                >
+                  <div className="space-y-1 flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="font-serif font-medium text-ink-primary text-xs">
+                        {tpl.name}
+                      </span>
+                      <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-paper-subtle border border-border-rule text-ink-secondary">
+                        {tpl.categoryLabel}
+                      </span>
+                      {tpl.isBuiltIn && (
+                        <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-brand-indigo/10 text-brand-indigo font-semibold">
+                          System Default
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-[11px] font-sans text-ink-secondary line-clamp-2 leading-tight">
+                      {tpl.caption}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleApplyTemplate(tpl);
+                        setIsManageTemplatesModalOpen(false);
+                      }}
+                      className="px-2 py-1 bg-paper-raised hover:bg-brand-indigo hover:text-white text-ink-primary border border-border-rule rounded text-[10px] font-mono font-medium transition-colors cursor-pointer"
+                    >
+                      นำไปใช้
+                    </button>
+                    {!tpl.isBuiltIn && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteCustomTemplate(tpl.id)}
+                        className="p-1 text-ink-secondary hover:text-semantic-error transition-colors cursor-pointer"
+                        title="ลบเทมเพลตนี้"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2 flex items-center justify-end border-t border-border-rule shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsManageTemplatesModalOpen(false)}
+                className="px-3 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule rounded-editorial text-xs font-mono cursor-pointer"
+              >
+                ปิดหน้าต่าง
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 3: AI MEDIA ASSET HUB (Boss's System Feature Upgrade)               */}
+      {/* ========================================================================= */}
+      {isAiMediaModalOpen && (
+        <div className="fixed inset-0 z-50 bg-ink-primary/40 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-paper-raised border border-border-rule rounded-card max-w-2xl w-full p-6 shadow-xl space-y-4 animate-in fade-in zoom-in-95 duration-150 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between pb-3 border-b border-border-rule shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center">
+                  <Sparkles className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-medium text-base text-ink-primary">
+                    คลังภาพสื่อ AI (AI Media Asset Hub)
+                  </h3>
+                  <span className="text-[10px] font-mono text-ink-secondary block">
+                    เลือกรูปภาพเรนเดอร์สถาปัตยกรรมและอสังหาริมทรัพย์ระดับ 8K ที่พร้อมใช้งาน
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAiMediaModalOpen(false)}
+                className="p-1 rounded text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 overflow-y-auto pr-1 flex-1">
+              {AI_MEDIA_LIBRARY_ASSETS.map((asset) => (
+                <div
+                  key={asset.id}
+                  className="p-3 bg-paper-canvas border border-border-rule rounded-editorial hover:border-brand-indigo transition-all flex flex-col justify-between space-y-2 group"
+                >
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-brand-indigo/10 text-brand-indigo font-semibold">
+                        {asset.category}
+                      </span>
+                      <span className="text-[9px] font-mono text-ink-secondary">
+                        {asset.size}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <ImageIcon className="w-4 h-4 text-brand-indigo shrink-0" />
+                      <h4 className="font-mono text-xs font-semibold text-ink-primary truncate">
+                        {asset.name}
+                      </h4>
+                    </div>
+                    <p className="text-[11px] font-sans text-ink-secondary leading-relaxed line-clamp-3">
+                      {asset.description}
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={() => handleInsertAiMedia(asset)}
+                    className="w-full mt-2 py-1.5 px-3 bg-paper-raised hover:bg-brand-indigo hover:text-white text-ink-primary border border-border-rule rounded text-xs font-mono font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>เลือกภาพนี้เข้าโพสต์</span>
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="pt-2 flex items-center justify-between border-t border-border-rule shrink-0">
+              <span className="text-[10px] font-mono text-ink-secondary">
+                Auto-optimized for 1:1 Carousel & 9:16 Full Screen Story
+              </span>
+              <button
+                type="button"
+                onClick={() => setIsAiMediaModalOpen(false)}
+                className="px-3 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule rounded-editorial text-xs font-mono cursor-pointer"
+              >
+                ปิด
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
