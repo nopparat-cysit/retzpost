@@ -38,6 +38,9 @@ import {
   BarChart3
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { CustomDatePicker } from '@/components/ui/custom-date-picker';
+import { CustomTimePicker } from '@/components/ui/custom-time-picker';
+import { CustomDropdown } from '@/components/ui/custom-dropdown';
 import { SmartFilterBar } from '@/components/ui/smart-filter-bar';
 import { 
   SocialPlatformIcon, 
@@ -1019,29 +1022,35 @@ export default function EditorialCalendarPage() {
             ))}
           </div>
 
-          {/* Platform Filter */}
-          <select
-            value={platformFilter}
-            onChange={(e) => setPlatformFilter(e.target.value as any)}
-            className="px-2 py-1 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-[11px] text-ink-primary focus:outline-hidden focus:border-brand-indigo"
-          >
-            <option value="ALL">All Channels</option>
-            <option value="FACEBOOK">Facebook</option>
-            <option value="INSTAGRAM">Instagram</option>
-            <option value="YOUTUBE">YouTube</option>
-            <option value="TIKTOK">TikTok</option>
-          </select>
+          {/* Platform Filter Custom Dropdown */}
+          <div className="w-36">
+            <CustomDropdown
+              options={[
+                { value: 'ALL', label: 'All Channels', badge: 'All' },
+                { value: 'FACEBOOK', label: 'Facebook', badge: 'Meta' },
+                { value: 'INSTAGRAM', label: 'Instagram', badge: 'IG' },
+                { value: 'YOUTUBE', label: 'YouTube', badge: 'YT' },
+                { value: 'TIKTOK', label: 'TikTok', badge: 'TT' },
+              ]}
+              value={platformFilter}
+              onChange={(val) => setPlatformFilter(val as any)}
+              size="sm"
+            />
+          </div>
 
-          {/* Status Filter */}
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value as any)}
-            className="px-2 py-1 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-[11px] text-ink-primary focus:outline-hidden focus:border-brand-indigo"
-          >
-            <option value="ALL">All Status</option>
-            <option value="SCHEDULED">Scheduled</option>
-            <option value="PUBLISHED">Published Live</option>
-          </select>
+          {/* Status Filter Custom Dropdown */}
+          <div className="w-32">
+            <CustomDropdown
+              options={[
+                { value: 'ALL', label: 'All Status' },
+                { value: 'SCHEDULED', label: 'Scheduled', badge: 'Queue', badgeColor: 'bg-brand-indigo/15 text-brand-indigo' },
+                { value: 'PUBLISHED', label: 'Published Live', badge: 'Live', badgeColor: 'bg-semantic-success/15 text-semantic-success' },
+              ]}
+              value={statusFilter}
+              onChange={(val) => setStatusFilter(val as any)}
+              size="sm"
+            />
+          </div>
         </div>
       </div>
 
@@ -1849,24 +1858,28 @@ export default function EditorialCalendarPage() {
                   <span className="font-mono text-[10px] text-ink-secondary">Timezone: Asia/Bangkok</span>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block font-mono text-[10px] text-ink-secondary mb-1">Date</label>
-                    <input
-                      type="date"
+                    <CustomDatePicker
+                      label="Date (วันที่จะเผยแพร่)"
                       value={rescheduleDate}
-                      onChange={(e) => setRescheduleDate(e.target.value)}
-                      className="w-full px-2.5 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
+                      onChange={(d) => setRescheduleDate(d)}
+                      size="sm"
+                      showPresets={true}
+                      markedDates={{
+                        '2026-10-24': { isPeak: true },
+                        '2026-10-25': { isPeak: true },
+                        '2026-10-31': { isPeak: true },
+                      }}
                     />
                   </div>
                   <div>
-                    <label className="block font-mono text-[10px] text-ink-secondary mb-1">Time</label>
-                    <input
-                      type="text"
+                    <CustomTimePicker
+                      label="Time (เวลาที่ต้องการ)"
                       value={rescheduleTime}
-                      onChange={(e) => setRescheduleTime(e.target.value)}
-                      placeholder="e.g. 09:30 AM"
-                      className="w-full px-2.5 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
+                      onChange={(t) => setRescheduleTime(t)}
+                      size="sm"
+                      showPeakSlots={true}
                     />
                   </div>
                 </div>
@@ -2203,15 +2216,16 @@ export default function EditorialCalendarPage() {
 
                 <div>
                   <label className="block font-mono text-[11px] text-ink-secondary mb-1">Post Format</label>
-                  <select
+                  <CustomDropdown
+                    options={[
+                      { value: 'FEED_POST', label: 'Feed Post / Photo Album', badge: 'Feed' },
+                      { value: 'STORY', label: '24h Story (รองรับ Link Sticker)', badge: 'Story' },
+                      { value: 'VIDEO_REEL', label: 'Video Reel / Shorts (9:16)', badge: 'Reel' },
+                    ]}
                     value={quickFormat}
-                    onChange={(e) => setQuickFormat(e.target.value as any)}
-                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
-                  >
-                    <option value="FEED_POST">Feed Post / Photo Album</option>
-                    <option value="STORY">24h Ephemeral Story (รองรับ Link Sticker)</option>
-                    <option value="VIDEO_REEL">Video Reel / Shorts (9:16)</option>
-                  </select>
+                    onChange={(val) => setQuickFormat(val as any)}
+                    size="sm"
+                  />
                 </div>
               </div>
 
@@ -2235,36 +2249,20 @@ export default function EditorialCalendarPage() {
                 </div>
               )}
 
-              {/* Time quick buttons */}
+              {/* Custom Time Picker with Bangkok Peak Slots */}
               <div>
-                <label className="block font-mono text-[10px] text-ink-secondary mb-1.5">
-                  Suggested Peak Time Slots (UTC+7)
-                </label>
-                <div className="flex flex-wrap items-center gap-2 font-mono text-[11px]">
-                  {[
-                    { label: '08:30 AM 🔥 Morning', time: '08:30 AM' },
-                    { label: '11:45 AM 🔥 Lunch', time: '11:45 AM' },
-                    { label: '19:30 PM 🔥 Evening Prime', time: '19:30 PM' },
-                  ].map((s) => (
-                    <button
-                      key={s.time}
-                      type="button"
-                      onClick={() =>
-                        setQuickScheduleModal({
-                          ...quickScheduleModal,
-                          timeStr: s.time,
-                        })
-                      }
-                      className={`px-2.5 py-1 rounded-editorial border transition-colors ${
-                        quickScheduleModal.timeStr === s.time
-                          ? 'bg-accent-terracotta text-white border-accent-terracotta font-bold'
-                          : 'bg-paper-raised text-ink-secondary border-border-rule hover:text-ink-primary'
-                      }`}
-                    >
-                      {s.label}
-                    </button>
-                  ))}
-                </div>
+                <CustomTimePicker
+                  label="Dispatch Time (เวลาที่จะเผยแพร่ UTC+7)"
+                  value={quickScheduleModal.timeStr}
+                  onChange={(t) =>
+                    setQuickScheduleModal({
+                      ...quickScheduleModal,
+                      timeStr: t,
+                    })
+                  }
+                  size="sm"
+                  showPeakSlots={true}
+                />
               </div>
 
               {/* Submit / Cancel */}

@@ -46,6 +46,9 @@ import {
   FolderOpen
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { CustomDatePicker } from '@/components/ui/custom-date-picker';
+import { CustomTimePicker } from '@/components/ui/custom-time-picker';
+import { CustomDropdown } from '@/components/ui/custom-dropdown';
 import { 
   PostTemplate, 
   TemplateCategory,
@@ -1113,17 +1116,19 @@ export default function CreatePostPage() {
                 {currentRole === 'OWNER' ? '👑 Owner' : currentRole === 'MANAGER' ? '⭐ Manager' : currentRole === 'EDITOR' ? '✍️ Editor' : currentRole === 'CONTRIBUTOR' ? '👀 Contributor' : '🔍 Viewer'}
               </span>
 
-              <select
+              <CustomDropdown
+                options={[
+                  { value: 'MANAGER', label: '⭐ Manager (ยิงสด)', badge: 'Manager', badgeColor: 'bg-semantic-info/15 text-semantic-info' },
+                  { value: 'EDITOR', label: '✍️ Editor (ยิงสด)', badge: 'Editor', badgeColor: 'bg-brand-indigo/15 text-brand-indigo' },
+                  { value: 'CONTRIBUTOR', label: '👀 Contributor (รออนุมัติ)', badge: 'Approval', badgeColor: 'bg-accent-terracotta/15 text-accent-terracotta' },
+                  { value: 'VIEWER', label: '🔍 Viewer (อ่านอย่างเดียว)', badge: 'Read-only', badgeColor: 'bg-paper-subtle text-ink-secondary' },
+                ]}
                 value={currentRole}
-                onChange={(e) => setCurrentRole(e.target.value as WorkspaceRole)}
-                className="px-1.5 py-0.5 bg-paper-canvas border border-border-rule rounded text-[10px] font-mono text-ink-primary focus:outline-none focus:border-brand-indigo cursor-pointer"
-                title="ทดสอบสิทธิ์ผู้ใช้งาน"
-              >
-                <option value="MANAGER">⭐ Manager (ยิงสด)</option>
-                <option value="EDITOR">✍️ Editor (ยิงสด)</option>
-                <option value="CONTRIBUTOR">👀 Contributor (รออนุมัติ)</option>
-                <option value="VIEWER">🔍 Viewer (อ่านอย่างเดียว)</option>
-              </select>
+                onChange={(val) => setCurrentRole(val as WorkspaceRole)}
+                size="sm"
+                fullWidth={false}
+                className="w-48"
+              />
 
               <Link
                 href="/settings/team"
@@ -1959,23 +1964,30 @@ export default function CreatePostPage() {
             </div>
 
             {publishMode === 'SCHEDULED' && (
-              <div className="grid grid-cols-2 gap-2 text-xs pt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
                 <div>
-                  <label className="block text-[10px] font-mono uppercase text-ink-secondary mb-1">Target Date</label>
-                  <input
-                    type="date"
+                  <CustomDatePicker
+                    label="Target Date (วันที่ต้องการเผยแพร่)"
                     value={scheduledDate}
-                    onChange={(e) => setScheduledDate(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs focus:outline-none focus:border-brand-indigo"
+                    onChange={(d) => setScheduledDate(d)}
+                    placeholder="เลือกวันที่..."
+                    size="sm"
+                    showPresets={true}
+                    markedDates={{
+                      '2026-10-24': { isPeak: true },
+                      '2026-10-25': { isPeak: true },
+                      '2026-10-31': { isPeak: true },
+                    }}
                   />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-mono uppercase text-ink-secondary mb-1">Target Time</label>
-                  <input
-                    type="time"
+                  <CustomTimePicker
+                    label="Target Time (เวลาที่ต้องการเผยแพร่)"
                     value={scheduledTime}
-                    onChange={(e) => setScheduledTime(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs focus:outline-none focus:border-brand-indigo"
+                    onChange={(t) => setScheduledTime(t)}
+                    placeholder="เลือกเวลา..."
+                    size="sm"
+                    showPeakSlots={true}
                   />
                 </div>
               </div>
