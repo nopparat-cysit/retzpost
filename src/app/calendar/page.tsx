@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   ChevronLeft, 
@@ -580,6 +580,37 @@ export default function EditorialCalendarPage() {
   const [rescheduleDate, setRescheduleDate] = useState('');
   const [rescheduleTime, setRescheduleTime] = useState('');
 
+  // Inline expanded days state in Month view (แก้ปัญหาปุ่ม more)
+  const [expandedDays, setExpandedDays] = useState<Record<number, boolean>>({});
+
+  // Day dispatches list modal state
+  const [dayModal, setDayModal] = useState<{ day: number; dateStr: string; events: CalendarEventItem[] } | null>(null);
+
+  // Close modals on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedEvent(null);
+        setDayModal(null);
+        setQuickScheduleModal(null);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Lock body scroll when modal/drawer is open
+  useEffect(() => {
+    if (selectedEvent || dayModal || quickScheduleModal?.isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedEvent, dayModal, quickScheduleModal]);
+
   // Toast feedback
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
@@ -1090,9 +1121,21 @@ export default function EditorialCalendarPage() {
                       {/* Quick Add Button on Hover */}
                       <div className="flex items-center gap-1">
                         {dayEvents.length > 0 && (
-                          <span className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-paper-subtle border border-border-rule text-ink-secondary">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setDayModal({
+                                day,
+                                dateStr: `2026-10-${String(day).padStart(2, '0')}`,
+                                events: dayEvents,
+                              });
+                            }}
+                            title={`คลิกเพื่อดูรายการโพสต์ทั้ง ${dayEvents.length} รายการของวันที่ ${day}`}
+                            className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-paper-subtle hover:bg-brand-indigo hover:text-white border border-border-rule text-ink-secondary transition-colors cursor-pointer"
+                          >
                             {dayEvents.length}
-                          </span>
+                          </button>
                         )}
                         <button
                           onClick={() => {
@@ -1104,75 +1147,108 @@ export default function EditorialCalendarPage() {
                             });
                           }}
                           title={`Schedule post on Oct ${day}`}
-                          className="opacity-0 group-hover:opacity-100 p-0.5 rounded bg-brand-indigo text-white hover:bg-brand-indigo-hover transition-opacity"
+                          className="opacity-0 group-hover:opacity-100 p-0.5 rounded bg-brand-indigo text-white hover:bg-brand-indigo-hover transition-opacity cursor-pointer"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
                       </div>
                     </div>
 
-                    {/* Events List for this Day */}
-                    <div className="space-y-1.5">
-                      {dayEvents.slice(0, 3).map((ev) => {
-                        const plat = getPlatformBadge(ev.platform);
-                        const fmt = getFormatBadge(ev.format);
-                        const isLive = ev.status === 'PUBLISHED';
+                    {/* Events List for this Day with inline expansion & more button */}
+                    {(() => {
+                      const isExpanded = expandedDays[day] ?? false;
+                      const displayedEvents = isExpanded ? dayEvents : dayEvents.slice(0, 3);
 
-                        return (
-                          <div
-                            key={ev.id}
-                            onClick={() => handleOpenEventInspector(ev)}
-                            className="p-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo hover:shadow-xs cursor-pointer transition-all text-[10px] group/card relative"
-                          >
-                            <div className="flex items-center justify-between mb-0.5">
-                              <span className="font-mono font-bold text-ink-secondary flex items-center gap-1.5">
-                                <SocialPlatformIcon platform={ev.platform} format={ev.format} size={13} />
-                                <span>{ev.timeStr}</span>
-                              </span>
-                              <div className="flex items-center gap-1">
-                                <span className={`px-1 py-0.2 rounded text-[8px] font-mono font-bold uppercase ${fmt.color}`}>
-                                  {fmt.label}
-                                </span>
-                                {isLive && (
-                                  <span className="flex items-center gap-0.5 text-[8px] font-mono font-bold text-semantic-success">
-                                    <span className="w-1 h-1 rounded-full bg-semantic-success animate-ping" />
-                                    <span>LIVE</span>
+                      return (
+                        <div className="space-y-1.5">
+                          {displayedEvents.map((ev) => {
+                            const plat = getPlatformBadge(ev.platform);
+                            const fmt = getFormatBadge(ev.format);
+                            const isLive = ev.status === 'PUBLISHED';
+
+                            return (
+                              <div
+                                key={ev.id}
+                                onClick={() => handleOpenEventInspector(ev)}
+                                className="p-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo hover:shadow-xs cursor-pointer transition-all text-[10px] group/card relative"
+                              >
+                                <div className="flex items-center justify-between mb-0.5">
+                                  <span className="font-mono font-bold text-ink-secondary flex items-center gap-1.5">
+                                    <SocialPlatformIcon platform={ev.platform} format={ev.format} size={13} />
+                                    <span>{ev.timeStr}</span>
                                   </span>
-                                )}
+                                  <div className="flex items-center gap-1">
+                                    <span className={`px-1 py-0.2 rounded text-[8px] font-mono font-bold uppercase ${fmt.color}`}>
+                                      {fmt.label}
+                                    </span>
+                                    {isLive && (
+                                      <span className="flex items-center gap-0.5 text-[8px] font-mono font-bold text-semantic-success">
+                                        <span className="w-1 h-1 rounded-full bg-semantic-success animate-ping" />
+                                        <span>LIVE</span>
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+
+                                <p className="font-serif font-medium text-ink-primary line-clamp-1 leading-snug group-hover/card:text-brand-indigo">
+                                  {ev.title}
+                                </p>
+
+                                <div className="flex items-center justify-between text-[8px] font-mono text-ink-secondary mt-0.5">
+                                  <span className="truncate max-w-[85px]">{WORKSPACE_CONFIG[ev.workspace]?.icon} {ev.handle}</span>
+                                  {ev.storyLinkUrl && (
+                                    <span className="text-accent-terracotta flex items-center gap-0.5" title="Story Link Sticker Attached">
+                                      <Link2 className="w-2.5 h-2.5" />
+                                    </span>
+                                  )}
+                                  {ev.liveUrl && (
+                                    <span className="text-brand-indigo font-bold flex items-center gap-0.5">
+                                      <span>View</span>
+                                      <ExternalLink className="w-2.5 h-2.5" />
+                                    </span>
+                                  )}
+                                </div>
                               </div>
+                            );
+                          })}
+
+                          {dayEvents.length > 3 && (
+                            <div className="flex items-center gap-1 pt-0.5">
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setExpandedDays((prev) => ({ ...prev, [day]: !prev[day] }));
+                                }}
+                                className="flex-1 text-center py-1 px-1 rounded bg-brand-indigo/5 hover:bg-brand-indigo/15 text-[9px] font-mono text-brand-indigo font-bold transition-colors flex items-center justify-center gap-1 cursor-pointer"
+                                title={isExpanded ? 'ย่อรายการโพสต์ลง' : `กางดูโพสต์ทั้งหมดอีก ${dayEvents.length - 3} รายการ`}
+                              >
+                                {isExpanded ? (
+                                  <span>▴ ย่อลง</span>
+                                ) : (
+                                  <span>+ {dayEvents.length - 3} more</span>
+                                )}
+                              </button>
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setDayModal({
+                                    day,
+                                    dateStr: `2026-10-${String(day).padStart(2, '0')}`,
+                                    events: dayEvents,
+                                  });
+                                }}
+                                title="เปิดดูรายการสรุปทั้งหมดของวันนี้ในหน้าต่างแยก"
+                                className="p-1 rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-brand-indigo text-[9px] font-mono cursor-pointer"
+                              >
+                                <List className="w-2.5 h-2.5" />
+                              </button>
                             </div>
-
-                            <p className="font-serif font-medium text-ink-primary line-clamp-1 leading-snug group-hover/card:text-brand-indigo">
-                              {ev.title}
-                            </p>
-
-                            <div className="flex items-center justify-between text-[8px] font-mono text-ink-secondary mt-0.5">
-                              <span className="truncate max-w-[85px]">{WORKSPACE_CONFIG[ev.workspace]?.icon} {ev.handle}</span>
-                              {ev.storyLinkUrl && (
-                                <span className="text-accent-terracotta flex items-center gap-0.5" title="Story Link Sticker Attached">
-                                  <Link2 className="w-2.5 h-2.5" />
-                                </span>
-                              )}
-                              {ev.liveUrl && (
-                                <span className="text-brand-indigo font-bold flex items-center gap-0.5">
-                                  <span>View</span>
-                                  <ExternalLink className="w-2.5 h-2.5" />
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
-
-                      {dayEvents.length > 3 && (
-                        <button
-                          onClick={() => handleOpenEventInspector(dayEvents[3])}
-                          className="w-full text-center py-0.5 text-[9px] font-mono text-brand-indigo hover:underline font-bold"
-                        >
-                          + {dayEvents.length - 3} more dispatches
-                        </button>
-                      )}
-                    </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
               );
@@ -1466,10 +1542,13 @@ export default function EditorialCalendarPage() {
 
       {/* SLIDE-OVER EVENT INSPECTOR & RESCHEDULER DRAWER */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-black/40 backdrop-blur-xs animate-in fade-in">
+        <div 
+          onClick={() => setSelectedEvent(null)}
+          className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs animate-in fade-in cursor-pointer"
+        >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-xl bg-paper-canvas border-l border-border-rule h-full shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-200"
+            className="w-full max-w-xl bg-paper-canvas border-l border-border-rule h-full shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-200 cursor-default"
           >
             {/* Drawer Header */}
             <div className="p-5 border-b border-border-rule bg-paper-raised flex items-start justify-between">
@@ -1502,12 +1581,19 @@ export default function EditorialCalendarPage() {
                 </h3>
               </div>
 
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="p-1.5 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] font-mono text-ink-muted border border-border-rule px-1.5 py-0.5 rounded hidden sm:inline-block">
+                  ESC
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedEvent(null)}
+                  className="p-1.5 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
+                  title="ปิดหน้าต่าง (ESC หรือคลิกพื้นที่ด้านนอก)"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
             </div>
 
             {/* Drawer Body */}
@@ -1844,12 +1930,199 @@ export default function EditorialCalendarPage() {
         </div>
       )}
 
-      {/* QUICK SCHEDULE MODAL */}
-      {quickScheduleModal?.isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in">
+      {/* DAY DISPATCHES OVERVIEW MODAL (เมื่อกดปุ่ม +more หรือตัวเลขวัน) */}
+      {dayModal && (
+        <div 
+          onClick={() => setDayModal(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in cursor-pointer"
+        >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-lg bg-paper-canvas border border-border-rule rounded-card shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150"
+            className="w-full max-w-2xl bg-paper-canvas border border-border-rule rounded-card shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 max-h-[85vh] flex flex-col cursor-default"
+          >
+            {/* Modal Header */}
+            <div className="p-5 border-b border-border-rule bg-paper-raised flex items-center justify-between shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-full bg-brand-indigo/10 flex items-center justify-center text-brand-indigo">
+                  <CalendarIcon className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-serif font-bold text-lg text-ink-primary">
+                      October {dayModal.day}, 2026 Dispatches
+                    </h3>
+                    <span className="px-2 py-0.5 rounded-full bg-brand-indigo/10 text-brand-indigo font-mono text-[11px] font-bold">
+                      {dayModal.events.length} Posts
+                    </span>
+                  </div>
+                  <p className="text-[11px] font-mono text-ink-secondary">
+                    กำหนดการและประวัติการเผยแพร่ประจำวัน
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const dayToSchedule = dayModal.day;
+                    setDayModal(null);
+                    setQuickScheduleModal({
+                      isOpen: true,
+                      day: dayToSchedule,
+                      timeStr: '09:00 AM',
+                      workspace: selectedWorkspace === 'ALL' ? 'CAPITAL_ONE' : selectedWorkspace,
+                    });
+                  }}
+                  className="px-2.5 py-1.5 rounded-editorial bg-brand-indigo/10 hover:bg-brand-indigo/20 text-brand-indigo font-mono text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Add Post</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDayModal(null)}
+                  className="p-1.5 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
+                  title="ปิดหน้าต่าง (ESC หรือคลิกพื้นที่ด้านนอก)"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body: List of all events on this day */}
+            <div className="p-5 overflow-y-auto space-y-3 flex-1 divide-y divide-border-rule/60">
+              {dayModal.events.map((ev) => {
+                const plat = getPlatformBadge(ev.platform);
+                const fmt = getFormatBadge(ev.format);
+                const isLive = ev.status === 'PUBLISHED';
+
+                return (
+                  <div 
+                    key={ev.id} 
+                    className="pt-3 first:pt-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 group/item hover:bg-paper-subtle/50 p-2 rounded-editorial transition-colors"
+                  >
+                    <div className="flex items-start gap-3 flex-1 min-w-0">
+                      {/* Thumbnail or platform avatar */}
+                      <div className="w-14 h-14 rounded-editorial bg-neutral-900 border border-border-rule overflow-hidden shrink-0 relative">
+                        {ev.previewImage ? (
+                          <img
+                            src={ev.previewImage}
+                            alt={ev.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center bg-paper-subtle text-ink-muted">
+                            <SocialPlatformIcon platform={ev.platform} format={ev.format} size={20} />
+                          </div>
+                        )}
+                        <div className="absolute bottom-1 right-1 bg-black/70 rounded p-0.5">
+                          <SocialPlatformIcon platform={ev.platform} format={ev.format} size={11} />
+                        </div>
+                      </div>
+
+                      {/* Info */}
+                      <div className="min-w-0 flex-1">
+                        <div className="flex flex-wrap items-center gap-1.5 mb-1">
+                          <span className="font-mono text-xs font-bold text-ink-primary flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-ink-secondary" />
+                            <span>{ev.timeStr}</span>
+                          </span>
+                          <span className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold ${fmt.color}`}>
+                            {fmt.label}
+                          </span>
+                          <span className={`px-1.5 py-0.2 rounded text-[9px] font-mono border ${WORKSPACE_CONFIG[ev.workspace].color}`}>
+                            {WORKSPACE_CONFIG[ev.workspace].icon} {WORKSPACE_CONFIG[ev.workspace].name}
+                          </span>
+                          {isLive ? (
+                            <span className="px-1.5 py-0.2 rounded bg-semantic-success/15 text-semantic-success text-[9px] font-mono font-bold flex items-center gap-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-semantic-success animate-ping" />
+                              <span>LIVE</span>
+                            </span>
+                          ) : (
+                            <span className="px-1.5 py-0.2 rounded bg-brand-indigo/15 text-brand-indigo text-[9px] font-mono font-bold">
+                              SCHEDULED
+                            </span>
+                          )}
+                        </div>
+
+                        <h4 className="font-serif font-bold text-sm text-ink-primary truncate">
+                          {ev.title}
+                        </h4>
+
+                        <p className="text-[11px] text-ink-secondary line-clamp-1 mt-0.5 font-sans">
+                          {ev.caption}
+                        </p>
+
+                        {/* Live links and Sticker hints */}
+                        <div className="flex flex-wrap items-center gap-2 mt-1 font-mono text-[10px]">
+                          {ev.liveUrl && (
+                            <a
+                              href={ev.liveUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="text-brand-indigo font-bold hover:underline flex items-center gap-0.5"
+                            >
+                              <span>View live on {plat.name}</span>
+                              <ExternalLink className="w-2.5 h-2.5" />
+                            </a>
+                          )}
+                          {ev.storyLinkUrl && (
+                            <span className="text-accent-terracotta flex items-center gap-0.5">
+                              <Link2 className="w-2.5 h-2.5" />
+                              <span>Sticker: {ev.storyLinkText || 'Attached'}</span>
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setDayModal(null);
+                          handleOpenEventInspector(ev);
+                        }}
+                        className="px-3 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo hover:text-brand-indigo font-mono text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                      >
+                        <span>Inspect & Edit</span>
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-border-rule bg-paper-raised flex items-center justify-between shrink-0">
+              <span className="text-[11px] font-mono text-ink-secondary">
+                กดปุ่ม <strong>Inspect & Edit</strong> เพื่อเปิดดู Mockup มือถือ หรือเปลี่ยนเวลาเผยแพร่
+              </span>
+              <button
+                type="button"
+                onClick={() => setDayModal(null)}
+                className="px-4 py-1.5 rounded-editorial border border-border-rule bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary font-mono text-xs cursor-pointer transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* QUICK SCHEDULE MODAL */}
+      {quickScheduleModal?.isOpen && (
+        <div 
+          onClick={() => setQuickScheduleModal(null)}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 animate-in fade-in cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-lg bg-paper-canvas border border-border-rule rounded-card shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 cursor-default"
           >
             <div className="p-5 border-b border-border-rule bg-paper-raised flex items-center justify-between">
               <div className="flex items-center gap-2">
