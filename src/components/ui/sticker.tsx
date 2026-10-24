@@ -79,13 +79,18 @@ interface StickerProps {
   inline?: boolean;
 }
 
-const SIZE_MAP: Record<StickerSize, string> = {
-  xs: 'w-3.5 h-3.5 min-w-[14px]',
-  sm: 'w-4.5 h-4.5 min-w-[18px]',
-  md: 'w-5.5 h-5.5 min-w-[22px]',
-  lg: 'w-7 h-7 min-w-[28px]',
-  xl: 'w-9 h-9 min-w-[36px]',
-  '2xl': 'w-12 h-12 min-w-[48px]',
+interface SizeSpec {
+  dimension: number;
+  className: string;
+}
+
+const SIZE_MAP: Record<StickerSize, SizeSpec> = {
+  xs: { dimension: 16, className: 'w-4 h-4 min-w-[16px] max-w-[16px] max-h-[16px]' },
+  sm: { dimension: 20, className: 'w-5 h-5 min-w-[20px] max-w-[20px] max-h-[20px]' },
+  md: { dimension: 24, className: 'w-6 h-6 min-w-[24px] max-w-[24px] max-h-[24px]' },
+  lg: { dimension: 32, className: 'w-8 h-8 min-w-[32px] max-w-[32px] max-h-[32px]' },
+  xl: { dimension: 40, className: 'w-10 h-10 min-w-[40px] max-w-[40px] max-h-[40px]' },
+  '2xl': { dimension: 48, className: 'w-12 h-12 min-w-[48px] max-w-[48px] max-h-[48px]' },
 };
 
 export const Sticker: React.FC<StickerProps> = ({
@@ -96,7 +101,7 @@ export const Sticker: React.FC<StickerProps> = ({
   title,
   inline = false,
 }) => {
-  const sizeClass = SIZE_MAP[size] || SIZE_MAP.md;
+  const spec = SIZE_MAP[size] || SIZE_MAP.md;
   const imageSrc = `/icons/stickers/${name}.png`;
 
   return (
@@ -104,15 +109,21 @@ export const Sticker: React.FC<StickerProps> = ({
       src={imageSrc}
       alt={alt || name}
       title={title || alt || name}
+      width={spec.dimension}
+      height={spec.dimension}
       loading="lazy"
-      className={`${sizeClass} object-contain select-none shrink-0 drop-shadow-[0_1.5px_2.5px_rgba(0,0,0,0.18)] transition-transform duration-150 hover:scale-105 ${
-        inline ? 'inline-block align-middle' : 'block'
-      } ${className}`}
       style={{
+        width: `${spec.dimension}px`,
+        height: `${spec.dimension}px`,
+        maxWidth: `${spec.dimension}px`,
+        maxHeight: `${spec.dimension}px`,
         imageRendering: '-webkit-optimize-contrast',
       }}
+      className={`${spec.className} object-contain select-none shrink-0 drop-shadow-[0_1.5px_2.5px_rgba(0,0,0,0.18)] transition-transform duration-150 hover:scale-105 ${
+        inline ? 'inline-block align-middle' : 'block'
+      } ${className}`}
       onError={(e) => {
-        // Fallback gracefully to hidden or subtle dot if missing
+        // Fallback gracefully if missing
         e.currentTarget.style.display = 'none';
       }}
     />

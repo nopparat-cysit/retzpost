@@ -281,7 +281,7 @@ export default function ConnectedAccountsPage() {
       id: newWsId,
       name: newProjectName.trim(),
       category: newProjectCategory,
-      icon: newProjectCategory === 'อสังหาริมทรัพย์' ? '🏢' : newProjectCategory === 'ครีเอเตอร์' ? '🎙️' : '⚡',
+      icon: newProjectCategory === 'อสังหาริมทรัพย์' ? 'ws-realestate' : newProjectCategory === 'ครีเอเตอร์' ? 'ws-creator' : 'ws-software',
       selectedChannelIds: chosenChannelIds,
     };
 
@@ -366,8 +366,9 @@ export default function ConnectedAccountsPage() {
           </div>
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-serif font-bold text-sm text-ink-primary">
-                🛡️ Zero-Touch API Bypass Guarantee (ระบบข้ามอัตโนมัติ ไม่ยิง API ไม่เกิด Error)
+              <h2 className="font-serif font-bold text-sm text-ink-primary flex items-center gap-2">
+                <Sticker name="guarded-shield" size="xs" inline />
+                <span>Zero-Touch API Bypass Guarantee (ระบบข้ามอัตโนมัติ ไม่ยิง API ไม่เกิด Error)</span>
               </h2>
               <span className="text-[10px] font-mono px-2 py-0.5 bg-emerald-100 text-emerald-900 border border-emerald-300 rounded font-bold">
                 Zero Error Policy
@@ -398,10 +399,15 @@ export default function ConnectedAccountsPage() {
             <Building2 className="w-4 h-4 text-brand-indigo" />
             <span>เลือกโปรเจกต์ที่ต้องการจัดการช่องทาง (Workspace Channel Matrix):</span>
           </div>
-          <span className="text-[11px] font-mono text-ink-secondary">
-            {selectedWorkspaceId === 'ALL'
-              ? '🌐 แสดงบัญชีทั้งหมดในระบบ (Master Directory)'
-              : `🏢 โปรเจกต์: ${activeWorkspace?.name} (${activeWorkspace?.category})`}
+          <span className="text-[11px] font-mono text-ink-secondary flex items-center gap-1.5">
+            {selectedWorkspaceId === 'ALL' ? (
+              <span>แสดงบัญชีทั้งหมดในระบบ (Master Directory)</span>
+            ) : (
+              <>
+                <Sticker name={activeWorkspace?.icon || 'ws-software'} size="xs" inline />
+                <span>โปรเจกต์: {activeWorkspace?.name} ({activeWorkspace?.category})</span>
+              </>
+            )}
           </span>
         </div>
 
@@ -671,11 +677,11 @@ export default function ConnectedAccountsPage() {
                   onChange={(e) => setNewProjectCategory(e.target.value)}
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
                 >
-                  <option value="อสังหาริมทรัพย์">🏢 อสังหาริมทรัพย์ (Real Estate Agency)</option>
-                  <option value="ครีเอเตอร์">🎙️ ครีเอเตอร์ / สตูดิโอมีเดีย (Creator Media)</option>
-                  <option value="SaaS & ซอฟต์แวร์">⚡ ซอฟต์แวร์ / ดิจิทัลโปรดักต์ (SaaS)</option>
-                  <option value="คาเฟ่ & อาหาร">☕ คาเฟ่ & ไลฟ์สไตล์ (Food & Beverage)</option>
-                  <option value="อีคอมเมิร์ซ">🛍️ แบรนด์สินค้า & อีคอมเมิร์ซ (E-Commerce)</option>
+                  <option value="อสังหาริมทรัพย์">อสังหาริมทรัพย์ (Real Estate Agency)</option>
+                  <option value="ครีเอเตอร์">ครีเอเตอร์ / สตูดิโอมีเดีย (Creator Media)</option>
+                  <option value="SaaS & ซอฟต์แวร์">ซอฟต์แวร์ / ดิจิทัลโปรดักต์ (SaaS)</option>
+                  <option value="คาเฟ่ & อาหาร">คาเฟ่ & ไลฟ์สไตล์ (Food & Beverage)</option>
+                  <option value="อีคอมเมิร์ซ">แบรนด์สินค้า & อีคอมเมิร์ซ (E-Commerce)</option>
                 </select>
               </div>
 

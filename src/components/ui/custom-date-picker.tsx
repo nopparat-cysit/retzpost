@@ -366,7 +366,7 @@ export function CustomDatePicker({
                 onClick={() => handleQuickPreset('WEEKEND')}
                 className="px-2 py-0.5 rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold whitespace-nowrap transition-colors cursor-pointer"
               >
-                สุดสัปดาห์ 🔥
+                สุดสัปดาห์ (Peak)
               </button>
               <button
                 type="button"

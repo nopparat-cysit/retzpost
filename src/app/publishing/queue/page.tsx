@@ -19,7 +19,8 @@ import {
   X,
   Eye,
   ShieldAlert,
-  ArrowRight
+  ArrowRight,
+  Lightbulb
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { Sticker } from '@/components/ui/sticker';
@@ -696,8 +697,9 @@ export default function PublishingQueuePage() {
               </div>
 
               <div className="p-3 bg-paper-subtle border border-border-rule rounded-editorial text-[11px] space-y-1">
-                <span className="font-mono uppercase font-bold text-ink-primary block text-[10px]">
-                  💡 Recommended Remediation
+                <span className="font-mono uppercase font-bold text-ink-primary text-[10px] flex items-center gap-1.5">
+                  <Lightbulb className="w-3.5 h-3.5 text-accent-warm inline" />
+                  <span>Recommended Remediation</span>
                 </span>
                 <p className="text-ink-secondary font-sans leading-relaxed">
                   {selectedErrorJob.errorSafeMessage?.includes('OAuth')

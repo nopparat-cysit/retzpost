@@ -41,6 +41,8 @@ import {
   RotateCcw,
   Building2,
   Sliders,
+  SlidersHorizontal,
+  Lightbulb,
   X,
   Copy,
   FolderOpen,
@@ -1335,34 +1337,56 @@ export default function CreatePostPage() {
           <div className="flex flex-wrap items-center gap-2.5">
             {/* Identity & Role Tester */}
             <div className="flex items-center gap-2 px-2.5 py-1 bg-paper-raised border border-border-rule rounded-editorial text-xs shadow-2xs">
-              <div className="w-5 h-5 rounded-full bg-semantic-info/15 text-semantic-info flex items-center justify-center font-bold text-[9px] shrink-0 border border-semantic-info/30">
+              <div className="w-5 h-5 rounded-full bg-brand-indigo/15 text-brand-indigo flex items-center justify-center font-bold text-[9px] shrink-0 border border-brand-indigo/30">
                 NC
               </div>
               <span className="text-ink-secondary text-[11px] font-sans">
                 บทบาท:
               </span>
-              <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
-                currentRole === 'CONTRIBUTOR'
-                  ? 'bg-accent-terracotta text-white'
-                  : currentRole === 'VIEWER'
-                  ? 'bg-paper-subtle text-ink-secondary border border-border-rule'
-                  : 'bg-semantic-info text-white'
-              }`}>
-                {currentRole === 'OWNER' ? '👑 Owner' : currentRole === 'MANAGER' ? '⭐ Manager' : currentRole === 'EDITOR' ? '✍️ Editor' : currentRole === 'CONTRIBUTOR' ? '👀 Contributor' : '🔍 Viewer'}
-              </span>
 
               <CustomDropdown
                 options={[
-                  { value: 'MANAGER', label: '⭐ Manager (ยิงสด)', badge: 'Manager', badgeColor: 'bg-semantic-info/15 text-semantic-info' },
-                  { value: 'EDITOR', label: '✍️ Editor (ยิงสด)', badge: 'Editor', badgeColor: 'bg-brand-indigo/15 text-brand-indigo' },
-                  { value: 'CONTRIBUTOR', label: '👀 Contributor (รออนุมัติ)', badge: 'Approval', badgeColor: 'bg-accent-terracotta/15 text-accent-terracotta' },
-                  { value: 'VIEWER', label: '🔍 Viewer (อ่านอย่างเดียว)', badge: 'Read-only', badgeColor: 'bg-paper-subtle text-ink-secondary' },
+                  { 
+                    value: 'OWNER', 
+                    label: 'Owner (เจ้าของ)', 
+                    icon: <Sticker name="role-owner" size="xs" />,
+                    badge: 'Owner', 
+                    badgeColor: 'bg-brand-indigo/15 text-brand-indigo' 
+                  },
+                  { 
+                    value: 'MANAGER', 
+                    label: 'Manager (ยิงสด)', 
+                    icon: <Sticker name="role-manager" size="xs" />,
+                    badge: 'Manager', 
+                    badgeColor: 'bg-semantic-info/15 text-semantic-info' 
+                  },
+                  { 
+                    value: 'EDITOR', 
+                    label: 'Editor (ยิงสด)', 
+                    icon: <Sticker name="role-editor" size="xs" />,
+                    badge: 'Editor', 
+                    badgeColor: 'bg-brand-indigo/15 text-brand-indigo' 
+                  },
+                  { 
+                    value: 'CONTRIBUTOR', 
+                    label: 'Contributor (รออนุมัติ)', 
+                    icon: <Sticker name="role-contributor" size="xs" />,
+                    badge: 'Approval', 
+                    badgeColor: 'bg-accent-terracotta/15 text-accent-terracotta' 
+                  },
+                  { 
+                    value: 'VIEWER', 
+                    label: 'Viewer (อ่านอย่างเดียว)', 
+                    icon: <Sticker name="role-viewer" size="xs" />,
+                    badge: 'Read-only', 
+                    badgeColor: 'bg-paper-subtle text-ink-secondary' 
+                  },
                 ]}
                 value={currentRole}
                 onChange={(val) => setCurrentRole(val as WorkspaceRole)}
                 size="sm"
                 fullWidth={false}
-                className="w-48"
+                className="w-52"
               />
 
               <Link
@@ -1399,35 +1423,38 @@ export default function CreatePostPage() {
         <button
           type="button"
           onClick={() => setMobileTab('DESTINATIONS')}
-          className={`flex-1 py-2 text-center font-mono font-medium rounded transition-colors ${
+          className={`flex-1 py-2 text-center font-mono font-medium rounded transition-colors flex items-center justify-center gap-1.5 ${
             mobileTab === 'DESTINATIONS'
               ? 'bg-brand-indigo text-white font-semibold shadow-xs'
               : 'text-ink-secondary hover:text-ink-primary'
           }`}
         >
-          🎯 Destinations ({totalActivePlacements})
+          <Layers className="w-3.5 h-3.5" />
+          <span>Destinations ({totalActivePlacements})</span>
         </button>
         <button
           type="button"
           onClick={() => setMobileTab('CANVAS')}
-          className={`flex-1 py-2 text-center font-mono font-medium rounded transition-colors ${
+          className={`flex-1 py-2 text-center font-mono font-medium rounded transition-colors flex items-center justify-center gap-1.5 ${
             mobileTab === 'CANVAS'
               ? 'bg-brand-indigo text-white font-semibold shadow-xs'
               : 'text-ink-secondary hover:text-ink-primary'
           }`}
         >
-          ✍️ Creative Canvas
+          <Edit3 className="w-3.5 h-3.5" />
+          <span>Creative Canvas</span>
         </button>
         <button
           type="button"
           onClick={() => setMobileTab('PROOF')}
-          className={`flex-1 py-2 text-center font-mono font-medium rounded transition-colors ${
+          className={`flex-1 py-2 text-center font-mono font-medium rounded transition-colors flex items-center justify-center gap-1.5 ${
             mobileTab === 'PROOF'
               ? 'bg-brand-indigo text-white font-semibold shadow-xs'
               : 'text-ink-secondary hover:text-ink-primary'
           }`}
         >
-          📱 Live Proof
+          <Smartphone className="w-3.5 h-3.5" />
+          <span>Live Proof</span>
         </button>
       </div>
 
@@ -1445,8 +1472,9 @@ export default function CreatePostPage() {
           {/* Column 1 Clean Header: Target Channels + Project Pill Badge + Clear */}
           <div className="flex items-center justify-between pb-2.5 border-b border-border-rule">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="text-xs font-bold font-sans text-ink-primary shrink-0">
-                🎯 Target Channels
+              <span className="text-xs font-bold font-sans text-ink-primary shrink-0 flex items-center gap-1.5">
+                <SlidersHorizontal className="w-3.5 h-3.5 text-brand-indigo" />
+                <span>Target Channels</span>
               </span>
 
               {/* Compact Project Switcher Pill */}
@@ -1533,36 +1561,39 @@ export default function CreatePostPage() {
               <button
                 type="button"
                 onClick={() => applyUniversalPreset('FEEDS')}
-                className="py-1 px-1 rounded text-[10px] font-mono font-semibold bg-brand-indigo text-white hover:bg-brand-indigo-hover transition-colors shadow-2xs text-center truncate"
+                className="py-1 px-1 rounded text-[10px] font-mono font-semibold bg-brand-indigo text-white hover:bg-brand-indigo-hover transition-colors shadow-2xs text-center truncate flex items-center justify-center gap-1"
                 title="Select all Feed placements in this workspace"
               >
-                📰 All Feeds
+                <LayoutGrid className="w-3 h-3 shrink-0" />
+                <span>All Feeds</span>
               </button>
               <button
                 type="button"
                 disabled={mediaMode === 'TEXT_ONLY'}
                 onClick={() => applyUniversalPreset('STORIES')}
-                className={`py-1 px-1 rounded text-[10px] font-mono font-semibold transition-colors shadow-2xs text-center truncate ${
+                className={`py-1 px-1 rounded text-[10px] font-mono font-semibold transition-colors shadow-2xs text-center truncate flex items-center justify-center gap-1 ${
                   mediaMode !== 'TEXT_ONLY'
                     ? 'bg-accent-terracotta text-white hover:opacity-90'
                     : 'bg-paper-canvas text-ink-secondary/40 border border-border-rule cursor-not-allowed'
                 }`}
                 title="Select all Stories in this workspace"
               >
-                📱 All Stories
+                <Smartphone className="w-3 h-3 shrink-0" />
+                <span>All Stories</span>
               </button>
               <button
                 type="button"
                 disabled={mediaMode !== 'VIDEO'}
                 onClick={() => applyUniversalPreset('REELS')}
-                className={`py-1 px-1 rounded text-[10px] font-mono font-semibold transition-colors shadow-2xs text-center truncate ${
+                className={`py-1 px-1 rounded text-[10px] font-mono font-semibold transition-colors shadow-2xs text-center truncate flex items-center justify-center gap-1 ${
                   mediaMode === 'VIDEO'
                     ? 'bg-semantic-info text-white hover:opacity-90'
                     : 'bg-paper-canvas text-ink-secondary/40 border border-border-rule cursor-not-allowed'
                 }`}
                 title="Select all Reels/Shorts in this workspace"
               >
-                🎬 All Reels
+                <Film className="w-3 h-3 shrink-0" />
+                <span>All Reels</span>
               </button>
             </div>
 
@@ -2038,7 +2069,8 @@ export default function CreatePostPage() {
               <div className="flex items-center gap-2">
                 {lastSavedDraftTime && (
                   <span className="text-[10px] font-mono text-semantic-success flex items-center gap-1 font-medium bg-semantic-success/10 px-2 py-0.5 rounded border border-semantic-success/30">
-                    <span>💾 บันทึกอัตโนมัติ</span>
+                    <Check className="w-3 h-3 text-semantic-success shrink-0" />
+                    <span>บันทึกอัตโนมัติ</span>
                     <span className="text-ink-secondary">({lastSavedDraftTime})</span>
                   </span>
                 )}
@@ -2078,8 +2110,9 @@ export default function CreatePostPage() {
             <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial space-y-2.5">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <div className="flex items-center gap-2 flex-1">
-                  <span className="text-[10px] font-mono uppercase font-bold text-ink-secondary shrink-0">
-                    📑 ใช้เทมเพลต:
+                  <span className="text-[10px] font-mono uppercase font-bold text-ink-secondary shrink-0 flex items-center gap-1">
+                    <FileText className="w-3 h-3 text-brand-indigo shrink-0" />
+                    <span>ใช้เทมเพลต:</span>
                   </span>
                   <select
                     value={selectedTemplateId}
@@ -2095,14 +2128,14 @@ export default function CreatePostPage() {
                       if (catTemplates.length === 0) return null;
                       const label =
                         cat === 'REAL_ESTATE'
-                          ? '🏢 อสังหาริมทรัพย์ (Capital One Deals)'
+                          ? 'อสังหาริมทรัพย์ (Capital One Deals)'
                           : cat === 'PROMOTION'
-                          ? '⚡ โปรโมชั่น (Flash Deals)'
+                          ? 'โปรโมชั่น (Flash Deals)'
                           : cat === 'PRODUCT_LAUNCH'
-                          ? '🚀 เปิดตัวสินค้า (Tech Launch)'
+                          ? 'เปิดตัวสินค้า (Tech Launch)'
                           : cat === 'INSIGHTS'
-                          ? '📊 บทวิเคราะห์ & บทความ (Insights)'
-                          : '⭐ เทมเพลตของฉัน (Custom Saved)';
+                          ? 'บทวิเคราะห์ & บทความ (Insights)'
+                          : 'เทมเพลตของฉัน (Custom Saved)';
                       return (
                         <optgroup key={cat} label={label}>
                           {catTemplates.map((tpl) => (
@@ -3106,8 +3139,9 @@ export default function CreatePostPage() {
                   ส่งให้ Manager อนุมัติ ({totalActivePlacements} Placements)
                 </span>
               </button>
-              <p className="text-[10px] text-accent-terracotta font-sans text-center leading-tight">
-                🛡️ บทบาท Contributor: ต้องผ่านการอนุมัติก่อนยิงขึ้นช่องทางจริง
+              <p className="text-[10px] text-accent-terracotta font-sans text-center leading-tight flex items-center justify-center gap-1.5">
+                <Sticker name="guarded-shield" size="xs" inline />
+                <span>บทบาท Contributor: ต้องผ่านการอนุมัติก่อนยิงขึ้นช่องทางจริง</span>
               </p>
             </div>
           ) : currentRole === 'VIEWER' ? (
@@ -3185,15 +3219,17 @@ export default function CreatePostPage() {
                 <span className="text-[9px] font-mono uppercase text-ink-secondary block font-semibold">
                   เนื้อหาที่จะถูกบันทึก:
                 </span>
-                <p className="font-medium text-ink-primary truncate text-xs">
-                  📌 {workingTitle || 'Untitled Post'}
+                <p className="font-medium text-ink-primary truncate text-xs flex items-center gap-1.5">
+                  <Sticker name="sticky-pushpin" size="xs" inline />
+                  <span className="truncate">{workingTitle || 'Untitled Post'}</span>
                 </p>
                 <p className="text-ink-secondary line-clamp-3 text-[11px] leading-relaxed">
                   {sharedCaption}
                 </p>
                 {storyLinkUrl && (
-                  <p className="font-mono text-[10px] text-accent-terracotta truncate">
-                    🔗 {storyLinkUrl}
+                  <p className="font-mono text-[10px] text-accent-terracotta truncate flex items-center gap-1.5">
+                    <Link2 className="w-3 h-3 text-accent-terracotta shrink-0" />
+                    <span className="truncate">{storyLinkUrl}</span>
                   </p>
                 )}
               </div>
@@ -3315,7 +3351,7 @@ export default function CreatePostPage() {
                       type="text"
                       value={tplSearchQuery}
                       onChange={(e) => setTplSearchQuery(e.target.value)}
-                      placeholder="🔍 ค้นหาตามชื่อเทมเพลต, เนื้อหาแคปชัน, แฮชแท็ก หรือหมวดหมู่..."
+                      placeholder="ค้นหาตามชื่อเทมเพลต, เนื้อหาแคปชัน, แฮชแท็ก หรือหมวดหมู่..."
                       className="w-full pl-9 pr-8 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"
                     />
                     {tplSearchQuery && (
@@ -3332,12 +3368,12 @@ export default function CreatePostPage() {
                   {/* Category Pills */}
                   <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-[11px] font-mono scrollbar-none">
                     {[
-                      { id: 'ALL', label: 'ทั้งหมด', count: templateCategoryCounts.ALL },
-                      { id: 'CUSTOM', label: '⭐ ของฉัน', count: templateCategoryCounts.CUSTOM },
-                      { id: 'REAL_ESTATE', label: '🏢 อสังหาริมทรัพย์', count: templateCategoryCounts.REAL_ESTATE },
-                      { id: 'PROMOTION', label: '⚡ โปรโมชั่น', count: templateCategoryCounts.PROMOTION },
-                      { id: 'PRODUCT_LAUNCH', label: '🚀 เปิดตัวสินค้า', count: templateCategoryCounts.PRODUCT_LAUNCH },
-                      { id: 'INSIGHTS', label: '📊 บทวิเคราะห์', count: templateCategoryCounts.INSIGHTS },
+                      { id: 'ALL', label: 'ทั้งหมด', sticker: null, count: templateCategoryCounts.ALL },
+                      { id: 'CUSTOM', label: 'ของฉัน', sticker: 'award-star-badge', count: templateCategoryCounts.CUSTOM },
+                      { id: 'REAL_ESTATE', label: 'อสังหาริมทรัพย์', sticker: 'ws-realestate', count: templateCategoryCounts.REAL_ESTATE },
+                      { id: 'PROMOTION', label: 'โปรโมชั่น', sticker: 'viral-flame', count: templateCategoryCounts.PROMOTION },
+                      { id: 'PRODUCT_LAUNCH', label: 'เปิดตัวสินค้า', sticker: 'paper-airplane', count: templateCategoryCounts.PRODUCT_LAUNCH },
+                      { id: 'INSIGHTS', label: 'บทวิเคราะห์', sticker: 'growth-chart', count: templateCategoryCounts.INSIGHTS },
                     ].map((tab) => {
                       const isActive = tplCategoryFilter === tab.id;
                       return (
@@ -3351,6 +3387,7 @@ export default function CreatePostPage() {
                               : 'bg-paper-canvas text-ink-secondary border-border-rule hover:border-brand-indigo/40 hover:text-ink-primary'
                           }`}
                         >
+                          {tab.sticker && <Sticker name={tab.sticker} size="xs" inline />}
                           <span>{tab.label}</span>
                           <span className={`px-1.5 py-0.2 rounded-full text-[9px] ${
                             isActive ? 'bg-white/20 text-white' : 'bg-paper-subtle text-ink-muted'
@@ -3573,7 +3610,12 @@ export default function CreatePostPage() {
                 {/* Modal Footer */}
                 <div className="pt-3 border-t border-border-rule flex items-center justify-between shrink-0 text-xs font-mono">
                   <div className="flex items-center gap-3 text-ink-secondary">
-                    <span>💡 นำไปใช้เพื่อแทนที่ข้อความ หรือกด ✏️ เพื่อแก้ไข</span>
+                    <span className="flex items-center gap-1.5">
+                      <Lightbulb className="w-3.5 h-3.5 text-accent-warm inline" />
+                      <span>นำไปใช้เพื่อแทนที่ข้อความ หรือกด</span>
+                      <Edit3 className="w-3.5 h-3.5 inline text-ink-primary" />
+                      <span>เพื่อแก้ไข</span>
+                    </span>
                     <button
                       type="button"
                       onClick={() => setResetConfirmOpen(true)}
@@ -3647,7 +3689,7 @@ export default function CreatePostPage() {
                         type="text"
                         required
                         autoFocus
-                        placeholder="เช่น: 🏢 คอนโดหรูติด BTS (Capital One Deal)"
+                        placeholder="เช่น: คอนโดหรูติด BTS (Capital One Deal)"
                         value={formTplName}
                         onChange={(e) => setFormTplName(e.target.value)}
                         className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-serif text-sm text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"
@@ -3662,11 +3704,11 @@ export default function CreatePostPage() {
                         onChange={(e) => setFormTplCategory(e.target.value as any)}
                         className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo cursor-pointer"
                       >
-                        <option value="REAL_ESTATE">🏢 อสังหาริมทรัพย์</option>
-                        <option value="PROMOTION">⚡ โปรโมชั่น / Flash Sale</option>
-                        <option value="PRODUCT_LAUNCH">🚀 เปิดตัวสินค้า / Tech</option>
-                        <option value="INSIGHTS">📊 บทวิเคราะห์ & บทความ</option>
-                        <option value="CUSTOM">⭐ เทมเพลตของฉัน (Custom)</option>
+                        <option value="REAL_ESTATE">อสังหาริมทรัพย์</option>
+                        <option value="PROMOTION">โปรโมชั่น / Flash Sale</option>
+                        <option value="PRODUCT_LAUNCH">เปิดตัวสินค้า / Tech</option>
+                        <option value="INSIGHTS">บทวิเคราะห์ & บทความ</option>
+                        <option value="CUSTOM">เทมเพลตของฉัน (Custom)</option>
                       </select>
                     </div>
                   </div>

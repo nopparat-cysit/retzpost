@@ -52,7 +52,8 @@ import {
   Filter,
   Users,
   Target,
-  ShieldCheck
+  ShieldCheck,
+  Heart
 } from 'lucide-react';
 import { 
   getEmployeeKPIs, 
@@ -459,7 +460,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ctr: '5.8%',
     engagementRate: '10.0%',
     rank: 1,
-    rankBadge: '🏆 RANK 1 • BEST PERFORMING CONDO',
+    rankBadge: 'RANK 1 • BEST PERFORMING CONDO',
     liveLinks: [
       {
         platform: 'FACEBOOK',
@@ -505,7 +506,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ctr: '6.1%',
     engagementRate: '9.8%',
     rank: 2,
-    rankBadge: '🥈 RANK 2 • TOP LUXURY ENGAGEMENT',
+    rankBadge: 'RANK 2 • TOP LUXURY ENGAGEMENT',
     liveLinks: [
       {
         platform: 'FACEBOOK',
@@ -551,7 +552,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ctr: '4.8%',
     engagementRate: '10.3%',
     rank: 3,
-    rankBadge: '🥉 RANK 3 • TOP VIDEO RETENTION',
+    rankBadge: 'RANK 3 • TOP VIDEO RETENTION',
     liveLinks: [
       {
         platform: 'YOUTUBE',
@@ -605,7 +606,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ctr: '5.2%',
     engagementRate: '9.6%',
     rank: 4,
-    rankBadge: '⚡ RANK 4 • TOP B2B CONVERSION',
+    rankBadge: 'RANK 4 • TOP B2B CONVERSION',
     liveLinks: [
       {
         platform: 'FACEBOOK',
@@ -651,7 +652,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ctr: '4.1%',
     engagementRate: '9.3%',
     rank: 5,
-    rankBadge: '☕ RANK 5 • TOP COMMUNITY REACH',
+    rankBadge: 'RANK 5 • TOP COMMUNITY REACH',
     liveLinks: [
       {
         platform: 'FACEBOOK',
@@ -1757,7 +1758,7 @@ export default function HomePage() {
                       title="วิเคราะห์ปัจจัยความสำเร็จด้วย AI: ทำไมถึงได้ยอด และแนวทางต่อยอด"
                     >
                       <Sparkles className="w-3.5 h-3.5 text-accent-terracotta" />
-                      <span>🤖 ทำไมถึงปัง? (AI Diagnosis)</span>
+                      <span>ทำไมถึงปัง? (AI Diagnosis)</span>
                     </button>
                     <span className="px-2.5 py-1 rounded bg-semantic-success/10 border border-semantic-success/20 text-semantic-success font-bold flex items-center gap-1">
                       <Flame className="w-3.5 h-3.5 fill-semantic-success text-semantic-success" />
@@ -1769,28 +1770,43 @@ export default function HomePage() {
                 {/* 5-Column Stats Grid */}
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-xs pt-1">
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
-                    <span className="text-[10px] text-ink-secondary block">👁️ คนดูทั้งหมด (Views)</span>
-                    <span className="font-bold text-ink-primary text-sm">{post.views.toLocaleString()}</span>
+                    <span className="text-[10px] text-ink-secondary flex items-center justify-center gap-1">
+                      <Eye className="w-3 h-3 text-ink-secondary" />
+                      <span>คนดูทั้งหมด (Views)</span>
+                    </span>
+                    <span className="font-bold text-ink-primary text-sm block mt-0.5">{post.views.toLocaleString()}</span>
                   </div>
 
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
-                    <span className="text-[10px] text-ink-secondary block">❤️ คนกดไลค์ (Likes)</span>
-                    <span className="font-bold text-ink-primary text-sm">{post.likes.toLocaleString()}</span>
+                    <span className="text-[10px] text-ink-secondary flex items-center justify-center gap-1">
+                      <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />
+                      <span>คนกดไลค์ (Likes)</span>
+                    </span>
+                    <span className="font-bold text-ink-primary text-sm block mt-0.5">{post.likes.toLocaleString()}</span>
                   </div>
 
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
-                    <span className="text-[10px] text-ink-secondary block">💬 คอมเมนต์ (Comments)</span>
-                    <span className="font-bold text-ink-primary text-sm">{post.comments}</span>
+                    <span className="text-[10px] text-ink-secondary flex items-center justify-center gap-1">
+                      <MessageSquare className="w-3 h-3 text-brand-indigo" />
+                      <span>คอมเมนต์ (Comments)</span>
+                    </span>
+                    <span className="font-bold text-ink-primary text-sm block mt-0.5">{post.comments}</span>
                   </div>
 
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
-                    <span className="text-[10px] text-ink-secondary block">🔁 แชร์ (Shares)</span>
-                    <span className="font-bold text-ink-primary text-sm">{post.shares}</span>
+                    <span className="text-[10px] text-ink-secondary flex items-center justify-center gap-1">
+                      <Share2 className="w-3 h-3 text-semantic-info" />
+                      <span>แชร์ (Shares)</span>
+                    </span>
+                    <span className="font-bold text-ink-primary text-sm block mt-0.5">{post.shares}</span>
                   </div>
 
                   <div className="p-2.5 bg-accent-terracotta/10 border border-accent-terracotta/30 rounded-editorial text-center col-span-2 sm:col-span-1">
-                    <span className="text-[10px] text-accent-terracotta font-bold block">⚡ คลิกลิงก์ Story (Clicks)</span>
-                    <span className="font-bold text-accent-terracotta text-sm">{post.linkClicks} Clicks ({post.ctr})</span>
+                    <span className="text-[10px] text-accent-terracotta font-bold flex items-center justify-center gap-1">
+                      <MousePointerClick className="w-3 h-3 text-accent-terracotta" />
+                      <span>คลิกลิงก์ Story (Clicks)</span>
+                    </span>
+                    <span className="font-bold text-accent-terracotta text-sm block mt-0.5">{post.linkClicks} Clicks ({post.ctr})</span>
                   </div>
                 </div>
 

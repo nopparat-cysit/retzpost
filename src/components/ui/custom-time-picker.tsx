@@ -36,11 +36,11 @@ export interface CustomTimePickerProps {
 }
 
 export const BANGKOK_PEAK_SLOTS: TimePeakSlot[] = [
-  { time: '08:30 AM', label: 'ช่วงเช้า: คอนโด & ผู้บริหาร', badge: '🔥 Prime', isPeak: true },
-  { time: '11:30 AM', label: 'พักเที่ยง: Story & โปรโมชั่น', badge: '📱 Swipes', isPeak: false },
-  { time: '14:00 PM', label: 'ช่วงบ่าย: คาเฟ่ & SME', badge: '☕ Active', isPeak: false },
-  { time: '19:30 PM', label: 'หัวค่ำ: ยอด Reach & Engagement สูงสุด', badge: '🔥 Peak Window', isPeak: true },
-  { time: '21:00 PM', label: 'รอบดึก: Reels & TikTok สบายๆ', badge: '🌙 Viral', isPeak: false },
+  { time: '08:30 AM', label: 'ช่วงเช้า: คอนโด & ผู้บริหาร', badge: 'Prime', isPeak: true },
+  { time: '11:30 AM', label: 'พักเที่ยง: Story & โปรโมชั่น', badge: 'Swipes', isPeak: false },
+  { time: '14:00 PM', label: 'ช่วงบ่าย: คาเฟ่ & SME', badge: 'Active', isPeak: false },
+  { time: '19:30 PM', label: 'หัวค่ำ: ยอด Reach & Engagement สูงสุด', badge: 'Peak Window', isPeak: true },
+  { time: '21:00 PM', label: 'รอบดึก: Reels & TikTok สบายๆ', badge: 'Viral', isPeak: false },
 ];
 
 // Helper to parse time string
