@@ -827,7 +827,7 @@ export default function ConnectedAccountsPage() {
                       className="w-full flex items-center gap-2 p-1.5 rounded hover:bg-paper-subtle text-brand-indigo text-left cursor-pointer font-semibold text-[11px]"
                     >
                       <Plus className="w-3.5 h-3.5 shrink-0" />
-                      <span>+ สร้างโปรเจกต์ใหม่...</span>
+                      <span>สร้างโปรเจกต์ใหม่...</span>
                     </button>
                   </div>
                 </div>

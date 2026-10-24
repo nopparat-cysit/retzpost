@@ -880,7 +880,8 @@ export default function EditorialCalendarPage() {
           </div>
 
           <div className="hidden lg:flex items-center gap-1.5 text-ink-secondary font-mono border-l border-border-rule pl-3">
-            <span className="text-accent-terracotta font-semibold">⚡ ชั่วโมง Peak:</span>
+            <Zap className="w-3.5 h-3.5 text-accent-terracotta shrink-0" />
+            <span className="text-accent-terracotta font-semibold">ชั่วโมง Peak:</span>
             <span className="text-ink-primary font-bold">08:30 / 11:30 / 19:30</span>
           </div>
         </div>
@@ -896,7 +897,7 @@ export default function EditorialCalendarPage() {
             }`}
           >
             <Sparkles className="w-3 h-3" />
-            <span>{showAiPeakTimes ? 'เน้น Peak 🔥' : 'ชั่วโมง Peak'}</span>
+            <span>{showAiPeakTimes ? 'เน้นช่วงเวลา Peak' : 'ชั่วโมง Peak'}</span>
           </button>
 
           <button
@@ -1007,7 +1008,7 @@ export default function EditorialCalendarPage() {
           onSelect={(id) => setSelectedWorkspace(id as any)}
           maxVisiblePills={4}
           moreButtonText="โครงการอื่นๆ"
-          searchPlaceholder="🔍 ค้นหา Workspace..."
+          searchPlaceholder="ค้นหา Workspace..."
         />
       </div>
 
@@ -1335,7 +1336,7 @@ export default function EditorialCalendarPage() {
                               title={`คลิกเพื่อเปิด Modal ดูรายการโพสต์ทั้งหมดอีก ${remainingCount} รายการของวันที่ ${day}`}
                             >
                               <Layers className="w-3 h-3 shrink-0" />
-                              <span>+ {remainingCount} more (ดูใน Modal)</span>
+                              <span>ดูอีก {remainingCount} โพสต์ (Modal)</span>
                             </button>
                           )}
                         </div>

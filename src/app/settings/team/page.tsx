@@ -124,7 +124,7 @@ export default function TeamSettingsPage() {
             className="inline-flex items-center gap-2 px-3.5 py-2 bg-brand-indigo text-white text-xs font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-colors shadow-xs cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
-            <span>+ เชิญสมาชิกเข้าโปรเจกต์</span>
+            <span>เชิญสมาชิกเข้าโปรเจกต์</span>
           </button>
         }
       />
@@ -568,13 +568,16 @@ export default function TeamSettingsPage() {
               <button
                 key={role}
                 onClick={() => setSimulatedRole(role)}
-                className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded text-xs font-mono font-medium transition-colors cursor-pointer inline-flex items-center gap-1.5 ${
                   simulatedRole === role
                     ? 'bg-brand-indigo text-white font-semibold shadow-2xs'
                     : 'bg-paper-canvas text-ink-secondary hover:text-ink-primary border border-border-rule'
                 }`}
               >
-                {role === 'MANAGER' ? '⭐ Manager (ผู้จัดการ)' : role === 'EDITOR' ? '✍️ Editor (ครีเอเตอร์)' : role === 'CONTRIBUTOR' ? '👀 Contributor (รออนุมัติ)' : '🔍 Viewer (ลูกค้า)'}
+                <Sticker name={ROLE_DEFINITIONS[role].stickerName} size="xs" inline />
+                <span>
+                  {role === 'MANAGER' ? 'Manager (ผู้จัดการ)' : role === 'EDITOR' ? 'Editor (ครีเอเตอร์)' : role === 'CONTRIBUTOR' ? 'Contributor (รออนุมัติ)' : 'Viewer (ลูกค้า)'}
+                </span>
               </button>
             ))}
           </div>

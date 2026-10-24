@@ -1552,7 +1552,7 @@ export default function CreatePostPage() {
                 }`}
               >
                 <BookmarkPlus className="w-2.5 h-2.5" />
-                <span>+ Save Preset</span>
+                <span>Save Preset</span>
               </button>
             </div>
 

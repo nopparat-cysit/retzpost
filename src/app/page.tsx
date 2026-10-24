@@ -968,7 +968,7 @@ export default function HomePage() {
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
-            <span>🎛️ Operations & Dispatch Ledger</span>
+            <span>Operations & Dispatch Ledger</span>
           </button>
 
           <button
@@ -980,7 +980,7 @@ export default function HomePage() {
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5 text-accent-terracotta" />
-            <span>📊 Content Telemetry (คนดู • ไลค์ • คลิกลิงก์)</span>
+            <span>Content Telemetry (คนดู • ไลค์ • คลิกลิงก์)</span>
             <span className="px-1.5 py-0.2 rounded bg-accent-terracotta text-white text-[9px] font-bold">
               LIVE
             </span>
@@ -995,7 +995,7 @@ export default function HomePage() {
             }`}
           >
             <Users className="w-3.5 h-3.5 text-emerald-700" />
-            <span>👥 Staff & Creator KPI (วัดผลพนักงาน)</span>
+            <span>Staff & Creator KPI (วัดผลพนักงาน)</span>
             <span className="px-1.5 py-0.2 rounded bg-emerald-700 text-white text-[9px] font-bold">
               KPI
             </span>
@@ -1023,21 +1023,21 @@ export default function HomePage() {
           }
           items={[
             { id: 'ALL', label: 'All Projects', count: '17 Channels', icon: <Building2 className="w-3 h-3 text-brand-indigo" /> },
-            { id: 'ws_capitalone', label: 'Capital One Real Estate', count: 6, icon: <span>🏢</span> },
-            { id: 'ws_acme', label: 'Acme Studio', count: 4, icon: <span>🎙️</span> },
-            { id: 'ws_retzpost', label: 'RetzPost Software', count: 4, icon: <span>⚡</span> },
-            { id: 'ws_coffee', label: 'Coffee Craft', count: 3, icon: <span>☕</span> },
-            { id: 'ws_whizdom', label: 'Whizdom Inspire Sukhumvit', count: 5, icon: <span>🏙️</span> },
-            { id: 'ws_ashton', label: 'Ashton Asoke Suites', count: 4, icon: <span>🏰</span> },
-            { id: 'ws_siam_craft', label: 'Siam Craft Roastery', count: 2, icon: <span>🥐</span> },
-            { id: 'ws_bkk_residence', label: 'The Bangkok Residence', count: 6, icon: <span>🏢</span> },
-            { id: 'ws_nordic_living', label: 'Nordic Living Thailand', count: 3, icon: <span>🏡</span> },
+            { id: 'ws_capitalone', label: 'Capital One Real Estate', count: 6, icon: <Sticker name="ws-realestate" size="xs" inline /> },
+            { id: 'ws_acme', label: 'Acme Studio', count: 4, icon: <Sticker name="ws-creator" size="xs" inline /> },
+            { id: 'ws_retzpost', label: 'RetzPost Software', count: 4, icon: <Sticker name="ws-software" size="xs" inline /> },
+            { id: 'ws_coffee', label: 'Coffee Craft', count: 3, icon: <Sticker name="ws-cafe" size="xs" inline /> },
+            { id: 'ws_whizdom', label: 'Whizdom Inspire Sukhumvit', count: 5, icon: <Sticker name="preset-skytrain" size="xs" inline /> },
+            { id: 'ws_ashton', label: 'Ashton Asoke Suites', count: 4, icon: <Sticker name="preset-villa" size="xs" inline /> },
+            { id: 'ws_siam_craft', label: 'Siam Craft Roastery', count: 2, icon: <Sticker name="preset-croissant" size="xs" inline /> },
+            { id: 'ws_bkk_residence', label: 'The Bangkok Residence', count: 6, icon: <Sticker name="ws-realestate" size="xs" inline /> },
+            { id: 'ws_nordic_living', label: 'Nordic Living Thailand', count: 3, icon: <Sticker name="preset-castle" size="xs" inline /> },
           ]}
           selectedId={workspaceFilter}
           onSelect={(id) => setWorkspaceFilter(id)}
           maxVisiblePills={4}
           moreButtonText="โครงการอื่นๆ"
-          searchPlaceholder="🔍 ค้นหาชื่อโครงการ หรือ Workspace..."
+          searchPlaceholder="ค้นหาชื่อโครงการ หรือ Workspace..."
         />
 
         <div className="hidden lg:flex items-center gap-2 text-[11px] font-mono text-ink-secondary shrink-0">
@@ -1487,7 +1487,7 @@ export default function HomePage() {
               <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs space-y-3">
                 <div className="flex items-center justify-between pb-1 border-b border-border-rule">
                   <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold">
-                    ⚡ Quick Launch Studio
+                    Quick Launch Studio
                   </span>
                   <span className="text-[9px] font-mono text-brand-indigo">1-Click</span>
                 </div>
@@ -1500,7 +1500,7 @@ export default function HomePage() {
                     <div className="flex items-center gap-2 text-ink-primary">
                       <Bookmark className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
                       <div>
-                        <span className="font-semibold block text-xs">🏢 คอนโดหรูติด BTS (Capital One)</span>
+                        <span className="font-semibold block text-xs">คอนโดหรูติด BTS (Capital One)</span>
                         <span className="text-[10px] font-mono text-ink-secondary">Pre-filled specs & Story link</span>
                       </div>
                     </div>
@@ -1514,7 +1514,7 @@ export default function HomePage() {
                     <div className="flex items-center gap-2 text-ink-primary">
                       <Sparkles className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
                       <div>
-                        <span className="font-semibold block text-xs">✨ คลังภาพสื่อ AI (8K Renders)</span>
+                        <span className="font-semibold block text-xs">คลังภาพสื่อ AI (8K Renders)</span>
                         <span className="text-[10px] font-mono text-ink-secondary">Rama 9, Sky Pool, Penthouse</span>
                       </div>
                     </div>
@@ -1528,7 +1528,7 @@ export default function HomePage() {
                     <div className="flex items-center gap-2 text-ink-primary">
                       <Share2 className="w-4 h-4 text-accent-terracotta group-hover:scale-110 transition-transform" />
                       <div>
-                        <span className="font-semibold block text-xs">⚡ Flash Sale 50% Campaign</span>
+                        <span className="font-semibold block text-xs">Flash Sale 50% Campaign</span>
                         <span className="text-[10px] font-mono text-ink-secondary">Promo copy + CTA stickers</span>
                       </div>
                     </div>
@@ -1540,7 +1540,7 @@ export default function HomePage() {
               {/* Export & Audit Desk */}
               <div className="p-4 bg-paper-canvas border border-border-rule rounded-card space-y-2.5">
                 <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold block">
-                  📊 Export & Audit Reports
+                  Export & Audit Reports
                 </span>
                 <div className="grid grid-cols-2 gap-2">
                   <button
@@ -1577,7 +1577,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                  👁️ TOTAL VIEWS & REACH
+                  TOTAL VIEWS & REACH
                 </span>
                 <TrendingUp className="w-3.5 h-3.5 text-semantic-success" />
               </div>
@@ -1598,7 +1598,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                  ❤️ ENGAGEMENTS
+                  ENGAGEMENTS
                 </span>
                 <ThumbsUp className="w-3.5 h-3.5 text-brand-indigo" />
               </div>
@@ -1619,7 +1619,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                  ⚡ STORY LINK CLICKS
+                  STORY LINK CLICKS
                 </span>
                 <MousePointerClick className="w-3.5 h-3.5 text-accent-terracotta" />
               </div>
@@ -1640,7 +1640,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                  🏆 TOP CONVERTING POST
+                  TOP CONVERTING POST
                 </span>
                 <Trophy className="w-3.5 h-3.5 text-amber-500" />
               </div>
@@ -1676,10 +1676,10 @@ export default function HomePage() {
               <div className="flex items-center gap-1 bg-paper-canvas border border-border-rule rounded-editorial p-1">
                 <span className="text-[10px] text-ink-muted pl-1">Sort:</span>
                 {[
-                  { id: 'OVERALL', label: '🏆 อันดับรวม' },
-                  { id: 'VIEWS', label: '👁️ คนดูสูงสุด' },
-                  { id: 'ENGAGEMENT', label: '❤️ มีส่วนร่วมสูงสุด' },
-                  { id: 'CLICKS', label: '⚡ คนคลิกลิงก์สูงสุด' },
+                  { id: 'OVERALL', label: 'อันดับรวม' },
+                  { id: 'VIEWS', label: 'คนดูสูงสุด' },
+                  { id: 'ENGAGEMENT', label: 'มีส่วนร่วมสูงสุด' },
+                  { id: 'CLICKS', label: 'คนคลิกลิงก์สูงสุด' },
                 ].map((s) => (
                   <button
                     key={s.id}
@@ -1956,7 +1956,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                  📦 ยอดผลิตโพสต์รวม (OUTPUT)
+                  ยอดผลิตโพสต์รวม (OUTPUT)
                 </span>
                 <Target className="w-3.5 h-3.5 text-brand-indigo" />
               </div>
@@ -1969,7 +1969,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                +{departmentSummary.totalActualPosts - departmentSummary.totalTargetPosts} งาน เกินเป้าหมายประจำเดือน 🔥
+                +{departmentSummary.totalActualPosts - departmentSummary.totalTargetPosts} งาน เกินเป้าหมายประจำเดือน
               </p>
             </div>
 
@@ -1977,7 +1977,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                  ⏰ ความตรงต่อเวลา (ON-TIME RATE)
+                  ความตรงต่อเวลา (ON-TIME RATE)
                 </span>
                 <Clock className="w-3.5 h-3.5 text-semantic-success" />
               </div>
@@ -1998,7 +1998,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                  👁️ ยอด REACH ที่ทีมสร้างได้
+                  ยอด REACH ที่ทีมสร้างได้
                 </span>
                 <TrendingUp className="w-3.5 h-3.5 text-accent-terracotta" />
               </div>
@@ -2019,7 +2019,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-emerald-300 shadow-2xs bg-gradient-to-br from-paper-raised to-emerald-50/40">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-emerald-800">
-                  🏆 ครีเอเตอร์ยอดเยี่ยม
+                  ครีเอเตอร์ยอดเยี่ยม
                 </span>
                 <Trophy className="w-3.5 h-3.5 text-amber-500" />
               </div>
