@@ -86,7 +86,7 @@ import {
   clearAllMockData 
 } from '@/modules/data/mock-data-manager';
 
-type MediaTypeMode = 'PHOTOS' | 'VIDEO' | 'TEXT_ONLY';
+type MediaTypeMode = 'PHOTOS' | 'VIDEO' | 'VIDEO_LANDSCAPE' | 'TEXT_ONLY';
 
 export interface ProjectWorkspace {
   id: string;
@@ -179,9 +179,9 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     avatarBg: 'bg-[#FF0000]',
     avatarText: 'YT',
     capabilities: {
-      feed: { supported: false, label: '—' },
+      feed: { supported: true, label: 'Full Video (16:9)' },
       story: { supported: false, label: '—' },
-      reel: { supported: true, label: 'Shorts' },
+      reel: { supported: true, label: 'Shorts (9:16)' },
     },
   },
   {
@@ -327,9 +327,9 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     avatarBg: 'bg-[#FF0000]',
     avatarText: 'YT',
     capabilities: {
-      feed: { supported: false, label: '—' },
+      feed: { supported: true, label: 'Full Video (16:9)' },
       story: { supported: false, label: '—' },
-      reel: { supported: true, label: 'Shorts' },
+      reel: { supported: true, label: 'Shorts (9:16)' },
     },
   },
   {
@@ -756,6 +756,11 @@ export default function CreatePostPage() {
     isMockDataCleared() ? '' : 'https://retzpost.com/announcement'
   );
 
+  // YouTube Full Video Specific Settings
+  const [customThumbnail, setCustomThumbnail] = useState<{ id: string; name: string; size: string } | null>(null);
+  const [youtubeVisibility, setYoutubeVisibility] = useState<'PUBLIC' | 'UNLISTED' | 'PRIVATE'>('PUBLIC');
+  const [youtubeCategory, setYoutubeCategory] = useState<string>('HOUSING');
+
   // Sync with Global Mock Data Clean / Demo Switcher
   useEffect(() => {
     const cleared = isMockDataCleared();
@@ -766,6 +771,7 @@ export default function CreatePostPage() {
       if (newCleared) {
         setImages([]);
         setVideoAsset(null);
+        setCustomThumbnail(null);
         setPlacements({});
         setWorkingTitle('');
         setSharedCaption('');
@@ -1097,7 +1103,7 @@ export default function CreatePostPage() {
         badge: 'YouTube Channel',
         avatarBg: 'bg-[#FF0000]',
         avatarText: 'YT',
-        capabilities: { feed: { supported: true, label: 'Community' }, story: { supported: false, label: '—' }, reel: { supported: true, label: 'Shorts' } },
+        capabilities: { feed: { supported: true, label: 'Full Video (16:9)' }, story: { supported: false, label: '—' }, reel: { supported: true, label: 'Shorts (9:16)' } },
       },
       TIKTOK: {
         id: `mock_tt_${activeWorkspaceId}`,
@@ -1263,27 +1269,38 @@ export default function CreatePostPage() {
   // Smart Validation Helper
   const getFormatValidation = (format: 'feed' | 'story' | 'reel', account: DestinationAccount) => {
     const capability = account.capabilities[format];
-    if (!capability.supported) {
+    if (!capability || !capability.supported) {
       return { eligible: false, reason: 'Platform API does not support this format' };
     }
 
     if (format === 'reel') {
+      if (mediaMode === 'VIDEO_LANDSCAPE') {
+        return { eligible: false, reason: 'Shorts/Reels ต้องการวิดีโอแนวตั้ง 9:16 (สลับแท็บเป็น Reel/Shorts)' };
+      }
       if (mediaMode !== 'VIDEO') {
-        return { eligible: false, reason: 'Requires MP4/MOV video asset (9:16 vertical)' };
+        return { eligible: false, reason: 'ต้องการไฟล์วิดีโอ MP4/MOV แนวตั้ง 9:16' };
       }
       return { eligible: true };
     }
 
     if (format === 'story') {
       if (mediaMode === 'TEXT_ONLY') {
-        return { eligible: false, reason: '24h Stories require visual photo or video' };
+        return { eligible: false, reason: '24h Stories ต้องการรูปภาพหรือวิดีโอ' };
+      }
+      if (mediaMode === 'VIDEO_LANDSCAPE') {
+        return { eligible: false, reason: '24h Stories ต้องการรูปภาพหรือวิดีโอแนวตั้ง 9:16' };
       }
       return { eligible: true };
     }
 
     if (format === 'feed') {
       if (mediaMode === 'TEXT_ONLY' && account.platform === 'INSTAGRAM') {
-        return { eligible: false, reason: 'Instagram feed requires image or video' };
+        return { eligible: false, reason: 'Instagram feed ต้องการรูปภาพหรือวิดีโอ' };
+      }
+      if (account.platform === 'YOUTUBE') {
+        if (mediaMode !== 'VIDEO_LANDSCAPE' && mediaMode !== 'VIDEO') {
+          return { eligible: false, reason: 'YouTube Full Video ต้องการไฟล์วิดีโอ (สลับแท็บ Full Video 16:9)' };
+        }
       }
       return { eligible: true };
     }
@@ -1317,7 +1334,9 @@ export default function CreatePostPage() {
 
     // Otherwise, turn on preferred format based on mediaMode
     let preferredFormat: 'feed' | 'story' | 'reel' = 'feed';
-    if (mediaMode === 'VIDEO' && account.capabilities.reel.supported) {
+    if (mediaMode === 'VIDEO_LANDSCAPE') {
+      preferredFormat = 'feed';
+    } else if (mediaMode === 'VIDEO' && account.capabilities.reel.supported) {
       preferredFormat = 'reel';
     } else if (account.capabilities.feed.supported) {
       preferredFormat = 'feed';
@@ -1741,14 +1760,14 @@ export default function CreatePostPage() {
                 title="Select all Feed placements in this workspace"
               >
                 <LayoutGrid className="w-3 h-3 shrink-0" />
-                <span>All Feeds</span>
+                <span>{mediaMode === 'VIDEO_LANDSCAPE' ? 'Full Videos' : 'All Feeds'}</span>
               </button>
               <button
                 type="button"
-                disabled={mediaMode === 'TEXT_ONLY'}
+                disabled={mediaMode === 'TEXT_ONLY' || mediaMode === 'VIDEO_LANDSCAPE'}
                 onClick={() => applyUniversalPreset('STORIES')}
                 className={`py-1 px-1 rounded text-[10px] font-mono font-semibold transition-colors shadow-2xs text-center truncate flex items-center justify-center gap-1 ${
-                  mediaMode !== 'TEXT_ONLY'
+                  mediaMode !== 'TEXT_ONLY' && mediaMode !== 'VIDEO_LANDSCAPE'
                     ? 'bg-accent-terracotta text-white hover:opacity-90'
                     : 'bg-paper-canvas text-ink-secondary/40 border border-border-rule cursor-not-allowed'
                 }`}
@@ -2128,14 +2147,14 @@ export default function CreatePostPage() {
             </div>
 
             {/* Media Mode Tabs */}
-            <div className="flex items-center gap-1 p-1 bg-paper-subtle border border-border-rule rounded-editorial text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 bg-paper-subtle border border-border-rule rounded-editorial text-xs">
               <button
                 type="button"
                 onClick={() => {
                   setMediaMode('PHOTOS');
                   if (previewTab === 'REEL') setPreviewTab('FEED');
                 }}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
+                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
                   mediaMode === 'PHOTOS'
                     ? 'bg-paper-canvas text-brand-indigo shadow-xs font-semibold'
                     : 'text-ink-secondary hover:text-ink-primary'
@@ -2151,14 +2170,35 @@ export default function CreatePostPage() {
                   setMediaMode('VIDEO');
                   setPreviewTab('REEL');
                 }}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
+                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
                   mediaMode === 'VIDEO'
                     ? 'bg-paper-canvas text-semantic-info shadow-xs font-semibold'
                     : 'text-ink-secondary hover:text-ink-primary'
                 }`}
               >
                 <Film className="w-3.5 h-3.5" />
-                <span>Video Reel (9:16)</span>
+                <span>Shorts (9:16)</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => {
+                  setMediaMode('VIDEO_LANDSCAPE');
+                  setPreviewPlatform('YOUTUBE');
+                  setPreviewTab('FEED');
+                  const ytAcc = workspaceChannels.find((c) => c.platform === 'YOUTUBE');
+                  if (ytAcc) {
+                    setPlacements((prev) => ({ ...prev, [`${ytAcc.id}_feed`]: true }));
+                  }
+                }}
+                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
+                  mediaMode === 'VIDEO_LANDSCAPE'
+                    ? 'bg-paper-canvas text-[#FF0000] shadow-xs font-semibold'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+              >
+                <YouTubeLogo size={14} className="shrink-0" />
+                <span>Full Video (16:9 YT)</span>
               </button>
 
               <button
@@ -2167,7 +2207,7 @@ export default function CreatePostPage() {
                   setMediaMode('TEXT_ONLY');
                   setPreviewTab('FEED');
                 }}
-                className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
+                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
                   mediaMode === 'TEXT_ONLY'
                     ? 'bg-paper-canvas text-ink-primary shadow-xs font-semibold'
                     : 'text-ink-secondary hover:text-ink-primary'
@@ -2226,7 +2266,7 @@ export default function CreatePostPage() {
               </div>
             )}
 
-            {/* Video Card */}
+            {/* Video Card (Vertical 9:16) */}
             {mediaMode === 'VIDEO' && (
               videoAsset ? (
                 <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between">
@@ -2268,6 +2308,183 @@ export default function CreatePostPage() {
                   </p>
                 </div>
               )
+            )}
+
+            {/* YouTube Full Video / Landscape 16:9 Card */}
+            {mediaMode === 'VIDEO_LANDSCAPE' && (
+              <div className="space-y-3">
+                {videoAsset ? (
+                  <div className="p-3 bg-paper-canvas border border-[#FF0000]/30 rounded-editorial flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-11 h-11 rounded-editorial bg-[#FF0000]/10 text-[#FF0000] flex items-center justify-center shrink-0 border border-[#FF0000]/20">
+                        <Play className="w-5 h-5 fill-[#FF0000]" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="px-1.5 py-0.2 bg-[#FF0000] text-white text-[9px] font-mono font-bold rounded">16:9 YT</span>
+                          <h3 className="font-semibold text-xs text-ink-primary font-mono truncate max-w-[240px]">
+                            {videoAsset.name}
+                          </h3>
+                        </div>
+                        <p className="text-[10px] font-mono text-semantic-success mt-0.5">
+                          {videoAsset.resolution} • ความยาว {videoAsset.duration} • 16:9 Landscape
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="px-2 py-0.5 rounded bg-semantic-success/10 text-semantic-success text-[9px] font-mono font-semibold">
+                        ✓ 4K Ready
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setVideoAsset(null)}
+                        className="p-1 text-ink-secondary hover:text-accent-terracotta transition-colors"
+                        title="ลบวิดีโอ"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div
+                    onClick={() => {
+                      setVideoAsset({
+                        name: `${activeWorkspace.name.toLowerCase().replace(/\s+/g, '-')}-full-presentation-4k.mp4`,
+                        size: '342 MB',
+                        resolution: '3840x2160 (4K UHD 16:9)',
+                        duration: '14:28'
+                      });
+                    }}
+                    className="border-2 border-dashed border-[#FF0000]/40 rounded-editorial p-6 text-center bg-paper-canvas hover:border-[#FF0000] hover:bg-[#FF0000]/5 transition-all cursor-pointer group"
+                  >
+                    <div className="w-12 h-12 mx-auto rounded-full bg-[#FF0000]/10 text-[#FF0000] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
+                      <Play className="w-6 h-6 fill-[#FF0000] ml-0.5" />
+                    </div>
+                    <p className="text-xs font-semibold text-ink-primary">
+                      คลิกหรือลากไฟล์วิดีโอแนวนอน 16:9 Landscape (YouTube Full Video / FB Watch)
+                    </p>
+                    <p className="text-[10px] font-mono text-ink-secondary mt-1">
+                      รองรับ MP4, MOV, WebM • 1080p, 2K, 4K UHD • ไม่จำกัดความยาว (YouTube API สูงสุด 128GB)
+                    </p>
+                    <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full bg-[#FF0000]/10 text-[#FF0000] font-mono text-[9px] font-semibold border border-[#FF0000]/20">
+                      + คลิกเพื่อเลือกไฟล์วิดีโอ 16:9
+                    </span>
+                  </div>
+                )}
+
+                {/* Custom 16:9 Thumbnail Section */}
+                <div className="p-3 bg-paper-subtle border border-border-rule rounded-editorial space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <ImageIcon className="w-3.5 h-3.5 text-brand-indigo" />
+                      <span className="text-xs font-semibold text-ink-primary">
+                        ภาพปกคลิปวิดีโอ (Custom Thumbnail 16:9)
+                      </span>
+                    </div>
+                    <span className="text-[9px] font-mono text-ink-secondary">
+                      แนะนำ 1280 × 720 px (16:9) ไม่เกิน 2MB
+                    </span>
+                  </div>
+
+                  {customThumbnail ? (
+                    <div className="flex items-center justify-between p-2 bg-paper-canvas rounded border border-border-rule">
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-12 h-7 bg-brand-indigo/10 rounded flex items-center justify-center text-[8px] font-mono text-brand-indigo font-bold border border-brand-indigo/20 overflow-hidden">
+                          16:9 ปก
+                        </div>
+                        <div>
+                          <p className="text-xs font-medium text-ink-primary font-mono">{customThumbnail.name}</p>
+                          <p className="text-[9px] font-mono text-ink-secondary">{customThumbnail.size} • 1280x720 JPG</p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setCustomThumbnail(null)}
+                        className="text-ink-secondary hover:text-accent-terracotta p-1"
+                        title="ลบภาพปก"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setCustomThumbnail({ id: 'thumb-1', name: 'yt-thumbnail-cover-16-9.jpg', size: '480 KB' })}
+                        className="py-2 px-3 border border-dashed border-border-rule hover:border-brand-indigo rounded text-center text-xs bg-paper-canvas transition-colors group flex items-center justify-center gap-1.5"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-brand-indigo group-hover:scale-110 transition-transform" />
+                        <span className="text-[11px] font-medium text-ink-primary">อัปโหลดภาพปก 16:9</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setCustomThumbnail({ id: 'thumb-ai', name: 'ai-generated-youtube-hero.jpg', size: '620 KB' })}
+                        className="py-2 px-3 border border-brand-indigo/40 hover:border-brand-indigo rounded text-center text-xs bg-brand-indigo/5 text-brand-indigo transition-colors flex items-center justify-center gap-1.5"
+                      >
+                        <Sparkles className="w-3.5 h-3.5" />
+                        <span className="text-[11px] font-medium">สุ่มตัดปกจากวิดีโอ (AI)</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* YouTube Settings (Visibility & Category) */}
+                <div className="p-3 bg-paper-subtle border border-border-rule rounded-editorial space-y-2.5">
+                  <div className="flex items-center gap-1.5">
+                    <SocialPlatformIcon platform="YOUTUBE" size={14} />
+                    <span className="text-xs font-semibold text-ink-primary">
+                      การตั้งค่าช่อง YouTube (YouTube Metadata & Privacy)
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div>
+                      <label className="text-[10px] font-mono text-ink-secondary uppercase block mb-1 font-semibold">
+                        ระดับการมองเห็น (Visibility):
+                      </label>
+                      <div className="grid grid-cols-3 gap-1">
+                        {(['PUBLIC', 'UNLISTED', 'PRIVATE'] as const).map((vis) => (
+                          <button
+                            key={vis}
+                            type="button"
+                            onClick={() => setYoutubeVisibility(vis)}
+                            className={`py-1 px-1.5 rounded text-[10px] font-mono font-medium border transition-colors ${
+                              youtubeVisibility === vis
+                                ? 'bg-[#FF0000] text-white border-[#FF0000] font-bold shadow-2xs'
+                                : 'bg-paper-canvas text-ink-secondary border-border-rule hover:text-ink-primary'
+                            }`}
+                          >
+                            {vis === 'PUBLIC' ? '🌐 Public' : vis === 'UNLISTED' ? '🔗 Unlisted' : '🔒 Private'}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-[10px] font-mono text-ink-secondary uppercase block mb-1 font-semibold">
+                        หมวดหมู่วิดีโอ (Category):
+                      </label>
+                      <select
+                        value={youtubeCategory}
+                        onChange={(e) => setYoutubeCategory(e.target.value)}
+                        className="w-full text-xs font-mono bg-paper-canvas border border-border-rule rounded p-1.5 text-ink-primary focus:outline-none focus:border-brand-indigo"
+                      >
+                        <option value="HOUSING">22 - Real Estate & Housing</option>
+                        <option value="PEOPLE_BLOGS">22 - People & Blogs</option>
+                        <option value="TECH">28 - Science & Technology</option>
+                        <option value="EDUCATION">27 - Education</option>
+                        <option value="ENTERTAINMENT">24 - Entertainment</option>
+                        <option value="BUSINESS">25 - News & Politics / Business</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 pt-1 border-t border-border-rule/60 text-[10px] text-ink-secondary font-mono">
+                    <span className="w-1.5 h-1.5 rounded-full bg-semantic-success"></span>
+                    <span>COPPA: ไม่ได้สร้างมาเพื่อเด็กโดยเฉพาะ (Not Made for Kids)</span>
+                  </div>
+                </div>
+              </div>
             )}
 
             {/* Text Only Indicator */}
@@ -3121,12 +3338,24 @@ export default function CreatePostPage() {
               {/* YOUTUBE VIDEO FEED */}
               {previewTab === 'FEED' && (
                 <div className="bg-paper-canvas border border-border-rule rounded-editorial overflow-hidden shadow-2xs text-ink-primary">
-                  <div className="aspect-[16/9] bg-black text-white relative flex items-center justify-center">
-                    <div className="w-12 h-12 rounded-full bg-[#FF0000] flex items-center justify-center shadow-lg">
+                  <div className="aspect-[16/9] bg-black text-white relative flex items-center justify-center overflow-hidden">
+                    {/* Thumbnail preview tag if present */}
+                    {customThumbnail ? (
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30 flex items-center justify-center">
+                        <span className="text-[10px] font-mono text-white/90 absolute top-2 left-2 bg-black/70 px-1.5 py-0.5 rounded border border-white/20">
+                          🖼️ ปก: {customThumbnail.name}
+                        </span>
+                      </div>
+                    ) : null}
+
+                    <div className="w-12 h-12 rounded-full bg-[#FF0000] flex items-center justify-center shadow-lg relative z-10">
                       <Play className="w-6 h-6 fill-white text-white ml-0.5" />
                     </div>
-                    <span className="absolute bottom-2 right-2 px-1 py-0.2 rounded bg-black/90 font-mono text-[9px] font-bold">
-                      {videoAsset?.duration || '00:00'}
+                    <span className="absolute bottom-2 right-2 px-1.5 py-0.5 rounded bg-black/90 font-mono text-[9px] font-bold z-10">
+                      {videoAsset?.duration || '14:28'}
+                    </span>
+                    <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-[#FF0000] text-white font-mono text-[8px] font-bold z-10 uppercase">
+                      {youtubeVisibility}
                     </span>
                   </div>
 
@@ -3142,9 +3371,11 @@ export default function CreatePostPage() {
                         <span>{previewAccount.name}</span>
                         <CheckCircle2 className="w-2.5 h-2.5 text-ink-secondary" />
                       </p>
-                      <p className="text-[9px] font-mono text-ink-secondary">
-                        24K views • 3 hours ago
-                      </p>
+                      <div className="flex items-center gap-2 text-[9px] font-mono text-ink-secondary mt-0.5">
+                        <span>16:9 Landscape Video</span>
+                        <span>•</span>
+                        <span className="text-brand-indigo font-semibold">{youtubeCategory}</span>
+                      </div>
                     </div>
                   </div>
 
