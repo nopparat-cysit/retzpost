@@ -321,7 +321,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto">
+      <div className="flex-1 min-w-0 w-full overflow-y-auto">
         {children}
       </div>
     </div>

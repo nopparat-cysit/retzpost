@@ -811,7 +811,7 @@ export default function EditorialCalendarPage() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Toast Notification */}
       {toastMessage && (
         <div className="fixed top-6 right-6 z-50 flex items-center gap-2 px-4 py-3 bg-ink-primary text-paper-canvas text-xs font-mono rounded-editorial shadow-2xl border border-white/20 animate-in fade-in slide-in-from-top-2">

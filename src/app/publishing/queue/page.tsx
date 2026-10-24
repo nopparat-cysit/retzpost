@@ -306,7 +306,7 @@ export default function PublishingQueuePage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-8 space-y-6">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <Masthead
         folio="OPERATIONAL QUEUE / TELEMETRY DESK"
         editionDate="DISPATCH FEED"
@@ -448,16 +448,16 @@ export default function PublishingQueuePage() {
 
       {/* QUEUE TABLE */}
       <div className="bg-paper-raised border border-border-rule rounded-card overflow-hidden shadow-xs">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left text-xs table-auto">
             <thead className="bg-paper-subtle border-b border-border-rule font-mono text-[10px] text-ink-secondary uppercase">
               <tr>
-                <th className="py-3 px-4 min-w-[105px]">Job ID</th>
-                <th className="py-3 px-4 min-w-[200px]">Destination & Format</th>
-                <th className="py-3 px-4 min-w-[240px]">Payload Story</th>
-                <th className="py-3 px-4 min-w-[170px]">Status & Diagnostics</th>
-                <th className="py-3 px-4 min-w-[85px]">Attempts</th>
-                <th className="py-3 px-4 min-w-[190px] text-right">Result & Actions</th>
+                <th className="py-3 px-4 w-[110px]">Job ID</th>
+                <th className="py-3 px-4 w-[220px]">Destination & Format</th>
+                <th className="py-3 px-4 min-w-[220px]">Payload Story</th>
+                <th className="py-3 px-4 w-[240px]">Status & Diagnostics</th>
+                <th className="py-3 px-4 w-[90px] text-center">Attempts</th>
+                <th className="py-3 px-4 w-[200px] text-right">Result & Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border-rule">
@@ -517,7 +517,7 @@ export default function PublishingQueuePage() {
                       </td>
 
                       {/* Master Story Title */}
-                      <td className="py-3.5 px-4 max-w-xs align-top">
+                      <td className="py-3.5 px-4 align-top">
                         <p className="font-serif font-medium text-ink-primary text-xs truncate">
                           {job.storyTitle}
                         </p>
@@ -533,7 +533,7 @@ export default function PublishingQueuePage() {
                       </td>
 
                       {/* Status & Error Diagnostics */}
-                      <td className="py-3.5 px-4 max-w-sm align-top">
+                      <td className="py-3.5 px-4 align-top">
                         <StatusTag status={job.status} />
                         {job.errorSafeMessage && (
                           <div className="mt-1.5 p-2 bg-paper-canvas border border-accent-terracotta/20 rounded text-[10px] text-ink-primary leading-tight font-sans">
@@ -552,12 +552,12 @@ export default function PublishingQueuePage() {
                       </td>
 
                       {/* Attempts */}
-                      <td className="py-3.5 px-4 font-mono text-ink-secondary text-xs align-top">
+                      <td className="py-3.5 px-4 font-mono text-ink-secondary text-xs align-top text-center">
                         {job.attemptCount} / {job.maxAttempts}
                       </td>
 
                       {/* Actions / Live Links */}
-                      <td className="py-3.5 px-4 text-right align-top min-w-[190px]">
+                      <td className="py-3.5 px-4 text-right align-top w-[200px]">
                         {(job.status === 'PENDING_REVIEW' || job.status === 'NEEDS_REVISION') && (
                           <div className="flex flex-col items-end gap-1">
                             <button

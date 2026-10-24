@@ -1323,7 +1323,7 @@ export default function CreatePostPage() {
   );
 
   return (
-    <div className="max-w-[1520px] mx-auto px-4 md:px-6 py-6 space-y-5">
+    <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-5">
       {/* Masthead Header */}
       <Masthead
         folio="STUDIO DESK / 3-COLUMN WORKBENCH"
