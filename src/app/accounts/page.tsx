@@ -280,12 +280,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
   },
 ];
 
-const AVAILABLE_PROJECT_ICONS = [
-  { id: 'ws-realestate', label: 'อสังหาริมทรัพย์ / อาคาร' },
-  { id: 'ws-creator', label: 'ครีเอเตอร์ / สตูดิโอมีเดีย' },
-  { id: 'ws-software', label: 'ซอฟต์แวร์ / เทคโนโลยี' },
-  { id: 'ws-cafe', label: 'คาเฟ่ / กาแฟ & ขนม' },
-];
+
 
 export default function ConnectedAccountsPage() {
   const searchParams = useSearchParams();
@@ -332,8 +327,6 @@ export default function ConnectedAccountsPage() {
   // Modal: Create New Project
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
-  const [newProjectCategory, setNewProjectCategory] = useState('อสังหาริมทรัพย์');
-  const [newProjectIcon, setNewProjectIcon] = useState('ws-realestate');
   const [newProjectSelectedChannels, setNewProjectSelectedChannels] = useState<Record<string, boolean>>({
     'acc-fb-c1-th': true,
     'acc-ig-c1-main': true,
@@ -343,8 +336,6 @@ export default function ConnectedAccountsPage() {
   const [isManageProjectModalOpen, setIsManageProjectModalOpen] = useState(false);
   const [editingProjectId, setEditingProjectId] = useState<string>('ws_capitalone');
   const [editProjectName, setEditProjectName] = useState('');
-  const [editProjectCategory, setEditProjectCategory] = useState('');
-  const [editProjectIcon, setEditProjectIcon] = useState('ws-realestate');
   const [editProjectChannels, setEditProjectChannels] = useState<Record<string, boolean>>({});
 
   // Modal: Quick Assign Channel to Project
@@ -440,8 +431,6 @@ export default function ConnectedAccountsPage() {
 
     setEditingProjectId(target.id);
     setEditProjectName(target.name);
-    setEditProjectCategory(target.category);
-    setEditProjectIcon(target.icon);
 
     const channelMap: Record<string, boolean> = {};
     accounts.forEach((acc) => {
@@ -458,8 +447,6 @@ export default function ConnectedAccountsPage() {
 
     setEditingProjectId(target.id);
     setEditProjectName(target.name);
-    setEditProjectCategory(target.category);
-    setEditProjectIcon(target.icon);
 
     const channelMap: Record<string, boolean> = {};
     accounts.forEach((acc) => {
@@ -482,8 +469,6 @@ export default function ConnectedAccountsPage() {
           ? {
               ...ws,
               name: editProjectName.trim(),
-              category: editProjectCategory,
-              icon: editProjectIcon,
               selectedChannelIds: chosenChannelIds,
             }
           : ws
@@ -645,8 +630,8 @@ export default function ConnectedAccountsPage() {
     const newProject: WorkspaceItem = {
       id: newWsId,
       name: newProjectName.trim(),
-      category: newProjectCategory,
-      icon: newProjectIcon,
+      category: 'ทั่วไป',
+      icon: 'ws-software',
       selectedChannelIds: chosenChannelIds,
     };
 
@@ -736,7 +721,7 @@ export default function ConnectedAccountsPage() {
                   <p className="text-[10px] font-mono text-ink-secondary">
                     {selectedWorkspaceId === 'ALL'
                       ? `${accounts.length} ช่องทางในระบบ • สรุปภาพรวม`
-                      : `${activeWorkspace?.category} • ${currentProjectActiveCount} ช่องทางที่เปิดใช้`}
+                      : `${currentProjectActiveCount} ช่องทางที่เปิดใช้งาน`}
                   </p>
                 </div>
               </button>
@@ -798,7 +783,7 @@ export default function ConnectedAccountsPage() {
                           <Sticker name={ws.icon} size="xs" inline />
                           <div className="truncate">
                             <p className="font-semibold leading-tight truncate">{ws.name}</p>
-                            <p className="text-[10px] text-ink-secondary">{ws.category} • {wsCount} ช่องทาง</p>
+                            <p className="text-[10px] text-ink-secondary">{wsCount} ช่องทางเปิดใช้งาน</p>
                           </div>
                         </div>
                         {isSelected && <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />}
@@ -1435,82 +1420,47 @@ export default function ConnectedAccountsPage() {
               </button>
             </div>
 
-            {/* Project Tabs (Switch between projects to configure) */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-mono scrollbar-none shrink-0">
-              <span className="text-[10px] text-ink-secondary uppercase mr-1 font-bold">โปรเจกต์:</span>
-              {workspaces.map((ws) => (
-                <button
-                  key={ws.id}
-                  type="button"
-                  onClick={() => handleSwitchEditingProjectInModal(ws.id)}
-                  className={`px-2.5 py-1 rounded transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    editingProjectId === ws.id
-                      ? 'bg-brand-indigo text-white font-bold shadow-2xs'
-                      : 'bg-paper-canvas text-ink-secondary border border-border-rule hover:text-ink-primary'
-                  }`}
+            {/* Project Selector Dropdown (อิงตาม project ที่ active) */}
+            <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shrink-0">
+              <div className="flex items-center gap-2 min-w-0">
+                <Sliders className="w-4 h-4 text-brand-indigo shrink-0" />
+                <label htmlFor="modal-project-selector" className="font-mono text-xs font-bold text-ink-primary uppercase shrink-0">
+                  เลือกโปรเจกต์:
+                </label>
+              </div>
+              <div className="relative flex-1 sm:max-w-xs">
+                <select
+                  id="modal-project-selector"
+                  value={editingProjectId}
+                  onChange={(e) => handleSwitchEditingProjectInModal(e.target.value)}
+                  className="w-full px-3 py-1.5 bg-paper-raised border border-border-rule rounded-editorial font-serif text-xs font-bold text-brand-indigo focus:outline-hidden focus:border-brand-indigo cursor-pointer shadow-2xs"
                 >
-                  <Sticker name={ws.icon} size="xs" inline />
-                  <span>{ws.name}</span>
-                </button>
-              ))}
+                  {workspaces.map((ws) => {
+                    const wsCount = accounts.filter((a) => channelSelections[`${ws.id}_${a.id}`]).length;
+                    return (
+                      <option key={ws.id} value={ws.id}>
+                        {ws.name} ({wsCount} ช่องทาง)
+                      </option>
+                    );
+                  })}
+                </select>
+              </div>
             </div>
 
             {/* Edit Form */}
             <form onSubmit={handleSaveManageProject} className="space-y-4 overflow-y-auto flex-1 pr-1 text-xs font-mono">
-              {/* Row 1: Project Name & Category */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] uppercase text-ink-secondary mb-1">
-                    ชื่อโปรเจกต์ (Project Name) *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={editProjectName}
-                    onChange={(e) => setEditProjectName(e.target.value)}
-                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] uppercase text-ink-secondary mb-1">
-                    หมวดหมู่ธุรกิจ (Category)
-                  </label>
-                  <select
-                    value={editProjectCategory}
-                    onChange={(e) => setEditProjectCategory(e.target.value)}
-                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo cursor-pointer"
-                  >
-                    <option value="อสังหาริมทรัพย์">อสังหาริมทรัพย์ (Real Estate Agency)</option>
-                    <option value="ครีเอเตอร์ / สตูดิโอ">ครีเอเตอร์ / สตูดิโอ (Creator Media)</option>
-                    <option value="SaaS & ซอฟต์แวร์">ซอฟต์แวร์ / ดิจิทัลโปรดักต์ (SaaS)</option>
-                    <option value="คาเฟ่ & อาหาร">คาเฟ่ & ไลฟ์สไตล์ (Food & Beverage)</option>
-                    <option value="อีคอมเมิร์ซ">แบรนด์สินค้า & อีคอมเมิร์ซ (E-Commerce)</option>
-                  </select>
-                </div>
-              </div>
-
-              {/* Row 2: Sticker Icon Selector */}
+              {/* Project Name */}
               <div>
-                <label className="block text-[11px] uppercase text-ink-secondary mb-1.5">
-                  สติกเกอร์ประจำโปรเจกต์ (Project Icon)
+                <label className="block text-[11px] uppercase text-ink-secondary font-bold mb-1">
+                  ชื่อโปรเจกต์ (Project Name) *
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {AVAILABLE_PROJECT_ICONS.map((ic) => (
-                    <button
-                      key={ic.id}
-                      type="button"
-                      onClick={() => setEditProjectIcon(ic.id)}
-                      className={`p-2 rounded border flex items-center gap-2 cursor-pointer transition-all ${
-                        editProjectIcon === ic.id
-                          ? 'bg-brand-indigo/10 border-brand-indigo ring-1 ring-brand-indigo/30'
-                          : 'bg-paper-canvas border-border-rule hover:bg-paper-subtle'
-                      }`}
-                    >
-                      <Sticker name={ic.id} size="sm" />
-                      <span className="text-[10px] text-ink-primary truncate">{ic.label.split('/')[0]}</span>
-                    </button>
-                  ))}
-                </div>
+                <input
+                  type="text"
+                  required
+                  value={editProjectName}
+                  onChange={(e) => setEditProjectName(e.target.value)}
+                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-serif text-xs font-bold text-ink-primary focus:outline-hidden focus:border-brand-indigo shadow-2xs"
+                />
               </div>
 
               {/* Channel Mapping Matrix Checklist */}
@@ -1926,40 +1876,7 @@ export default function ConnectedAccountsPage() {
                 />
               </div>
 
-              {/* Category & Icon */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1">
-                    ประเภทธุรกิจ / หมวดหมู่
-                  </label>
-                  <select
-                    value={newProjectCategory}
-                    onChange={(e) => setNewProjectCategory(e.target.value)}
-                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo cursor-pointer"
-                  >
-                    <option value="อสังหาริมทรัพย์">อสังหาริมทรัพย์ (Real Estate Agency)</option>
-                    <option value="ครีเอเตอร์ / สตูดิโอ">ครีเอเตอร์ / สตูดิโอ (Creator Media)</option>
-                    <option value="SaaS & ซอฟต์แวร์">ซอฟต์แวร์ / ดิจิทัลโปรดักต์ (SaaS)</option>
-                    <option value="คาเฟ่ & อาหาร">คาเฟ่ & ไลฟ์สไตล์ (Food & Beverage)</option>
-                    <option value="อีคอมเมิร์ซ">แบรนด์สินค้า & อีคอมเมิร์ซ (E-Commerce)</option>
-                  </select>
-                </div>
 
-                <div>
-                  <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1">
-                    สติกเกอร์ประจำโปรเจกต์
-                  </label>
-                  <select
-                    value={newProjectIcon}
-                    onChange={(e) => setNewProjectIcon(e.target.value)}
-                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo cursor-pointer"
-                  >
-                    {AVAILABLE_PROJECT_ICONS.map((ic) => (
-                      <option key={ic.id} value={ic.id}>{ic.label}</option>
-                    ))}
-                  </select>
-                </div>
-              </div>
 
               {/* Channel Checkbox Directory */}
               <div className="space-y-2">
