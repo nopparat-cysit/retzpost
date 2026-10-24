@@ -45,6 +45,13 @@ import { CustomTimePicker } from '@/components/ui/custom-time-picker';
 import { CustomDropdown } from '@/components/ui/custom-dropdown';
 import { SmartFilterBar } from '@/components/ui/smart-filter-bar';
 import { 
+  getActiveWorkspaceId, 
+  setActiveWorkspaceId, 
+  subscribeToActiveWorkspace, 
+  toCalendarWorkspaceId, 
+  toStandardWorkspaceId 
+} from '@/modules/workspaces/active-workspace';
+import { 
   SocialPlatformIcon, 
   SocialMediaLiveButton, 
   FacebookLogo, 
@@ -557,6 +564,24 @@ export default function EditorialCalendarPage() {
   const [events, setEvents] = useState<CalendarEventItem[]>(SAMPLE_EVENTS);
   const [viewMode, setViewMode] = useState<ViewMode>('MONTH');
   const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceType>('ALL');
+
+  // Global active workspace sync
+  useEffect(() => {
+    const globalWs = getActiveWorkspaceId();
+    if (globalWs) {
+      const calId = toCalendarWorkspaceId(globalWs) as WorkspaceType;
+      setSelectedWorkspace(calId);
+    }
+    const unsubscribe = subscribeToActiveWorkspace((newWs) => {
+      setSelectedWorkspace(toCalendarWorkspaceId(newWs) as WorkspaceType);
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleSelectWorkspace = (calId: WorkspaceType) => {
+    setSelectedWorkspace(calId);
+    setActiveWorkspaceId(toStandardWorkspaceId(calId));
+  };
   const [platformFilter, setPlatformFilter] = useState<'ALL' | PlatformType>('ALL');
   const [formatFilter, setFormatFilter] = useState<'ALL' | PostFormat>('ALL');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'SCHEDULED' | 'PUBLISHED'>('ALL');
@@ -1005,7 +1030,7 @@ export default function EditorialCalendarPage() {
             })),
           ]}
           selectedId={selectedWorkspace}
-          onSelect={(id) => setSelectedWorkspace(id as any)}
+          onSelect={(id) => handleSelectWorkspace(id as any)}
           maxVisiblePills={4}
           moreButtonText="โครงการอื่นๆ"
           searchPlaceholder="ค้นหา Workspace..."

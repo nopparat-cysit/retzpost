@@ -43,12 +43,19 @@ import {
   FacebookLogo, 
   InstagramLogo, 
   YouTubeLogo, 
-  TikTokLogo 
+  TikTokLogo,
+  XLogo,
+  Lemon8Logo 
 } from '@/components/ui/social-icons';
+import { 
+  getActiveWorkspaceId, 
+  setActiveWorkspaceId, 
+  subscribeToActiveWorkspace 
+} from '@/modules/workspaces/active-workspace';
 
 export interface MasterChannelAccount {
   id: string;
-  platform: 'FACEBOOK' | 'INSTAGRAM' | 'YOUTUBE' | 'TIKTOK';
+  platform: 'FACEBOOK' | 'INSTAGRAM' | 'YOUTUBE' | 'TIKTOK' | 'X' | 'LEMON8';
   displayName: string;
   handle: string;
   channelId: string;
@@ -195,6 +202,66 @@ const INITIAL_MASTER_ACCOUNTS: MasterChannelAccount[] = [
     lastSynced: '10 mins ago',
     url: 'https://www.youtube.com/@AlexRiveraStudio',
   },
+
+  // 5. X (Twitter) Accounts (2 Profiles)
+  {
+    id: 'acc-x-c1',
+    platform: 'X',
+    displayName: 'Capital One Thailand (@CapitalOneBKK)',
+    handle: '@CapitalOneBKK',
+    channelId: 'x_c1_th_992',
+    defaultWorkspaceId: 'ws_capitalone',
+    defaultWorkspaceName: 'Capital One Real Estate',
+    scopes: ['tweet.read', 'tweet.write', 'users.read'],
+    expiresIn: 'OAuth 2.0 User Context (Active)',
+    capabilities: 'Short-Form Fast Dispatches • Media Threads • Real-time Quotes',
+    lastSynced: '5 mins ago',
+    url: 'https://x.com/CapitalOneBKK',
+  },
+  {
+    id: 'acc-x-acme',
+    platform: 'X',
+    displayName: 'Alex Rivera Tech & Studio',
+    handle: '@AlexRiveraStudio',
+    channelId: 'x_acme_883',
+    defaultWorkspaceId: 'ws_acme',
+    defaultWorkspaceName: 'Acme Creator Studio',
+    scopes: ['tweet.read', 'tweet.write', 'users.read'],
+    expiresIn: 'OAuth 2.0 User Context (Active)',
+    capabilities: 'Tech News Bites • Video Teasers • Community Threads',
+    lastSynced: '18 mins ago',
+    url: 'https://x.com/AlexRiveraStudio',
+  },
+
+  // 6. Lemon8 Accounts (2 Profiles)
+  {
+    id: 'acc-lemon-c1',
+    platform: 'LEMON8',
+    displayName: 'Capital One Living (Lemon8)',
+    handle: '@capitalone_living',
+    channelId: 'lemon_c1_881',
+    defaultWorkspaceId: 'ws_capitalone',
+    defaultWorkspaceName: 'Capital One Real Estate',
+    scopes: ['content.publish', 'user.profile'],
+    expiresIn: 'Lemon8 Creator Token (Active)',
+    capabilities: 'High-aesthetic Home Tours • Interior Decor Guides • Infographic Carousels',
+    lastSynced: '30 mins ago',
+    url: 'https://www.lemon8-app.com/@capitalone_living',
+  },
+  {
+    id: 'acc-lemon-coffee',
+    platform: 'LEMON8',
+    displayName: 'Coffee Craft Cafe Hopping',
+    handle: '@coffeecraft.bkk',
+    channelId: 'lemon_coffee_221',
+    defaultWorkspaceId: 'ws_coffee',
+    defaultWorkspaceName: 'Coffee Craft BKK',
+    scopes: ['content.publish', 'user.profile'],
+    expiresIn: 'Lemon8 Creator Token (Active)',
+    capabilities: 'Cafe Aesthetics • Drip Coffee Recipes • Photo Spots Guide',
+    lastSynced: '1 hour ago',
+    url: 'https://www.lemon8-app.com/@coffeecraft.bkk',
+  },
 ];
 
 export interface WorkspaceItem {
@@ -211,14 +278,14 @@ const INITIAL_PROJECTS: WorkspaceItem[] = [
     name: 'Capital One Real Estate',
     category: 'อสังหาริมทรัพย์',
     icon: 'ws-realestate',
-    selectedChannelIds: ['acc-fb-c1-th', 'acc-ig-c1-main', 'acc-fb-c1-kw'],
+    selectedChannelIds: ['acc-fb-c1-th', 'acc-ig-c1-main', 'acc-fb-c1-kw', 'acc-x-c1', 'acc-lemon-c1'],
   },
   {
     id: 'ws_acme',
     name: 'Acme Creator Studio',
     category: 'ครีเอเตอร์ / สตูดิโอ',
     icon: 'ws-creator',
-    selectedChannelIds: ['acc-ig-acme', 'acc-fb-acme', 'acc-yt-acme', 'acc-tt-acme'],
+    selectedChannelIds: ['acc-ig-acme', 'acc-fb-acme', 'acc-yt-acme', 'acc-tt-acme', 'acc-x-acme'],
   },
   {
     id: 'ws_retzpost',
@@ -232,12 +299,12 @@ const INITIAL_PROJECTS: WorkspaceItem[] = [
     name: 'Coffee Craft BKK',
     category: 'คาเฟ่ & อาหาร',
     icon: 'ws-cafe',
-    selectedChannelIds: ['acc-ig-coffee'],
+    selectedChannelIds: ['acc-ig-coffee', 'acc-lemon-coffee'],
   },
 ];
 
 interface PlatformConfig {
-  id: 'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE';
+  id: 'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE' | 'X' | 'LEMON8';
   name: string;
   subtitle: string;
   addButtonText: string;
@@ -278,6 +345,22 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
     badgeColor: 'bg-red-100 text-red-900 border-red-200',
     icon: (size = 20) => <YouTubeLogo size={size} />,
   },
+  {
+    id: 'X',
+    name: 'X (Twitter)',
+    subtitle: 'X API v2 • Short-Form Dispatches & Media Threads',
+    addButtonText: 'เพิ่มบัญชี X',
+    badgeColor: 'bg-neutral-100 text-neutral-900 border-neutral-300',
+    icon: (size = 20) => <XLogo size={size} />,
+  },
+  {
+    id: 'LEMON8',
+    name: 'Lemon8',
+    subtitle: 'ByteDance Lifestyle • Image Carousels & Editorial Guides',
+    addButtonText: 'เพิ่มบัญชี Lemon8',
+    badgeColor: 'bg-amber-100 text-yellow-950 border-amber-300',
+    icon: (size = 20) => <Lemon8Logo size={size} />,
+  },
 ];
 
 
@@ -314,9 +397,44 @@ export default function ConnectedAccountsPage() {
 
   // Modal: Connect New Page / Channel (+)
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
-  const [connectPlatform, setConnectPlatform] = useState<'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE'>('FACEBOOK');
+  const [connectPlatform, setConnectPlatform] = useState<'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE' | 'X' | 'LEMON8'>('FACEBOOK');
   const [newPageName, setNewPageName] = useState('');
   const [newPageHandle, setNewPageHandle] = useState('');
+
+  // Sync active workspace across pages via shared registry
+  useEffect(() => {
+    const globalWs = getActiveWorkspaceId();
+    if (globalWs && globalWs !== selectedWorkspaceId) {
+      setSelectedWorkspaceId(globalWs);
+    }
+    const unsubscribe = subscribeToActiveWorkspace((newWs) => {
+      setSelectedWorkspaceId(newWs);
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleSelectWorkspace = (wsId: string) => {
+    setSelectedWorkspaceId(wsId);
+    setActiveWorkspaceId(wsId);
+    setIsProjectDropdownOpen(false);
+  };
+
+  // Batch toggle all channels in a platform for the active workspace
+  const handleBatchTogglePlatform = (platformId: string, enableAll: boolean) => {
+    if (selectedWorkspaceId === 'ALL') return;
+    const targetAccounts = accounts.filter((a) => a.platform === platformId);
+
+    setChannelSelections((prev) => {
+      const next = { ...prev };
+      targetAccounts.forEach((acc) => {
+        next[`${selectedWorkspaceId}_${acc.id}`] = enableAll;
+      });
+      return next;
+    });
+
+    const actionText = enableAll ? 'เปิดใช้งาน' : 'ปิดการใช้งาน';
+    showToast(`✓ ${actionText}ช่องทาง ${platformId} ทั้งหมด (${targetAccounts.length} บัญชี) สำหรับ "${activeWorkspace?.name}" เรียบร้อยแล้ว`);
+  };
 
   // Modal: Test API Diagnostic
   const [testApiAccount, setTestApiAccount] = useState<MasterChannelAccount | null>(null);
@@ -580,7 +698,14 @@ export default function ConnectedAccountsPage() {
       channelId: `${connectPlatform.toLowerCase()}_${Date.now().toString().slice(-6)}`,
       defaultWorkspaceId: selectedWorkspaceId === 'ALL' ? 'ws_capitalone' : selectedWorkspaceId,
       defaultWorkspaceName: activeWorkspace ? activeWorkspace.name : 'Capital One Real Estate',
-      scopes: connectPlatform === 'FACEBOOK' ? ['pages_show_list', 'pages_manage_posts'] : ['content_publish'],
+      scopes:
+        connectPlatform === 'FACEBOOK'
+          ? ['pages_show_list', 'pages_manage_posts']
+          : connectPlatform === 'X'
+          ? ['tweet.read', 'tweet.write', 'users.read']
+          : connectPlatform === 'LEMON8'
+          ? ['content.publish', 'user.profile']
+          : ['content_publish'],
       expiresIn: 'Permanent Access Token (Active)',
       capabilities:
         connectPlatform === 'FACEBOOK'
@@ -589,7 +714,11 @@ export default function ConnectedAccountsPage() {
           ? 'Feed Carousel • Stories • Reels'
           : connectPlatform === 'TIKTOK'
           ? 'Vertical Video (9:16) • Direct Post'
-          : 'Shorts & Long Videos',
+          : connectPlatform === 'YOUTUBE'
+          ? 'Shorts & Long Videos'
+          : connectPlatform === 'X'
+          ? 'Short-Form Dispatches • Media Threads'
+          : 'Lifestyle Carousels & Editorial Guides',
       lastSynced: 'Just now',
       url: '#',
     };
@@ -610,7 +739,7 @@ export default function ConnectedAccountsPage() {
   };
 
   // Open Connect Modal for a specific platform
-  const handleOpenConnect = (platform: 'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE') => {
+  const handleOpenConnect = (platform: 'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE' | 'X' | 'LEMON8') => {
     setConnectPlatform(platform);
     setNewPageName('');
     setNewPageHandle('');
@@ -736,10 +865,7 @@ export default function ConnectedAccountsPage() {
                   {/* Master Hub Option */}
                   <button
                     type="button"
-                    onClick={() => {
-                      setSelectedWorkspaceId('ALL');
-                      setIsProjectDropdownOpen(false);
-                    }}
+                    onClick={() => handleSelectWorkspace('ALL')}
                     className={`w-full flex items-center justify-between p-2 rounded text-left transition-colors cursor-pointer ${
                       selectedWorkspaceId === 'ALL'
                         ? 'bg-paper-canvas text-brand-indigo font-bold border border-brand-indigo/20 shadow-2xs'
@@ -769,10 +895,7 @@ export default function ConnectedAccountsPage() {
                       <button
                         key={ws.id}
                         type="button"
-                        onClick={() => {
-                          setSelectedWorkspaceId(ws.id);
-                          setIsProjectDropdownOpen(false);
-                        }}
+                        onClick={() => handleSelectWorkspace(ws.id)}
                         className={`w-full flex items-center justify-between p-2 rounded text-left transition-colors cursor-pointer ${
                           isSelected
                             ? 'bg-paper-canvas text-brand-indigo font-bold border border-brand-indigo/20 shadow-2xs'
@@ -980,16 +1103,41 @@ export default function ConnectedAccountsPage() {
                   </div>
                 </div>
 
-                {/* Add Page Button (+) */}
-                <button
-                  type="button"
-                  onClick={() => handleOpenConnect(platform.id)}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-2xs cursor-pointer shrink-0 active:scale-95"
-                  title={`เชื่อมต่อ ${platform.name} เพิ่มเติม`}
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>{platform.addButtonText}</span>
-                </button>
+                <div className="flex items-center gap-2 shrink-0">
+                  {/* Batch Toggle Buttons when Scoped to a Project */}
+                  {selectedWorkspaceId !== 'ALL' && (
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        onClick={() => handleBatchTogglePlatform(platform.id, true)}
+                        className="px-2 py-1 rounded bg-paper-canvas hover:bg-emerald-50 text-emerald-800 border border-border-rule hover:border-emerald-300 text-[11px] font-mono font-bold transition-colors cursor-pointer shadow-2xs"
+                        title={`เปิดทุกช่องทางของ ${platform.name} สำหรับ ${activeWorkspace?.name}`}
+                      >
+                        เปิดทั้งหมด
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleBatchTogglePlatform(platform.id, false)}
+                        className="px-2 py-1 rounded bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-[11px] font-mono font-medium transition-colors cursor-pointer shadow-2xs"
+                        title={`ปิดทุกช่องทางของ ${platform.name} สำหรับ ${activeWorkspace?.name}`}
+                      >
+                        ปิดทั้งหมด
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Add Page Button (+) */}
+                  <button
+                    type="button"
+                    onClick={() => handleOpenConnect(platform.id)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-2xs cursor-pointer shrink-0 active:scale-95"
+                    title={`เชื่อมต่อ ${platform.name} เพิ่มเติม`}
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span className="hidden sm:inline">{platform.addButtonText}</span>
+                    <span className="sm:hidden">เพิ่ม</span>
+                  </button>
+                </div>
               </div>
 
               {/* Pages / Channels List */}
@@ -1302,6 +1450,56 @@ export default function ConnectedAccountsPage() {
                     >
                       <p className="font-bold text-ink-primary text-xs truncate">Creators Hub</p>
                       <p className="text-[9px] text-ink-muted">Creator IG Account</p>
+                    </button>
+                  </>
+                ) : connectPlatform === 'X' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPageName('Capital One Investor Updates');
+                        setNewPageHandle('@CapOneInvest');
+                      }}
+                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
+                    >
+                      <p className="font-bold text-ink-primary text-xs truncate">Investor Updates</p>
+                      <p className="text-[9px] text-ink-muted">X / Twitter Handle</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPageName('RetzPost Live Dispatch');
+                        setNewPageHandle('@RetzPostLive');
+                      }}
+                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
+                    >
+                      <p className="font-bold text-ink-primary text-xs truncate">RetzPost Live</p>
+                      <p className="text-[9px] text-ink-muted">X Broadcast Handle</p>
+                    </button>
+                  </>
+                ) : connectPlatform === 'LEMON8' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPageName('Bangkok Condo Decor (Lemon8)');
+                        setNewPageHandle('@bkk_condodecor');
+                      }}
+                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
+                    >
+                      <p className="font-bold text-ink-primary text-xs truncate">Condo Decor Guide</p>
+                      <p className="text-[9px] text-ink-muted">Lemon8 Creator Profile</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPageName('Cafe Hopping Vibes');
+                        setNewPageHandle('@cafehopping_vibes');
+                      }}
+                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
+                    >
+                      <p className="font-bold text-ink-primary text-xs truncate">Cafe Hopping</p>
+                      <p className="text-[9px] text-ink-muted">Lemon8 Food & Lifestyle</p>
                     </button>
                   </>
                 ) : (

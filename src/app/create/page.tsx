@@ -92,8 +92,8 @@ export interface ProjectWorkspace {
 export interface DestinationAccount {
   id: string;
   workspaceId: string;
-  platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK' | 'THREADS' | 'TWITTER';
-  platformGroup: 'Instagram' | 'Facebook' | 'YouTube' | 'TikTok' | 'Other';
+  platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK' | 'THREADS' | 'TWITTER' | 'X' | 'LEMON8';
+  platformGroup: 'Instagram' | 'Facebook' | 'YouTube' | 'TikTok' | 'X' | 'Lemon8' | 'Other';
   name: string;
   handle: string;
   badge: string;
@@ -194,6 +194,22 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
       reel: { supported: true, label: 'Video' },
     },
   },
+  {
+    id: 'acme_x',
+    workspaceId: 'ws_acme',
+    platform: 'X',
+    platformGroup: 'X',
+    name: 'Alex Rivera Studio (@AlexRiveraStudio)',
+    handle: '@AlexRiveraStudio',
+    badge: 'Creator X',
+    avatarBg: 'bg-black',
+    avatarText: '𝕏',
+    capabilities: {
+      feed: { supported: true, label: 'Post' },
+      story: { supported: false, label: '—' },
+      reel: { supported: false, label: '—' },
+    },
+  },
 
   // 2. Coffee Craft BKK Channels (Client Cafe SME)
   {
@@ -241,6 +257,22 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     capabilities: {
       feed: { supported: true, label: 'Photos' },
       story: { supported: true, label: 'Story' },
+      reel: { supported: true, label: 'Video' },
+    },
+  },
+  {
+    id: 'coffee_lemon8',
+    workspaceId: 'ws_coffee',
+    platform: 'LEMON8',
+    platformGroup: 'Lemon8',
+    name: 'Coffee Craft BKK (Lemon8)',
+    handle: '@coffeecraft.bkk',
+    badge: 'Cafe Lemon8',
+    avatarBg: 'bg-[#FFEB00] text-black',
+    avatarText: 'L8',
+    capabilities: {
+      feed: { supported: true, label: 'Post' },
+      story: { supported: false, label: '—' },
       reel: { supported: true, label: 'Video' },
     },
   },
@@ -313,11 +345,11 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
   {
     id: 'retz_x',
     workspaceId: 'ws_retzpost',
-    platform: 'TWITTER',
-    platformGroup: 'Other',
+    platform: 'X',
+    platformGroup: 'X',
     name: 'RetzPost App on X',
     handle: '@retzpost',
-    badge: 'Twitter/X',
+    badge: 'Official X',
     avatarBg: 'bg-[#0f1419]',
     avatarText: '𝕏',
     capabilities: {
@@ -422,6 +454,38 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
       feed: { supported: true, label: 'Feed' },
       story: { supported: true, label: 'Story' },
       reel: { supported: true, label: 'Reel' },
+    },
+  },
+  {
+    id: 'c1_x',
+    workspaceId: 'ws_capitalone',
+    platform: 'X',
+    platformGroup: 'X',
+    name: 'Capital One Thailand (@CapitalOneBKK)',
+    handle: '@CapitalOneBKK',
+    badge: 'Official X',
+    avatarBg: 'bg-black',
+    avatarText: '𝕏',
+    capabilities: {
+      feed: { supported: true, label: 'Tweet' },
+      story: { supported: false, label: '—' },
+      reel: { supported: false, label: '—' },
+    },
+  },
+  {
+    id: 'c1_lemon8',
+    workspaceId: 'ws_capitalone',
+    platform: 'LEMON8',
+    platformGroup: 'Lemon8',
+    name: 'Capital One Living (Lemon8)',
+    handle: '@capitalone_living',
+    badge: 'Lemon8 Creator',
+    avatarBg: 'bg-[#FFEB00] text-black',
+    avatarText: 'L8',
+    capabilities: {
+      feed: { supported: true, label: 'Post' },
+      story: { supported: false, label: '—' },
+      reel: { supported: true, label: 'Video' },
     },
   },
 ];
@@ -599,7 +663,7 @@ export default function CreatePostPage() {
 
   // Search & Filter State for Channels (Column 1)
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedGroupFilter, setSelectedGroupFilter] = useState<'ALL' | 'Instagram' | 'Facebook' | 'YouTube' | 'TikTok' | 'Other'>('ALL');
+  const [selectedGroupFilter, setSelectedGroupFilter] = useState<'ALL' | 'Instagram' | 'Facebook' | 'YouTube' | 'TikTok' | 'X' | 'Lemon8' | 'Other'>('ALL');
 
   // Collapsible state per platform group in Column 1 (Destinations Accordion)
   const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>({});
@@ -1011,17 +1075,20 @@ export default function CreatePostPage() {
   // Active Custom Presets for this Workspace
   const activePresets = customPresetsMap[activeWorkspaceId] || [];
 
-  // Listen to Global Workspace changes from AppShell Sidebar
+  // Listen to Global Workspace changes from AppShell Sidebar and other pages
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const saved = localStorage.getItem('retzpost_active_workspace_id');
+      const saved = localStorage.getItem('retzpost_active_project_id') || localStorage.getItem('retzpost_active_workspace_id');
       if (saved && WORKSPACES_DATA.some(w => w.id === saved)) {
         handleSwitchWorkspace(saved, false);
       }
       const handleWorkspaceSync = (e: Event) => {
-        const customEvent = e as CustomEvent<string>;
-        if (customEvent.detail && WORKSPACES_DATA.some(w => w.id === customEvent.detail)) {
-          handleSwitchWorkspace(customEvent.detail, false);
+        const customEvent = e as CustomEvent<any>;
+        const incomingId = typeof customEvent.detail === 'object' && customEvent.detail !== null
+          ? customEvent.detail.workspaceId
+          : customEvent.detail;
+        if (incomingId && WORKSPACES_DATA.some(w => w.id === incomingId)) {
+          handleSwitchWorkspace(incomingId, false);
         }
       };
       window.addEventListener('retzpost:workspace-change', handleWorkspaceSync);
@@ -1039,8 +1106,9 @@ export default function CreatePostPage() {
     setSelectedGroupFilter('ALL');
 
     if (broadcast && typeof window !== 'undefined') {
+      localStorage.setItem('retzpost_active_project_id', workspaceId);
       localStorage.setItem('retzpost_active_workspace_id', workspaceId);
-      window.dispatchEvent(new CustomEvent('retzpost:workspace-change', { detail: workspaceId }));
+      window.dispatchEvent(new CustomEvent('retzpost:workspace-change', { detail: { workspaceId } }));
     }
 
     // Automatically load default preset or first preset of that workspace
@@ -1678,7 +1746,7 @@ export default function CreatePostPage() {
 
           {/* Platform Filter Chips */}
           <div className="flex flex-wrap items-center gap-1 text-[10px] font-mono">
-            {(['ALL', 'Instagram', 'Facebook', 'YouTube', 'TikTok'] as const).map((grp) => {
+            {(['ALL', 'Instagram', 'Facebook', 'YouTube', 'TikTok', 'X', 'Lemon8'] as const).map((grp) => {
               const count = grp === 'ALL' 
                 ? workspaceChannels.length 
                 : workspaceChannels.filter(a => a.platformGroup === grp).length;

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Masthead 
@@ -57,7 +57,9 @@ import {
   Edit3,
   Save,
   RotateCcw,
-  Wand2
+  Wand2,
+  Printer,
+  Trash2
 } from 'lucide-react';
 import { 
   getEmployeeKPIs, 
@@ -86,12 +88,19 @@ import {
   YouTubeLogo, 
   TikTokLogo, 
   LineLogo, 
-  WebsiteLogo 
+  WebsiteLogo,
+  XLogo,
+  Lemon8Logo 
 } from '@/components/ui/social-icons';
 import { Sticker } from '@/components/ui/sticker';
+import { 
+  getActiveWorkspaceId, 
+  setActiveWorkspaceId, 
+  subscribeToActiveWorkspace 
+} from '@/modules/workspaces/active-workspace';
 
 interface DispatchPlacement {
-  platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK';
+  platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK' | 'X' | 'LEMON8';
   format: 'FEED' | 'STORY' | 'REEL';
   label: string;
   badgeBg: string;
@@ -699,6 +708,11 @@ export default function HomePage() {
   const [selectedLiveBatch, setSelectedLiveBatch] = useState<DispatchBatch | null>(null);
   const [copiedLinkNotice, setCopiedLinkNotice] = useState<string | null>(null);
 
+  // Revoke & Delete Post States
+  const [revokeCandidateBatch, setRevokeCandidateBatch] = useState<DispatchBatch | null>(null);
+  const [revokedBatchIds, setRevokedBatchIds] = useState<Record<string, boolean>>({});
+  const [isApiDeleting, setIsApiDeleting] = useState<Record<string, boolean>>({});
+
   // Performance Tracking States
   const [trackingSort, setTrackingSort] = useState<'OVERALL' | 'VIEWS' | 'ENGAGEMENT' | 'CLICKS'>('OVERALL');
   const [trackingTimeframe, setTrackingTimeframe] = useState<'30D' | '7D' | 'ALL'>('30D');
@@ -714,6 +728,61 @@ export default function HomePage() {
   const [editFocusTags, setEditFocusTags] = useState<string[]>([]);
   const [isAiGeneratingCoaching, setIsAiGeneratingCoaching] = useState<boolean>(false);
   const [kpiEvaluationNotice, setKpiEvaluationNotice] = useState<string | null>(null);
+  const [isEvaluationSlipOpen, setIsEvaluationSlipOpen] = useState<boolean>(false);
+
+  // Sync active workspace from shared engine and listen to changes
+  useEffect(() => {
+    const globalWs = getActiveWorkspaceId();
+    if (globalWs && globalWs !== workspaceFilter) {
+      setWorkspaceFilter(globalWs);
+    }
+    const unsubscribe = subscribeToActiveWorkspace((newWs) => {
+      setWorkspaceFilter(newWs);
+    });
+    return unsubscribe;
+  }, []);
+
+  const handleSelectWorkspaceFilter = (wsId: string) => {
+    setWorkspaceFilter(wsId);
+    setActiveWorkspaceId(wsId);
+  };
+
+  // Tab persistence: read from URL query param ?tab= or localStorage on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const tabParam = urlParams.get('tab');
+      if (tabParam) {
+        if (['kpi', 'team_kpi', 'team'].includes(tabParam.toLowerCase())) {
+          setDashboardMode('TEAM_KPI');
+        } else if (['performance', 'tracking'].includes(tabParam.toLowerCase())) {
+          setDashboardMode('TRACKING');
+        } else if (['operations', 'dispatch'].includes(tabParam.toLowerCase())) {
+          setDashboardMode('OPERATIONS');
+        }
+      } else {
+        const stored = window.localStorage.getItem('retzpost_active_dashboard_tab');
+        if (stored && ['OPERATIONS', 'TRACKING', 'TEAM_KPI'].includes(stored)) {
+          setDashboardMode(stored as any);
+        }
+      }
+    } catch {}
+  }, []);
+
+  // Switch tab with URL search parameter & localStorage persistence
+  const handleSwitchDashboardMode = (mode: 'OPERATIONS' | 'TRACKING' | 'TEAM_KPI') => {
+    setDashboardMode(mode);
+    if (typeof window !== 'undefined') {
+      try {
+        window.localStorage.setItem('retzpost_active_dashboard_tab', mode);
+        const tabParam = mode === 'TEAM_KPI' ? 'kpi' : mode === 'TRACKING' ? 'performance' : 'operations';
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', tabParam);
+        window.history.replaceState(null, '', url.toString());
+      } catch {}
+    }
+  };
 
   // Employee KPI Queries
   const employeeKpis = useMemo(() => {
@@ -1044,7 +1113,7 @@ export default function HomePage() {
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 p-2 bg-paper-raised border border-border-rule rounded-card shadow-xs">
         <div className="flex flex-wrap items-center gap-1.5 p-1 bg-paper-subtle rounded-editorial font-mono text-xs">
           <button
-            onClick={() => setDashboardMode('OPERATIONS')}
+            onClick={() => handleSwitchDashboardMode('OPERATIONS')}
             className={`flex items-center gap-2 px-3.5 py-2 rounded transition-all font-semibold cursor-pointer ${
               dashboardMode === 'OPERATIONS'
                 ? 'bg-paper-canvas text-brand-indigo shadow-xs border border-brand-indigo/30'
@@ -1056,7 +1125,7 @@ export default function HomePage() {
           </button>
 
           <button
-            onClick={() => setDashboardMode('TRACKING')}
+            onClick={() => handleSwitchDashboardMode('TRACKING')}
             className={`flex items-center gap-2 px-3.5 py-2 rounded transition-all font-semibold cursor-pointer ${
               dashboardMode === 'TRACKING'
                 ? 'bg-paper-canvas text-brand-indigo shadow-xs border border-brand-indigo/30'
@@ -1071,7 +1140,7 @@ export default function HomePage() {
           </button>
 
           <button
-            onClick={() => setDashboardMode('TEAM_KPI')}
+            onClick={() => handleSwitchDashboardMode('TEAM_KPI')}
             className={`flex items-center gap-2 px-3.5 py-2 rounded transition-all font-semibold cursor-pointer ${
               dashboardMode === 'TEAM_KPI'
                 ? 'bg-paper-canvas text-emerald-800 shadow-xs border border-emerald-500/40'
@@ -1118,7 +1187,7 @@ export default function HomePage() {
             { id: 'ws_nordic_living', label: 'Nordic Living Thailand', count: 3, icon: <Sticker name="preset-castle" size="xs" inline /> },
           ]}
           selectedId={workspaceFilter}
-          onSelect={(id) => setWorkspaceFilter(id)}
+          onSelect={(id) => handleSelectWorkspaceFilter(id)}
           maxVisiblePills={4}
           moreButtonText="โครงการอื่นๆ"
           searchPlaceholder="ค้นหาชื่อโครงการ หรือ Workspace..."
@@ -1307,7 +1376,14 @@ export default function HomePage() {
                           </div>
 
                           <div className="flex items-center gap-2 shrink-0">
-                            <StatusTag status={batch.status as any} />
+                            {revokedBatchIds[batch.id] ? (
+                              <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-neutral-200 text-neutral-800 border border-neutral-300 flex items-center gap-1">
+                                <Trash2 className="w-3 h-3 text-red-600" />
+                                <span>ถอนโพสต์แล้ว (REVOKED)</span>
+                              </span>
+                            ) : (
+                              <StatusTag status={batch.status as any} />
+                            )}
                             
                             <button
                               type="button"
@@ -1317,6 +1393,18 @@ export default function HomePage() {
                               <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                               <span>ดูโพสต์จริง ({batch.placements.filter(p => p.liveUrl).length} ช่องทาง)</span>
                             </button>
+
+                            {!revokedBatchIds[batch.id] && (
+                              <button
+                                type="button"
+                                onClick={() => setRevokeCandidateBatch(batch)}
+                                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-mono font-medium text-red-700 hover:bg-red-50 bg-paper-canvas border border-red-200 rounded-editorial transition-colors cursor-pointer shadow-2xs"
+                                title="สั่งลบหรือถอนโพสต์ออกจากระบบและแพลตฟอร์ม"
+                              >
+                                <Trash2 className="w-3 h-3 text-red-600" />
+                                <span>ถอนโพสต์</span>
+                              </button>
+                            )}
                           </div>
                         </div>
 
@@ -2741,6 +2829,15 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <button
                   type="button"
+                  onClick={() => setIsEvaluationSlipOpen(true)}
+                  className="px-3 py-1.5 rounded-editorial bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                  title="พิมพ์ใบคะแนนและแผนโค้ชชิ่งสำหรับ HR"
+                >
+                  <Printer className="w-3.5 h-3.5 text-brand-indigo" />
+                  <span>📄 พิมพ์ใบประเมิน (Slip)</span>
+                </button>
+                <button
+                  type="button"
                   onClick={handleResetKpis}
                   title="คืนค่าผลประเมินเป็นค่าเริ่มต้นจำลอง"
                   className="px-3 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas text-ink-secondary hover:text-ink-primary border border-border-rule text-xs cursor-pointer flex items-center gap-1 transition-colors"
@@ -2754,6 +2851,310 @@ export default function HomePage() {
                   className="px-4 py-1.5 rounded-editorial bg-paper-raised hover:bg-paper-subtle text-ink-primary border border-border-rule cursor-pointer font-bold shadow-2xs transition-colors"
                 >
                   ปิดหน้าต่าง
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: OFFICIAL PRINTABLE EVALUATION SLIP                                  */}
+      {/* ========================================================================= */}
+      {isEvaluationSlipOpen && selectedEmployeeKpi && (
+        <div 
+          onClick={() => setIsEvaluationSlipOpen(false)}
+          className="fixed inset-0 z-60 bg-ink-primary/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-paper-raised border-2 border-border-strong rounded-card max-w-xl w-full shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 max-h-[92vh] flex flex-col cursor-default"
+          >
+            {/* Top Slip Action Bar */}
+            <div className="p-3.5 border-b border-border-rule bg-paper-canvas flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Printer className="w-4 h-4 text-brand-indigo" />
+                <span className="font-serif font-bold text-sm text-ink-primary">
+                  ใบคะแนนประเมินผลงานและแผนโค้ชชิ่ง (Official Evaluation Slip)
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    const textSummary = `[RETZPOST EMPLOYEE EVALUATION SLIP]
+พนักงาน: ${selectedEmployeeKpi.name} (${selectedEmployeeKpi.roleTh})
+โปรเจกต์: ${selectedEmployeeKpi.workspaceName}
+ผลการประเมิน: เกรด ${selectedEmployeeKpi.grade} (${selectedEmployeeKpi.overallKpiScore}/100)
+- เป้าหมายงาน: ${selectedEmployeeKpi.actualPosts}/${selectedEmployeeKpi.targetPosts} โพสต์ (${selectedEmployeeKpi.postsCompletionRate}%)
+- ความตรงต่อเวลา (On-Time): ${selectedEmployeeKpi.onTimePublishingRate}%
+- ตรวจผ่านรอบแรก (First-Pass): ${selectedEmployeeKpi.firstPassApprovalRate}%
+- ยอดการเข้าถึงรวม: ${(selectedEmployeeKpi.totalImpressions / 1000).toFixed(0)}K วิว (${selectedEmployeeKpi.avgEngagementRate} ER)
+จุดเด่น (Key Strengths):
+${selectedEmployeeKpi.strengthsTh}
+ข้อแนะนำจากหัวหน้างาน (Manager Coaching):
+${selectedEmployeeKpi.coachingNotesTh}
+ประเมินโดย: ${selectedEmployeeKpi.evaluatedBy || 'หัวหน้างาน'}
+ลงวันที่: ${new Date().toLocaleDateString('th-TH')}`;
+                    navigator.clipboard.writeText(textSummary);
+                    setDownloadToast('✓ คัดลอกข้อความสรุปใบคะแนนประเมินเรียบร้อยแล้ว');
+                    setTimeout(() => setDownloadToast(null), 3000);
+                  }}
+                  className="px-2.5 py-1 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary text-xs font-mono font-semibold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
+                >
+                  <Copy className="w-3 h-3 text-ink-secondary" />
+                  <span>คัดลอกข้อความ</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => window.print()}
+                  className="px-3 py-1 rounded-editorial bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-mono font-semibold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
+                >
+                  <Printer className="w-3 h-3" />
+                  <span>พิมพ์ใบคะแนน</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEvaluationSlipOpen(false)}
+                  className="p-1 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Slip Printable Body */}
+            <div className="p-6 overflow-y-auto space-y-4 bg-paper-canvas font-mono text-xs">
+              {/* Slip Header Banner */}
+              <div className="text-center pb-4 border-b-2 border-dashed border-border-strong space-y-1">
+                <p className="font-serif font-black text-lg tracking-wider text-ink-primary uppercase">
+                  RETZPOST PUBLISHING DESK
+                </p>
+                <p className="text-[10px] tracking-widest text-ink-secondary uppercase">
+                  OFFICIAL STAFF KPI EVALUATION & COACHING SLIP
+                </p>
+                <p className="text-[9px] text-ink-muted">
+                  DOC-ID: EVL-{selectedEmployeeKpi.memberId.toUpperCase()}-{new Date().getFullYear()} • VERIFIED LEDGER
+                </p>
+              </div>
+
+              {/* Employee Bio & Grade Pill */}
+              <div className="flex items-center justify-between p-3 bg-paper-raised border border-border-rule rounded-editorial">
+                <div>
+                  <h4 className="font-serif font-bold text-base text-ink-primary">
+                    {selectedEmployeeKpi.name}
+                  </h4>
+                  <p className="text-[11px] text-ink-secondary font-sans">
+                    {selectedEmployeeKpi.roleTh} • {selectedEmployeeKpi.workspaceName}
+                  </p>
+                </div>
+                <div className="text-right">
+                  <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 inline-block font-mono">
+                    เกรด {selectedEmployeeKpi.grade} ({selectedEmployeeKpi.overallKpiScore}/100)
+                  </span>
+                  <span className="text-[9px] text-ink-muted block mt-0.5">Rank #{selectedEmployeeKpi.rank} of {employeeKpis.length}</span>
+                </div>
+              </div>
+
+              {/* 4 Dimension Score Table */}
+              <div className="border border-border-rule rounded-editorial overflow-hidden bg-paper-raised">
+                <div className="grid grid-cols-4 p-2 bg-paper-subtle text-[10px] font-bold text-ink-secondary border-b border-border-rule uppercase tracking-wider">
+                  <span>เป้าหมาย (Output)</span>
+                  <span>ตรงต่อเวลา (On-Time)</span>
+                  <span>ผ่านรอบแรก (Quality)</span>
+                  <span>การเข้าถึง (Reach)</span>
+                </div>
+                <div className="grid grid-cols-4 p-2.5 text-xs font-bold text-ink-primary">
+                  <span>{selectedEmployeeKpi.actualPosts}/{selectedEmployeeKpi.targetPosts} ({selectedEmployeeKpi.postsCompletionRate}%)</span>
+                  <span>{selectedEmployeeKpi.onTimePublishingRate}%</span>
+                  <span>{selectedEmployeeKpi.firstPassApprovalRate}%</span>
+                  <span>{(selectedEmployeeKpi.totalImpressions / 1000).toFixed(0)}K ({selectedEmployeeKpi.avgEngagementRate})</span>
+                </div>
+              </div>
+
+              {/* Key Strengths */}
+              <div className="p-3 bg-paper-raised border border-border-rule rounded-editorial space-y-1 font-sans">
+                <span className="text-[11px] font-mono font-bold text-emerald-800 uppercase flex items-center gap-1">
+                  <Award className="w-3.5 h-3.5 text-emerald-600" />
+                  <span>จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):</span>
+                </span>
+                <p className="text-xs text-ink-primary leading-relaxed pl-4">
+                  {selectedEmployeeKpi.strengthsTh}
+                </p>
+              </div>
+
+              {/* Manager Coaching */}
+              <div className="p-3 bg-paper-raised border border-border-rule rounded-editorial space-y-1 font-sans">
+                <span className="text-[11px] font-mono font-bold text-brand-indigo uppercase flex items-center gap-1">
+                  <FileText className="w-3.5 h-3.5 text-brand-indigo" />
+                  <span>ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):</span>
+                </span>
+                <p className="text-xs text-ink-secondary leading-relaxed pl-4">
+                  {selectedEmployeeKpi.coachingNotesTh}
+                </p>
+              </div>
+
+              {/* Focus Tags */}
+              {(selectedEmployeeKpi.focusTags || []).length > 0 && (
+                <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                  <span className="text-[10px] text-ink-secondary">FOCUS TAGS:</span>
+                  {(selectedEmployeeKpi.focusTags || []).map((tag, idx) => (
+                    <span key={idx} className="px-2 py-0.5 rounded-full text-[10px] bg-paper-raised border border-border-rule text-ink-primary font-mono">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Signature Line Footer */}
+              <div className="pt-4 border-t-2 border-dashed border-border-strong grid grid-cols-2 gap-4 text-[11px] text-ink-secondary">
+                <div className="space-y-4">
+                  <p>ผู้ประเมิน: <strong>{selectedEmployeeKpi.evaluatedBy || 'หัวหน้างาน (Lead Editor)'}</strong></p>
+                  <p className="text-[9px] text-ink-muted">บันทึกผ่าน RetzPost Secure Ledger</p>
+                </div>
+                <div className="text-right space-y-3">
+                  <div className="border-b border-border-strong w-44 ml-auto pt-4" />
+                  <p className="text-[10px]">ลายเซ็นหัวหน้างาน / ผู้มีอำนาจอนุมัติ</p>
+                  <p className="text-[9px] text-ink-muted">วันที่: {new Date().toLocaleDateString('th-TH')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: REVOKE / DELETE DISPATCH MODAL                                     */}
+      {/* ========================================================================= */}
+      {revokeCandidateBatch && (
+        <div 
+          onClick={() => setRevokeCandidateBatch(null)}
+          className="fixed inset-0 z-60 bg-ink-primary/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 animate-in fade-in cursor-pointer"
+        >
+          <div 
+            onClick={(e) => e.stopPropagation()}
+            className="bg-paper-raised border border-border-rule rounded-card max-w-lg w-full shadow-2xl overflow-hidden animate-in zoom-in-95 duration-150 flex flex-col cursor-default font-mono text-xs"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-border-rule bg-paper-canvas flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-red-100 text-red-700 flex items-center justify-center shrink-0">
+                  <Trash2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-sm text-ink-primary">
+                    ถอนโพสต์ / สั่งลบงานเผยแพร่ (Revoke & Delete Dispatch)
+                  </h3>
+                  <span className="text-[10px] text-ink-secondary block">
+                    {revokeCandidateBatch.id} • {revokeCandidateBatch.title}
+                  </span>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setRevokeCandidateBatch(null)}
+                className="p-1 rounded text-ink-secondary hover:text-ink-primary cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Body */}
+            <div className="p-4 space-y-3.5">
+              <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-editorial text-[11px] leading-relaxed">
+                💡 <strong>ข้อกำหนดการลบแยกตาม API:</strong> แพลตฟอร์ม Facebook, YouTube, และ X รองรับการสั่งลบผ่าน API ได้ 100% ส่วน Instagram, TikTok, และ Lemon8 เป็นข้อกำหนดความปลอดภัยของแพลตฟอร์มที่ต้องกดเปิดเข้าไปลบในแอปโดยตรง
+              </div>
+
+              {/* Channels List Breakdown */}
+              <div className="space-y-2">
+                <span className="font-bold text-ink-primary block uppercase tracking-wider text-[10px]">
+                  สถานะการลบในแต่ละช่องทาง ({revokeCandidateBatch.placements.length} รายการ):
+                </span>
+
+                {revokeCandidateBatch.placements.map((plc, idx) => {
+                  const plat = plc.platform.toUpperCase();
+                  const canApiDelete = ['FACEBOOK', 'YOUTUBE', 'X', 'TWITTER'].includes(plat);
+
+                  return (
+                    <div 
+                      key={idx} 
+                      className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between gap-2"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <SocialPlatformIcon platform={plc.platform} size={18} />
+                        <div className="truncate">
+                          <p className="font-bold text-xs text-ink-primary truncate">{plc.label}</p>
+                          <span className={`text-[9px] px-1.5 py-0.2 rounded border font-semibold inline-block ${
+                            canApiDelete
+                              ? 'bg-blue-50 text-blue-800 border-blue-200'
+                              : 'bg-amber-50 text-amber-800 border-amber-200'
+                          }`}>
+                            {canApiDelete ? '⚡ API DELETE SUPPORTED' : '🛡️ MANUAL APP DELETION'}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="shrink-0">
+                        {canApiDelete ? (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setIsApiDeleting(prev => ({ ...prev, [`${revokeCandidateBatch.id}_${idx}`]: true }));
+                              setTimeout(() => {
+                                setIsApiDeleting(prev => ({ ...prev, [`${revokeCandidateBatch.id}_${idx}`]: false }));
+                                setDownloadToast(`✓ ส่งคำสั่ง API DELETE สำหรับ "${plc.label}" สำเร็จ โพสต์ถูกลบออกจากระบบจริงแล้ว`);
+                                setTimeout(() => setDownloadToast(null), 3000);
+                              }, 600);
+                            }}
+                            disabled={isApiDeleting[`${revokeCandidateBatch.id}_${idx}`]}
+                            className="px-2.5 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold transition-colors cursor-pointer shadow-2xs disabled:opacity-50 flex items-center gap-1"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                            <span>{isApiDeleting[`${revokeCandidateBatch.id}_${idx}`] ? 'กำลังลบ...' : 'ลบผ่าน API'}</span>
+                          </button>
+                        ) : (
+                          plc.liveUrl ? (
+                            <a
+                              href={plc.liveUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="px-2.5 py-1 rounded bg-paper-raised hover:bg-paper-subtle border border-border-rule text-brand-indigo hover:underline text-[11px] font-semibold transition-colors inline-flex items-center gap-1"
+                            >
+                              <span>เปิดโพสต์เพื่อลบ ↗</span>
+                            </a>
+                          ) : (
+                            <span className="text-[10px] text-ink-muted">ไม่มีลิงก์</span>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="p-3.5 border-t border-border-rule bg-paper-canvas flex items-center justify-between">
+              <span className="text-[10px] text-ink-muted">Recorded into audit trail</span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setRevokeCandidateBatch(null)}
+                  className="px-3 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas border border-border-rule text-ink-secondary hover:text-ink-primary cursor-pointer text-xs"
+                >
+                  ปิดหน้าต่าง
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setRevokedBatchIds(prev => ({ ...prev, [revokeCandidateBatch.id]: true }));
+                    setDownloadToast(`✓ บันทึกการถอนโพสต์ "${revokeCandidateBatch.title}" ใน RetzPost Ledger เรียบร้อยแล้ว`);
+                    setTimeout(() => setDownloadToast(null), 3000);
+                    setRevokeCandidateBatch(null);
+                  }}
+                  className="px-3.5 py-1.5 rounded-editorial bg-neutral-900 hover:bg-black text-white font-bold cursor-pointer text-xs shadow-xs"
+                >
+                  บันทึกสถานะถอนโพสต์ทั้งหมด
                 </button>
               </div>
             </div>

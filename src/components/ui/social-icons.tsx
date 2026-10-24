@@ -155,7 +155,45 @@ export const WebsiteLogo: React.FC<SocialIconProps> = ({ className = 'w-4 h-4', 
   </svg>
 );
 
-export type SupportedPlatform = 'FACEBOOK' | 'INSTAGRAM' | 'YOUTUBE' | 'TIKTOK' | 'LINE' | 'WEBSITE';
+export const XLogo: React.FC<SocialIconProps> = ({ className = 'w-4 h-4', size = 18 }) => (
+  <svg
+    viewBox="0 0 24 24"
+    width={size}
+    height={size}
+    className={`shrink-0 ${className}`}
+    fill="none"
+  >
+    <rect width="24" height="24" rx="5.5" fill="#000000" />
+    <path
+      fill="#FFFFFF"
+      d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
+    />
+  </svg>
+);
+
+export const Lemon8Logo: React.FC<SocialIconProps> = ({ className = 'w-4 h-4', size = 18 }) => (
+  <svg
+    viewBox="0 0 24 24"
+    width={size}
+    height={size}
+    className={`shrink-0 ${className}`}
+    fill="none"
+  >
+    <rect width="24" height="24" rx="5.5" fill="#FFDC00" />
+    <circle cx="12" cy="12" r="7.5" fill="#FFF38A" />
+    <path
+      fill="#1A1918"
+      d="M12 6.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zm0 9.2a3.7 3.7 0 110-7.4 3.7 3.7 0 010 7.4z"
+    />
+    <path
+      fill="#1A1918"
+      d="M11.2 9.5h1.6v5h-1.6z"
+    />
+    <circle cx="15.2" cy="8.2" r="1.1" fill="#06C755" />
+  </svg>
+);
+
+export type SupportedPlatform = 'FACEBOOK' | 'INSTAGRAM' | 'YOUTUBE' | 'TIKTOK' | 'LINE' | 'WEBSITE' | 'X' | 'LEMON8';
 export type SupportedFormat = 'FEED' | 'STORY' | 'REEL' | 'FEED_POST' | 'VIDEO_REEL';
 
 interface SocialPlatformIconProps {
@@ -197,6 +235,14 @@ export const SocialPlatformIcon: React.FC<SocialPlatformIconProps> = ({
     return <LineLogo className={className} size={size} />;
   }
 
+  if (plat === 'X' || plat === 'TWITTER') {
+    return <XLogo className={className} size={size} />;
+  }
+
+  if (plat === 'LEMON8' || plat === 'LEMON_8') {
+    return <Lemon8Logo className={className} size={size} />;
+  }
+
   return <WebsiteLogo className={className} size={size} />;
 };
 
@@ -234,6 +280,10 @@ export const SocialMediaLiveButton: React.FC<SocialMediaLiveButtonProps> = ({
     btnTheme = 'bg-neutral-900 text-cyan-300 border-neutral-700 hover:bg-black';
   } else if (plat === 'LINE') {
     btnTheme = 'bg-emerald-50/80 text-emerald-900 border-emerald-200/80 hover:bg-emerald-100 hover:border-emerald-300';
+  } else if (plat === 'X' || plat === 'TWITTER') {
+    btnTheme = 'bg-neutral-900 text-white border-neutral-700 hover:bg-black';
+  } else if (plat === 'LEMON8' || plat === 'LEMON_8') {
+    btnTheme = 'bg-amber-100 text-yellow-950 border-amber-300 hover:bg-amber-200';
   } else if (plat === 'WEBSITE') {
     btnTheme = 'bg-emerald-50/80 text-emerald-900 border-emerald-200/80 hover:bg-emerald-100 hover:border-emerald-300';
   }
