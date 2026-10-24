@@ -1077,17 +1077,8 @@ export default function ConnectedAccountsPage() {
                           </div>
                         </div>
 
-                        {/* Right: Workspace Badge + Active/Bypass Switch + (...) Menu */}
+                        {/* Right: Active/Bypass Switch + (...) Menu */}
                         <div className="flex items-center gap-2.5 sm:gap-3 self-end sm:self-center shrink-0">
-                          {/* Workspace Project Assignment Pill */}
-                          <div className={`${
-                            viewLayout === 'GRID' ? 'hidden 2xl:flex' : 'hidden md:flex'
-                          } items-center gap-1.5 px-2.5 py-1 rounded bg-paper-canvas border border-border-rule text-xs font-mono shadow-2xs`}>
-                            <Sticker name={defaultWsObj?.icon || 'ws-software'} size="xs" inline />
-                            <span className="text-[11px] text-ink-secondary font-medium truncate max-w-[140px]">
-                              {defaultWsObj?.name || acc.defaultWorkspaceName}
-                            </span>
-                          </div>
 
                           {/* Zero-Touch Bypass Toggle Switch */}
                           <button
