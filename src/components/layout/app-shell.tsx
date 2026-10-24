@@ -19,7 +19,8 @@ import {
   Sparkles,
   Users,
   Shield,
-  LogOut
+  LogOut,
+  BookOpen
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
 import { getCurrentUser, logoutUser, subscribeToAuthChange } from '@/modules/auth/auth-service';
@@ -59,9 +60,16 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  const isAuthRoute = pathname === '/login' || pathname === '/register' || pathname === '/forgot-password';
+  const isPublicRoute = 
+    pathname === '/login' || 
+    pathname === '/register' || 
+    pathname === '/forgot-password' ||
+    pathname.startsWith('/docs') ||
+    pathname.startsWith('/guide') ||
+    pathname.startsWith('/privacy') ||
+    pathname.startsWith('/terms');
 
-  if (isAuthRoute) {
+  if (isPublicRoute) {
     return <div className="min-h-screen bg-paper-canvas text-ink-primary">{children}</div>;
   }
 
@@ -123,6 +131,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           badge: { text: 'RBAC', bg: 'bg-semantic-info/15 text-semantic-info border border-semantic-info/20' }
         },
         { label: 'Settings & Defaults', href: '/settings', icon: Settings },
+        { label: 'คู่มือใช้งาน (Docs)', href: '/docs', icon: BookOpen },
       ],
     },
   ];

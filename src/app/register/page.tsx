@@ -439,8 +439,15 @@ export default function RegisterPage() {
                   className="mt-0.5 rounded text-brand-indigo focus:ring-brand-indigo"
                 />
                 <label htmlFor="terms" className="text-[11px] text-ink-secondary leading-tight cursor-pointer">
-                  ฉันยอมรับ <span className="text-brand-indigo font-medium">ข้อกำหนดการใช้งาน</span> และ{' '}
-                  <span className="text-brand-indigo font-medium">นโยบายความเป็นส่วนตัว</span> ของ RetzPost
+                  ฉันยอมรับ{' '}
+                  <Link href="/terms" target="_blank" className="text-brand-indigo font-semibold underline underline-offset-1 hover:text-brand-indigo-hover">
+                    ข้อกำหนดการใช้งาน
+                  </Link>{' '}
+                  และ{' '}
+                  <Link href="/privacy" target="_blank" className="text-brand-indigo font-semibold underline underline-offset-1 hover:text-brand-indigo-hover">
+                    นโยบายความเป็นส่วนตัว (Privacy Policy)
+                  </Link>{' '}
+                  ของ RetzPost
                 </label>
               </div>
 
@@ -579,8 +586,21 @@ export default function RegisterPage() {
       </main>
 
       {/* Footer */}
-      <footer className="max-w-5xl mx-auto w-full pt-6 border-t border-border-rule/60 text-center text-[11px] font-mono text-ink-secondary">
-        MULTIPOST — Dream Press Publishing Desk &copy; {new Date().getFullYear()} RetzPost SaaS. All rights reserved.
+      <footer className="max-w-5xl mx-auto w-full pt-6 border-t border-border-rule/60 text-center text-[11px] font-mono text-ink-secondary space-y-2">
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-medium">
+          <Link href="/docs" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
+            📖 คู่มือใช้งาน (Docs & Guide)
+          </Link>
+          <span>•</span>
+          <Link href="/privacy" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
+            🔒 นโยบายความเป็นส่วนตัว (Privacy Policy)
+          </Link>
+          <span>•</span>
+          <Link href="/terms" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
+            📜 ข้อกำหนดการใช้งาน (Terms of Service)
+          </Link>
+        </div>
+        <p>MULTIPOST — Dream Press Publishing Desk &copy; {new Date().getFullYear()} RetzPost SaaS. All rights reserved.</p>
       </footer>
     </div>
   );
