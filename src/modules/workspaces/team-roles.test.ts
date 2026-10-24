@@ -1,12 +1,14 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { 
   ROLE_DEFINITIONS, 
   hasPermission, 
   ALL_PERMISSIONS, 
   WorkspaceRole,
   inviteTeamMember,
+  getInitialTeamMembers,
   INITIAL_TEAM_MEMBERS 
 } from './team-roles';
+import { clearAllMockData, loadSampleMockData } from '../data/mock-data-manager';
 
 describe('Team & RBAC Permissions Engine', () => {
   it('defines all 5 hierarchical roles properly', () => {
@@ -57,5 +59,18 @@ describe('Team & RBAC Permissions Engine', () => {
     expect(invited.avatarText).toBe('KP');
     expect(invited.status).toBe('INVITED');
     expect(invited.role).toBe('EDITOR');
+  });
+
+  it('respects clean state vs sample demo data for team members', () => {
+    clearAllMockData();
+    expect(getInitialTeamMembers()).toEqual([]);
+
+    loadSampleMockData();
+    expect(getInitialTeamMembers().length).toBeGreaterThan(0);
+    expect(getInitialTeamMembers()).toEqual(INITIAL_TEAM_MEMBERS);
+
+    // Reset back to clean state default
+    clearAllMockData();
+    expect(getInitialTeamMembers()).toEqual([]);
   });
 });

@@ -25,6 +25,10 @@ import {
 import { Sticker } from '@/components/ui/sticker';
 import { getCurrentUser, logoutUser, subscribeToAuthChange } from '@/modules/auth/auth-service';
 import { AuthUser } from '@/modules/auth/auth-types';
+import { 
+  isMockDataCleared, 
+  subscribeToMockDataChange 
+} from '@/modules/data/mock-data-manager';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -39,36 +43,59 @@ export interface WorkspaceItem {
   stickerName: string;
 }
 
-export const WORKSPACES: WorkspaceItem[] = [
+export const DEFAULT_CLEAN_WORKSPACE: WorkspaceItem = {
+  id: 'ws_default',
+  name: 'Main Workspace',
+  category: 'General Space',
+  dotColor: 'bg-brand-indigo',
+  channelCount: 0,
+  stickerName: 'ws-software',
+};
+
+export const DEMO_WORKSPACES: WorkspaceItem[] = [
   { id: 'ws_capitalone', name: 'Capital One Real Estate', category: 'Enterprise Portfolio', dotColor: 'bg-accent-terracotta', channelCount: 6, stickerName: 'ws-realestate' },
   { id: 'ws_acme', name: 'Acme Creator Studio', category: 'Personal Brand', dotColor: 'bg-brand-indigo', channelCount: 4, stickerName: 'ws-creator' },
   { id: 'ws_retzpost', name: 'RetzPost Software', category: 'SaaS Product', dotColor: 'bg-semantic-info', channelCount: 4, stickerName: 'ws-software' },
   { id: 'ws_coffee', name: 'Coffee Craft BKK', category: 'Client Cafe SME', dotColor: 'bg-semantic-success', channelCount: 3, stickerName: 'ws-cafe' },
 ];
 
+export const WORKSPACES: WorkspaceItem[] = DEMO_WORKSPACES;
+
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeWorkspaceId, setActiveWorkspaceId] = useState('ws_acme');
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
 
   useEffect(() => {
     setCurrentUser(getCurrentUser());
+    setIsMockCleared(isMockDataCleared());
+
     const unsubscribe = subscribeToAuthChange((user) => {
       setCurrentUser(user);
     });
-    return unsubscribe;
+    const unsubMock = subscribeToMockDataChange((cleared) => {
+      setIsMockCleared(cleared);
+    });
+
+    return () => {
+      unsubscribe();
+      unsubMock();
+    };
   }, []);
+
+  const currentWorkspaces = isMockCleared ? [DEFAULT_CLEAN_WORKSPACE] : DEMO_WORKSPACES;
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('retzpost_active_workspace_id');
-      if (saved && WORKSPACES.some((w) => w.id === saved)) {
+      if (saved && currentWorkspaces.some((w) => w.id === saved)) {
         setActiveWorkspaceId(saved);
       }
       const handleSync = (e: Event) => {
         const custom = e as CustomEvent<string>;
-        if (custom.detail && WORKSPACES.some((w) => w.id === custom.detail)) {
+        if (custom.detail && currentWorkspaces.some((w) => w.id === custom.detail)) {
           setActiveWorkspaceId(custom.detail);
         }
       };
@@ -77,9 +104,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         window.removeEventListener('retzpost:workspace-change', handleSync);
       };
     }
-  }, []);
+  }, [currentWorkspaces]);
 
-  const activeWorkspace = WORKSPACES.find(w => w.id === activeWorkspaceId) || WORKSPACES[0];
+  const activeWorkspace = currentWorkspaces.find(w => w.id === activeWorkspaceId) || currentWorkspaces[0];
 
   const navItems = [
     {
@@ -97,7 +124,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           label: 'Publishing Queue', 
           href: '/publishing/queue', 
           icon: ListOrdered,
-          badge: { text: '2 Issues', bg: 'bg-accent-terracotta text-white' }
+          badge: isMockCleared ? undefined : { text: '2 Issues', bg: 'bg-accent-terracotta text-white' }
         },
         { label: 'Editorial Calendar', href: '/calendar', icon: Calendar },
       ],
@@ -109,7 +136,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           label: 'Connected Channels', 
           href: '/accounts', 
           icon: Share2,
-          badge: { text: `${activeWorkspace.channelCount} Live`, bg: 'bg-brand-indigo/15 text-brand-indigo border border-brand-indigo/20' }
+          badge: isMockCleared 
+            ? { text: '0 Live', bg: 'bg-paper-canvas text-ink-secondary border border-border-rule' }
+            : { text: `${activeWorkspace.channelCount} Live`, bg: 'bg-brand-indigo/15 text-brand-indigo border border-brand-indigo/20' }
         },
         {
           label: 'Team & Permissions',
@@ -246,38 +275,40 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         <div className="p-3.5 border-t border-border-rule text-xs bg-paper-subtle/50">
           <div className="flex items-center justify-between gap-1.5">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className={`w-7 h-7 rounded-full ${currentUser?.avatarBg || 'bg-brand-indigo'} text-white flex items-center justify-center font-serif text-xs font-bold ring-1 ring-brand-indigo/30 shrink-0`}>
-                {currentUser?.avatarText || (activeWorkspaceId === 'ws_capitalone' ? 'NC' : 'AR')}
+              <div className={`w-7 h-7 rounded-full ${currentUser?.avatarBg || (isMockCleared ? 'bg-ink-secondary/20 text-ink-primary' : 'bg-brand-indigo text-white')} flex items-center justify-center font-serif text-xs font-bold ring-1 ring-border-rule shrink-0`}>
+                {currentUser?.avatarText || (isMockCleared ? 'GU' : 'NC')}
               </div>
               <div className="min-w-0">
                 <p className="font-semibold text-ink-primary text-xs leading-tight truncate">
-                  {currentUser?.name || (activeWorkspaceId === 'ws_capitalone' ? 'Nopparat C.' : 'Alex Rivera')}
+                  {currentUser?.name || (isMockCleared ? 'ผู้ใช้งานทั่วไป (Guest)' : 'Nopparat C.')}
                 </p>
                 <p className="text-[10px] text-ink-secondary font-mono truncate max-w-[105px]">
-                  {currentUser?.email || activeWorkspace.name}
+                  {currentUser?.email || (isMockCleared ? 'คลิกเพื่อเข้าสู่ระบบ' : activeWorkspace.name)}
                 </p>
               </div>
             </div>
 
             <div className="flex items-center gap-1 shrink-0">
               <Link
-                href="/settings/team"
+                href={currentUser ? "/settings/team" : "/login"}
                 className="text-[9px] font-mono text-brand-indigo hover:underline px-1.5 py-0.5 bg-brand-indigo/10 border border-brand-indigo/20 rounded font-semibold"
-                title="View Role & Permissions"
+                title={currentUser ? "View Role & Permissions" : "เข้าสู่ระบบ (Sign In)"}
               >
-                {currentUser?.role || (activeWorkspaceId === 'ws_capitalone' ? 'Role: Mgr' : 'Role: Owner')}
+                {currentUser?.role || (isMockCleared ? 'Guest' : 'Role: Owner')}
               </Link>
-              <button
-                type="button"
-                onClick={() => {
-                  logoutUser();
-                  window.location.href = '/login';
-                }}
-                className="p-1 text-ink-secondary hover:text-accent-terracotta rounded hover:bg-paper-canvas transition-colors"
-                title="ออกจากระบบ (Sign Out)"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-              </button>
+              {currentUser && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    logoutUser();
+                    window.location.href = '/login';
+                  }}
+                  className="p-1 text-ink-secondary hover:text-accent-terracotta rounded hover:bg-paper-canvas transition-colors"
+                  title="ออกจากระบบ (Sign Out)"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              )}
             </div>
           </div>
         </div>

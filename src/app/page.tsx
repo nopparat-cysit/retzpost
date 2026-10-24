@@ -1233,7 +1233,9 @@ export default function HomePage() {
               <span>Workspace:</span>
             </span>
           }
-          items={[
+          items={isMockCleared ? [
+            { id: 'ALL', label: 'All Projects', count: '0 Channels', icon: <Building2 className="w-3 h-3 text-brand-indigo" /> }
+          ] : [
             { id: 'ALL', label: 'All Projects', count: '17 Channels', icon: <Building2 className="w-3 h-3 text-brand-indigo" /> },
             { id: 'ws_capitalone', label: 'Capital One Real Estate', count: 6, icon: <Sticker name="ws-realestate" size="xs" inline /> },
             { id: 'ws_acme', label: 'Acme Studio', count: 4, icon: <Sticker name="ws-creator" size="xs" inline /> },
@@ -1662,10 +1664,10 @@ export default function HomePage() {
                         <span className="w-2 h-2 rounded-full bg-brand-indigo" />
                         Feed Posts & Carousels
                       </span>
-                      <span className="font-semibold text-brand-indigo">45% (33 jobs)</span>
+                      <span className="font-semibold text-brand-indigo">{isMockCleared ? '0% (0 jobs)' : '45% (33 jobs)'}</span>
                     </div>
                     <div className="w-full h-2 bg-paper-subtle rounded-full overflow-hidden">
-                      <div className="h-full bg-brand-indigo rounded-full" style={{ width: '45%' }} />
+                      <div className="h-full bg-brand-indigo rounded-full" style={{ width: isMockCleared ? '0%' : '45%' }} />
                     </div>
                   </div>
 
@@ -1675,10 +1677,10 @@ export default function HomePage() {
                         <span className="w-2 h-2 rounded-full bg-accent-terracotta" />
                         24h Ephemeral Stories
                       </span>
-                      <span className="font-semibold text-accent-terracotta">35% (26 jobs)</span>
+                      <span className="font-semibold text-accent-terracotta">{isMockCleared ? '0% (0 jobs)' : '35% (26 jobs)'}</span>
                     </div>
                     <div className="w-full h-2 bg-paper-subtle rounded-full overflow-hidden">
-                      <div className="h-full bg-accent-terracotta rounded-full" style={{ width: '35%' }} />
+                      <div className="h-full bg-accent-terracotta rounded-full" style={{ width: isMockCleared ? '0%' : '35%' }} />
                     </div>
                   </div>
 
@@ -1688,16 +1690,16 @@ export default function HomePage() {
                         <span className="w-2 h-2 rounded-full bg-semantic-info" />
                         Reels, Shorts & Video
                       </span>
-                      <span className="font-semibold text-semantic-info">20% (15 jobs)</span>
+                      <span className="font-semibold text-semantic-info">{isMockCleared ? '0% (0 jobs)' : '20% (15 jobs)'}</span>
                     </div>
                     <div className="w-full h-2 bg-paper-subtle rounded-full overflow-hidden">
-                      <div className="h-full bg-semantic-info rounded-full" style={{ width: '20%' }} />
+                      <div className="h-full bg-semantic-info rounded-full" style={{ width: isMockCleared ? '0%' : '20%' }} />
                     </div>
                   </div>
                 </div>
 
                 <p className="text-[10px] text-ink-secondary font-mono pt-2 border-t border-border-rule leading-relaxed">
-                  💡 Omni-Format Synergy: 78% of image assets published simultaneously to both Feed and 24h Story.
+                  {isMockCleared ? '💡 ยังไม่มีการส่งกระจายโพสต์ สถิติการจัดสรรรูปแบบสื่อจะแสดงเมื่อเริ่มส่งงาน' : '💡 Omni-Format Synergy: 78% of image assets published simultaneously to both Feed and 24h Story.'}
                 </p>
               </div>
 
@@ -1714,52 +1716,64 @@ export default function HomePage() {
                     href="/accounts"
                     className="text-[11px] font-mono text-brand-indigo hover:underline font-semibold"
                   >
-                    Manage (17) →
+                    Manage ({isMockCleared ? 0 : 17}) →
                   </Link>
                 </div>
 
-                <div className="space-y-2">
-                  {CHANNEL_HEALTH.slice(0, 5).map((ch, idx) => (
-                    <div
-                      key={idx}
-                      className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between gap-2"
+                {isMockCleared ? (
+                  <div className="p-4 text-center rounded-editorial bg-paper-canvas border border-dashed border-border-rule space-y-2">
+                    <p className="text-xs font-mono text-ink-secondary">ยังไม่มีบัญชีโซเชียลที่เชื่อมต่อ</p>
+                    <Link
+                      href="/accounts"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-indigo text-white text-[11px] font-mono rounded font-semibold hover:bg-brand-indigo-hover transition-colors"
                     >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <SocialPlatformIcon platform={ch.platform} size={22} className="shrink-0" />
-                        <div className="truncate">
-                          <p className="text-xs font-mono font-medium text-ink-primary truncate">
-                            {ch.name}
-                          </p>
-                          <span className="text-[9px] font-mono text-ink-secondary block truncate">
-                            {ch.handle}
-                          </span>
+                      <span>+ เชื่อมต่อช่องทางแรก</span>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    {CHANNEL_HEALTH.slice(0, 5).map((ch, idx) => (
+                      <div
+                        key={idx}
+                        className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between gap-2"
+                      >
+                        <div className="flex items-center gap-2 min-w-0">
+                          <SocialPlatformIcon platform={ch.platform} size={22} className="shrink-0" />
+                          <div className="truncate">
+                            <p className="text-xs font-mono font-medium text-ink-primary truncate">
+                              {ch.name}
+                            </p>
+                            <span className="text-[9px] font-mono text-ink-secondary block truncate">
+                              {ch.handle}
+                            </span>
+                          </div>
+                        </div>
+
+                        <div className="shrink-0 text-right">
+                          {ch.status === 'HEALTHY' && (
+                            <span className="text-[9px] font-mono text-semantic-success flex items-center gap-1 justify-end font-semibold">
+                              <Check className="w-2.5 h-2.5" />
+                              <span>Valid</span>
+                            </span>
+                          )}
+                          {ch.status === 'ATTENTION' && (
+                            <Link
+                              href="/accounts"
+                              className="text-[9px] font-mono text-accent-terracotta font-bold hover:underline block"
+                            >
+                              Re-auth!
+                            </Link>
+                          )}
+                          {ch.status === 'WARNING' && (
+                            <span className="text-[9px] font-mono text-semantic-warning font-semibold block">
+                              Aspect Error
+                            </span>
+                          )}
                         </div>
                       </div>
-
-                      <div className="shrink-0 text-right">
-                        {ch.status === 'HEALTHY' && (
-                          <span className="text-[9px] font-mono text-semantic-success flex items-center gap-1 justify-end font-semibold">
-                            <Check className="w-2.5 h-2.5" />
-                            <span>Valid</span>
-                          </span>
-                        )}
-                        {ch.status === 'ATTENTION' && (
-                          <Link
-                            href="/accounts"
-                            className="text-[9px] font-mono text-accent-terracotta font-bold hover:underline block"
-                          >
-                            Re-auth!
-                          </Link>
-                        )}
-                        {ch.status === 'WARNING' && (
-                          <span className="text-[9px] font-mono text-semantic-warning font-semibold block">
-                            Aspect Error
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Quick Launch & Templates Hub */}
@@ -1772,47 +1786,95 @@ export default function HomePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Link
-                    href="/create"
-                    className="flex items-center justify-between p-2.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-medium transition-colors group"
-                  >
-                    <div className="flex items-center gap-2 text-ink-primary">
-                      <Bookmark className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
-                      <div>
-                        <span className="font-semibold block text-xs">คอนโดหรูติด BTS (Capital One)</span>
-                        <span className="text-[10px] font-mono text-ink-secondary">Pre-filled specs & Story link</span>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
+                  {isMockCleared ? (
+                    <>
+                      <Link
+                        href="/create"
+                        className="flex items-center justify-between p-2.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-medium transition-colors group"
+                      >
+                        <div className="flex items-center gap-2 text-ink-primary">
+                          <Plus className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
+                          <div>
+                            <span className="font-semibold block text-xs">สร้างโพสต์ใหม่ (Universal Composer)</span>
+                            <span className="text-[10px] font-mono text-ink-secondary">Feed, 24h Story, Reels 9:16</span>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
+                      </Link>
 
-                  <Link
-                    href="/create"
-                    className="flex items-center justify-between p-2.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-medium transition-colors group"
-                  >
-                    <div className="flex items-center gap-2 text-ink-primary">
-                      <Sparkles className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
-                      <div>
-                        <span className="font-semibold block text-xs">คลังภาพสื่อ AI (8K Renders)</span>
-                        <span className="text-[10px] font-mono text-ink-secondary">Rama 9, Sky Pool, Penthouse</span>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
+                      <Link
+                        href="/calendar"
+                        className="flex items-center justify-between p-2.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-medium transition-colors group"
+                      >
+                        <div className="flex items-center gap-2 text-ink-primary">
+                          <Calendar className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
+                          <div>
+                            <span className="font-semibold block text-xs">เปิดปฏิทินคอนเทนต์ (Editorial Calendar)</span>
+                            <span className="text-[10px] font-mono text-ink-secondary">เช็ค Bangkok Golden Peak Slots</span>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
+                      </Link>
 
-                  <Link
-                    href="/create"
-                    className="flex items-center justify-between p-2.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-medium transition-colors group"
-                  >
-                    <div className="flex items-center gap-2 text-ink-primary">
-                      <Share2 className="w-4 h-4 text-accent-terracotta group-hover:scale-110 transition-transform" />
-                      <div>
-                        <span className="font-semibold block text-xs">Flash Sale 50% Campaign</span>
-                        <span className="text-[10px] font-mono text-ink-secondary">Promo copy + CTA stickers</span>
-                      </div>
-                    </div>
-                    <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
-                  </Link>
+                      <Link
+                        href="/settings/team"
+                        className="flex items-center justify-between p-2.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-medium transition-colors group"
+                      >
+                        <div className="flex items-center gap-2 text-ink-primary">
+                          <Users className="w-4 h-4 text-accent-terracotta group-hover:scale-110 transition-transform" />
+                          <div>
+                            <span className="font-semibold block text-xs">จัดการทีมงาน & สิทธิ์ 5 ระดับ</span>
+                            <span className="text-[10px] font-mono text-ink-secondary">Owner, Manager, Editor, Contributor</span>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href="/create"
+                        className="flex items-center justify-between p-2.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-medium transition-colors group"
+                      >
+                        <div className="flex items-center gap-2 text-ink-primary">
+                          <Bookmark className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
+                          <div>
+                            <span className="font-semibold block text-xs">คอนโดหรูติด BTS (Capital One)</span>
+                            <span className="text-[10px] font-mono text-ink-secondary">Pre-filled specs & Story link</span>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
+                      </Link>
+
+                      <Link
+                        href="/create"
+                        className="flex items-center justify-between p-2.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-medium transition-colors group"
+                      >
+                        <div className="flex items-center gap-2 text-ink-primary">
+                          <Sparkles className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
+                          <div>
+                            <span className="font-semibold block text-xs">คลังภาพสื่อ AI (8K Renders)</span>
+                            <span className="text-[10px] font-mono text-ink-secondary">Rama 9, Sky Pool, Penthouse</span>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
+                      </Link>
+
+                      <Link
+                        href="/create"
+                        className="flex items-center justify-between p-2.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-medium transition-colors group"
+                      >
+                        <div className="flex items-center gap-2 text-ink-primary">
+                          <Share2 className="w-4 h-4 text-accent-terracotta group-hover:scale-110 transition-transform" />
+                          <div>
+                            <span className="font-semibold block text-xs">Flash Sale 50% Campaign</span>
+                            <span className="text-[10px] font-mono text-ink-secondary">Promo copy + CTA stickers</span>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
+                      </Link>
+                    </>
+                  )}
                 </div>
               </div>
 

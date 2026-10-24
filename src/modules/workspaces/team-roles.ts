@@ -238,6 +238,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
   },
 ];
 
+import { isMockDataCleared } from '../data/mock-data-manager';
+
 export function hasPermission(role: WorkspaceRole, permission: PermissionKey): boolean {
   const def = ROLE_DEFINITIONS[role];
   if (!def) return false;
@@ -245,6 +247,7 @@ export function hasPermission(role: WorkspaceRole, permission: PermissionKey): b
 }
 
 export function getInitialTeamMembers(): TeamMember[] {
+  if (isMockDataCleared()) return [];
   if (typeof window === 'undefined') return INITIAL_TEAM_MEMBERS;
   try {
     const saved = localStorage.getItem('retzpost_team_members');

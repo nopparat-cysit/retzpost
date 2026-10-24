@@ -22,10 +22,21 @@ import {
   Unlock,
   AlertTriangle,
   ChevronRight,
-  ExternalLink
+  ExternalLink,
+  Sparkles,
+  RefreshCw
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { Sticker } from '@/components/ui/sticker';
+import { getCurrentUser, subscribeToAuthChange } from '@/modules/auth/auth-service';
+import { AuthUser } from '@/modules/auth/auth-types';
+import { 
+  isMockDataCleared, 
+  loadSampleMockData, 
+  clearAllMockData, 
+  subscribeToMockDataChange 
+} from '@/modules/data/mock-data-manager';
+import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
 import { 
   WorkspaceRole, 
   PermissionKey, 
@@ -41,10 +52,31 @@ import {
 
 export default function TeamSettingsPage() {
   const [members, setMembers] = useState<TeamMember[]>(() => getInitialTeamMembers());
-  const [selectedWorkspace, setSelectedWorkspace] = useState<'ALL' | 'ws_capitalone' | 'ws_acme' | 'ws_retzpost' | 'ws_coffee'>('ws_capitalone');
+  const [selectedWorkspace, setSelectedWorkspace] = useState<'ALL' | 'ws_capitalone' | 'ws_acme' | 'ws_retzpost' | 'ws_coffee'>('ALL');
   const [activeTab, setActiveTab] = useState<'MEMBERS' | 'MATRIX' | 'SIMULATOR'>('MEMBERS');
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<'ALL' | WorkspaceRole>('ALL');
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+  const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
+
+  React.useEffect(() => {
+    setCurrentUser(getCurrentUser());
+    setIsMockCleared(isMockDataCleared());
+    setMembers(getInitialTeamMembers());
+
+    const unsubAuth = subscribeToAuthChange((user) => {
+      setCurrentUser(user);
+    });
+    const unsubMock = subscribeToMockDataChange((cleared) => {
+      setIsMockCleared(cleared);
+      setMembers(getInitialTeamMembers());
+    });
+
+    return () => {
+      unsubAuth();
+      unsubMock();
+    };
+  }, []);
 
   // Modal States
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
@@ -119,13 +151,41 @@ export default function TeamSettingsPage() {
         title="Team Members & Project Permissions"
         subtitle="Invite team members, assign granular roles (Owner, Manager, Editor, Contributor, Client Viewer), and govern multi-platform publishing authority."
         actions={
-          <button
-            onClick={() => setIsInviteModalOpen(true)}
-            className="inline-flex items-center gap-2 px-3.5 py-2 bg-brand-indigo text-white text-xs font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-colors shadow-xs cursor-pointer"
-          >
-            <UserPlus className="w-4 h-4" />
-            <span>เชิญสมาชิกเข้าโปรเจกต์</span>
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            {isMockCleared ? (
+              <button
+                type="button"
+                onClick={() => {
+                  loadSampleMockData();
+                }}
+                className="px-2.5 py-1.5 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="โหลดข้อมูลสมาชิกทีมตัวอย่าง"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>โหลดตัวอย่างทีม (Demo)</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  clearAllMockData();
+                }}
+                className="px-2.5 py-1.5 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-accent-terracotta font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="ล้างข้อมูลสมาชิกตัวอย่างทั้งหมด"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>เคลียร์ทีม (Clean)</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => setIsInviteModalOpen(true)}
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-brand-indigo text-white text-xs font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-colors shadow-xs cursor-pointer"
+            >
+              <UserPlus className="w-4 h-4" />
+              <span>เชิญสมาชิกเข้าโปรเจกต์</span>
+            </button>
+          </div>
         }
       />
 
@@ -142,19 +202,19 @@ export default function TeamSettingsPage() {
         </div>
       )}
 
-      {/* SESSION IDENTITY BANNER (Mirroring Boss's Screen Context) */}
+      {/* SESSION IDENTITY BANNER */}
       <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-full bg-semantic-info/15 text-semantic-info flex items-center justify-center font-serif text-sm font-bold border border-semantic-info/20">
-            NC
+          <div className={`w-9 h-9 rounded-full ${currentUser?.avatarBg || (isMockCleared ? 'bg-ink-secondary/20 text-ink-primary' : 'bg-brand-indigo text-white')} flex items-center justify-center font-serif text-sm font-bold border border-border-rule`}>
+            {currentUser?.avatarText || (isMockCleared ? 'GU' : 'NC')}
           </div>
           <div>
             <p className="text-xs text-ink-primary font-medium">
-              ทำงานในทีม <span className="font-semibold text-brand-indigo">{activeWorkspaceName}</span> ในบทบาท{' '}
-              <span className="font-bold text-semantic-info">ผู้จัดการ (Manager)</span> — ข้อมูลและเครดิตเป็นของทีม
+              ทำงานในทีม <span className="font-semibold text-brand-indigo">{isMockCleared ? 'Main Workspace' : activeWorkspaceName}</span> ในบทบาท{' '}
+              <span className="font-bold text-semantic-info">{currentUser?.role || (isMockCleared ? 'ผู้ใช้งานทั่วไป (Guest)' : 'ผู้จัดการ (Manager)')}</span>
             </p>
             <p className="text-[10px] font-mono text-ink-secondary mt-0.5">
-              คุณมีสิทธิ์: อนุมัติโพสต์ทีม • เชิญสมาชิก • ยิงโพสต์ทุกช่องทาง (Feed, Story, Reels) • จัดการ Presets
+              {currentUser?.email || (isMockCleared ? 'เข้าสู่ระบบเพื่อรับสิทธิ์การอนุมัติโพสต์และจัดการทีม' : 'คุณมีสิทธิ์: อนุมัติโพสต์ทีม • เชิญสมาชิก • ยิงโพสต์ทุกช่องทาง')}
             </p>
           </div>
         </div>
@@ -173,9 +233,13 @@ export default function TeamSettingsPage() {
             <span>โปรเจกต์:</span>
           </span>
           {[
-            { id: 'ws_capitalone', label: 'Capital One Real Estate (5 คน)', sticker: 'ws-realestate' },
-            { id: 'ws_acme', label: 'Acme Creator Studio (3 คน)', sticker: 'ws-creator' },
-            { id: 'ALL', label: 'ภาพรวมทั้งหมด (All Members)', sticker: null },
+            ...(isMockCleared ? [
+              { id: 'ALL' as const, label: `ภาพรวมทั้งหมด (${filteredMembers.length} คน)`, sticker: null },
+            ] : [
+              { id: 'ws_capitalone' as const, label: 'Capital One Real Estate (5 คน)', sticker: 'ws-realestate' },
+              { id: 'ws_acme' as const, label: 'Acme Creator Studio (3 คน)', sticker: 'ws-creator' },
+              { id: 'ALL' as const, label: 'ภาพรวมทั้งหมด (All Members)', sticker: null },
+            ]),
           ].map((tab) => (
             <button
               key={tab.id}
@@ -317,26 +381,32 @@ export default function TeamSettingsPage() {
           </div>
 
           {/* Members Table */}
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-paper-subtle border-b border-border-rule font-mono text-[10px] text-ink-secondary uppercase">
-                <tr>
-                  <th className="py-3 px-4">สมาชิก (User)</th>
-                  <th className="py-3 px-4">บทบาทและสิทธิ์ (Assigned Role)</th>
-                  <th className="py-3 px-4">สถานะ (Status)</th>
-                  <th className="py-3 px-4">เข้าร่วมเมื่อ</th>
-                  <th className="py-3 px-4 text-right">การจัดการ</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border-rule">
-                {filteredMembers.length === 0 ? (
+          {filteredMembers.length === 0 ? (
+            <EditorialEmptyState
+              stickerName="role-manager"
+              badgeText={isMockCleared ? "Team & RBAC • Clean State" : "Filter Empty"}
+              title="ยังไม่มีสมาชิกในโปรเจกต์นี้"
+              description="เชิญสมาชิกในทีมเพื่อร่วมวางแผน กำหนดสิทธิ์ และดูแลขั้นตอนการอนุมัติโพสต์ (5-Level RBAC)"
+              tipText="แต่ละบทบาทมีสิทธิ์จำเพาะ: Owner (คุมระบบ), Manager (อนุมัติโพสต์), Editor (ยิงตรง), Contributor (ส่งตรวจ), Viewer (ตรวจดู)"
+              actionLabel="+ เชิญสมาชิกคนแรก"
+              onActionClick={() => setIsInviteModalOpen(true)}
+              demoActionLabel={isMockCleared ? "โหลดตัวอย่างทีม (Demo Members)" : undefined}
+              onDemoActionClick={isMockCleared ? () => loadSampleMockData() : undefined}
+            />
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-paper-subtle border-b border-border-rule font-mono text-[10px] text-ink-secondary uppercase">
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-ink-secondary font-mono text-xs">
-                      ไม่พบสมาชิกที่ตรงกับเงื่อนไขการค้นหา
-                    </td>
+                    <th className="py-3 px-4">สมาชิก (User)</th>
+                    <th className="py-3 px-4">บทบาทและสิทธิ์ (Assigned Role)</th>
+                    <th className="py-3 px-4">สถานะ (Status)</th>
+                    <th className="py-3 px-4">เข้าร่วมเมื่อ</th>
+                    <th className="py-3 px-4 text-right">การจัดการ</th>
                   </tr>
-                ) : (
-                  filteredMembers.map((mbr) => {
+                </thead>
+                <tbody className="divide-y divide-border-rule">
+                  {filteredMembers.map((mbr) => {
                     const roleDef = ROLE_DEFINITIONS[mbr.role];
 
                     return (
@@ -427,11 +497,11 @@ export default function TeamSettingsPage() {
                         </td>
                       </tr>
                     );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
         </div>
       )}
 

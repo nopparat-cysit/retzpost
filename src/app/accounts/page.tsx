@@ -380,7 +380,9 @@ export default function ConnectedAccountsPage() {
   // Accounts & Workspaces state
   const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
   const [accounts, setAccounts] = useState<MasterChannelAccount[]>([]);
-  const [workspaces, setWorkspaces] = useState<WorkspaceItem[]>(INITIAL_PROJECTS);
+  const [workspaces, setWorkspaces] = useState<WorkspaceItem[]>(() =>
+    isMockDataCleared() ? [] : INITIAL_PROJECTS
+  );
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewLayout, setViewLayout] = useState<'GRID' | 'LIST'>('GRID');
@@ -391,10 +393,34 @@ export default function ConnectedAccountsPage() {
     const cleared = isMockDataCleared();
     setIsMockCleared(cleared);
     setAccounts(cleared ? [] : INITIAL_MASTER_ACCOUNTS);
+    setWorkspaces(cleared ? [] : INITIAL_PROJECTS);
+    if (cleared) {
+      setChannelSelections({});
+    } else {
+      const map: Record<string, boolean> = {};
+      for (const ws of INITIAL_PROJECTS) {
+        for (const chId of ws.selectedChannelIds) {
+          map[`${ws.id}_${chId}`] = true;
+        }
+      }
+      setChannelSelections(map);
+    }
 
     const unsub = subscribeToMockDataChange((newCleared) => {
       setIsMockCleared(newCleared);
       setAccounts(newCleared ? [] : INITIAL_MASTER_ACCOUNTS);
+      setWorkspaces(newCleared ? [] : INITIAL_PROJECTS);
+      if (newCleared) {
+        setChannelSelections({});
+      } else {
+        const map: Record<string, boolean> = {};
+        for (const ws of INITIAL_PROJECTS) {
+          for (const chId of ws.selectedChannelIds) {
+            map[`${ws.id}_${chId}`] = true;
+          }
+        }
+        setChannelSelections(map);
+      }
     });
     return unsub;
   }, []);
@@ -407,6 +433,7 @@ export default function ConnectedAccountsPage() {
 
   // Channel selections map: { `${workspaceId}_${channelId}`: boolean }
   const [channelSelections, setChannelSelections] = useState<Record<string, boolean>>(() => {
+    if (isMockDataCleared()) return {};
     const map: Record<string, boolean> = {};
     for (const ws of INITIAL_PROJECTS) {
       for (const chId of ws.selectedChannelIds) {

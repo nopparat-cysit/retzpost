@@ -79,6 +79,12 @@ import {
   deleteCustomTemplate 
 } from '@/modules/publishing/templates';
 import { WorkspaceRole, hasPermission } from '@/modules/workspaces/team-roles';
+import { 
+  isMockDataCleared, 
+  subscribeToMockDataChange, 
+  loadSampleMockData, 
+  clearAllMockData 
+} from '@/modules/data/mock-data-manager';
 
 type MediaTypeMode = 'PHOTOS' | 'VIDEO' | 'TEXT_ONLY';
 
@@ -675,34 +681,109 @@ export default function CreatePostPage() {
     }));
   };
 
-  // Sample Photos
-  const [images, setImages] = useState<Array<{ id: string; name: string; size: string }>>([
+  // Mock Data Clean / Demo Mode State
+  const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
+
+  // Sample Photos (Demo Mode)
+  const SAMPLE_PHOTOS = useMemo(() => [
     { id: 'img-1', name: 'editorial_hero_cover_01.jpg', size: '3.8 MB' },
     { id: 'img-2', name: 'diagram_architecture_flow_02.png', size: '2.4 MB' },
-  ]);
+  ], []);
 
-  // Sample Video
-  const [videoAsset, setVideoAsset] = useState({
+  // Sample Video (Demo Mode)
+  const SAMPLE_VIDEO = useMemo(() => ({
     name: 'teaser_multi_format_architecture_9x16.mp4',
     size: '42.6 MB',
     duration: '00:48',
     resolution: '1080x1920 (9:16 Vertical)',
-  });
+  }), []);
 
-  // Placements State Dictionary: [accountId_format]: boolean
-  const [placements, setPlacements] = useState<Record<string, boolean>>({
+  // Sample Placements (Demo Mode)
+  const SAMPLE_PLACEMENTS: Record<string, boolean> = useMemo(() => ({
     'acme_ig_feed': true,
     'acme_ig_story': true,
     'acme_fb_feed': true,
-  });
+  }), []);
+
+  const SAMPLE_WORKING_TITLE = 'Omni-Format Publishing: Simultaneous Feed, Story & Reels';
+  const SAMPLE_SHARED_CAPTION = 'Architecture over aesthetics. In this issue we break down our modular publishing pipeline designed for simultaneous Feed Posts, 24h Stories, and Reels/Shorts.\n\nSwipe to explore the full stack diagrams.';
+  const SAMPLE_SHARED_TAGS = 'architecture, publishing, tech, design-system';
+  const SAMPLE_STORY_LINK_URL = 'https://retzpost.com/announcement';
+
+  // Sample Photos
+  const [images, setImages] = useState<Array<{ id: string; name: string; size: string }>>(() =>
+    isMockDataCleared() ? [] : [
+      { id: 'img-1', name: 'editorial_hero_cover_01.jpg', size: '3.8 MB' },
+      { id: 'img-2', name: 'diagram_architecture_flow_02.png', size: '2.4 MB' },
+    ]
+  );
+
+  // Sample Video
+  const [videoAsset, setVideoAsset] = useState<{
+    name: string;
+    size: string;
+    duration: string;
+    resolution: string;
+  } | null>(() =>
+    isMockDataCleared() ? null : {
+      name: 'teaser_multi_format_architecture_9x16.mp4',
+      size: '42.6 MB',
+      duration: '00:48',
+      resolution: '1080x1920 (9:16 Vertical)',
+    }
+  );
+
+  // Placements State Dictionary: [accountId_format]: boolean
+  const [placements, setPlacements] = useState<Record<string, boolean>>(() =>
+    isMockDataCleared() ? {} : ({
+      'acme_ig_feed': true,
+      'acme_ig_story': true,
+      'acme_fb_feed': true,
+    } as Record<string, boolean>)
+  );
 
   // Content Fields (Column 2)
-  const [workingTitle, setWorkingTitle] = useState('Omni-Format Publishing: Simultaneous Feed, Story & Reels');
-  const [sharedCaption, setSharedCaption] = useState(
-    'Architecture over aesthetics. In this issue we break down our modular publishing pipeline designed for simultaneous Feed Posts, 24h Stories, and Reels/Shorts.\n\nSwipe to explore the full stack diagrams.'
+  const [workingTitle, setWorkingTitle] = useState(() =>
+    isMockDataCleared() ? '' : 'Omni-Format Publishing: Simultaneous Feed, Story & Reels'
   );
-  const [sharedTags, setSharedTags] = useState('architecture, publishing, tech, design-system');
-  const [storyLinkUrl, setStoryLinkUrl] = useState('https://retzpost.com/announcement');
+  const [sharedCaption, setSharedCaption] = useState(() =>
+    isMockDataCleared() ? '' : 'Architecture over aesthetics. In this issue we break down our modular publishing pipeline designed for simultaneous Feed Posts, 24h Stories, and Reels/Shorts.\n\nSwipe to explore the full stack diagrams.'
+  );
+  const [sharedTags, setSharedTags] = useState(() =>
+    isMockDataCleared() ? '' : 'architecture, publishing, tech, design-system'
+  );
+  const [storyLinkUrl, setStoryLinkUrl] = useState(() =>
+    isMockDataCleared() ? '' : 'https://retzpost.com/announcement'
+  );
+
+  // Sync with Global Mock Data Clean / Demo Switcher
+  useEffect(() => {
+    const cleared = isMockDataCleared();
+    setIsMockCleared(cleared);
+
+    const unsubscribe = subscribeToMockDataChange((newCleared) => {
+      setIsMockCleared(newCleared);
+      if (newCleared) {
+        setImages([]);
+        setVideoAsset(null);
+        setPlacements({});
+        setWorkingTitle('');
+        setSharedCaption('');
+        setSharedTags('');
+        setStoryLinkUrl('');
+      } else {
+        setImages(SAMPLE_PHOTOS);
+        setVideoAsset(SAMPLE_VIDEO);
+        setPlacements(SAMPLE_PLACEMENTS);
+        setWorkingTitle(SAMPLE_WORKING_TITLE);
+        setSharedCaption(SAMPLE_SHARED_CAPTION);
+        setSharedTags(SAMPLE_SHARED_TAGS);
+        setStoryLinkUrl(SAMPLE_STORY_LINK_URL);
+      }
+    });
+
+    return unsubscribe;
+  }, [SAMPLE_PHOTOS, SAMPLE_VIDEO, SAMPLE_PLACEMENTS]);
 
   // Auto-Save Draft & Recovery Engine
   const [lastSavedDraftTime, setLastSavedDraftTime] = useState<string | null>(null);
@@ -972,8 +1053,9 @@ export default function CreatePostPage() {
 
   // Active Channels Filtered by Workspace
   const workspaceChannels = useMemo(() => {
+    if (isMockCleared) return [];
     return CHANNELS_BY_WORKSPACE.filter(ch => ch.workspaceId === activeWorkspaceId);
-  }, [activeWorkspaceId]);
+  }, [activeWorkspaceId, isMockCleared]);
 
   // Active Account for Live Proof Preview (Graceful fallback to workspace-branded account if not connected)
   const previewAccount = useMemo(() => {
@@ -1469,6 +1551,32 @@ export default function CreatePostPage() {
             <span className="text-xs font-mono text-brand-indigo font-semibold px-2.5 py-1.5 bg-brand-indigo/10 rounded-editorial border border-brand-indigo/20">
               {totalActivePlacements} Active Placements
             </span>
+
+            {isMockCleared ? (
+              <button
+                type="button"
+                onClick={() => {
+                  loadSampleMockData();
+                }}
+                className="px-2.5 py-1.5 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="โหลดข้อมูลตัวอย่างสำหรับทดสอบเขียนโพสต์"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>โหลดตัวอย่าง (Demo)</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  clearAllMockData();
+                }}
+                className="px-2.5 py-1.5 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-accent-terracotta font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                title="ล้างข้อมูลตัวอย่างทั้งหมด เริ่มต้นเขียนจากศูนย์"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>เคลียร์แบบร่าง (Clean)</span>
+              </button>
+            )}
           </div>
         }
       />
@@ -2120,24 +2228,46 @@ export default function CreatePostPage() {
 
             {/* Video Card */}
             {mediaMode === 'VIDEO' && (
-              <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <div className="w-10 h-10 rounded-editorial bg-semantic-info/10 text-semantic-info flex items-center justify-center shrink-0 border border-semantic-info/20">
-                    <Film className="w-5 h-5" />
+              videoAsset ? (
+                <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-10 h-10 rounded-editorial bg-semantic-info/10 text-semantic-info flex items-center justify-center shrink-0 border border-semantic-info/20">
+                      <Film className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-xs text-ink-primary font-mono truncate max-w-[200px]">
+                        {videoAsset.name}
+                      </h3>
+                      <p className="text-[10px] font-mono text-semantic-success mt-0.5">
+                        {videoAsset.resolution} • {videoAsset.duration}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-xs text-ink-primary font-mono truncate max-w-[200px]">
-                      {videoAsset.name}
-                    </h3>
-                    <p className="text-[10px] font-mono text-semantic-success mt-0.5">
-                      {videoAsset.resolution} • {videoAsset.duration}
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2 py-0.5 rounded bg-semantic-success/10 text-semantic-success text-[9px] font-mono font-semibold">
+                      ✓ Validated
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => setVideoAsset(null)}
+                      className="p-1 text-ink-secondary hover:text-accent-terracotta transition-colors"
+                      title="ลบวิดีโอ"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
-                <span className="px-2 py-0.5 rounded bg-semantic-success/10 text-semantic-success text-[9px] font-mono font-semibold">
-                  ✓ Validated
-                </span>
-              </div>
+              ) : (
+                <div className="border-2 border-dashed border-border-rule rounded-editorial p-6 text-center bg-paper-canvas hover:border-brand-indigo/50 transition-colors">
+                  <Film className="w-8 h-8 mx-auto text-brand-indigo/50 mb-2" />
+                  <p className="text-xs font-semibold text-ink-primary">
+                    คลิกหรือลากไฟล์วิดีโอ (MP4/MOV) มาวางที่นี่
+                  </p>
+                  <p className="text-[10px] font-mono text-ink-secondary mt-1">
+                    รองรับอัตราส่วน 9:16 (Reels/Shorts/TikTok) ความละเอียดสูงสุด 1080x1920
+                  </p>
+                </div>
+              )
             )}
 
             {/* Text Only Indicator */}
@@ -2554,19 +2684,26 @@ export default function CreatePostPage() {
 
                   <div className="aspect-[4/3] bg-paper-subtle relative flex items-center justify-center border-b border-border-rule/60">
                     {mediaMode === 'PHOTOS' && (
-                      <>
-                        <ImageIcon className="w-8 h-8 text-brand-indigo/40" />
-                        <span className="absolute bottom-2 right-2 px-1.5 py-0.2 rounded-full bg-ink-primary/75 text-white font-mono text-[9px]">
-                          1/{images.length}
-                        </span>
-                      </>
+                      images.length > 0 ? (
+                        <>
+                          <ImageIcon className="w-8 h-8 text-brand-indigo/40" />
+                          <span className="absolute bottom-2 right-2 px-1.5 py-0.2 rounded-full bg-ink-primary/75 text-white font-mono text-[9px]">
+                            1/{images.length}
+                          </span>
+                        </>
+                      ) : (
+                        <div className="text-center p-3 text-ink-secondary/60">
+                          <ImageIcon className="w-8 h-8 mx-auto mb-1 opacity-40 text-brand-indigo" />
+                          <span className="text-[10px] font-mono">ยังไม่มีรูปภาพ</span>
+                        </div>
+                      )
                     )}
                     {mediaMode === 'VIDEO' && (
                       <div className="text-center">
                         <div className="w-10 h-10 mx-auto rounded-full bg-black/40 flex items-center justify-center mb-1">
                           <Play className="w-5 h-5 text-white fill-white ml-0.5" />
                         </div>
-                        <span className="text-[9px] font-mono text-ink-secondary">{videoAsset.duration} • 1080p</span>
+                        <span className="text-[9px] font-mono text-ink-secondary">{videoAsset?.duration || '00:00'} • 1080p</span>
                       </div>
                     )}
                     {mediaMode === 'TEXT_ONLY' && (
@@ -2762,10 +2899,19 @@ export default function CreatePostPage() {
                   {/* Media or Link Preview Box */}
                   {mediaMode === 'PHOTOS' ? (
                     <div className="aspect-[16/9] bg-paper-subtle relative flex items-center justify-center border-y border-border-rule/60">
-                      <ImageIcon className="w-8 h-8 text-[#1877F2]/40" />
-                      <span className="absolute bottom-2 right-2 px-1.5 py-0.2 rounded bg-ink-primary/75 text-white font-mono text-[9px]">
-                        {images.length} photos
-                      </span>
+                      {images.length > 0 ? (
+                        <>
+                          <ImageIcon className="w-8 h-8 text-[#1877F2]/40" />
+                          <span className="absolute bottom-2 right-2 px-1.5 py-0.2 rounded bg-ink-primary/75 text-white font-mono text-[9px]">
+                            {images.length} photos
+                          </span>
+                        </>
+                      ) : (
+                        <div className="text-center p-3 text-ink-secondary/60">
+                          <ImageIcon className="w-8 h-8 mx-auto mb-1 opacity-40 text-[#1877F2]" />
+                          <span className="text-[10px] font-mono">ยังไม่มีรูปภาพ</span>
+                        </div>
+                      )}
                     </div>
                   ) : mediaMode === 'VIDEO' ? (
                     <div className="aspect-[16/9] bg-ink-primary text-white relative flex items-center justify-center border-y border-border-rule/60">
@@ -2773,7 +2919,7 @@ export default function CreatePostPage() {
                         <Play className="w-5 h-5 fill-white text-white ml-0.5" />
                       </div>
                       <span className="absolute bottom-2 right-2 px-1.5 py-0.2 rounded bg-black/80 font-mono text-[9px]">
-                        {videoAsset.duration}
+                        {videoAsset?.duration || '00:00'}
                       </span>
                     </div>
                   ) : storyLinkUrl ? (
@@ -2980,7 +3126,7 @@ export default function CreatePostPage() {
                       <Play className="w-6 h-6 fill-white text-white ml-0.5" />
                     </div>
                     <span className="absolute bottom-2 right-2 px-1 py-0.2 rounded bg-black/90 font-mono text-[9px] font-bold">
-                      {videoAsset.duration || '04:15'}
+                      {videoAsset?.duration || '00:00'}
                     </span>
                   </div>
 

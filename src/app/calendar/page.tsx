@@ -945,14 +945,14 @@ export default function EditorialCalendarPage() {
 
           <div className="hidden sm:flex items-center gap-1.5 text-ink-secondary font-mono border-l border-border-rule pl-3">
             <TrendingUp className="w-3.5 h-3.5 text-semantic-success shrink-0" />
-            <span className="font-bold text-ink-primary">185.4K</span>
-            <span className="text-[10px] text-semantic-success font-semibold">(+24%)</span>
+            <span className="font-bold text-ink-primary">{isMockCleared || events.length === 0 ? '0' : '185.4K'}</span>
+            <span className="text-[10px] text-semantic-success font-semibold">({isMockCleared || events.length === 0 ? '0%' : '+24%'})</span>
           </div>
 
           <div className="hidden md:flex items-center gap-1.5 text-ink-secondary font-mono border-l border-border-rule pl-3">
             <Flame className="w-3.5 h-3.5 text-accent-terracotta shrink-0" />
             <span>AI Match:</span>
-            <strong className="text-accent-terracotta">94%</strong>
+            <strong className="text-accent-terracotta">{isMockCleared || events.length === 0 ? '—' : '94%'}</strong>
           </div>
 
           <div className="hidden lg:flex items-center gap-1.5 text-ink-secondary font-mono border-l border-border-rule pl-3">
@@ -1010,8 +1010,8 @@ export default function EditorialCalendarPage() {
                 <TrendingUp className="w-3.5 h-3.5 text-semantic-success" />
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="font-serif text-2xl font-bold text-ink-primary">185.4K</span>
-                <span className="text-[11px] font-mono text-ink-secondary">+24% vs last mo</span>
+                <span className="font-serif text-2xl font-bold text-ink-primary">{isMockCleared || events.length === 0 ? '0' : '185.4K'}</span>
+                <span className="text-[11px] font-mono text-ink-secondary">{isMockCleared || events.length === 0 ? '0% vs last mo' : '+24% vs last mo'}</span>
               </div>
             </div>
 
@@ -1033,7 +1033,7 @@ export default function EditorialCalendarPage() {
                 <Flame className="w-3.5 h-3.5 text-accent-terracotta" />
               </div>
               <div className="flex items-baseline gap-2">
-                <span className="font-serif text-2xl font-bold text-accent-terracotta">94%</span>
+                <span className="font-serif text-2xl font-bold text-accent-terracotta">{isMockCleared || events.length === 0 ? '—' : '94%'}</span>
                 <span className="text-[11px] font-mono text-ink-secondary">Prime Window Match</span>
               </div>
             </div>
@@ -1071,7 +1071,9 @@ export default function EditorialCalendarPage() {
               <span>Workspace:</span>
             </span>
           }
-          items={[
+          items={isMockCleared ? [
+            { id: 'ALL', label: 'All Workspaces', count: events.length }
+          ] : [
             { id: 'ALL', label: 'All Workspaces', count: events.length },
             ...(['CAPITAL_ONE', 'ACME_CREATOR', 'RETZPOST', 'COFFEE_CRAFT'] as const).map((wsKey) => ({
               id: wsKey,
