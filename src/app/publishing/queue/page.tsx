@@ -452,12 +452,12 @@ export default function PublishingQueuePage() {
           <table className="w-full text-left text-xs">
             <thead className="bg-paper-subtle border-b border-border-rule font-mono text-[10px] text-ink-secondary uppercase">
               <tr>
-                <th className="py-3 px-4">Job ID</th>
-                <th className="py-3 px-4">Destination & Format</th>
-                <th className="py-3 px-4">Payload Story</th>
-                <th className="py-3 px-4">Status & Diagnostics</th>
-                <th className="py-3 px-4">Attempts</th>
-                <th className="py-3 px-4 text-right">Result & Actions</th>
+                <th className="py-3 px-4 min-w-[105px]">Job ID</th>
+                <th className="py-3 px-4 min-w-[200px]">Destination & Format</th>
+                <th className="py-3 px-4 min-w-[240px]">Payload Story</th>
+                <th className="py-3 px-4 min-w-[170px]">Status & Diagnostics</th>
+                <th className="py-3 px-4 min-w-[85px]">Attempts</th>
+                <th className="py-3 px-4 min-w-[190px] text-right">Result & Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border-rule">
@@ -525,9 +525,9 @@ export default function PublishingQueuePage() {
                           {job.scheduledOrExecutedAt}
                         </span>
                         {job.stickyFeedback && (
-                          <div className="mt-1.5 p-2 bg-[#FFF9C4] border border-[#FBC02D]/60 rounded text-[10px] text-[#554a00] font-sans flex items-start gap-1 shadow-2xs">
+                          <div className="mt-2 p-2.5 bg-[#FFFDE7] border border-[#FBC02D]/70 rounded-editorial text-[10px] text-[#4A4000] font-sans flex items-start gap-1.5 shadow-2xs">
                             <span className="shrink-0 text-xs">📌</span>
-                            <span className="line-clamp-2"><strong>โน้ตแก้ไข:</strong> {job.stickyFeedback}</span>
+                            <span className="leading-relaxed"><strong>โน้ตแก้ไข:</strong> {job.stickyFeedback}</span>
                           </div>
                         )}
                       </td>
@@ -557,7 +557,7 @@ export default function PublishingQueuePage() {
                       </td>
 
                       {/* Actions / Live Links */}
-                      <td className="py-3.5 px-4 text-right align-top">
+                      <td className="py-3.5 px-4 text-right align-top min-w-[190px]">
                         {(job.status === 'PENDING_REVIEW' || job.status === 'NEEDS_REVISION') && (
                           <div className="flex flex-col items-end gap-1">
                             <button
@@ -565,13 +565,13 @@ export default function PublishingQueuePage() {
                                 setSelectedReviewJob(job);
                                 setManagerNoteInput(job.stickyFeedback || '');
                               }}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold bg-accent-terracotta hover:bg-accent-terracotta/90 text-white rounded-editorial transition-all shadow-2xs cursor-pointer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial transition-all shadow-2xs cursor-pointer whitespace-nowrap"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               <span>ตรวจงาน (Review)</span>
                             </button>
                             {job.submittedBy && (
-                              <span className="text-[9px] font-mono text-ink-secondary">
+                              <span className="text-[9px] font-mono text-ink-secondary whitespace-nowrap">
                                 By {job.submittedBy}
                               </span>
                             )}
@@ -584,14 +584,14 @@ export default function PublishingQueuePage() {
                               href={job.liveUrl}
                               target="_blank"
                               rel="noreferrer"
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold text-brand-indigo hover:text-white hover:bg-brand-indigo bg-paper-canvas border border-brand-indigo/30 rounded-editorial transition-all shadow-2xs group cursor-pointer"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold text-brand-indigo hover:text-white hover:bg-brand-indigo bg-paper-canvas border border-brand-indigo/30 rounded-editorial transition-all shadow-2xs group cursor-pointer whitespace-nowrap"
                               title={`เปิดดูโพสต์จริงบน ${job.platform}`}
                             >
                               <SocialPlatformIcon platform={job.platform} format={job.format} size={15} />
                               <span>ดูบน {job.platform === 'FACEBOOK' ? 'Facebook' : job.platform === 'INSTAGRAM' ? 'Instagram' : job.platform === 'YOUTUBE' ? 'YouTube' : 'TikTok'}</span>
                               <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                             </a>
-                            <span className="text-[9px] font-mono text-semantic-success flex items-center gap-1 font-medium">
+                            <span className="text-[9px] font-mono text-semantic-success flex items-center gap-1 font-medium whitespace-nowrap">
                               <span className="w-1.5 h-1.5 rounded-full bg-semantic-success" />
                               <span>Live on Web</span>
                             </span>
