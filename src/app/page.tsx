@@ -53,12 +53,19 @@ import {
   Users,
   Target,
   ShieldCheck,
-  Heart
+  Heart,
+  Edit3,
+  Save,
+  RotateCcw,
+  Wand2
 } from 'lucide-react';
 import { 
   getEmployeeKPIs, 
   getDepartmentSummary, 
-  EmployeeKPI 
+  EmployeeKPI,
+  generateAiKpiCoaching,
+  saveEmployeeKpiEvaluation,
+  resetEmployeeKpiEvaluations
 } from '@/modules/analytics/kpi-engine';
 import { 
   getPostDiagnosis, 
@@ -700,15 +707,92 @@ export default function HomePage() {
   const [selectedEmployeeKpi, setSelectedEmployeeKpi] = useState<EmployeeKPI | null>(null);
   const [selectedPostDiagnosis, setSelectedPostDiagnosis] = useState<PostDiagnosisInsight | null>(null);
   const [kpiTimeframe, setKpiTimeframe] = useState<'THIS_MONTH' | 'LAST_MONTH' | 'Q3_2026'>('THIS_MONTH');
+  const [kpiUpdateVersion, setKpiUpdateVersion] = useState<number>(0);
+  const [isEditingKpiNotes, setIsEditingKpiNotes] = useState<boolean>(false);
+  const [editStrengths, setEditStrengths] = useState<string>('');
+  const [editCoachingNotes, setEditCoachingNotes] = useState<string>('');
+  const [editFocusTags, setEditFocusTags] = useState<string[]>([]);
+  const [isAiGeneratingCoaching, setIsAiGeneratingCoaching] = useState<boolean>(false);
+  const [kpiEvaluationNotice, setKpiEvaluationNotice] = useState<string | null>(null);
 
   // Employee KPI Queries
   const employeeKpis = useMemo(() => {
     return getEmployeeKPIs(workspaceFilter);
-  }, [workspaceFilter]);
+  }, [workspaceFilter, kpiUpdateVersion]);
 
   const departmentSummary = useMemo(() => {
     return getDepartmentSummary(workspaceFilter);
-  }, [workspaceFilter]);
+  }, [workspaceFilter, kpiUpdateVersion]);
+
+  const handleOpenEmployeeScorecard = (emp: EmployeeKPI) => {
+    setSelectedEmployeeKpi(emp);
+    setIsEditingKpiNotes(false);
+    setEditStrengths(emp.strengthsTh);
+    setEditCoachingNotes(emp.coachingNotesTh);
+    setEditFocusTags(emp.focusTags || []);
+  };
+
+  const handleAiGenerateCoaching = () => {
+    if (!selectedEmployeeKpi) return;
+    setIsAiGeneratingCoaching(true);
+    
+    // Simulate brief AI inference time for delightful feedback
+    setTimeout(() => {
+      const result = generateAiKpiCoaching(selectedEmployeeKpi);
+      setEditStrengths(result.strengthsTh);
+      setEditCoachingNotes(result.coachingNotesTh);
+      setEditFocusTags(result.focusTags);
+      setIsEditingKpiNotes(true);
+      setIsAiGeneratingCoaching(false);
+      setKpiEvaluationNotice('✨ AI ร่างจุดเด่นและแผนโค้ชชิ่งให้เรียบร้อยแล้ว (สามารถปรับแต่งและกดบันทึก)');
+      setTimeout(() => setKpiEvaluationNotice(null), 4000);
+    }, 500);
+  };
+
+  const handleSaveKpiEvaluation = () => {
+    if (!selectedEmployeeKpi) return;
+    saveEmployeeKpiEvaluation(
+      selectedEmployeeKpi.memberId,
+      editStrengths,
+      editCoachingNotes,
+      editFocusTags,
+      false
+    );
+
+    const updatedEmp: EmployeeKPI = {
+      ...selectedEmployeeKpi,
+      strengthsTh: editStrengths,
+      coachingNotesTh: editCoachingNotes,
+      focusTags: editFocusTags,
+      lastEvaluatedAt: new Date().toISOString(),
+      evaluatedBy: 'หัวหน้างาน (Lead Editor)',
+      isAiGenerated: false,
+    };
+
+    setSelectedEmployeeKpi(updatedEmp);
+    setKpiUpdateVersion((v) => v + 1);
+    setIsEditingKpiNotes(false);
+    setKpiEvaluationNotice(`💾 บันทึกการประเมินและแผนโค้ชชิ่งของ "${selectedEmployeeKpi.name}" เรียบร้อยแล้ว`);
+    setTimeout(() => setKpiEvaluationNotice(null), 3500);
+  };
+
+  const handleResetKpis = () => {
+    resetEmployeeKpiEvaluations();
+    setKpiUpdateVersion((v) => v + 1);
+    if (selectedEmployeeKpi) {
+      const refreshed = getEmployeeKPIs(workspaceFilter).find(
+        (e) => e.memberId === selectedEmployeeKpi.memberId
+      );
+      if (refreshed) {
+        setSelectedEmployeeKpi(refreshed);
+        setEditStrengths(refreshed.strengthsTh);
+        setEditCoachingNotes(refreshed.coachingNotesTh);
+        setEditFocusTags(refreshed.focusTags || []);
+      }
+    }
+    setKpiEvaluationNotice('🔄 คืนค่าการประเมินกลับสู่ค่ามาตรฐานเรียบร้อยแล้ว');
+    setTimeout(() => setKpiEvaluationNotice(null), 3000);
+  };
 
   const handleCopyLink = (url: string, label: string) => {
     navigator.clipboard.writeText(url);
@@ -1947,8 +2031,35 @@ export default function HomePage() {
                 <Download className="w-3.5 h-3.5 text-brand-indigo" />
                 <span>Export CSV</span>
               </button>
+
+              <button
+                type="button"
+                onClick={handleResetKpis}
+                title="คืนค่าการประเมินเป็นค่าเริ่มต้นจำลอง"
+                className="px-2.5 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-secondary hover:text-ink-primary font-mono text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>รีเซ็ตค่าเริ่มต้น</span>
+              </button>
             </div>
           </div>
+
+          {/* KPI EVALUATION NOTICE BANNER */}
+          {kpiEvaluationNotice && (
+            <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-editorial text-xs font-mono flex items-center justify-between animate-in fade-in">
+              <div className="flex items-center gap-2">
+                <Check className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>{kpiEvaluationNotice}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setKpiEvaluationNotice(null)}
+                className="text-emerald-700 hover:text-emerald-900 text-xs px-1 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
           {/* TOP 4 DEPARTMENT KPI PULSE METRICS */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -2081,7 +2192,7 @@ export default function HomePage() {
                     return (
                       <tr 
                         key={emp.memberId}
-                        onClick={() => setSelectedEmployeeKpi(emp)}
+                        onClick={() => handleOpenEmployeeScorecard(emp)}
                         className="hover:bg-paper-canvas/80 transition-colors cursor-pointer group"
                       >
                         {/* Member & Rank */}
@@ -2094,9 +2205,16 @@ export default function HomePage() {
                               {emp.avatarText}
                             </div>
                             <div className="min-w-0">
-                              <p className="font-serif font-bold text-sm text-ink-primary group-hover:text-brand-indigo transition-colors truncate">
-                                {emp.name}
-                              </p>
+                              <div className="flex items-center gap-1.5">
+                                <p className="font-serif font-bold text-sm text-ink-primary group-hover:text-brand-indigo transition-colors truncate">
+                                  {emp.name}
+                                </p>
+                                {emp.focusTags?.[0] && (
+                                  <span className="hidden sm:inline-block px-1.5 py-0.2 rounded text-[9px] font-mono bg-paper-canvas border border-border-rule text-ink-secondary">
+                                    {emp.focusTags[0]}
+                                  </span>
+                                )}
+                              </div>
                               <div className="flex items-center gap-1.5 text-[10px] text-ink-secondary">
                                 <span className="truncate">{emp.roleTh}</span>
                                 <span>•</span>
@@ -2174,9 +2292,9 @@ export default function HomePage() {
                             type="button"
                             onClick={(e) => {
                               e.stopPropagation();
-                              setSelectedEmployeeKpi(emp);
+                              handleOpenEmployeeScorecard(emp);
                             }}
-                            className="px-2.5 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary text-xs font-semibold hover:text-brand-indigo transition-colors shadow-2xs"
+                            className="px-2.5 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary text-xs font-semibold hover:text-brand-indigo transition-colors shadow-2xs cursor-pointer"
                           >
                             <span>ดู Scorecard ↗</span>
                           </button>
@@ -2409,27 +2527,166 @@ export default function HomePage() {
                 </div>
               </div>
 
-              {/* Strengths & Coaching Notes */}
+              {/* Strengths & Coaching Notes (Hybrid AI + Manager Evaluation) */}
               <div className="p-4 bg-paper-canvas border border-border-rule rounded-editorial space-y-3 font-sans">
-                <div className="space-y-1">
-                  <span className="font-mono text-xs font-bold text-emerald-800 flex items-center gap-1.5 uppercase">
-                    <Award className="w-4 h-4 text-emerald-600" />
-                    <span>จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):</span>
-                  </span>
-                  <p className="text-xs text-ink-primary leading-relaxed pl-5">
-                    {selectedEmployeeKpi.strengthsTh}
-                  </p>
+                {/* Header Toolbar */}
+                <div className="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-border-rule">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs font-bold text-ink-primary uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5 text-accent-terracotta" />
+                      <span>การประเมินผลงาน & โค้ชชิ่ง</span>
+                    </span>
+                    {selectedEmployeeKpi.evaluatedBy && (
+                      <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-brand-indigo/10 text-brand-indigo border border-brand-indigo/20 font-medium">
+                        {selectedEmployeeKpi.evaluatedBy}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={handleAiGenerateCoaching}
+                      disabled={isAiGeneratingCoaching}
+                      className="px-2.5 py-1 rounded-editorial bg-gradient-to-r from-accent-terracotta/15 to-brand-indigo/15 hover:from-accent-terracotta/25 hover:to-brand-indigo/25 text-ink-primary border border-brand-indigo/30 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer disabled:opacity-50"
+                      title="วิเคราะห์ On-Time, Approval Rate, และ Volume เพื่อสังเคราะห์ข้อความใหม่"
+                    >
+                      <Sparkles className={`w-3.5 h-3.5 text-brand-indigo ${isAiGeneratingCoaching ? 'animate-spin' : ''}`} />
+                      <span>{isAiGeneratingCoaching ? 'AI กำลังประมวลผล...' : '✨ สังเคราะห์ด้วย AI'}</span>
+                    </button>
+
+                    {!isEditingKpiNotes ? (
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingKpiNotes(true)}
+                        className="px-2.5 py-1 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary hover:text-brand-indigo text-xs font-mono font-semibold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" />
+                        <span>✏️ แก้ไขโน้ต</span>
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsEditingKpiNotes(false);
+                          setEditStrengths(selectedEmployeeKpi.strengthsTh);
+                          setEditCoachingNotes(selectedEmployeeKpi.coachingNotesTh);
+                          setEditFocusTags(selectedEmployeeKpi.focusTags || []);
+                        }}
+                        className="px-2.5 py-1 rounded-editorial bg-paper-canvas border border-border-rule hover:bg-paper-subtle text-ink-secondary text-xs font-mono transition-colors cursor-pointer"
+                      >
+                        ยกเลิก
+                      </button>
+                    )}
+                  </div>
                 </div>
 
-                <div className="pt-2.5 border-t border-border-rule space-y-1">
-                  <span className="font-mono text-xs font-bold text-brand-indigo flex items-center gap-1.5 uppercase">
-                    <FileText className="w-4 h-4 text-brand-indigo" />
-                    <span>ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):</span>
-                  </span>
-                  <p className="text-xs text-ink-secondary leading-relaxed pl-5">
-                    {selectedEmployeeKpi.coachingNotesTh}
-                  </p>
-                </div>
+                {/* Focus Tags Chips */}
+                {(isEditingKpiNotes ? editFocusTags : (selectedEmployeeKpi.focusTags || [])).length > 0 && (
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    {(isEditingKpiNotes ? editFocusTags : (selectedEmployeeKpi.focusTags || [])).map((tag, idx) => (
+                      <span key={idx} className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-paper-subtle border border-border-rule text-ink-primary">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Form or Display */}
+                {isEditingKpiNotes ? (
+                  <div className="space-y-3 pt-1">
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <label className="font-bold text-emerald-800 flex items-center gap-1.5 uppercase">
+                          <Award className="w-4 h-4 text-emerald-600" />
+                          <span>จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):</span>
+                        </label>
+                        <span className="text-[10px] text-ink-muted">{editStrengths.length} ตัวอักษร</span>
+                      </div>
+                      <textarea
+                        value={editStrengths}
+                        onChange={(e) => setEditStrengths(e.target.value)}
+                        rows={3}
+                        className="w-full p-2.5 bg-paper-canvas border border-brand-indigo/40 rounded-editorial text-xs text-ink-primary font-sans leading-relaxed focus:outline-none focus:ring-1 focus:ring-brand-indigo"
+                        placeholder="ระบุจุดเด่น ปัจจัยความสำเร็จ หรือผลงานที่โดดเด่น..."
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <label className="font-bold text-brand-indigo flex items-center gap-1.5 uppercase">
+                          <FileText className="w-4 h-4 text-brand-indigo" />
+                          <span>ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):</span>
+                        </label>
+                        <span className="text-[10px] text-ink-muted">{editCoachingNotes.length} ตัวอักษร</span>
+                      </div>
+                      <textarea
+                        value={editCoachingNotes}
+                        onChange={(e) => setEditCoachingNotes(e.target.value)}
+                        rows={3}
+                        className="w-full p-2.5 bg-paper-canvas border border-brand-indigo/40 rounded-editorial text-xs text-ink-primary font-sans leading-relaxed focus:outline-none focus:ring-1 focus:ring-brand-indigo"
+                        placeholder="ระบุคำแนะนำ แผนการเติบโต หรือจุดที่ต้องการให้พัฒนา..."
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-border-rule">
+                      <span className="text-[10px] text-ink-muted font-mono">
+                        💡 กด &quot;✨ สังเคราะห์ด้วย AI&quot; เพื่อให้ AI ช่วยร่างข้อความใหม่ได้ตลอดเวลา
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsEditingKpiNotes(false);
+                            setEditStrengths(selectedEmployeeKpi.strengthsTh);
+                            setEditCoachingNotes(selectedEmployeeKpi.coachingNotesTh);
+                            setEditFocusTags(selectedEmployeeKpi.focusTags || []);
+                          }}
+                          className="px-3 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas text-ink-secondary text-xs font-mono transition-colors cursor-pointer border border-border-rule"
+                        >
+                          ยกเลิก
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleSaveKpiEvaluation}
+                          className="px-4 py-1.5 rounded-editorial bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs font-bold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
+                        >
+                          <Save className="w-3.5 h-3.5" />
+                          <span>💾 บันทึกการประเมิน</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    <div className="space-y-1">
+                      <span className="font-mono text-xs font-bold text-emerald-800 flex items-center gap-1.5 uppercase">
+                        <Award className="w-4 h-4 text-emerald-600" />
+                        <span>จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):</span>
+                      </span>
+                      <p className="text-xs text-ink-primary leading-relaxed pl-5">
+                        {selectedEmployeeKpi.strengthsTh}
+                      </p>
+                    </div>
+
+                    <div className="pt-2.5 border-t border-border-rule space-y-1">
+                      <span className="font-mono text-xs font-bold text-brand-indigo flex items-center gap-1.5 uppercase">
+                        <FileText className="w-4 h-4 text-brand-indigo" />
+                        <span>ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):</span>
+                      </span>
+                      <p className="text-xs text-ink-secondary leading-relaxed pl-5">
+                        {selectedEmployeeKpi.coachingNotesTh}
+                      </p>
+                    </div>
+
+                    {selectedEmployeeKpi.lastEvaluatedAt && (
+                      <p className="text-[10px] text-ink-muted font-mono pt-1">
+                        🕒 บันทึกล่าสุด: {new Date(selectedEmployeeKpi.lastEvaluatedAt).toLocaleString('th-TH')}
+                      </p>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Recent Dispatches by this Employee */}
@@ -2477,17 +2734,28 @@ export default function HomePage() {
             </div>
 
             {/* Modal Footer */}
-            <div className="p-4 border-t border-border-rule bg-paper-canvas flex items-center justify-between text-xs font-mono">
+            <div className="p-4 border-t border-border-rule bg-paper-canvas flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
               <span className="text-[10px] text-ink-muted">
                 เกณฑ์การวัดผล: Productivity (40%) + Punctuality (30%) + Quality (30%)
               </span>
-              <button
-                type="button"
-                onClick={() => setSelectedEmployeeKpi(null)}
-                className="px-4 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule cursor-pointer"
-              >
-                ปิดหน้าต่าง
-              </button>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleResetKpis}
+                  title="คืนค่าผลประเมินเป็นค่าเริ่มต้นจำลอง"
+                  className="px-3 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas text-ink-secondary hover:text-ink-primary border border-border-rule text-xs cursor-pointer flex items-center gap-1 transition-colors"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>รีเซ็ตค่าเริ่มต้น</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedEmployeeKpi(null)}
+                  className="px-4 py-1.5 rounded-editorial bg-paper-raised hover:bg-paper-subtle text-ink-primary border border-border-rule cursor-pointer font-bold shadow-2xs transition-colors"
+                >
+                  ปิดหน้าต่าง
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -1,5 +1,13 @@
-import { describe, it, expect } from 'vitest';
-import { getEmployeeKPIs, getDepartmentSummary, MOCK_EMPLOYEE_KPIS } from './kpi-engine';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { 
+  getEmployeeKPIs, 
+  getDepartmentSummary, 
+  MOCK_EMPLOYEE_KPIS, 
+  generateAiKpiCoaching,
+  saveEmployeeKpiEvaluation,
+  loadEmployeeKpiOverrides,
+  resetEmployeeKpiEvaluations 
+} from './kpi-engine';
 import { getPostDiagnosis, MOCK_POST_DIAGNOSES } from './ai-insights';
 
 describe('Staff KPI Telemetry Engine', () => {
@@ -53,5 +61,89 @@ describe('AI Post Performance Diagnosis Engine', () => {
     expect(fallback.attributionDrivers.length).toBeGreaterThanOrEqual(2);
     expect(fallback.actionablePlaybook.length).toBeGreaterThanOrEqual(1);
     expect(fallback.isMockData).toBe(true);
+  });
+});
+
+describe('AI Employee KPI Coaching Synthesis & Evaluation Persistence', () => {
+  it('synthesizes high-performing coaching insights for overachieving staff', () => {
+    const narumon = MOCK_EMPLOYEE_KPIS[0];
+    const aiResult = generateAiKpiCoaching(narumon);
+
+    expect(aiResult).toBeDefined();
+    expect(aiResult.strengthsTh).toContain('เกินเป้าหมาย');
+    expect(aiResult.strengthsTh).toContain('ตรงเวลาระดับยอดเยี่ยม');
+    expect(aiResult.strengthsTh).toContain('ผ่านการอนุมัติในรอบแรก');
+    expect(aiResult.coachingNotesTh).toContain('Mentor');
+    expect(aiResult.focusTags.length).toBeGreaterThanOrEqual(2);
+    expect(aiResult.modelName).toContain('Gemini');
+  });
+
+  it('generates corrective and constructive coaching for members needing attention', () => {
+    const ploy = MOCK_EMPLOYEE_KPIS.find((e) => e.memberId === 'mbr-coffee-1')!;
+    const aiResult = generateAiKpiCoaching(ploy);
+
+    expect(aiResult).toBeDefined();
+    expect(aiResult.coachingNotesTh).toContain('ต่ำกว่าเป้าหมาย');
+    expect(aiResult.coachingNotesTh).toContain('Auto-Schedule');
+    expect(aiResult.focusTags).toContain('⚠️ Volume Gap');
+  });
+
+  describe('Client Persistence with LocalStorage Mock', () => {
+    let mockStorage: Record<string, string> = {};
+
+    beforeEach(() => {
+      mockStorage = {};
+      const fakeLocalStorage = {
+        getItem: (key: string) => mockStorage[key] || null,
+        setItem: (key: string, value: string) => {
+          mockStorage[key] = value;
+        },
+        removeItem: (key: string) => {
+          delete mockStorage[key];
+        },
+        clear: () => {
+          mockStorage = {};
+        },
+      };
+      vi.stubGlobal('window', { localStorage: fakeLocalStorage });
+    });
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
+    });
+
+    it('saves custom manager evaluation and merges into getEmployeeKPIs', () => {
+      saveEmployeeKpiEvaluation(
+        'mbr-coffee-1',
+        'จุดเด่นที่หัวหน้างานพิมพ์ประเมินใหม่เอง',
+        'แผนการโค้ชชิ่งประจำไตรมาส 4: เพิ่มความถี่เป็นสัปดาห์ละ 3 คอนเทนต์',
+        ['🎯 Custom Focus', '☕ Cafe Lead'],
+        false
+      );
+
+      const overrides = loadEmployeeKpiOverrides();
+      expect(overrides['mbr-coffee-1']).toBeDefined();
+      expect(overrides['mbr-coffee-1'].strengthsTh).toBe('จุดเด่นที่หัวหน้างานพิมพ์ประเมินใหม่เอง');
+      expect(overrides['mbr-coffee-1'].evaluatedBy).toContain('หัวหน้างาน');
+
+      // Assert merged KPIs
+      const kpis = getEmployeeKPIs('ws_coffee');
+      const ploy = kpis.find((e) => e.memberId === 'mbr-coffee-1')!;
+      expect(ploy.strengthsTh).toBe('จุดเด่นที่หัวหน้างานพิมพ์ประเมินใหม่เอง');
+      expect(ploy.coachingNotesTh).toContain('ไตรมาส 4');
+      expect(ploy.focusTags).toContain('🎯 Custom Focus');
+    });
+
+    it('resets custom evaluations back to mock defaults on resetEmployeeKpiEvaluations', () => {
+      saveEmployeeKpiEvaluation('mbr-c1-3', 'Custom note', 'Custom coaching');
+      expect(loadEmployeeKpiOverrides()['mbr-c1-3']).toBeDefined();
+
+      resetEmployeeKpiEvaluations();
+      expect(loadEmployeeKpiOverrides()['mbr-c1-3']).toBeUndefined();
+
+      const kpis = getEmployeeKPIs('ws_capitalone');
+      const narumon = kpis.find((e) => e.memberId === 'mbr-c1-3')!;
+      expect(narumon.strengthsTh).toContain('เชี่ยวชาญการเขียนแคปชัน');
+    });
   });
 });
