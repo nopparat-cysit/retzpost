@@ -282,7 +282,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
 
 const AVAILABLE_PROJECT_ICONS = [
   { id: 'ws-realestate', label: 'อสังหาริมทรัพย์ / อาคาร' },
-  { id: 'ws-creator', label: 'ครีเอเตอร์ / ไมโครโฟน' },
+  { id: 'ws-creator', label: 'ครีเอเตอร์ / สตูดิโอมีเดีย' },
   { id: 'ws-software', label: 'ซอฟต์แวร์ / เทคโนโลยี' },
   { id: 'ws-cafe', label: 'คาเฟ่ / กาแฟ & ขนม' },
 ];
@@ -972,10 +972,10 @@ export default function ConnectedAccountsPage() {
           return (
             <div
               key={platform.id}
-              className="bg-paper-raised border border-border-rule rounded-card overflow-hidden shadow-xs"
+              className="bg-paper-raised border border-border-rule rounded-card shadow-xs relative"
             >
               {/* Platform Header */}
-              <div className="p-4 bg-paper-canvas/70 border-b border-border-rule flex items-center justify-between gap-3">
+              <div className="p-4 bg-paper-canvas/70 border-b border-border-rule rounded-t-card flex items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
                   <div className="w-9 h-9 rounded-editorial flex items-center justify-center bg-paper-raised border border-border-rule shadow-2xs shrink-0">
                     {platform.icon(22)}
@@ -1009,7 +1009,7 @@ export default function ConnectedAccountsPage() {
 
               {/* Pages / Channels List */}
               {platformAccounts.length === 0 ? (
-                <div className="p-6 text-center space-y-2 bg-paper-canvas/30">
+                <div className="p-6 text-center space-y-2 bg-paper-canvas/30 rounded-b-card">
                   <p className="text-xs font-mono text-ink-secondary">
                     {searchQuery
                       ? `ไม่พบบัญชี ${platform.name} ที่ตรงกับคำค้นหา "${searchQuery}"`
@@ -1028,16 +1028,19 @@ export default function ConnectedAccountsPage() {
                 </div>
               ) : (
                 <div className="divide-y divide-border-rule/60">
-                  {platformAccounts.map((acc) => {
+                  {platformAccounts.map((acc, accIdx) => {
                     const currentWsId = selectedWorkspaceId === 'ALL' ? acc.defaultWorkspaceId : selectedWorkspaceId;
                     const key = `${currentWsId}_${acc.id}`;
                     const isEnabledInCurrentWs = channelSelections[key] ?? (selectedWorkspaceId === 'ALL' ? true : false);
                     const defaultWsObj = workspaces.find((w) => w.id === acc.defaultWorkspaceId);
+                    const isNearBottom = accIdx >= Math.max(1, platformAccounts.length - 2);
 
                     return (
                       <div
                         key={acc.id}
-                        className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 transition-colors gap-3 ${
+                        className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 transition-colors gap-3 last:rounded-b-card ${
+                          openDropdownId === acc.id ? 'z-30 relative ring-1 ring-brand-indigo/30 bg-paper-canvas/60' : ''
+                        } ${
                           isEnabledInCurrentWs
                             ? 'bg-paper-raised hover:bg-paper-canvas/40'
                             : 'bg-paper-subtle/30 hover:bg-paper-subtle/50 opacity-80'
@@ -1141,11 +1144,13 @@ export default function ConnectedAccountsPage() {
                             {openDropdownId === acc.id && (
                               <div
                                 ref={dropdownRef}
-                                className="absolute right-0 top-full mt-1 w-56 bg-paper-raised border border-border-strong rounded-editorial shadow-xl p-1 z-50 animate-in fade-in zoom-in-95 duration-100 text-xs font-mono space-y-0.5"
+                                className={`absolute right-0 ${
+                                  isNearBottom ? 'bottom-full mb-1.5' : 'top-full mt-1.5'
+                                } w-56 bg-paper-raised border border-border-strong rounded-editorial shadow-2xl p-1 z-50 animate-in fade-in zoom-in-95 duration-100 text-xs font-mono space-y-0.5`}
                               >
                                 <div className="px-2 py-1 text-[9px] font-mono uppercase text-ink-secondary font-bold border-b border-border-rule mb-1 flex items-center justify-between">
                                   <span>{acc.platform} OPTIONS</span>
-                                  <span className="text-[8px] text-brand-indigo">{defaultWsObj?.name}</span>
+                                  <span className="text-[8px] text-brand-indigo truncate max-w-[100px]">{defaultWsObj?.name}</span>
                                 </div>
 
                                 <button
