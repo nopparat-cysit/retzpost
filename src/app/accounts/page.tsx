@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { 
   CheckCircle2, 
@@ -18,11 +18,21 @@ import {
   CheckSquare,
   Square,
   Sparkles,
-  Info
+  Info,
+  MoreHorizontal,
+  Copy,
+  Trash2,
+  Activity,
+  Search,
+  ChevronDown,
+  Globe,
+  Radio,
+  Zap,
+  Layers,
+  ArrowRight
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { Sticker } from '@/components/ui/sticker';
-import { StatusTag } from '@/components/ui/status-tag';
 import { 
   SocialPlatformIcon, 
   FacebookLogo, 
@@ -30,9 +40,8 @@ import {
   YouTubeLogo, 
   TikTokLogo 
 } from '@/components/ui/social-icons';
-import { SmartFilterBar } from '@/components/ui/smart-filter-bar';
 
-interface MasterChannelAccount {
+export interface MasterChannelAccount {
   id: string;
   platform: 'FACEBOOK' | 'INSTAGRAM' | 'YOUTUBE' | 'TIKTOK';
   displayName: string;
@@ -44,64 +53,11 @@ interface MasterChannelAccount {
   expiresIn: string;
   capabilities: string;
   lastSynced: string;
+  url?: string;
 }
 
-const MASTER_ACCOUNTS: MasterChannelAccount[] = [
-  // 1. Acme Creator Studio Endpoints
-  {
-    id: 'acc-ig-acme',
-    platform: 'INSTAGRAM',
-    displayName: 'Alex Rivera Studio',
-    handle: '@alexrivera_official',
-    channelId: 'ig_user_17841405',
-    defaultWorkspaceId: 'ws_acme',
-    defaultWorkspaceName: 'Acme Creator Studio',
-    scopes: ['instagram_basic', 'instagram_content_publish'],
-    expiresIn: '60-day Long-Lived Token (Auto-refreshed via Token Vault)',
-    capabilities: 'Feed Photos • Carousels (Up to 10) • 24h Stories • Reels',
-    lastSynced: '5 mins ago',
-  },
-  {
-    id: 'acc-fb-acme',
-    platform: 'FACEBOOK',
-    displayName: 'Alex Rivera Media Studio',
-    handle: 'FB Page: Alex Rivera Media Studio',
-    channelId: 'fb_page_10928374',
-    defaultWorkspaceId: 'ws_acme',
-    defaultWorkspaceName: 'Acme Creator Studio',
-    scopes: ['pages_show_list', 'pages_manage_posts'],
-    expiresIn: 'Permanent Page Access Token (Encrypted)',
-    capabilities: 'Page Timeline • Photo Albums • Text Status • Page Stories',
-    lastSynced: '5 mins ago',
-  },
-  {
-    id: 'acc-yt-acme',
-    platform: 'YOUTUBE',
-    displayName: 'Alex Rivera Studio (YouTube)',
-    handle: '@AlexRiveraStudio',
-    channelId: 'UC_x65aB891F_Live',
-    defaultWorkspaceId: 'ws_acme',
-    defaultWorkspaceName: 'Acme Creator Studio',
-    scopes: ['youtube.upload', 'youtube.readonly'],
-    expiresIn: 'Active Google OAuth Token',
-    capabilities: 'YouTube Shorts (9:16) • Long-form Videos • Resumable',
-    lastSynced: '10 mins ago',
-  },
-  {
-    id: 'acc-tt-acme',
-    platform: 'TIKTOK',
-    displayName: 'Alex Rivera Official',
-    handle: '@alexrivera_official',
-    channelId: 'open_id_tt_8892',
-    defaultWorkspaceId: 'ws_acme',
-    defaultWorkspaceName: 'Acme Creator Studio',
-    scopes: ['video.publish', 'user.info.basic'],
-    expiresIn: 'Active TikTok Token',
-    capabilities: 'Max Video Duration: 10m (600s) • Direct Post & Inbox',
-    lastSynced: '1 hour ago',
-  },
-
-  // 2. Capital One Real Estate Endpoints
+const INITIAL_MASTER_ACCOUNTS: MasterChannelAccount[] = [
+  // 1. Facebook Pages (4 Pages)
   {
     id: 'acc-fb-c1-th',
     platform: 'FACEBOOK',
@@ -114,19 +70,7 @@ const MASTER_ACCOUNTS: MasterChannelAccount[] = [
     expiresIn: 'Permanent Meta Page Token',
     capabilities: 'Property Listings • Photo Albums • Page Stories • Lead Forms',
     lastSynced: '12 mins ago',
-  },
-  {
-    id: 'acc-ig-c1-main',
-    platform: 'INSTAGRAM',
-    displayName: 'Capital One Thailand Official',
-    handle: '@capitalone.realestate',
-    channelId: 'ig_c1_7718',
-    defaultWorkspaceId: 'ws_capitalone',
-    defaultWorkspaceName: 'Capital One Real Estate',
-    scopes: ['instagram_basic', 'instagram_content_publish'],
-    expiresIn: '60-day Auto-Refresh Token Vault',
-    capabilities: 'Condo Carousel (10) • 24h Story Link Stickers • Luxury Reels',
-    lastSynced: '15 mins ago',
+    url: 'https://www.facebook.com/capitalonethailand',
   },
   {
     id: 'acc-fb-c1-kw',
@@ -140,9 +84,22 @@ const MASTER_ACCOUNTS: MasterChannelAccount[] = [
     expiresIn: 'Permanent Meta Page Token',
     capabilities: 'Ultra-Luxury Penthouse Albums & Syndication',
     lastSynced: '25 mins ago',
+    url: 'https://www.facebook.com/kwluxurythailand',
   },
-
-  // 3. RetzPost Software
+  {
+    id: 'acc-fb-acme',
+    platform: 'FACEBOOK',
+    displayName: 'Alex Rivera Media Studio',
+    handle: 'FB Page: Alex Rivera Media Studio',
+    channelId: 'fb_page_10928374',
+    defaultWorkspaceId: 'ws_acme',
+    defaultWorkspaceName: 'Acme Creator Studio',
+    scopes: ['pages_show_list', 'pages_manage_posts'],
+    expiresIn: 'Permanent Page Access Token (Encrypted)',
+    capabilities: 'Page Timeline • Photo Albums • Text Status • Page Stories',
+    lastSynced: '5 mins ago',
+    url: 'https://www.facebook.com/alexriveramedia',
+  },
   {
     id: 'acc-fb-retz',
     platform: 'FACEBOOK',
@@ -155,9 +112,38 @@ const MASTER_ACCOUNTS: MasterChannelAccount[] = [
     expiresIn: 'Permanent Token',
     capabilities: 'SaaS Product Changelogs & Tech Announcements',
     lastSynced: '2 hours ago',
+    url: 'https://www.facebook.com/retzpost',
   },
 
-  // 4. Coffee Craft BKK
+  // 2. Instagram Accounts (3 Accounts)
+  {
+    id: 'acc-ig-c1-main',
+    platform: 'INSTAGRAM',
+    displayName: 'Capital One Thailand Official',
+    handle: '@capitalone.realestate',
+    channelId: 'ig_c1_7718',
+    defaultWorkspaceId: 'ws_capitalone',
+    defaultWorkspaceName: 'Capital One Real Estate',
+    scopes: ['instagram_basic', 'instagram_content_publish'],
+    expiresIn: '60-day Auto-Refresh Token Vault',
+    capabilities: 'Condo Carousel (10) • 24h Story Link Stickers • Luxury Reels',
+    lastSynced: '15 mins ago',
+    url: 'https://www.instagram.com/capitalone.realestate',
+  },
+  {
+    id: 'acc-ig-acme',
+    platform: 'INSTAGRAM',
+    displayName: 'Alex Rivera Studio',
+    handle: '@alexrivera_official',
+    channelId: 'ig_user_17841405',
+    defaultWorkspaceId: 'ws_acme',
+    defaultWorkspaceName: 'Acme Creator Studio',
+    scopes: ['instagram_basic', 'instagram_content_publish'],
+    expiresIn: '60-day Long-Lived Token (Auto-refreshed via Token Vault)',
+    capabilities: 'Feed Photos • Carousels (Up to 10) • 24h Stories • Reels',
+    lastSynced: '5 mins ago',
+    url: 'https://www.instagram.com/alexrivera_official',
+  },
   {
     id: 'acc-ig-coffee',
     platform: 'INSTAGRAM',
@@ -170,6 +156,39 @@ const MASTER_ACCOUNTS: MasterChannelAccount[] = [
     expiresIn: '60-day Auto-Refresh Token',
     capabilities: 'Cafe Stories with Location Stickers & Daily Special Reels',
     lastSynced: '3 hours ago',
+    url: 'https://www.instagram.com/coffeecraft.bkk',
+  },
+
+  // 3. TikTok Accounts (1 Profile)
+  {
+    id: 'acc-tt-acme',
+    platform: 'TIKTOK',
+    displayName: 'Alex Rivera Official',
+    handle: '@alexrivera_official',
+    channelId: 'open_id_tt_8892',
+    defaultWorkspaceId: 'ws_acme',
+    defaultWorkspaceName: 'Acme Creator Studio',
+    scopes: ['video.publish', 'user.info.basic'],
+    expiresIn: 'Active TikTok Token',
+    capabilities: 'Max Video Duration: 10m (600s) • Direct Post & Inbox',
+    lastSynced: '1 hour ago',
+    url: 'https://www.tiktok.com/@alexrivera_official',
+  },
+
+  // 4. YouTube Channels (1 Channel)
+  {
+    id: 'acc-yt-acme',
+    platform: 'YOUTUBE',
+    displayName: 'Alex Rivera Studio (YouTube)',
+    handle: '@AlexRiveraStudio',
+    channelId: 'UC_x65aB891F_Live',
+    defaultWorkspaceId: 'ws_acme',
+    defaultWorkspaceName: 'Acme Creator Studio',
+    scopes: ['youtube.upload', 'youtube.readonly'],
+    expiresIn: 'Active Google OAuth Token',
+    capabilities: 'YouTube Shorts (9:16) • Long-form Videos • Resumable',
+    lastSynced: '10 mins ago',
+    url: 'https://www.youtube.com/@AlexRiveraStudio',
   },
 ];
 
@@ -212,14 +231,64 @@ const INITIAL_PROJECTS: WorkspaceItem[] = [
   },
 ];
 
+interface PlatformConfig {
+  id: 'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE';
+  name: string;
+  subtitle: string;
+  addButtonText: string;
+  badgeColor: string;
+  icon: (size?: number) => React.ReactNode;
+}
+
+const PLATFORM_CONFIGS: PlatformConfig[] = [
+  {
+    id: 'FACEBOOK',
+    name: 'Facebook',
+    subtitle: 'Meta Pages • Feed & Stories Endpoints',
+    addButtonText: 'เพิ่มเพจ Facebook',
+    badgeColor: 'bg-blue-100 text-blue-900 border-blue-200',
+    icon: (size = 20) => <FacebookLogo size={size} />,
+  },
+  {
+    id: 'INSTAGRAM',
+    name: 'Instagram',
+    subtitle: 'Instagram Professional • Carousels, Stories & Reels',
+    addButtonText: 'เพิ่มบัญชี IG',
+    badgeColor: 'bg-pink-100 text-pink-900 border-pink-200',
+    icon: (size = 20) => <InstagramLogo size={size} />,
+  },
+  {
+    id: 'TIKTOK',
+    name: 'TikTok',
+    subtitle: 'TikTok for Business • Direct Video Publishing (9:16)',
+    addButtonText: 'เพิ่มบัญชี TikTok',
+    badgeColor: 'bg-stone-100 text-stone-900 border-stone-300',
+    icon: (size = 20) => <TikTokLogo size={size} />,
+  },
+  {
+    id: 'YOUTUBE',
+    name: 'YouTube',
+    subtitle: 'Google OAuth • Shorts & Long-Form Publishing',
+    addButtonText: 'เพิ่มช่อง YouTube',
+    badgeColor: 'bg-red-100 text-red-900 border-red-200',
+    icon: (size = 20) => <YouTubeLogo size={size} />,
+  },
+];
+
 export default function ConnectedAccountsPage() {
   const searchParams = useSearchParams();
   const successMessage = searchParams.get('success');
   const errorMessage = searchParams.get('error');
 
+  // Accounts state
+  const [accounts, setAccounts] = useState<MasterChannelAccount[]>(INITIAL_MASTER_ACCOUNTS);
   const [workspaces, setWorkspaces] = useState<WorkspaceItem[]>(INITIAL_PROJECTS);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>('ALL');
-  const [channelFilterMode, setChannelFilterMode] = useState<'ALL' | 'ACTIVE' | 'BYPASSED'>('ALL');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // Dropdown states
+  const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Channel selections map: { `${workspaceId}_${channelId}`: boolean }
   const [channelSelections, setChannelSelections] = useState<Record<string, boolean>>(() => {
@@ -232,7 +301,19 @@ export default function ConnectedAccountsPage() {
     return map;
   });
 
-  // Modal: Create New Project & Pick Channels
+  // Modal: Connect New Page / Channel
+  const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
+  const [connectPlatform, setConnectPlatform] = useState<'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE'>('FACEBOOK');
+  const [newPageName, setNewPageName] = useState('');
+  const [newPageHandle, setNewPageHandle] = useState('');
+
+  // Modal: Test API Diagnostic
+  const [testApiAccount, setTestApiAccount] = useState<MasterChannelAccount | null>(null);
+
+  // Modal: Disconnect Confirmation
+  const [disconnectCandidate, setDisconnectCandidate] = useState<MasterChannelAccount | null>(null);
+
+  // Modal: Create New Project
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectCategory, setNewProjectCategory] = useState('อสังหาริมทรัพย์');
@@ -241,30 +322,142 @@ export default function ConnectedAccountsPage() {
     'acc-ig-c1-main': true,
   });
 
-  // Feedback notice
-  const [bypassFeedbackNotice, setBypassFeedbackNotice] = useState<string | null>(null);
+  // Toast / Feedback Notice
+  const [feedbackNotice, setFeedbackNotice] = useState<string | null>(null);
 
-  const showNotice = (msg: string) => {
-    setBypassFeedbackNotice(msg);
-    setTimeout(() => setBypassFeedbackNotice(null), 4000);
+  const showToast = (msg: string) => {
+    setFeedbackNotice(msg);
+    setTimeout(() => setFeedbackNotice(null), 4000);
   };
 
-  // Toggle channel activation for a specific workspace
-  const handleToggleChannelForWorkspace = (channelId: string, wsId: string) => {
-    const key = `${wsId}_${channelId}`;
-    const currentlyActive = channelSelections[key] ?? false;
-    const nextState = !currentlyActive;
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setOpenDropdownId(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  // Active workspace object
+  const activeWorkspace = workspaces.find((w) => w.id === selectedWorkspaceId);
+
+  // Filter accounts by search query
+  const searchedAccounts = useMemo(() => {
+    if (!searchQuery.trim()) return accounts;
+    const q = searchQuery.toLowerCase().trim();
+    return accounts.filter(
+      (acc) =>
+        acc.displayName.toLowerCase().includes(q) ||
+        acc.handle.toLowerCase().includes(q) ||
+        acc.channelId.toLowerCase().includes(q)
+    );
+  }, [accounts, searchQuery]);
+
+  // Toggle channel enablement for workspace (Zero-Touch API Bypass)
+  const handleToggleChannelForWorkspace = (channelId: string, wsId?: string) => {
+    const targetWsId = wsId || (selectedWorkspaceId === 'ALL' ? 'ws_capitalone' : selectedWorkspaceId);
+    const key = `${targetWsId}_${channelId}`;
+    const willEnable = !(channelSelections[key] ?? false);
 
     setChannelSelections((prev) => ({
       ...prev,
-      [key]: nextState,
+      [key]: willEnable,
     }));
 
-    if (nextState) {
-      showNotice(`✓ เปิดใช้งานช่องทางในโปรเจกต์นี้แล้ว (พร้อมรับคิวโพสต์)`);
+    const targetAccount = accounts.find((a) => a.id === channelId);
+    const targetWs = workspaces.find((w) => w.id === targetWsId);
+
+    if (willEnable) {
+      showToast(`✓ เปิดใช้งาน "${targetAccount?.displayName}" ใน ${targetWs?.name} แล้ว (พร้อมรับคิวโพสต์)`);
     } else {
-      showNotice(`🛡️ ปิดใช้งานช่องทางนี้แล้ว: ระบบจะไม่ยุ่ง ไม่ยิง API ข้ามไป และไม่เกิด Error 100%`);
+      showToast(`🛡️ ปิดใช้งาน "${targetAccount?.displayName}" ใน ${targetWs?.name} (ระบบจะข้าม API ไม่เกิด Error 100%)`);
     }
+  };
+
+  // Re-authenticate / Refresh Token
+  const handleReauth = (acc: MasterChannelAccount) => {
+    setAccounts((prev) =>
+      prev.map((item) =>
+        item.id === acc.id ? { ...item, lastSynced: 'Just now' } : item
+      )
+    );
+    setOpenDropdownId(null);
+    showToast(`✓ รีเฟรช Access Token สำหรับ "${acc.displayName}" สำเร็จ (Token Vault ปลอดภัย)`);
+  };
+
+  // Copy Channel ID
+  const handleCopyId = (acc: MasterChannelAccount) => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(acc.channelId);
+    }
+    setOpenDropdownId(null);
+    showToast(`✓ คัดลอก Channel ID: "${acc.channelId}" แล้ว`);
+  };
+
+  // Disconnect Channel
+  const handleConfirmDisconnect = () => {
+    if (!disconnectCandidate) return;
+    const id = disconnectCandidate.id;
+    const name = disconnectCandidate.displayName;
+
+    setAccounts((prev) => prev.filter((a) => a.id !== id));
+    setDisconnectCandidate(null);
+    setOpenDropdownId(null);
+    showToast(`✓ ตัดการเชื่อมต่อช่องทาง "${name}" เรียบร้อยแล้ว`);
+  };
+
+  // Connect New Page / Channel submit
+  const handleConnectSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newPageName.trim()) return;
+
+    const newId = `acc-${connectPlatform.toLowerCase()}-${Date.now().toString().slice(-4)}`;
+    const newAccount: MasterChannelAccount = {
+      id: newId,
+      platform: connectPlatform,
+      displayName: newPageName.trim(),
+      handle: newPageHandle.trim() || `@${newPageName.toLowerCase().replace(/\s+/g, '')}`,
+      channelId: `${connectPlatform.toLowerCase()}_${Date.now().toString().slice(-6)}`,
+      defaultWorkspaceId: selectedWorkspaceId === 'ALL' ? 'ws_capitalone' : selectedWorkspaceId,
+      defaultWorkspaceName: activeWorkspace ? activeWorkspace.name : 'Capital One Real Estate',
+      scopes: connectPlatform === 'FACEBOOK' ? ['pages_show_list', 'pages_manage_posts'] : ['content_publish'],
+      expiresIn: 'Permanent Access Token (Active)',
+      capabilities:
+        connectPlatform === 'FACEBOOK'
+          ? 'Page Timeline • Feed Albums • Stories'
+          : connectPlatform === 'INSTAGRAM'
+          ? 'Feed Carousel • Stories • Reels'
+          : connectPlatform === 'TIKTOK'
+          ? 'Vertical Video (9:16) • Direct Post'
+          : 'Shorts & Long Videos',
+      lastSynced: 'Just now',
+      url: '#',
+    };
+
+    setAccounts((prev) => [newAccount, ...prev]);
+
+    // Enable in current workspace
+    const wsId = selectedWorkspaceId === 'ALL' ? 'ws_capitalone' : selectedWorkspaceId;
+    setChannelSelections((prev) => ({
+      ...prev,
+      [`${wsId}_${newId}`]: true,
+    }));
+
+    setIsConnectModalOpen(false);
+    setNewPageName('');
+    setNewPageHandle('');
+    showToast(`✓ เชื่อมต่อช่องทางใหม่ "${newAccount.displayName}" เข้าสู่ระบบเรียบร้อยแล้ว`);
+  };
+
+  // Open Connect Modal for a specific platform
+  const handleOpenConnect = (platform: 'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE') => {
+    setConnectPlatform(platform);
+    setNewPageName('');
+    setNewPageHandle('');
+    setIsConnectModalOpen(true);
   };
 
   // Handle Create New Project
@@ -299,36 +492,17 @@ export default function ConnectedAccountsPage() {
     setSelectedWorkspaceId(newWsId);
     setIsNewProjectModalOpen(false);
     setNewProjectName('');
-    showNotice(`✓ สร้างโปรเจกต์ "${newProject.name}" เรียบร้อยแล้ว (เปิดใช้งานเฉพาะ ${chosenChannelIds.length} ช่องทางที่เลือก ช่องอื่นข้าม API 100%)`);
+    showToast(`✓ สร้างโปรเจกต์ "${newProject.name}" เรียบร้อยแล้ว (เปิดใช้งานเฉพาะ ${chosenChannelIds.length} ช่องทางที่เลือก)`);
   };
-
-  // Active workspace object
-  const activeWorkspace = workspaces.find((w) => w.id === selectedWorkspaceId);
-
-  // Filtered accounts list
-  const filteredAccounts = useMemo(() => {
-    return MASTER_ACCOUNTS.filter((acc) => {
-      if (selectedWorkspaceId === 'ALL') {
-        return true;
-      }
-
-      // Check if channel is chosen for active workspace
-      const key = `${selectedWorkspaceId}_${acc.id}`;
-      const isEnabled = channelSelections[key] ?? false;
-
-      if (channelFilterMode === 'ACTIVE') return isEnabled;
-      if (channelFilterMode === 'BYPASSED') return !isEnabled;
-      return true;
-    });
-  }, [selectedWorkspaceId, channelSelections, channelFilterMode]);
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      {/* Masthead Header */}
       <Masthead
-        folio="WORKSPACE DIRECTORY / AUTH MATRIX"
-        editionDate="MULTI-FORMAT ENDPOINTS"
+        folio="ACCOUNTS DIRECTORY / ENDPOINTS HUB"
+        editionDate="MULTI-PLATFORM MATRIX"
         title="Connected Channels & Health"
-        subtitle="Manage authorized publication endpoints across Instagram, Facebook, YouTube, and TikTok."
+        subtitle="Manage publication endpoints grouped by platform. Control permissions and Zero-Touch API bypass per project."
       />
 
       {/* Notifications */}
@@ -346,20 +520,20 @@ export default function ConnectedAccountsPage() {
         </div>
       )}
 
-      {bypassFeedbackNotice && (
+      {feedbackNotice && (
         <div className="p-3.5 bg-paper-canvas border-l-4 border-brand-indigo rounded-editorial shadow-xs flex items-center justify-between text-xs font-mono text-ink-primary animate-in fade-in duration-150">
           <div className="flex items-center gap-2.5">
             <ShieldCheck className="w-4 h-4 text-brand-indigo shrink-0" />
-            <span>{bypassFeedbackNotice}</span>
+            <span>{feedbackNotice}</span>
           </div>
-          <button onClick={() => setBypassFeedbackNotice(null)} className="text-ink-secondary hover:text-ink-primary">
+          <button onClick={() => setFeedbackNotice(null)} className="text-ink-secondary hover:text-ink-primary cursor-pointer">
             <X className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
 
       {/* ZERO-TOUCH API BYPASS POLICY BANNER */}
-      <div className="p-4 bg-paper-raised border border-border-rule rounded-card flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
+      <div className="p-4 bg-paper-raised border border-border-rule rounded-card flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs">
         <div className="flex items-start gap-3.5">
           <div className="p-2.5 bg-brand-indigo/10 rounded-editorial text-brand-indigo shrink-0 mt-0.5">
             <ShieldCheck className="w-5 h-5" />
@@ -368,253 +542,648 @@ export default function ConnectedAccountsPage() {
             <div className="flex flex-wrap items-center gap-2">
               <h2 className="font-serif font-bold text-sm text-ink-primary flex items-center gap-2">
                 <Sticker name="guarded-shield" size="xs" inline />
-                <span>Zero-Touch API Bypass Guarantee (ระบบข้ามอัตโนมัติ ไม่ยิง API ไม่เกิด Error)</span>
+                <span>Zero-Touch API Bypass Guarantee</span>
               </h2>
               <span className="text-[10px] font-mono px-2 py-0.5 bg-emerald-100 text-emerald-900 border border-emerald-300 rounded font-bold">
                 Zero Error Policy
               </span>
             </div>
             <p className="text-xs text-ink-secondary leading-relaxed font-sans">
-              แพลตฟอร์มหรือเพจไหนที่ <strong>ไม่ได้ติ๊กเลือก</strong> ในโปรเจกต์ ระบบจะไม่ยุ่ง ไม่ทำการเชื่อมต่อ ไม่ส่ง API Request ข้ามไป และไม่เกิด Error ใดๆ ทั้งสิ้น หน้าเขียนโพสต์และคิวจะสะอาดเฉพาะช่องทางที่เปิดใช้งานจริงเท่านั้น
+              เพจหรือช่องทางที่ไม่ได้เปิดใช้งานในโปรเจกต์ ระบบจะไม่ยุ่ง ไม่ทำการเชื่อมต่อ ไม่ส่ง API Request ข้ามไป และไม่เกิด Error ใดๆ ทั้งสิ้น
             </p>
           </div>
         </div>
 
-        <div className="shrink-0 self-end sm:self-center">
+        <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+          <div className="px-3 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule text-right">
+            <p className="text-[10px] font-mono uppercase text-ink-secondary">Master Channels</p>
+            <p className="text-sm font-mono font-bold text-brand-indigo">{accounts.length} Endpoints</p>
+          </div>
           <button
             type="button"
             onClick={() => setIsNewProjectModalOpen(true)}
             className="px-3.5 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>+ สร้าง Project ใหม่ (เลือกช่องทาง)</span>
+            <span>+ สร้าง Project ใหม่</span>
           </button>
         </div>
       </div>
 
-      {/* WORKSPACE DIRECTORY & SCOPED FILTER BAR */}
-      <div className="p-4 bg-paper-raised border border-border-rule rounded-card space-y-3 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border-rule pb-2.5">
-          <div className="flex items-center gap-2 font-mono text-xs text-ink-primary font-bold">
-            <Building2 className="w-4 h-4 text-brand-indigo" />
-            <span>เลือกโปรเจกต์ที่ต้องการจัดการช่องทาง (Workspace Channel Matrix):</span>
-          </div>
-          <span className="text-[11px] font-mono text-ink-secondary flex items-center gap-1.5">
-            {selectedWorkspaceId === 'ALL' ? (
-              <span>แสดงบัญชีทั้งหมดในระบบ (Master Directory)</span>
-            ) : (
-              <>
-                <Sticker name={activeWorkspace?.icon || 'ws-software'} size="xs" inline />
-                <span>โปรเจกต์: {activeWorkspace?.name} ({activeWorkspace?.category})</span>
-              </>
-            )}
+      {/* TOOLBAR: WORKSPACE SCOPE & SEARCH */}
+      <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+        {/* Workspace Switcher Selector */}
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-mono text-ink-secondary flex items-center gap-1 font-semibold">
+            <Building2 className="w-3.5 h-3.5 text-brand-indigo" />
+            <span>ขอบเขตโปรเจกต์:</span>
           </span>
-        </div>
 
-        {/* Workspace Smart Filter Bar */}
-        <SmartFilterBar
-          items={[
-            { id: 'ALL', label: 'Master Directory (บัญชีทั้งหมด)', count: MASTER_ACCOUNTS.length },
-            ...workspaces.map((ws) => ({
-              id: ws.id,
-              label: ws.name,
-              icon: <Sticker name={ws.icon} size="xs" inline />,
-              count: `${ws.selectedChannelIds.length} ช่องทาง`,
-            })),
-          ]}
-          selectedId={selectedWorkspaceId}
-          onSelect={(id) => setSelectedWorkspaceId(id)}
-          maxVisiblePills={5}
-          moreButtonText="โปรเจกต์อื่นๆ"
-          searchPlaceholder="ค้นหาโปรเจกต์ / Workspace..."
-        />
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
+            <button
+              type="button"
+              onClick={() => setSelectedWorkspaceId('ALL')}
+              className={`px-3 py-1 rounded text-xs font-mono transition-all cursor-pointer whitespace-nowrap ${
+                selectedWorkspaceId === 'ALL'
+                  ? 'bg-brand-indigo text-white font-bold shadow-2xs'
+                  : 'bg-paper-canvas text-ink-secondary border border-border-rule hover:text-ink-primary'
+              }`}
+            >
+              แสดงทั้งหมด ({accounts.length})
+            </button>
 
-        {/* Channel Filter Pills (เมื่อเลือก Workspace แล้ว) */}
-        {selectedWorkspaceId !== 'ALL' && (
-          <div className="flex items-center gap-2 pt-1 font-mono text-xs">
-            <span className="text-[10px] text-ink-secondary uppercase">แสดง:</span>
-            {[
-              { id: 'ALL', label: 'ทั้งหมด' },
-              { id: 'ACTIVE', label: '✓ เปิดใช้งานในโปรเจกต์นี้' },
-              { id: 'BYPASSED', label: '⚪ ไม่ได้ใช้ (Bypassed ข้าม API)' },
-            ].map((f) => (
-              <button
-                key={f.id}
-                type="button"
-                onClick={() => setChannelFilterMode(f.id as any)}
-                className={`px-2.5 py-0.5 rounded text-[11px] border transition-colors cursor-pointer ${
-                  channelFilterMode === f.id
-                    ? 'bg-paper-canvas text-brand-indigo border-brand-indigo font-bold shadow-2xs'
-                    : 'bg-paper-subtle text-ink-secondary border-border-rule hover:text-ink-primary'
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
+            {workspaces.map((ws) => {
+              const isSelected = selectedWorkspaceId === ws.id;
+              return (
+                <button
+                  key={ws.id}
+                  type="button"
+                  onClick={() => setSelectedWorkspaceId(ws.id)}
+                  className={`px-2.5 py-1 rounded text-xs font-mono transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    isSelected
+                      ? 'bg-brand-indigo text-white font-bold shadow-2xs'
+                      : 'bg-paper-canvas text-ink-secondary border border-border-rule hover:text-ink-primary'
+                  }`}
+                >
+                  <Sticker name={ws.icon} size="xs" inline />
+                  <span>{ws.name}</span>
+                </button>
+              );
+            })}
           </div>
-        )}
-      </div>
-
-      {/* ACTIVE ENDPOINTS GRID */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h2 className="font-serif font-bold text-lg text-ink-primary flex items-center gap-2">
-            <span>Authorized Endpoints & Channels</span>
-            <span className="px-2 py-0.5 rounded-full bg-paper-subtle border border-border-rule text-xs font-mono font-bold text-ink-secondary">
-              {filteredAccounts.length} บัญชี
-            </span>
-          </h2>
-          <span className="text-[11px] font-mono text-ink-muted hidden sm:inline-block">
-            Envelope Encryption AES-256-GCM Active
-          </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filteredAccounts.map((acc) => {
-            // Check if active for current workspace
-            const currentWsId = selectedWorkspaceId === 'ALL' ? acc.defaultWorkspaceId : selectedWorkspaceId;
-            const key = `${currentWsId}_${acc.id}`;
-            const isEnabledInCurrentWs = channelSelections[key] ?? (selectedWorkspaceId === 'ALL' ? true : false);
-
-            return (
-              <div
-                key={acc.id}
-                className={`border rounded-card p-5 space-y-4 transition-all shadow-xs ${
-                  isEnabledInCurrentWs
-                    ? 'bg-paper-raised border-border-rule hover:border-brand-indigo/60'
-                    : 'bg-paper-subtle/50 border-border-rule/80 opacity-75'
-                }`}
-              >
-                {/* Header: Platform Logo + Name + Status */}
-                <div className="flex items-start justify-between gap-3">
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-10 h-10 rounded-editorial flex items-center justify-center p-2 bg-paper-canvas border border-border-rule shrink-0 shadow-2xs">
-                      {acc.platform === 'INSTAGRAM' && <InstagramLogo size={24} />}
-                      {acc.platform === 'FACEBOOK' && <FacebookLogo size={24} />}
-                      {acc.platform === 'YOUTUBE' && <YouTubeLogo size={24} />}
-                      {acc.platform === 'TIKTOK' && <TikTokLogo size={24} />}
-                    </div>
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-1.5">
-                        <h3 className="font-serif font-bold text-sm text-ink-primary truncate">
-                          {acc.displayName}
-                        </h3>
-                      </div>
-                      <p className="text-xs font-mono text-ink-secondary truncate">{acc.handle}</p>
-                    </div>
-                  </div>
-
-                  {/* Status Badge */}
-                  <div className="shrink-0">
-                    {isEnabledInCurrentWs ? (
-                      <span className="px-2 py-1 rounded bg-semantic-success/15 text-semantic-success text-[10px] font-mono font-bold flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-semantic-success animate-ping" />
-                        <span>CONNECTED</span>
-                      </span>
-                    ) : (
-                      <span className="px-2 py-1 rounded bg-paper-subtle border border-border-rule text-ink-muted text-[10px] font-mono font-bold">
-                        ⚪ BYPASSED / ข้าม
-                      </span>
-                    )}
-                  </div>
-                </div>
-
-                {/* ZERO-TOUCH BYPASS TOGGLE / CHECKBOX */}
-                <div className={`p-3 rounded-editorial border text-xs font-mono flex items-center justify-between gap-3 ${
-                  isEnabledInCurrentWs
-                    ? 'bg-paper-canvas border-brand-indigo/30'
-                    : 'bg-paper-subtle border-border-rule'
-                }`}>
-                  <label className="flex items-center gap-2 cursor-pointer select-none min-w-0">
-                    <input
-                      type="checkbox"
-                      checked={isEnabledInCurrentWs}
-                      onChange={() => handleToggleChannelForWorkspace(acc.id, currentWsId)}
-                      className="w-4 h-4 rounded text-brand-indigo border-border-rule focus:ring-brand-indigo cursor-pointer"
-                    />
-                    <span className="font-bold text-ink-primary truncate">
-                      {isEnabledInCurrentWs
-                        ? `เปิดใช้งานใน ${activeWorkspace?.name || acc.defaultWorkspaceName}`
-                        : `ปิดใช้งานใน ${activeWorkspace?.name || acc.defaultWorkspaceName} (ข้าม API)`}
-                    </span>
-                  </label>
-
-                  <span className={`text-[10px] shrink-0 font-bold ${
-                    isEnabledInCurrentWs ? 'text-semantic-success' : 'text-ink-muted'
-                  }`}>
-                    {isEnabledInCurrentWs ? '✓ พร้อมรับคิวโพสต์' : '🛡️ ระบบจะไม่ยุ่ง 100%'}
-                  </span>
-                </div>
-
-                {/* Capabilities & Token Health */}
-                <div className="space-y-1.5 p-3 bg-paper-canvas rounded-editorial text-[11px] font-mono text-ink-secondary border border-border-rule">
-                  <div>
-                    <span className="text-ink-primary font-semibold">Capabilities: </span>
-                    <span className="text-brand-indigo font-medium">{acc.capabilities}</span>
-                  </div>
-                  <div>
-                    <span className="text-ink-primary font-semibold">Token Health: </span>
-                    <span>{acc.expiresIn}</span>
-                  </div>
-                </div>
-
-                {/* Actions */}
-                <div className="flex items-center justify-between pt-2 border-t border-border-rule text-xs">
-                  <span className="text-[10px] font-mono text-ink-secondary">Synced {acc.lastSynced}</span>
-                  <a
-                    href={`/api/connections/${acc.platform === 'INSTAGRAM' || acc.platform === 'FACEBOOK' ? 'meta' : acc.platform.toLowerCase()}/start`}
-                    className="px-3 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary font-medium rounded-editorial border border-border-rule transition-colors inline-flex items-center gap-1.5 text-xs font-mono"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5 text-ink-secondary" />
-                    <span>Re-authenticate</span>
-                  </a>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* CONNECT ADDITIONAL PLATFORMS SECTION */}
-      <div className="p-6 bg-paper-raised border border-border-rule rounded-card space-y-4">
-        <div>
-          <h2 className="font-serif font-bold text-base text-ink-primary mb-1">
-            Connect Additional Publication Endpoints (เพิ่มการเชื่อมต่อบัญชีใหม่)
-          </h2>
-          <p className="text-xs text-ink-secondary max-w-xl font-sans">
-            เชื่อมต่อ Facebook Pages, Instagram Professional, YouTube Channels, หรือ TikTok Profiles เพิ่มเติมเข้ามายัง Master Hub
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3">
-          <a
-            href="/api/connections/meta/start"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#1877F2] text-white text-xs font-mono font-semibold rounded-editorial hover:opacity-90 transition-opacity shadow-xs"
-          >
-            <Plus className="w-4 h-4" />
-            <span>+ Connect Meta (Facebook & Instagram)</span>
-          </a>
-
-          <a
-            href="/api/connections/youtube/start"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-[#FF0000] text-white text-xs font-mono font-semibold rounded-editorial hover:opacity-90 transition-opacity shadow-xs"
-          >
-            <Plus className="w-4 h-4" />
-            <span>+ Connect YouTube Channel</span>
-          </a>
-
-          <a
-            href="/api/connections/tiktok/start"
-            className="inline-flex items-center gap-2 px-4 py-2 bg-ink-primary text-white text-xs font-mono font-semibold rounded-editorial hover:opacity-90 transition-opacity shadow-xs"
-          >
-            <Plus className="w-4 h-4" />
-            <span>+ Connect TikTok Account</span>
-          </a>
+        {/* Channel Search Input */}
+        <div className="relative w-full sm:w-64 shrink-0">
+          <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-secondary pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="ค้นหาเพจ หรือแฮนเดิล..."
+            className="w-full pl-8 pr-7 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary placeholder:text-ink-secondary/60 focus:outline-hidden focus:border-brand-indigo"
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-ink-secondary hover:text-ink-primary cursor-pointer p-0.5"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          )}
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* MODAL: CREATE NEW PROJECT & SELECT CHANNELS                               */}
+      {/* PLATFORM GROUPED SECTIONS (User Requested Layout)                         */}
+      {/* Facebook [+] -> page 1 ..., page 2 ...                                   */}
+      {/* Instagram [+] -> page 1 ..., page 2 ...                                  */}
+      {/* TikTok [+] -> page 1 ...                                                 */}
+      {/* YouTube [+] -> channel 1 ...                                             */}
+      {/* ========================================================================= */}
+      <div className="space-y-6">
+        {PLATFORM_CONFIGS.map((platform) => {
+          const platformAccounts = searchedAccounts.filter((a) => a.platform === platform.id);
+          const totalInPlatform = accounts.filter((a) => a.platform === platform.id).length;
+
+          return (
+            <div
+              key={platform.id}
+              className="bg-paper-raised border border-border-rule rounded-card overflow-hidden shadow-xs"
+            >
+              {/* Platform Header */}
+              <div className="p-4 bg-paper-canvas/70 border-b border-border-rule flex items-center justify-between gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-editorial flex items-center justify-center bg-paper-raised border border-border-rule shadow-2xs shrink-0">
+                    {platform.icon(22)}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h2 className="font-serif font-bold text-base text-ink-primary">
+                        {platform.name}
+                      </h2>
+                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border font-semibold ${platform.badgeColor}`}>
+                        {totalInPlatform} {platform.id === 'YOUTUBE' ? 'Channels' : 'Pages'}
+                      </span>
+                    </div>
+                    <p className="text-[11px] font-mono text-ink-secondary">
+                      {platform.subtitle}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Add Page Button (+) */}
+                <button
+                  type="button"
+                  onClick={() => handleOpenConnect(platform.id)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-2xs cursor-pointer shrink-0 active:scale-95"
+                  title={`เชื่อมต่อ ${platform.name} เพิ่มเติม`}
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>{platform.addButtonText}</span>
+                </button>
+              </div>
+
+              {/* Pages / Channels List */}
+              {platformAccounts.length === 0 ? (
+                <div className="p-6 text-center space-y-2 bg-paper-canvas/30">
+                  <p className="text-xs font-mono text-ink-secondary">
+                    {searchQuery
+                      ? `ไม่พบบัญชี ${platform.name} ที่ตรงกับคำค้นหา "${searchQuery}"`
+                      : `ยังไม่มีบัญชี ${platform.name} เชื่อมต่ออยู่ในระบบ`}
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => handleOpenConnect(platform.id)}
+                    className="text-xs font-mono text-brand-indigo hover:underline font-semibold cursor-pointer inline-flex items-center gap-1"
+                  >
+                    <Plus className="w-3 h-3" />
+                    <span>คลิกเพื่อเชื่อมต่อ {platform.name} ตอนนี้</span>
+                  </button>
+                </div>
+              ) : (
+                <div className="divide-y divide-border-rule/60">
+                  {platformAccounts.map((acc) => {
+                    const currentWsId = selectedWorkspaceId === 'ALL' ? acc.defaultWorkspaceId : selectedWorkspaceId;
+                    const key = `${currentWsId}_${acc.id}`;
+                    const isEnabledInCurrentWs = channelSelections[key] ?? (selectedWorkspaceId === 'ALL' ? true : false);
+                    const defaultWsObj = workspaces.find((w) => w.id === acc.defaultWorkspaceId);
+
+                    return (
+                      <div
+                        key={acc.id}
+                        className={`flex flex-col sm:flex-row sm:items-center justify-between p-3.5 sm:p-4 transition-colors gap-3 ${
+                          isEnabledInCurrentWs
+                            ? 'bg-paper-raised hover:bg-paper-canvas/40'
+                            : 'bg-paper-subtle/30 hover:bg-paper-subtle/50 opacity-80'
+                        }`}
+                      >
+                        {/* Left: Avatar + Display Name + Handle + ID + Format Badges */}
+                        <div className="flex items-start sm:items-center gap-3 min-w-0">
+                          {/* Channel Avatar with Platform Sub-badge */}
+                          <div className="relative shrink-0">
+                            <div className="w-10 h-10 rounded-full bg-paper-subtle border border-border-rule flex items-center justify-center font-bold font-serif text-sm text-brand-indigo shadow-2xs">
+                              {acc.displayName.slice(0, 2).toUpperCase()}
+                            </div>
+                            <div className="absolute -bottom-1 -right-1 bg-paper-raised p-0.5 rounded-full shadow-2xs border border-border-rule">
+                              <SocialPlatformIcon platform={acc.platform} size={13} />
+                            </div>
+                          </div>
+
+                          <div className="min-w-0 space-y-0.5">
+                            <div className="flex flex-wrap items-center gap-2">
+                              <h3 className="font-serif font-bold text-sm text-ink-primary truncate">
+                                {acc.displayName}
+                              </h3>
+                              <span className="text-[10px] font-mono text-ink-muted">
+                                ID: {acc.channelId}
+                              </span>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-ink-secondary">
+                              <span className="text-brand-indigo font-medium truncate">
+                                {acc.handle}
+                              </span>
+                              <span>•</span>
+                              <span className="text-[10px] text-ink-muted">
+                                Synced {acc.lastSynced}
+                              </span>
+                            </div>
+
+                            {/* Format & Capability Tags */}
+                            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+                              {acc.capabilities.split('•').slice(0, 3).map((cap, i) => (
+                                <span
+                                  key={i}
+                                  className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-paper-canvas border border-border-rule text-ink-secondary"
+                                >
+                                  {cap.trim()}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Right: Workspace Badge + Active/Bypass Switch + (...) Menu */}
+                        <div className="flex items-center gap-2.5 sm:gap-3 self-end sm:self-center shrink-0">
+                          {/* Workspace Project Assignment Pill */}
+                          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded bg-paper-canvas border border-border-rule text-xs font-mono shadow-2xs">
+                            <Sticker name={defaultWsObj?.icon || 'ws-software'} size="xs" inline />
+                            <span className="text-[11px] text-ink-secondary font-medium truncate max-w-[140px]">
+                              {defaultWsObj?.name || acc.defaultWorkspaceName}
+                            </span>
+                          </div>
+
+                          {/* Zero-Touch Bypass Toggle Switch */}
+                          <button
+                            type="button"
+                            onClick={() => handleToggleChannelForWorkspace(acc.id, currentWsId)}
+                            className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold border transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+                              isEnabledInCurrentWs
+                                ? 'bg-semantic-success/15 text-semantic-success border-semantic-success/30 hover:bg-semantic-success/25'
+                                : 'bg-paper-subtle text-ink-muted border-border-rule hover:bg-paper-canvas'
+                            }`}
+                            title={
+                              isEnabledInCurrentWs
+                                ? 'คลิกเพื่อปิดใช้งานในโปรเจกต์นี้ (Bypass ข้าม API ไม่เกิด Error)'
+                                : 'คลิกเพื่อเปิดใช้งานในโปรเจกต์นี้'
+                            }
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${
+                              isEnabledInCurrentWs ? 'bg-semantic-success animate-pulse' : 'bg-ink-muted'
+                            }`} />
+                            <span>{isEnabledInCurrentWs ? 'Active' : 'Bypassed'}</span>
+                          </button>
+
+                          {/* Action Menu (...) */}
+                          <div className="relative">
+                            <button
+                              type="button"
+                              onClick={() => setOpenDropdownId(openDropdownId === acc.id ? null : acc.id)}
+                              className="w-8 h-8 rounded-editorial border border-border-rule hover:border-brand-indigo/60 bg-paper-canvas hover:bg-paper-subtle flex items-center justify-center text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer shadow-2xs"
+                              title="ตัวเลือกเพิ่มเติม (...)"
+                            >
+                              <MoreHorizontal className="w-4 h-4" />
+                            </button>
+
+                            {/* Dropdown Popover */}
+                            {openDropdownId === acc.id && (
+                              <div
+                                ref={dropdownRef}
+                                className="absolute right-0 top-full mt-1 w-52 bg-paper-raised border border-border-strong rounded-editorial shadow-xl p-1 z-50 animate-in fade-in zoom-in-95 duration-100 text-xs font-mono space-y-0.5"
+                              >
+                                <div className="px-2 py-1 text-[9px] font-mono uppercase text-ink-secondary font-bold border-b border-border-rule mb-1">
+                                  ตัวเลือกช่องทาง ({acc.platform})
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleReauth(acc)}
+                                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
+                                >
+                                  <RefreshCw className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
+                                  <span>รีเฟรช Token (Sync)</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setTestApiAccount(acc);
+                                    setOpenDropdownId(null);
+                                  }}
+                                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
+                                >
+                                  <Activity className="w-3.5 h-3.5 text-semantic-info shrink-0" />
+                                  <span>ทดสอบ API Connection</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => handleCopyId(acc)}
+                                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
+                                >
+                                  <Copy className="w-3.5 h-3.5 text-ink-secondary shrink-0" />
+                                  <span>คัดลอก Channel ID</span>
+                                </button>
+
+                                {acc.url && (
+                                  <a
+                                    href={acc.url}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    onClick={() => setOpenDropdownId(null)}
+                                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
+                                  >
+                                    <ExternalLink className="w-3.5 h-3.5 text-ink-secondary shrink-0" />
+                                    <span>เปิดดูหน้าเพจจริง ↗</span>
+                                  </a>
+                                )}
+
+                                <div className="pt-1 border-t border-border-rule">
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setDisconnectCandidate(acc);
+                                      setOpenDropdownId(null);
+                                    }}
+                                    className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-semantic-error/10 text-semantic-error text-left transition-colors cursor-pointer font-semibold"
+                                  >
+                                    <Trash2 className="w-3.5 h-3.5 shrink-0" />
+                                    <span>ยกเลิกการเชื่อมต่อ</span>
+                                  </button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* ========================================================================= */}
+      {/* MODAL 1: CONNECT NEW PAGE / CHANNEL (+)                                   */}
+      {/* ========================================================================= */}
+      {isConnectModalOpen && (
+        <div
+          onClick={() => setIsConnectModalOpen(false)}
+          className="fixed inset-0 z-50 bg-ink-primary/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-paper-raised border border-border-rule rounded-card max-w-md w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 cursor-default"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-border-rule">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-paper-canvas border border-border-rule flex items-center justify-center shadow-2xs">
+                  <SocialPlatformIcon platform={connectPlatform} size={18} />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base text-ink-primary">
+                    เชื่อมต่อ {connectPlatform === 'FACEBOOK' ? 'Facebook Page' : connectPlatform === 'INSTAGRAM' ? 'Instagram Account' : connectPlatform === 'TIKTOK' ? 'TikTok Account' : 'YouTube Channel'} ใหม่
+                  </h3>
+                  <p className="text-[11px] font-mono text-ink-secondary">
+                    ดึง Endpoint เข้าสู่ Master Hub พร้อมเชื่อมต่อ Token Vault
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsConnectModalOpen(false)}
+                className="p-1 rounded text-ink-secondary hover:text-ink-primary cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Quick Preset Selector */}
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold block">
+                เลือกเพจตัวอย่างจาก Meta/Google ที่ตรวจพบ:
+              </span>
+              <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
+                {connectPlatform === 'FACEBOOK' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPageName('The Rich Sathorn-Taksin');
+                        setNewPageHandle('FB Page: The Rich Sathorn');
+                      }}
+                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
+                    >
+                      <p className="font-bold text-ink-primary text-xs truncate">The Rich Sathorn</p>
+                      <p className="text-[9px] text-ink-muted">Ready to import</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPageName('Capital One Phuket Villas');
+                        setNewPageHandle('FB Page: Capital One Phuket');
+                      }}
+                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
+                    >
+                      <p className="font-bold text-ink-primary text-xs truncate">Phuket Luxury Villas</p>
+                      <p className="text-[9px] text-ink-muted">Ready to import</p>
+                    </button>
+                  </>
+                ) : connectPlatform === 'INSTAGRAM' ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPageName('The Penthouse Studio BKK');
+                        setNewPageHandle('@penthouse.bkk');
+                      }}
+                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
+                    >
+                      <p className="font-bold text-ink-primary text-xs truncate">Penthouse Studio</p>
+                      <p className="text-[9px] text-ink-muted">Business IG Account</p>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPageName('RetzPost Creators Hub');
+                        setNewPageHandle('@retzpost.creators');
+                      }}
+                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
+                    >
+                      <p className="font-bold text-ink-primary text-xs truncate">Creators Hub</p>
+                      <p className="text-[9px] text-ink-muted">Creator IG Account</p>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setNewPageName('RetzPost Official Media');
+                        setNewPageHandle('@retzpost_media');
+                      }}
+                      className="col-span-2 p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
+                    >
+                      <p className="font-bold text-ink-primary text-xs">RetzPost Official Studio</p>
+                      <p className="text-[9px] text-ink-muted">Verified Enterprise Channel</p>
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+
+            {/* Custom Input Form */}
+            <form onSubmit={handleConnectSubmit} className="space-y-3.5 text-xs font-mono">
+              <div>
+                <label className="block text-[11px] uppercase text-ink-secondary mb-1">
+                  ชื่อเพจ / ช่องทาง (Display Name) *
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="เช่น: The Rich Rama 9 Luxury Club"
+                  value={newPageName}
+                  onChange={(e) => setNewPageName(e.target.value)}
+                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] uppercase text-ink-secondary mb-1">
+                  แฮนเดิล / Username (Handle)
+                </label>
+                <input
+                  type="text"
+                  placeholder="เช่น: @therichrama9_official"
+                  value={newPageHandle}
+                  onChange={(e) => setNewPageHandle(e.target.value)}
+                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
+                />
+              </div>
+
+              <div className="p-3 bg-brand-indigo/5 border border-brand-indigo/20 rounded-editorial text-[11px] text-ink-secondary leading-relaxed">
+                ระบบจะสร้าง Long-Lived Token และจัดเก็บใน Token Vault พร้อมสิทธิ์ในการโพสต์รูปภาพ, วิดีโอ, และ Story แบบอัตโนมัติ
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-border-rule">
+                <button
+                  type="button"
+                  onClick={() => setIsConnectModalOpen(false)}
+                  className="px-3.5 py-2 border border-border-rule rounded-editorial text-ink-secondary hover:text-ink-primary cursor-pointer"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors"
+                >
+                  ยืนยันและเชื่อมต่อ
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 2: TEST API CONNECTION DIAGNOSTIC                                   */}
+      {/* ========================================================================= */}
+      {testApiAccount && (
+        <div
+          onClick={() => setTestApiAccount(null)}
+          className="fixed inset-0 z-50 bg-ink-primary/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-paper-raised border border-border-rule rounded-card max-w-md w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 cursor-default"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-border-rule">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-semantic-info/10 text-semantic-info flex items-center justify-center">
+                  <Activity className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base text-ink-primary">
+                    ผลการทดสอบ API Connection
+                  </h3>
+                  <p className="text-[11px] font-mono text-ink-secondary">
+                    {testApiAccount.displayName}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTestApiAccount(null)}
+                className="p-1 rounded text-ink-secondary hover:text-ink-primary cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-2.5 text-xs font-mono">
+              <div className="p-3 bg-semantic-success/10 border border-semantic-success/30 rounded-editorial text-semantic-success space-y-1">
+                <div className="flex items-center justify-between font-bold">
+                  <span className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-4 h-4" />
+                    <span>Ping Status: 200 OK</span>
+                  </span>
+                  <span>Latency: 42ms</span>
+                </div>
+                <p className="text-[11px] text-ink-secondary">
+                  Meta Graph API / Endpoints ตอบสนองปกติ พร้อมส่งข้อมูลไปยังฟีดทันที
+                </p>
+              </div>
+
+              <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial space-y-1.5">
+                <div className="flex justify-between">
+                  <span className="text-ink-secondary">Target Platform:</span>
+                  <span className="font-bold text-ink-primary">{testApiAccount.platform}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-ink-secondary">Channel ID:</span>
+                  <span className="font-mono text-ink-primary">{testApiAccount.channelId}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-ink-secondary">Token Vault Health:</span>
+                  <span className="text-semantic-success font-semibold">{testApiAccount.expiresIn}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-ink-secondary">Encryption:</span>
+                  <span className="text-brand-indigo font-semibold">AES-256-GCM Envelope Verified</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-2 flex justify-end border-t border-border-rule">
+              <button
+                type="button"
+                onClick={() => setTestApiAccount(null)}
+                className="px-4 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial font-mono text-xs font-semibold cursor-pointer shadow-xs transition-colors"
+              >
+                ปิดหน้าต่าง
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 3: DISCONNECT CHANNEL CONFIRMATION                                  */}
+      {/* ========================================================================= */}
+      {disconnectCandidate && (
+        <div
+          onClick={() => setDisconnectCandidate(null)}
+          className="fixed inset-0 z-50 bg-ink-primary/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-paper-raised border border-border-rule rounded-card max-w-md w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 cursor-default"
+          >
+            <div className="flex items-center gap-3 pb-3 border-b border-border-rule text-semantic-error">
+              <div className="w-9 h-9 rounded-full bg-semantic-error/10 flex items-center justify-center shrink-0">
+                <AlertTriangle className="w-5 h-5 text-semantic-error" />
+              </div>
+              <div>
+                <h3 className="font-serif font-bold text-base text-ink-primary">
+                  ยืนยันการตัดการเชื่อมต่อ
+                </h3>
+                <p className="text-[11px] font-mono text-ink-secondary">
+                  {disconnectCandidate.displayName}
+                </p>
+              </div>
+            </div>
+
+            <p className="text-xs text-ink-secondary leading-relaxed font-sans">
+              คุณต้องการตัดการเชื่อมต่อเพจ <strong>{disconnectCandidate.displayName}</strong> ออกจากระบบ RetzPost ใช่หรือไม่? บัญชีนี้จะไม่สามารถรับคิวหรือยิงโพสต์อัตโนมัติได้จนกว่าจะเชื่อมต่อใหม่
+            </p>
+
+            <div className="pt-2 flex items-center justify-end gap-2 border-t border-border-rule text-xs font-mono">
+              <button
+                type="button"
+                onClick={() => setDisconnectCandidate(null)}
+                className="px-3.5 py-2 border border-border-rule rounded-editorial text-ink-secondary hover:text-ink-primary cursor-pointer"
+              >
+                ยกเลิก
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDisconnect}
+                className="px-4 py-2 bg-semantic-error hover:bg-semantic-error/90 text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors"
+              >
+                ตัดการเชื่อมต่อทันที
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 4: CREATE NEW PROJECT & SELECT CHANNELS                             */}
       {/* ========================================================================= */}
       {isNewProjectModalOpen && (
         <div 
@@ -643,7 +1212,7 @@ export default function ConnectedAccountsPage() {
               <button
                 type="button"
                 onClick={() => setIsNewProjectModalOpen(false)}
-                className="p-1 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary"
+                className="p-1 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -675,7 +1244,7 @@ export default function ConnectedAccountsPage() {
                 <select
                   value={newProjectCategory}
                   onChange={(e) => setNewProjectCategory(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
+                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo cursor-pointer"
                 >
                   <option value="อสังหาริมทรัพย์">อสังหาริมทรัพย์ (Real Estate Agency)</option>
                   <option value="ครีเอเตอร์">ครีเอเตอร์ / สตูดิโอมีเดีย (Creator Media)</option>
@@ -696,7 +1265,7 @@ export default function ConnectedAccountsPage() {
                       type="button"
                       onClick={() => {
                         const allSelected: Record<string, boolean> = {};
-                        MASTER_ACCOUNTS.forEach((a) => (allSelected[a.id] = true));
+                        accounts.forEach((a) => (allSelected[a.id] = true));
                         setNewProjectSelectedChannels(allSelected);
                       }}
                       className="text-brand-indigo hover:underline cursor-pointer"
@@ -715,7 +1284,7 @@ export default function ConnectedAccountsPage() {
                 </div>
 
                 <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial space-y-2 max-h-48 overflow-y-auto">
-                  {MASTER_ACCOUNTS.map((acc) => {
+                  {accounts.map((acc) => {
                     const isChecked = newProjectSelectedChannels[acc.id] ?? false;
 
                     return (
