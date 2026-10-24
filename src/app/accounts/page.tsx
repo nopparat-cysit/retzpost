@@ -29,7 +29,9 @@ import {
   Radio,
   Zap,
   Layers,
-  ArrowRight
+  ArrowRight,
+  LayoutGrid,
+  List
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { Sticker } from '@/components/ui/sticker';
@@ -285,6 +287,7 @@ export default function ConnectedAccountsPage() {
   const [workspaces, setWorkspaces] = useState<WorkspaceItem[]>(INITIAL_PROJECTS);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [viewLayout, setViewLayout] = useState<'GRID' | 'LIST'>('GRID');
 
   // Dropdown states
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
@@ -613,36 +616,73 @@ export default function ConnectedAccountsPage() {
           </div>
         </div>
 
-        {/* Channel Search Input */}
-        <div className="relative w-full sm:w-64 shrink-0">
-          <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-secondary pointer-events-none" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="ค้นหาเพจ หรือแฮนเดิล..."
-            className="w-full pl-8 pr-7 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary placeholder:text-ink-secondary/60 focus:outline-hidden focus:border-brand-indigo"
-          />
-          {searchQuery && (
+        {/* Right side toolbar actions: View Switcher (Grid 2x2 vs List) + Search */}
+        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 justify-between sm:justify-end">
+          {/* View Mode Toggle: Grid 2x2 vs List */}
+          <div className="flex items-center p-0.5 bg-paper-canvas border border-border-rule rounded-editorial shrink-0 shadow-2xs">
             <button
               type="button"
-              onClick={() => setSearchQuery('')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-ink-secondary hover:text-ink-primary cursor-pointer p-0.5"
+              onClick={() => setViewLayout('GRID')}
+              className={`px-2.5 py-1 rounded text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                viewLayout === 'GRID'
+                  ? 'bg-brand-indigo text-white font-bold shadow-2xs'
+                  : 'text-ink-secondary hover:text-ink-primary'
+              }`}
+              title="มุมมองแบบตาราง 2x2 (Grid 2x2 View)"
             >
-              <X className="w-3 h-3" />
+              <LayoutGrid className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Grid 2×2</span>
             </button>
-          )}
+            <button
+              type="button"
+              onClick={() => setViewLayout('LIST')}
+              className={`px-2.5 py-1 rounded text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                viewLayout === 'LIST'
+                  ? 'bg-brand-indigo text-white font-bold shadow-2xs'
+                  : 'text-ink-secondary hover:text-ink-primary'
+              }`}
+              title="มุมมองแบบรายการยาว (Full-width List View)"
+            >
+              <List className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">List</span>
+            </button>
+          </div>
+
+          {/* Channel Search Input */}
+          <div className="relative w-full sm:w-60 shrink-0">
+            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-secondary pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="ค้นหาเพจ หรือแฮนเดิล..."
+              className="w-full pl-8 pr-7 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary placeholder:text-ink-secondary/60 focus:outline-hidden focus:border-brand-indigo"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-ink-secondary hover:text-ink-primary cursor-pointer p-0.5"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* PLATFORM GROUPED SECTIONS (User Requested Layout)                         */}
+      {/* PLATFORM GROUPED SECTIONS (User Requested Layout: Grid 2x2 or List)       */}
       {/* Facebook [+] -> page 1 ..., page 2 ...                                   */}
       {/* Instagram [+] -> page 1 ..., page 2 ...                                  */}
       {/* TikTok [+] -> page 1 ...                                                 */}
       {/* YouTube [+] -> channel 1 ...                                             */}
       {/* ========================================================================= */}
-      <div className="space-y-6">
+      <div className={
+        viewLayout === 'GRID'
+          ? 'grid grid-cols-1 xl:grid-cols-2 gap-5 items-start'
+          : 'space-y-6'
+      }>
         {PLATFORM_CONFIGS.map((platform) => {
           const platformAccounts = searchedAccounts.filter((a) => a.platform === platform.id);
           const totalInPlatform = accounts.filter((a) => a.platform === platform.id).length;
@@ -768,7 +808,9 @@ export default function ConnectedAccountsPage() {
                         {/* Right: Workspace Badge + Active/Bypass Switch + (...) Menu */}
                         <div className="flex items-center gap-2.5 sm:gap-3 self-end sm:self-center shrink-0">
                           {/* Workspace Project Assignment Pill */}
-                          <div className="hidden md:flex items-center gap-1.5 px-2.5 py-1 rounded bg-paper-canvas border border-border-rule text-xs font-mono shadow-2xs">
+                          <div className={`${
+                            viewLayout === 'GRID' ? 'hidden 2xl:flex' : 'hidden md:flex'
+                          } items-center gap-1.5 px-2.5 py-1 rounded bg-paper-canvas border border-border-rule text-xs font-mono shadow-2xs`}>
                             <Sticker name={defaultWsObj?.icon || 'ws-software'} size="xs" inline />
                             <span className="text-[11px] text-ink-secondary font-medium truncate max-w-[140px]">
                               {defaultWsObj?.name || acc.defaultWorkspaceName}
