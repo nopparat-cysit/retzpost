@@ -31,7 +31,10 @@ import {
   Layers,
   ArrowRight,
   LayoutGrid,
-  List
+  List,
+  Settings,
+  Edit3,
+  SlidersHorizontal
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { Sticker } from '@/components/ui/sticker';
@@ -194,7 +197,7 @@ const INITIAL_MASTER_ACCOUNTS: MasterChannelAccount[] = [
   },
 ];
 
-interface WorkspaceItem {
+export interface WorkspaceItem {
   id: string;
   name: string;
   category: string;
@@ -277,21 +280,31 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
   },
 ];
 
+const AVAILABLE_PROJECT_ICONS = [
+  { id: 'ws-realestate', label: 'อสังหาริมทรัพย์ / อาคาร' },
+  { id: 'ws-creator', label: 'ครีเอเตอร์ / ไมโครโฟน' },
+  { id: 'ws-software', label: 'ซอฟต์แวร์ / เทคโนโลยี' },
+  { id: 'ws-cafe', label: 'คาเฟ่ / กาแฟ & ขนม' },
+];
+
 export default function ConnectedAccountsPage() {
   const searchParams = useSearchParams();
   const successMessage = searchParams.get('success');
   const errorMessage = searchParams.get('error');
 
-  // Accounts state
+  // Accounts & Workspaces state
   const [accounts, setAccounts] = useState<MasterChannelAccount[]>(INITIAL_MASTER_ACCOUNTS);
   const [workspaces, setWorkspaces] = useState<WorkspaceItem[]>(INITIAL_PROJECTS);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewLayout, setViewLayout] = useState<'GRID' | 'LIST'>('GRID');
+  const [channelFilterMode, setChannelFilterMode] = useState<'ALL' | 'ACTIVE' | 'BYPASSED'>('ALL');
 
   // Dropdown states
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
+  const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const projectDropdownRef = useRef<HTMLDivElement>(null);
 
   // Channel selections map: { `${workspaceId}_${channelId}`: boolean }
   const [channelSelections, setChannelSelections] = useState<Record<string, boolean>>(() => {
@@ -304,7 +317,7 @@ export default function ConnectedAccountsPage() {
     return map;
   });
 
-  // Modal: Connect New Page / Channel
+  // Modal: Connect New Page / Channel (+)
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
   const [connectPlatform, setConnectPlatform] = useState<'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE'>('FACEBOOK');
   const [newPageName, setNewPageName] = useState('');
@@ -320,10 +333,23 @@ export default function ConnectedAccountsPage() {
   const [isNewProjectModalOpen, setIsNewProjectModalOpen] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectCategory, setNewProjectCategory] = useState('อสังหาริมทรัพย์');
+  const [newProjectIcon, setNewProjectIcon] = useState('ws-realestate');
   const [newProjectSelectedChannels, setNewProjectSelectedChannels] = useState<Record<string, boolean>>({
     'acc-fb-c1-th': true,
     'acc-ig-c1-main': true,
   });
+
+  // Modal: Manage & Map Project Channels (Comprehensive Project Matrix)
+  const [isManageProjectModalOpen, setIsManageProjectModalOpen] = useState(false);
+  const [editingProjectId, setEditingProjectId] = useState<string>('ws_capitalone');
+  const [editProjectName, setEditProjectName] = useState('');
+  const [editProjectCategory, setEditProjectCategory] = useState('');
+  const [editProjectIcon, setEditProjectIcon] = useState('ws-realestate');
+  const [editProjectChannels, setEditProjectChannels] = useState<Record<string, boolean>>({});
+
+  // Modal: Quick Assign Channel to Project
+  const [assignCandidate, setAssignCandidate] = useState<MasterChannelAccount | null>(null);
+  const [assignTargetWsId, setAssignTargetWsId] = useState<string>('ws_capitalone');
 
   // Toast / Feedback Notice
   const [feedbackNotice, setFeedbackNotice] = useState<string | null>(null);
@@ -333,11 +359,14 @@ export default function ConnectedAccountsPage() {
     setTimeout(() => setFeedbackNotice(null), 4000);
   };
 
-  // Close dropdown on click outside
+  // Close dropdowns on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setOpenDropdownId(null);
+      }
+      if (projectDropdownRef.current && !projectDropdownRef.current.contains(e.target as Node)) {
+        setIsProjectDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -347,17 +376,41 @@ export default function ConnectedAccountsPage() {
   // Active workspace object
   const activeWorkspace = workspaces.find((w) => w.id === selectedWorkspaceId);
 
-  // Filter accounts by search query
-  const searchedAccounts = useMemo(() => {
-    if (!searchQuery.trim()) return accounts;
-    const q = searchQuery.toLowerCase().trim();
-    return accounts.filter(
-      (acc) =>
-        acc.displayName.toLowerCase().includes(q) ||
-        acc.handle.toLowerCase().includes(q) ||
-        acc.channelId.toLowerCase().includes(q)
-    );
-  }, [accounts, searchQuery]);
+  // Active count calculations for current scope
+  const currentProjectActiveCount = useMemo(() => {
+    if (selectedWorkspaceId === 'ALL') return accounts.length;
+    return accounts.filter((a) => channelSelections[`${selectedWorkspaceId}_${a.id}`] ?? false).length;
+  }, [selectedWorkspaceId, accounts, channelSelections]);
+
+  const currentProjectBypassedCount = useMemo(() => {
+    if (selectedWorkspaceId === 'ALL') return 0;
+    return accounts.length - currentProjectActiveCount;
+  }, [selectedWorkspaceId, accounts, currentProjectActiveCount]);
+
+  // Filter accounts by search query AND workspace selection AND filter mode
+  const displayedAccounts = useMemo(() => {
+    let list = accounts;
+
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      list = list.filter(
+        (acc) =>
+          acc.displayName.toLowerCase().includes(q) ||
+          acc.handle.toLowerCase().includes(q) ||
+          acc.channelId.toLowerCase().includes(q)
+      );
+    }
+
+    if (selectedWorkspaceId !== 'ALL') {
+      if (channelFilterMode === 'ACTIVE') {
+        list = list.filter((acc) => channelSelections[`${selectedWorkspaceId}_${acc.id}`] ?? false);
+      } else if (channelFilterMode === 'BYPASSED') {
+        list = list.filter((acc) => !(channelSelections[`${selectedWorkspaceId}_${acc.id}`] ?? false));
+      }
+    }
+
+    return list;
+  }, [accounts, searchQuery, selectedWorkspaceId, channelFilterMode, channelSelections]);
 
   // Toggle channel enablement for workspace (Zero-Touch API Bypass)
   const handleToggleChannelForWorkspace = (channelId: string, wsId?: string) => {
@@ -378,6 +431,95 @@ export default function ConnectedAccountsPage() {
     } else {
       showToast(`🛡️ ปิดใช้งาน "${targetAccount?.displayName}" ใน ${targetWs?.name} (ระบบจะข้าม API ไม่เกิด Error 100%)`);
     }
+  };
+
+  // Open Manage Project Modal
+  const handleOpenManageProjectModal = (wsId: string) => {
+    const target = workspaces.find((w) => w.id === wsId) || workspaces[0];
+    if (!target) return;
+
+    setEditingProjectId(target.id);
+    setEditProjectName(target.name);
+    setEditProjectCategory(target.category);
+    setEditProjectIcon(target.icon);
+
+    const channelMap: Record<string, boolean> = {};
+    accounts.forEach((acc) => {
+      channelMap[acc.id] = channelSelections[`${target.id}_${acc.id}`] ?? false;
+    });
+    setEditProjectChannels(channelMap);
+    setIsManageProjectModalOpen(true);
+  };
+
+  // Switch editing project inside Manage Project Modal
+  const handleSwitchEditingProjectInModal = (wsId: string) => {
+    const target = workspaces.find((w) => w.id === wsId);
+    if (!target) return;
+
+    setEditingProjectId(target.id);
+    setEditProjectName(target.name);
+    setEditProjectCategory(target.category);
+    setEditProjectIcon(target.icon);
+
+    const channelMap: Record<string, boolean> = {};
+    accounts.forEach((acc) => {
+      channelMap[acc.id] = channelSelections[`${target.id}_${acc.id}`] ?? false;
+    });
+    setEditProjectChannels(channelMap);
+  };
+
+  // Save changes in Manage Project Modal
+  const handleSaveManageProject = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editProjectName.trim()) return;
+
+    const chosenChannelIds = Object.keys(editProjectChannels).filter((id) => editProjectChannels[id]);
+
+    // Update workspaces list
+    setWorkspaces((prev) =>
+      prev.map((ws) =>
+        ws.id === editingProjectId
+          ? {
+              ...ws,
+              name: editProjectName.trim(),
+              category: editProjectCategory,
+              icon: editProjectIcon,
+              selectedChannelIds: chosenChannelIds,
+            }
+          : ws
+      )
+    );
+
+    // Update channel selections
+    setChannelSelections((prev) => {
+      const updated = { ...prev };
+      accounts.forEach((acc) => {
+        updated[`${editingProjectId}_${acc.id}`] = editProjectChannels[acc.id] ?? false;
+      });
+      return updated;
+    });
+
+    setIsManageProjectModalOpen(false);
+    showToast(`✓ บันทึกการตั้งค่าโปรเจกต์ "${editProjectName}" และแมป ${chosenChannelIds.length} ช่องทางสำเร็จ`);
+  };
+
+  // Delete project
+  const handleDeleteProject = (wsId: string) => {
+    if (workspaces.length <= 1) {
+      alert('ไม่สามารถลบโปรเจกต์สุดท้ายในระบบได้ ต้องมีอย่างน้อย 1 โปรเจกต์');
+      return;
+    }
+    const target = workspaces.find((w) => w.id === wsId);
+    if (!confirm(`คุณต้องการลบโปรเจกต์ "${target?.name}" ออกจากระบบหรือไม่? ช่องทางต่างๆ จะยังคงอยู่ใน Master Hub`)) {
+      return;
+    }
+
+    setWorkspaces((prev) => prev.filter((w) => w.id !== wsId));
+    if (selectedWorkspaceId === wsId) {
+      setSelectedWorkspaceId('ALL');
+    }
+    setIsManageProjectModalOpen(false);
+    showToast(`✓ ลบโปรเจกต์ "${target?.name}" เรียบร้อยแล้ว`);
   };
 
   // Re-authenticate / Refresh Token
@@ -410,6 +552,33 @@ export default function ConnectedAccountsPage() {
     setDisconnectCandidate(null);
     setOpenDropdownId(null);
     showToast(`✓ ตัดการเชื่อมต่อช่องทาง "${name}" เรียบร้อยแล้ว`);
+  };
+
+  // Quick Assign Channel to Project submit
+  const handleAssignChannelSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!assignCandidate) return;
+
+    const targetWs = workspaces.find((w) => w.id === assignTargetWsId);
+    if (!targetWs) return;
+
+    // Update account's default workspace
+    setAccounts((prev) =>
+      prev.map((a) =>
+        a.id === assignCandidate.id
+          ? { ...a, defaultWorkspaceId: targetWs.id, defaultWorkspaceName: targetWs.name }
+          : a
+      )
+    );
+
+    // Enable in target workspace
+    setChannelSelections((prev) => ({
+      ...prev,
+      [`${targetWs.id}_${assignCandidate.id}`]: true,
+    }));
+
+    setAssignCandidate(null);
+    showToast(`✓ กำหนดช่องทาง "${assignCandidate.displayName}" ให้โปรเจกต์ "${targetWs.name}" เรียบร้อยแล้ว`);
   };
 
   // Connect New Page / Channel submit
@@ -477,7 +646,7 @@ export default function ConnectedAccountsPage() {
       id: newWsId,
       name: newProjectName.trim(),
       category: newProjectCategory,
-      icon: newProjectCategory === 'อสังหาริมทรัพย์' ? 'ws-realestate' : newProjectCategory === 'ครีเอเตอร์' ? 'ws-creator' : 'ws-software',
+      icon: newProjectIcon,
       selectedChannelIds: chosenChannelIds,
     };
 
@@ -495,17 +664,17 @@ export default function ConnectedAccountsPage() {
     setSelectedWorkspaceId(newWsId);
     setIsNewProjectModalOpen(false);
     setNewProjectName('');
-    showToast(`✓ สร้างโปรเจกต์ "${newProject.name}" เรียบร้อยแล้ว (เปิดใช้งานเฉพาะ ${chosenChannelIds.length} ช่องทางที่เลือก)`);
+    showToast(`✓ สร้างโปรเจกต์ "${newProject.name}" เรียบร้อยแล้ว (เปิดใช้งาน ${chosenChannelIds.length} ช่องทาง)`);
   };
 
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Masthead Header */}
       <Masthead
-        folio="ACCOUNTS DIRECTORY / ENDPOINTS HUB"
-        editionDate="MULTI-PLATFORM MATRIX"
-        title="Connected Channels & Health"
-        subtitle="Manage publication endpoints grouped by platform. Control permissions and Zero-Touch API bypass per project."
+        folio="PROJECT DIRECTORY / INTEGRATION MATRIX"
+        editionDate="MULTI-WORKSPACE & CHANNELS"
+        title="Connected Channels & Project Hub"
+        subtitle="Manage publication endpoints and map them into Projects with Zero-Touch API safety and flexible routing."
       />
 
       {/* Notifications */}
@@ -535,148 +704,261 @@ export default function ConnectedAccountsPage() {
         </div>
       )}
 
-      {/* ZERO-TOUCH API BYPASS POLICY BANNER */}
-      <div className="p-4 bg-paper-raised border border-border-rule rounded-card flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-2xs">
-        <div className="flex items-start gap-3.5">
-          <div className="p-2.5 bg-brand-indigo/10 rounded-editorial text-brand-indigo shrink-0 mt-0.5">
-            <ShieldCheck className="w-5 h-5" />
-          </div>
-          <div className="space-y-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-serif font-bold text-sm text-ink-primary flex items-center gap-2">
-                <Sticker name="guarded-shield" size="xs" inline />
-                <span>Zero-Touch API Bypass Guarantee</span>
-              </h2>
-              <span className="text-[10px] font-mono px-2 py-0.5 bg-emerald-100 text-emerald-900 border border-emerald-300 rounded font-bold">
-                Zero Error Policy
-              </span>
-            </div>
-            <p className="text-xs text-ink-secondary leading-relaxed font-sans">
-              เพจหรือช่องทางที่ไม่ได้เปิดใช้งานในโปรเจกต์ ระบบจะไม่ยุ่ง ไม่ทำการเชื่อมต่อ ไม่ส่ง API Request ข้ามไป และไม่เกิด Error ใดๆ ทั้งสิ้น
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
-          <div className="px-3 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule text-right">
-            <p className="text-[10px] font-mono uppercase text-ink-secondary">Master Channels</p>
-            <p className="text-sm font-mono font-bold text-brand-indigo">{accounts.length} Endpoints</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => setIsNewProjectModalOpen(true)}
-            className="px-3.5 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors shadow-xs cursor-pointer"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>+ สร้าง Project ใหม่</span>
-          </button>
-        </div>
-      </div>
-
-      {/* TOOLBAR: WORKSPACE SCOPE & SEARCH */}
-      <div className="p-3.5 bg-paper-raised border border-border-rule rounded-card flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
-        {/* Workspace Switcher Selector */}
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-mono text-ink-secondary flex items-center gap-1 font-semibold">
-            <Building2 className="w-3.5 h-3.5 text-brand-indigo" />
-            <span>ขอบเขตโปรเจกต์:</span>
-          </span>
-
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-            <button
-              type="button"
-              onClick={() => setSelectedWorkspaceId('ALL')}
-              className={`px-3 py-1 rounded text-xs font-mono transition-all cursor-pointer whitespace-nowrap ${
-                selectedWorkspaceId === 'ALL'
-                  ? 'bg-brand-indigo text-white font-bold shadow-2xs'
-                  : 'bg-paper-canvas text-ink-secondary border border-border-rule hover:text-ink-primary'
-              }`}
-            >
-              แสดงทั้งหมด ({accounts.length})
-            </button>
-
-            {workspaces.map((ws) => {
-              const isSelected = selectedWorkspaceId === ws.id;
-              return (
-                <button
-                  key={ws.id}
-                  type="button"
-                  onClick={() => setSelectedWorkspaceId(ws.id)}
-                  className={`px-2.5 py-1 rounded text-xs font-mono transition-all cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
-                    isSelected
-                      ? 'bg-brand-indigo text-white font-bold shadow-2xs'
-                      : 'bg-paper-canvas text-ink-secondary border border-border-rule hover:text-ink-primary'
-                  }`}
-                >
-                  <Sticker name={ws.icon} size="xs" inline />
-                  <span>{ws.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Right side toolbar actions: View Switcher (Grid 2x2 vs List) + Search */}
-        <div className="flex items-center gap-2 w-full sm:w-auto shrink-0 justify-between sm:justify-end">
-          {/* View Mode Toggle: Grid 2x2 vs List */}
-          <div className="flex items-center p-0.5 bg-paper-canvas border border-border-rule rounded-editorial shrink-0 shadow-2xs">
-            <button
-              type="button"
-              onClick={() => setViewLayout('GRID')}
-              className={`px-2.5 py-1 rounded text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                viewLayout === 'GRID'
-                  ? 'bg-brand-indigo text-white font-bold shadow-2xs'
-                  : 'text-ink-secondary hover:text-ink-primary'
-              }`}
-              title="มุมมองแบบตาราง 2x2 (Grid 2x2 View)"
-            >
-              <LayoutGrid className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Grid 2×2</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewLayout('LIST')}
-              className={`px-2.5 py-1 rounded text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
-                viewLayout === 'LIST'
-                  ? 'bg-brand-indigo text-white font-bold shadow-2xs'
-                  : 'text-ink-secondary hover:text-ink-primary'
-              }`}
-              title="มุมมองแบบรายการยาว (Full-width List View)"
-            >
-              <List className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">List</span>
-            </button>
-          </div>
-
-          {/* Channel Search Input */}
-          <div className="relative w-full sm:w-60 shrink-0">
-            <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-secondary pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ค้นหาเพจ หรือแฮนเดิล..."
-              className="w-full pl-8 pr-7 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary placeholder:text-ink-secondary/60 focus:outline-hidden focus:border-brand-indigo"
-            />
-            {searchQuery && (
+      {/* ========================================================================= */}
+      {/* PROJECT COMMAND BAR & INTELLIGENCE HEADER (Comprehensive, Clean UX/UI)    */}
+      {/* ========================================================================= */}
+      <div className="bg-paper-raised border border-border-rule rounded-card p-4 shadow-xs space-y-3.5">
+        {/* Top Row: Smart Project Selector Dropdown + Live Scope Metadata + Project Actions */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+          {/* Left: Project Selector Dropdown + Metadata */}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Interactive Project Switcher Dropdown */}
+            <div className="relative" ref={projectDropdownRef}>
               <button
                 type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-ink-secondary hover:text-ink-primary cursor-pointer p-0.5"
+                onClick={() => setIsProjectDropdownOpen(!isProjectDropdownOpen)}
+                className="px-3.5 py-2 bg-paper-canvas border border-border-rule rounded-editorial flex items-center gap-2.5 hover:border-brand-indigo/60 transition-colors shadow-2xs cursor-pointer group text-left"
               >
-                <X className="w-3 h-3" />
+                {selectedWorkspaceId === 'ALL' ? (
+                  <div className="w-5 h-5 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center shrink-0">
+                    <Globe className="w-3.5 h-3.5" />
+                  </div>
+                ) : (
+                  <Sticker name={activeWorkspace?.icon || 'ws-software'} size="xs" inline />
+                )}
+                <div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-serif font-bold text-xs sm:text-sm text-ink-primary">
+                      {selectedWorkspaceId === 'ALL' ? 'Master Hub (รวมทุกบัญชี)' : activeWorkspace?.name}
+                    </span>
+                    <ChevronDown className="w-3.5 h-3.5 text-ink-secondary group-hover:text-ink-primary transition-transform duration-150 shrink-0" />
+                  </div>
+                  <p className="text-[10px] font-mono text-ink-secondary">
+                    {selectedWorkspaceId === 'ALL'
+                      ? `${accounts.length} ช่องทางในระบบ • สรุปภาพรวม`
+                      : `${activeWorkspace?.category} • ${currentProjectActiveCount} ช่องทางที่เปิดใช้`}
+                  </p>
+                </div>
+              </button>
+
+              {/* Dropdown Menu */}
+              {isProjectDropdownOpen && (
+                <div className="absolute left-0 top-full mt-1.5 w-72 bg-paper-raised border border-border-strong rounded-editorial shadow-xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 text-xs font-mono space-y-1">
+                  <div className="px-2 py-1 text-[9px] uppercase text-ink-secondary font-bold">
+                    สลับขอบเขตโปรเจกต์ (Select Project Scope):
+                  </div>
+
+                  {/* Master Hub Option */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedWorkspaceId('ALL');
+                      setIsProjectDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between p-2 rounded text-left transition-colors cursor-pointer ${
+                      selectedWorkspaceId === 'ALL'
+                        ? 'bg-paper-canvas text-brand-indigo font-bold border border-brand-indigo/20 shadow-2xs'
+                        : 'hover:bg-paper-subtle text-ink-primary'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <div className="w-5 h-5 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center shrink-0">
+                        <Globe className="w-3.5 h-3.5" />
+                      </div>
+                      <div className="truncate">
+                        <p className="font-semibold leading-tight truncate">Master Hub (รวมทุกบัญชี)</p>
+                        <p className="text-[10px] text-ink-secondary">ทุกช่องทาง ({accounts.length} endpoints)</p>
+                      </div>
+                    </div>
+                    {selectedWorkspaceId === 'ALL' && <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />}
+                  </button>
+
+                  {/* Project Items */}
+                  {workspaces.map((ws) => {
+                    const isSelected = selectedWorkspaceId === ws.id;
+                    const wsCount = accounts.filter(
+                      (a) => channelSelections[`${ws.id}_${a.id}`]
+                    ).length;
+
+                    return (
+                      <button
+                        key={ws.id}
+                        type="button"
+                        onClick={() => {
+                          setSelectedWorkspaceId(ws.id);
+                          setIsProjectDropdownOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between p-2 rounded text-left transition-colors cursor-pointer ${
+                          isSelected
+                            ? 'bg-paper-canvas text-brand-indigo font-bold border border-brand-indigo/20 shadow-2xs'
+                            : 'hover:bg-paper-subtle text-ink-primary'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 truncate">
+                          <Sticker name={ws.icon} size="xs" inline />
+                          <div className="truncate">
+                            <p className="font-semibold leading-tight truncate">{ws.name}</p>
+                            <p className="text-[10px] text-ink-secondary">{ws.category} • {wsCount} ช่องทาง</p>
+                          </div>
+                        </div>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />}
+                      </button>
+                    );
+                  })}
+
+                  <div className="pt-1 border-t border-border-rule space-y-0.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsProjectDropdownOpen(false);
+                        handleOpenManageProjectModal(selectedWorkspaceId === 'ALL' ? workspaces[0]?.id : selectedWorkspaceId);
+                      }}
+                      className="w-full flex items-center gap-2 p-1.5 rounded hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary text-left cursor-pointer text-[11px]"
+                    >
+                      <Sliders className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
+                      <span>จัดการโปรเจกต์ & แมปช่องทาง...</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsProjectDropdownOpen(false);
+                        setIsNewProjectModalOpen(true);
+                      }}
+                      className="w-full flex items-center gap-2 p-1.5 rounded hover:bg-paper-subtle text-brand-indigo text-left cursor-pointer font-semibold text-[11px]"
+                    >
+                      <Plus className="w-3.5 h-3.5 shrink-0" />
+                      <span>+ สร้างโปรเจกต์ใหม่...</span>
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Context Metadata Pill */}
+            {selectedWorkspaceId !== 'ALL' && activeWorkspace && (
+              <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+                <span className="px-2.5 py-1 rounded-full bg-paper-canvas border border-border-rule text-ink-secondary flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-semantic-success animate-pulse" />
+                  <span>{currentProjectActiveCount} จาก {accounts.length} ช่องทางเปิดใช้</span>
+                </span>
+                <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 flex items-center gap-1.5">
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
+                  <span>Zero-Touch: {currentProjectBypassedCount} ช่องทางถูกข้าม 100%</span>
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* Right: Quick Project Action Buttons */}
+          <div className="flex items-center gap-2 shrink-0 self-end lg:self-center">
+            {selectedWorkspaceId !== 'ALL' && (
+              <button
+                type="button"
+                onClick={() => handleOpenManageProjectModal(selectedWorkspaceId)}
+                className="px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-mono font-medium flex items-center gap-1.5 transition-colors cursor-pointer text-ink-primary shadow-2xs"
+                title="แก้ไขชื่อ หมวดหมู่ และติ๊กแมปช่องทางของโปรเจกต์นี้"
+              >
+                <Sliders className="w-3.5 h-3.5 text-brand-indigo" />
+                <span>แมปช่องทางโปรเจกต์</span>
               </button>
             )}
+
+            <button
+              type="button"
+              onClick={() => setIsNewProjectModalOpen(true)}
+              className="px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer active:scale-95"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>สร้าง Project ใหม่</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Bottom Row: Scope Filter (All vs Active vs Bypassed) + Search + Layout Switcher */}
+        <div className="pt-2.5 border-t border-border-rule flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-mono">
+          {/* Filter Pills when Project selected */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+            <span className="text-[10px] uppercase text-ink-secondary mr-1 font-bold shrink-0">แสดง:</span>
+            {[
+              { id: 'ALL', label: `ทั้งหมด (${accounts.length})` },
+              ...(selectedWorkspaceId !== 'ALL' ? [
+                { id: 'ACTIVE', label: `✓ เปิดใน ${activeWorkspace?.name} (${currentProjectActiveCount})` },
+                { id: 'BYPASSED', label: `⚪ ข้าม API (${currentProjectBypassedCount})` },
+              ] : [])
+            ].map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => setChannelFilterMode(tab.id as any)}
+                className={`px-2.5 py-1 rounded text-xs transition-colors cursor-pointer whitespace-nowrap ${
+                  channelFilterMode === tab.id
+                    ? 'bg-brand-indigo text-white font-bold shadow-2xs'
+                    : 'bg-paper-canvas text-ink-secondary border border-border-rule hover:text-ink-primary'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Right Side: View Layout (Grid 2x2 vs List) + Channel Search Input */}
+          <div className="flex items-center gap-2 w-full md:w-auto shrink-0 justify-between md:justify-end">
+            {/* View Mode Toggle: Grid 2x2 vs List */}
+            <div className="flex items-center p-0.5 bg-paper-canvas border border-border-rule rounded-editorial shrink-0 shadow-2xs">
+              <button
+                type="button"
+                onClick={() => setViewLayout('GRID')}
+                className={`px-2.5 py-1 rounded text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewLayout === 'GRID'
+                    ? 'bg-brand-indigo text-white font-bold shadow-2xs'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+                title="มุมมองแบบตาราง 2x2 (Grid 2x2 View)"
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Grid 2×2</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewLayout('LIST')}
+                className={`px-2.5 py-1 rounded text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                  viewLayout === 'LIST'
+                    ? 'bg-brand-indigo text-white font-bold shadow-2xs'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+                title="มุมมองแบบรายการยาว (Full-width List View)"
+              >
+                <List className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">List</span>
+              </button>
+            </div>
+
+            {/* Channel Search Input */}
+            <div className="relative w-full sm:w-56 shrink-0">
+              <Search className="w-3.5 h-3.5 absolute left-2.5 top-1/2 -translate-y-1/2 text-ink-secondary pointer-events-none" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="ค้นหาเพจ หรือแฮนเดิล..."
+                className="w-full pl-8 pr-7 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary placeholder:text-ink-secondary/60 focus:outline-hidden focus:border-brand-indigo"
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-ink-secondary hover:text-ink-primary cursor-pointer p-0.5"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* ========================================================================= */}
       {/* PLATFORM GROUPED SECTIONS (User Requested Layout: Grid 2x2 or List)       */}
-      {/* Facebook [+] -> page 1 ..., page 2 ...                                   */}
-      {/* Instagram [+] -> page 1 ..., page 2 ...                                  */}
-      {/* TikTok [+] -> page 1 ...                                                 */}
-      {/* YouTube [+] -> channel 1 ...                                             */}
       {/* ========================================================================= */}
       <div className={
         viewLayout === 'GRID'
@@ -684,7 +966,7 @@ export default function ConnectedAccountsPage() {
           : 'space-y-6'
       }>
         {PLATFORM_CONFIGS.map((platform) => {
-          const platformAccounts = searchedAccounts.filter((a) => a.platform === platform.id);
+          const platformAccounts = displayedAccounts.filter((a) => a.platform === platform.id);
           const totalInPlatform = accounts.filter((a) => a.platform === platform.id).length;
 
           return (
@@ -731,6 +1013,8 @@ export default function ConnectedAccountsPage() {
                   <p className="text-xs font-mono text-ink-secondary">
                     {searchQuery
                       ? `ไม่พบบัญชี ${platform.name} ที่ตรงกับคำค้นหา "${searchQuery}"`
+                      : channelFilterMode !== 'ALL'
+                      ? `ไม่มีบัญชี ${platform.name} ในสถานะที่เลือก (${channelFilterMode})`
                       : `ยังไม่มีบัญชี ${platform.name} เชื่อมต่ออยู่ในระบบ`}
                   </p>
                   <button
@@ -828,14 +1112,18 @@ export default function ConnectedAccountsPage() {
                             }`}
                             title={
                               isEnabledInCurrentWs
-                                ? 'คลิกเพื่อปิดใช้งานในโปรเจกต์นี้ (Bypass ข้าม API ไม่เกิด Error)'
-                                : 'คลิกเพื่อเปิดใช้งานในโปรเจกต์นี้'
+                                ? `คลิกเพื่อปิดใช้งานใน ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name} (Bypass ข้าม API ไม่เกิด Error)`
+                                : `คลิกเพื่อเปิดใช้งานใน ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name}`
                             }
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${
                               isEnabledInCurrentWs ? 'bg-semantic-success animate-pulse' : 'bg-ink-muted'
                             }`} />
-                            <span>{isEnabledInCurrentWs ? 'Active' : 'Bypassed'}</span>
+                            <span>
+                              {selectedWorkspaceId !== 'ALL'
+                                ? isEnabledInCurrentWs ? 'Active' : 'Bypassed'
+                                : isEnabledInCurrentWs ? 'พร้อมใช้งาน' : 'ข้าม API'}
+                            </span>
                           </button>
 
                           {/* Action Menu (...) */}
@@ -853,10 +1141,11 @@ export default function ConnectedAccountsPage() {
                             {openDropdownId === acc.id && (
                               <div
                                 ref={dropdownRef}
-                                className="absolute right-0 top-full mt-1 w-52 bg-paper-raised border border-border-strong rounded-editorial shadow-xl p-1 z-50 animate-in fade-in zoom-in-95 duration-100 text-xs font-mono space-y-0.5"
+                                className="absolute right-0 top-full mt-1 w-56 bg-paper-raised border border-border-strong rounded-editorial shadow-xl p-1 z-50 animate-in fade-in zoom-in-95 duration-100 text-xs font-mono space-y-0.5"
                               >
-                                <div className="px-2 py-1 text-[9px] font-mono uppercase text-ink-secondary font-bold border-b border-border-rule mb-1">
-                                  ตัวเลือกช่องทาง ({acc.platform})
+                                <div className="px-2 py-1 text-[9px] font-mono uppercase text-ink-secondary font-bold border-b border-border-rule mb-1 flex items-center justify-between">
+                                  <span>{acc.platform} OPTIONS</span>
+                                  <span className="text-[8px] text-brand-indigo">{defaultWsObj?.name}</span>
                                 </div>
 
                                 <button
@@ -878,6 +1167,19 @@ export default function ConnectedAccountsPage() {
                                 >
                                   <Activity className="w-3.5 h-3.5 text-semantic-info shrink-0" />
                                   <span>ทดสอบ API Connection</span>
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setAssignCandidate(acc);
+                                    setAssignTargetWsId(acc.defaultWorkspaceId);
+                                    setOpenDropdownId(null);
+                                  }}
+                                  className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
+                                >
+                                  <Building2 className="w-3.5 h-3.5 text-accent-terracotta shrink-0" />
+                                  <span>กำหนดโปรเจกต์หลัก...</span>
                                 </button>
 
                                 <button
@@ -1093,7 +1395,348 @@ export default function ConnectedAccountsPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL 2: TEST API CONNECTION DIAGNOSTIC                                   */}
+      {/* MODAL 2: MANAGE & MAP PROJECT CHANNELS (Comprehensive Project Matrix)     */}
+      {/* ========================================================================= */}
+      {isManageProjectModalOpen && (
+        <div
+          onClick={() => setIsManageProjectModalOpen(false)}
+          className="fixed inset-0 z-50 bg-ink-primary/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-paper-raised border border-border-rule rounded-card max-w-xl w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 max-h-[90vh] flex flex-col cursor-default"
+          >
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-border-rule shrink-0">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center">
+                  <Sliders className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base text-ink-primary">
+                    จัดการโปรเจกต์ & แมปช่องทาง (Project Channel Matrix)
+                  </h3>
+                  <p className="text-[11px] font-mono text-ink-secondary">
+                    เลือกช่องทางที่อนุญาตให้โพสต์ในโปรเจกต์นี้ (ช่องทางที่เหลือจะถูกข้าม API 100%)
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsManageProjectModalOpen(false)}
+                className="p-1 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Project Tabs (Switch between projects to configure) */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-mono scrollbar-none shrink-0">
+              <span className="text-[10px] text-ink-secondary uppercase mr-1 font-bold">โปรเจกต์:</span>
+              {workspaces.map((ws) => (
+                <button
+                  key={ws.id}
+                  type="button"
+                  onClick={() => handleSwitchEditingProjectInModal(ws.id)}
+                  className={`px-2.5 py-1 rounded transition-colors cursor-pointer flex items-center gap-1.5 whitespace-nowrap ${
+                    editingProjectId === ws.id
+                      ? 'bg-brand-indigo text-white font-bold shadow-2xs'
+                      : 'bg-paper-canvas text-ink-secondary border border-border-rule hover:text-ink-primary'
+                  }`}
+                >
+                  <Sticker name={ws.icon} size="xs" inline />
+                  <span>{ws.name}</span>
+                </button>
+              ))}
+            </div>
+
+            {/* Edit Form */}
+            <form onSubmit={handleSaveManageProject} className="space-y-4 overflow-y-auto flex-1 pr-1 text-xs font-mono">
+              {/* Row 1: Project Name & Category */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] uppercase text-ink-secondary mb-1">
+                    ชื่อโปรเจกต์ (Project Name) *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={editProjectName}
+                    onChange={(e) => setEditProjectName(e.target.value)}
+                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] uppercase text-ink-secondary mb-1">
+                    หมวดหมู่ธุรกิจ (Category)
+                  </label>
+                  <select
+                    value={editProjectCategory}
+                    onChange={(e) => setEditProjectCategory(e.target.value)}
+                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo cursor-pointer"
+                  >
+                    <option value="อสังหาริมทรัพย์">อสังหาริมทรัพย์ (Real Estate Agency)</option>
+                    <option value="ครีเอเตอร์ / สตูดิโอ">ครีเอเตอร์ / สตูดิโอ (Creator Media)</option>
+                    <option value="SaaS & ซอฟต์แวร์">ซอฟต์แวร์ / ดิจิทัลโปรดักต์ (SaaS)</option>
+                    <option value="คาเฟ่ & อาหาร">คาเฟ่ & ไลฟ์สไตล์ (Food & Beverage)</option>
+                    <option value="อีคอมเมิร์ซ">แบรนด์สินค้า & อีคอมเมิร์ซ (E-Commerce)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Row 2: Sticker Icon Selector */}
+              <div>
+                <label className="block text-[11px] uppercase text-ink-secondary mb-1.5">
+                  สติกเกอร์ประจำโปรเจกต์ (Project Icon)
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {AVAILABLE_PROJECT_ICONS.map((ic) => (
+                    <button
+                      key={ic.id}
+                      type="button"
+                      onClick={() => setEditProjectIcon(ic.id)}
+                      className={`p-2 rounded border flex items-center gap-2 cursor-pointer transition-all ${
+                        editProjectIcon === ic.id
+                          ? 'bg-brand-indigo/10 border-brand-indigo ring-1 ring-brand-indigo/30'
+                          : 'bg-paper-canvas border-border-rule hover:bg-paper-subtle'
+                      }`}
+                    >
+                      <Sticker name={ic.id} size="sm" />
+                      <span className="text-[10px] text-ink-primary truncate">{ic.label.split('/')[0]}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Channel Mapping Matrix Checklist */}
+              <div className="space-y-2 pt-2 border-t border-border-rule">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <span className="block text-[11px] uppercase text-ink-secondary font-bold">
+                      ติ๊กเลือกช่องทางที่เปิดใช้งานในโปรเจกต์นี้:
+                    </span>
+                    <span className="text-[10px] text-ink-muted">
+                      {Object.values(editProjectChannels).filter(Boolean).length} จาก {accounts.length} ช่องทางเปิดใช้งาน
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2 text-[10px]">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const allSelected: Record<string, boolean> = {};
+                        accounts.forEach((a) => (allSelected[a.id] = true));
+                        setEditProjectChannels(allSelected);
+                      }}
+                      className="text-brand-indigo hover:underline cursor-pointer"
+                    >
+                      เลือกทั้งหมด
+                    </button>
+                    <span>|</span>
+                    <button
+                      type="button"
+                      onClick={() => setEditProjectChannels({})}
+                      className="text-ink-muted hover:text-ink-primary cursor-pointer"
+                    >
+                      ล้างทั้งหมด
+                    </button>
+                  </div>
+                </div>
+
+                {/* Grouped channels list by platform */}
+                <div className="space-y-2 max-h-56 overflow-y-auto pr-1">
+                  {PLATFORM_CONFIGS.map((platform) => {
+                    const chs = accounts.filter((a) => a.platform === platform.id);
+                    if (chs.length === 0) return null;
+
+                    return (
+                      <div key={platform.id} className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial space-y-1.5">
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-ink-secondary uppercase">
+                          <SocialPlatformIcon platform={platform.id} size={14} />
+                          <span>{platform.name} ({chs.length})</span>
+                        </div>
+
+                        <div className="space-y-1">
+                          {chs.map((acc) => {
+                            const isChecked = editProjectChannels[acc.id] ?? false;
+                            return (
+                              <label
+                                key={acc.id}
+                                className={`flex items-center justify-between p-2 rounded border cursor-pointer transition-colors ${
+                                  isChecked
+                                    ? 'bg-brand-indigo/5 border-brand-indigo/30'
+                                    : 'bg-paper-raised/60 border-border-rule opacity-60 hover:opacity-100'
+                                }`}
+                              >
+                                <div className="flex items-center gap-2 truncate">
+                                  <input
+                                    type="checkbox"
+                                    checked={isChecked}
+                                    onChange={(e) =>
+                                      setEditProjectChannels((prev) => ({
+                                        ...prev,
+                                        [acc.id]: e.target.checked,
+                                      }))
+                                    }
+                                    className="w-4 h-4 rounded text-brand-indigo border-border-rule focus:ring-brand-indigo cursor-pointer shrink-0"
+                                  />
+                                  <div className="truncate">
+                                    <p className="font-bold text-ink-primary text-xs truncate">
+                                      {acc.displayName}
+                                    </p>
+                                    <p className="text-[10px] text-ink-secondary truncate">
+                                      {acc.handle}
+                                    </p>
+                                  </div>
+                                </div>
+
+                                <span className={`text-[10px] font-mono px-2 py-0.5 rounded shrink-0 ${
+                                  isChecked
+                                    ? 'bg-semantic-success/15 text-semantic-success font-bold'
+                                    : 'bg-paper-subtle text-ink-muted'
+                                }`}>
+                                  {isChecked ? 'Active' : 'Bypass'}
+                                </span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Zero-Touch API Safety Callout */}
+              <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-editorial text-[11px] text-emerald-900 flex items-start gap-2">
+                <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
+                <span>
+                  <strong>Zero-Touch Bypass:</strong> ช่องทางที่ไม่ได้ติ๊กเลือกจะถูกกันออกจากการทำงานของระบบอย่างสิ้นเชิง ทำให้หน้าเขียนโพสต์และคิวทำงานสะอาด ไม่มี Error ข้ามโปรเจกต์
+                </span>
+              </div>
+
+              {/* Modal Actions */}
+              <div className="pt-3 border-t border-border-rule flex items-center justify-between shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleDeleteProject(editingProjectId)}
+                  className="px-3 py-1.5 text-semantic-error hover:bg-semantic-error/10 rounded-editorial transition-colors cursor-pointer text-xs"
+                >
+                  ลบโปรเจกต์นี้
+                </button>
+
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsManageProjectModalOpen(false)}
+                    className="px-3.5 py-1.5 border border-border-rule rounded-editorial text-ink-secondary hover:text-ink-primary cursor-pointer text-xs"
+                  >
+                    ยกเลิก
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors text-xs"
+                  >
+                    บันทึกและปรับใช้
+                  </button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 3: QUICK ASSIGN CHANNEL TO PROJECT                                  */}
+      {/* ========================================================================= */}
+      {assignCandidate && (
+        <div
+          onClick={() => setAssignCandidate(null)}
+          className="fixed inset-0 z-50 bg-ink-primary/50 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in cursor-pointer"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-paper-raised border border-border-rule rounded-card max-w-md w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 cursor-default"
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-border-rule">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center">
+                  <Building2 className="w-4 h-4" />
+                </div>
+                <div>
+                  <h3 className="font-serif font-bold text-base text-ink-primary">
+                    กำหนดโปรเจกต์หลัก
+                  </h3>
+                  <p className="text-[11px] font-mono text-ink-secondary">
+                    {assignCandidate.displayName}
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setAssignCandidate(null)}
+                className="p-1 rounded text-ink-secondary hover:text-ink-primary cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAssignChannelSubmit} className="space-y-3.5 text-xs font-mono">
+              <span className="text-[11px] uppercase text-ink-secondary block font-bold">
+                เลือกโปรเจกต์หลักที่ต้องการผูกช่องทางนี้:
+              </span>
+
+              <div className="space-y-1.5">
+                {workspaces.map((ws) => (
+                  <label
+                    key={ws.id}
+                    className={`flex items-center justify-between p-2.5 rounded border cursor-pointer transition-colors ${
+                      assignTargetWsId === ws.id
+                        ? 'bg-brand-indigo/10 border-brand-indigo ring-1 ring-brand-indigo/30'
+                        : 'bg-paper-canvas border-border-rule hover:bg-paper-subtle'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 truncate">
+                      <input
+                        type="radio"
+                        name="target_ws"
+                        value={ws.id}
+                        checked={assignTargetWsId === ws.id}
+                        onChange={() => setAssignTargetWsId(ws.id)}
+                        className="text-brand-indigo focus:ring-brand-indigo cursor-pointer"
+                      />
+                      <Sticker name={ws.icon} size="xs" inline />
+                      <div className="truncate">
+                        <p className="font-bold text-ink-primary truncate">{ws.name}</p>
+                        <p className="text-[10px] text-ink-secondary">{ws.category}</p>
+                      </div>
+                    </div>
+                    {assignTargetWsId === ws.id && <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />}
+                  </label>
+                ))}
+              </div>
+
+              <div className="pt-2 flex items-center justify-end gap-2 border-t border-border-rule">
+                <button
+                  type="button"
+                  onClick={() => setAssignCandidate(null)}
+                  className="px-3.5 py-1.5 border border-border-rule rounded-editorial text-ink-secondary hover:text-ink-primary cursor-pointer"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors"
+                >
+                  บันทึกการผูกโปรเจกต์
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL 4: TEST API CONNECTION DIAGNOSTIC                                   */}
       {/* ========================================================================= */}
       {testApiAccount && (
         <div
@@ -1175,7 +1818,7 @@ export default function ConnectedAccountsPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL 3: DISCONNECT CHANNEL CONFIRMATION                                  */}
+      {/* MODAL 5: DISCONNECT CHANNEL CONFIRMATION                                  */}
       {/* ========================================================================= */}
       {disconnectCandidate && (
         <div
@@ -1225,7 +1868,7 @@ export default function ConnectedAccountsPage() {
       )}
 
       {/* ========================================================================= */}
-      {/* MODAL 4: CREATE NEW PROJECT & SELECT CHANNELS                             */}
+      {/* MODAL 6: CREATE NEW PROJECT & SELECT CHANNELS                             */}
       {/* ========================================================================= */}
       {isNewProjectModalOpen && (
         <div 
@@ -1278,22 +1921,39 @@ export default function ConnectedAccountsPage() {
                 />
               </div>
 
-              {/* Category */}
-              <div>
-                <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1">
-                  ประเภทธุรกิจ / หมวดหมู่
-                </label>
-                <select
-                  value={newProjectCategory}
-                  onChange={(e) => setNewProjectCategory(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo cursor-pointer"
-                >
-                  <option value="อสังหาริมทรัพย์">อสังหาริมทรัพย์ (Real Estate Agency)</option>
-                  <option value="ครีเอเตอร์">ครีเอเตอร์ / สตูดิโอมีเดีย (Creator Media)</option>
-                  <option value="SaaS & ซอฟต์แวร์">ซอฟต์แวร์ / ดิจิทัลโปรดักต์ (SaaS)</option>
-                  <option value="คาเฟ่ & อาหาร">คาเฟ่ & ไลฟ์สไตล์ (Food & Beverage)</option>
-                  <option value="อีคอมเมิร์ซ">แบรนด์สินค้า & อีคอมเมิร์ซ (E-Commerce)</option>
-                </select>
+              {/* Category & Icon */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1">
+                    ประเภทธุรกิจ / หมวดหมู่
+                  </label>
+                  <select
+                    value={newProjectCategory}
+                    onChange={(e) => setNewProjectCategory(e.target.value)}
+                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo cursor-pointer"
+                  >
+                    <option value="อสังหาริมทรัพย์">อสังหาริมทรัพย์ (Real Estate Agency)</option>
+                    <option value="ครีเอเตอร์ / สตูดิโอ">ครีเอเตอร์ / สตูดิโอ (Creator Media)</option>
+                    <option value="SaaS & ซอฟต์แวร์">ซอฟต์แวร์ / ดิจิทัลโปรดักต์ (SaaS)</option>
+                    <option value="คาเฟ่ & อาหาร">คาเฟ่ & ไลฟ์สไตล์ (Food & Beverage)</option>
+                    <option value="อีคอมเมิร์ซ">แบรนด์สินค้า & อีคอมเมิร์ซ (E-Commerce)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1">
+                    สติกเกอร์ประจำโปรเจกต์
+                  </label>
+                  <select
+                    value={newProjectIcon}
+                    onChange={(e) => setNewProjectIcon(e.target.value)}
+                    className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo cursor-pointer"
+                  >
+                    {AVAILABLE_PROJECT_ICONS.map((ic) => (
+                      <option key={ic.id} value={ic.id}>{ic.label}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
 
               {/* Channel Checkbox Directory */}
