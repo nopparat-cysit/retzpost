@@ -21,6 +21,7 @@ import {
   Users,
   Shield
 } from 'lucide-react';
+import { Sticker } from '@/components/ui/sticker';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -32,13 +33,14 @@ export interface WorkspaceItem {
   category: string;
   dotColor: string;
   channelCount: number;
+  stickerName: string;
 }
 
 export const WORKSPACES: WorkspaceItem[] = [
-  { id: 'ws_capitalone', name: 'Capital One Real Estate', category: 'Enterprise Portfolio', dotColor: 'bg-accent-terracotta', channelCount: 6 },
-  { id: 'ws_acme', name: 'Acme Creator Studio', category: 'Personal Brand', dotColor: 'bg-brand-indigo', channelCount: 4 },
-  { id: 'ws_retzpost', name: 'RetzPost Software', category: 'SaaS Product', dotColor: 'bg-semantic-info', channelCount: 4 },
-  { id: 'ws_coffee', name: 'Coffee Craft BKK', category: 'Client Cafe SME', dotColor: 'bg-semantic-success', channelCount: 3 },
+  { id: 'ws_capitalone', name: 'Capital One Real Estate', category: 'Enterprise Portfolio', dotColor: 'bg-accent-terracotta', channelCount: 6, stickerName: 'ws-realestate' },
+  { id: 'ws_acme', name: 'Acme Creator Studio', category: 'Personal Brand', dotColor: 'bg-brand-indigo', channelCount: 4, stickerName: 'ws-creator' },
+  { id: 'ws_retzpost', name: 'RetzPost Software', category: 'SaaS Product', dotColor: 'bg-semantic-info', channelCount: 4, stickerName: 'ws-software' },
+  { id: 'ws_coffee', name: 'Coffee Craft BKK', category: 'Client Cafe SME', dotColor: 'bg-semantic-success', channelCount: 3, stickerName: 'ws-cafe' },
 ];
 
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
@@ -177,7 +179,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 className="w-full p-2 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between text-xs hover:border-brand-indigo/60 transition-colors group shadow-2xs text-left"
               >
                 <div className="flex items-center gap-2 truncate">
-                  <div className={`w-2.5 h-2.5 rounded-full ${activeWorkspace.dotColor} shrink-0`} />
+                  <Sticker name={activeWorkspace.stickerName || 'ws-software'} size="sm" />
                   <div className="truncate">
                     <p className="font-semibold text-ink-primary text-xs leading-none truncate">
                       {activeWorkspace.name}
@@ -209,7 +211,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                       }`}
                     >
                       <div className="flex items-center gap-2 truncate">
-                        <div className={`w-2 h-2 rounded-full ${ws.dotColor} shrink-0`} />
+                        <Sticker name={ws.stickerName || 'ws-software'} size="xs" />
                         <div className="truncate">
                           <p className="leading-tight truncate">{ws.name}</p>
                           <p className="text-[9px] font-mono text-ink-secondary">{ws.category} • {ws.channelCount} ch</p>

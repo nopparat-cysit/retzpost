@@ -25,6 +25,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { Sticker } from '@/components/ui/sticker';
 import { 
   WorkspaceRole, 
   PermissionKey, 
@@ -172,20 +173,21 @@ export default function TeamSettingsPage() {
             <span>โปรเจกต์:</span>
           </span>
           {[
-            { id: 'ws_capitalone', label: '🏢 Capital One Real Estate (5 คน)' },
-            { id: 'ws_acme', label: '🎙️ Acme Creator Studio (3 คน)' },
-            { id: 'ALL', label: 'ภาพรวมทั้งหมด (All Members)' },
+            { id: 'ws_capitalone', label: 'Capital One Real Estate (5 คน)', sticker: 'ws-realestate' },
+            { id: 'ws_acme', label: 'Acme Creator Studio (3 คน)', sticker: 'ws-creator' },
+            { id: 'ALL', label: 'ภาพรวมทั้งหมด (All Members)', sticker: null },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setSelectedWorkspace(tab.id as any)}
-              className={`px-3 py-1.5 rounded text-xs font-mono transition-colors cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded text-xs font-mono transition-colors cursor-pointer ${
                 selectedWorkspace === tab.id
                   ? 'bg-brand-indigo text-white font-semibold shadow-2xs'
                   : 'bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule'
               }`}
             >
-              {tab.label}
+              {tab.sticker && <Sticker name={tab.sticker} size="xs" inline />}
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
@@ -358,7 +360,8 @@ export default function TeamSettingsPage() {
 
                         {/* Role Selector */}
                         <td className="py-3.5 px-4">
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-1.5">
+                            <Sticker name={roleDef.stickerName || `role-${mbr.role.toLowerCase()}`} size="xs" inline />
                             <select
                               value={mbr.role}
                               onChange={(e) => handleRoleChange(mbr.id, e.target.value as WorkspaceRole)}
@@ -375,11 +378,11 @@ export default function TeamSettingsPage() {
                                   : 'bg-paper-canvas text-ink-secondary border-border-rule hover:border-brand-indigo'
                               }`}
                             >
-                              <option value="OWNER" disabled>👑 Owner (เจ้าของโปรเจกต์)</option>
-                              <option value="MANAGER">⭐ Manager (ผู้จัดการทีม)</option>
-                              <option value="EDITOR">✍️ Editor (ครีเอเตอร์ยิงตรง)</option>
-                              <option value="CONTRIBUTOR">👀 Contributor (รออนุมัติ)</option>
-                              <option value="VIEWER">🔍 Viewer (ผู้ตรวจงาน/ลูกค้า)</option>
+                              <option value="OWNER" disabled>Owner (เจ้าของโปรเจกต์)</option>
+                              <option value="MANAGER">Manager (ผู้จัดการทีม)</option>
+                              <option value="EDITOR">Editor (ครีเอเตอร์ยิงตรง)</option>
+                              <option value="CONTRIBUTOR">Contributor (รออนุมัติ)</option>
+                              <option value="VIEWER">Viewer (ผู้ตรวจงาน/ลูกค้า)</option>
                             </select>
                           </div>
                           <span className="text-[10px] text-ink-secondary font-sans block mt-1 line-clamp-1">
@@ -453,20 +456,35 @@ export default function TeamSettingsPage() {
                   <th className="py-3 px-4 border-r border-border-rule min-w-[220px]">
                     ฟังก์ชัน / สิทธิ์การใช้งาน
                   </th>
-                  <th className="py-3 px-3 text-center border-r border-border-rule bg-brand-indigo/5 text-brand-indigo font-bold">
-                    👑 Owner
+                  <th className="py-2.5 px-3 text-center border-r border-border-rule bg-brand-indigo/5 text-brand-indigo font-bold">
+                    <div className="flex items-center justify-center gap-1.5">
+                      <Sticker name="role-owner" size="xs" inline />
+                      <span>Owner</span>
+                    </div>
                   </th>
-                  <th className="py-3 px-3 text-center border-r border-border-rule bg-semantic-info/5 text-semantic-info font-bold">
-                    ⭐ Manager
+                  <th className="py-2.5 px-3 text-center border-r border-border-rule bg-semantic-info/5 text-semantic-info font-bold">
+                    <div className="flex items-center justify-center gap-1.5">
+                      <Sticker name="role-manager" size="xs" inline />
+                      <span>Manager</span>
+                    </div>
                   </th>
-                  <th className="py-3 px-3 text-center border-r border-border-rule bg-semantic-success/5 text-semantic-success font-bold">
-                    ✍️ Editor
+                  <th className="py-2.5 px-3 text-center border-r border-border-rule bg-semantic-success/5 text-semantic-success font-bold">
+                    <div className="flex items-center justify-center gap-1.5">
+                      <Sticker name="role-editor" size="xs" inline />
+                      <span>Editor</span>
+                    </div>
                   </th>
-                  <th className="py-3 px-3 text-center border-r border-border-rule bg-accent-terracotta/5 text-accent-terracotta font-bold">
-                    👀 Contributor
+                  <th className="py-2.5 px-3 text-center border-r border-border-rule bg-accent-terracotta/5 text-accent-terracotta font-bold">
+                    <div className="flex items-center justify-center gap-1.5">
+                      <Sticker name="role-contributor" size="xs" inline />
+                      <span>Contributor</span>
+                    </div>
                   </th>
-                  <th className="py-3 px-3 text-center text-ink-secondary">
-                    🔍 Viewer
+                  <th className="py-2.5 px-3 text-center text-ink-secondary font-bold">
+                    <div className="flex items-center justify-center gap-1.5">
+                      <Sticker name="role-viewer" size="xs" inline />
+                      <span>Viewer</span>
+                    </div>
                   </th>
                 </tr>
               </thead>
@@ -680,10 +698,10 @@ export default function TeamSettingsPage() {
                   onChange={(e) => setInviteWorkspaceId(e.target.value)}
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary font-mono focus:outline-none focus:border-brand-indigo cursor-pointer"
                 >
-                  <option value="ws_capitalone">🏢 Capital One Real Estate (Enterprise)</option>
-                  <option value="ws_acme">🎙️ Acme Creator Studio (Personal Brand)</option>
-                  <option value="ws_retzpost">⚡ RetzPost Software (SaaS)</option>
-                  <option value="ws_coffee">☕ Coffee Craft BKK (SME Cafe)</option>
+                  <option value="ws_capitalone">Capital One Real Estate (Enterprise)</option>
+                  <option value="ws_acme">Acme Creator Studio (Personal Brand)</option>
+                  <option value="ws_retzpost">RetzPost Software (SaaS)</option>
+                  <option value="ws_coffee">Coffee Craft BKK (SME Cafe)</option>
                 </select>
               </div>
 
@@ -708,8 +726,9 @@ export default function TeamSettingsPage() {
                         }`}
                       >
                         <div className="space-y-0.5 pr-2">
-                          <span className="font-semibold text-xs text-ink-primary block">
-                            {def.label}
+                          <span className="font-semibold text-xs text-ink-primary flex items-center gap-1.5">
+                            <Sticker name={def.stickerName} size="xs" inline />
+                            <span>{def.label}</span>
                           </span>
                           <span className="text-[11px] text-ink-secondary block font-sans leading-tight">
                             {def.descriptionTh}

@@ -15,6 +15,7 @@ export type PermissionKey =
 export interface RoleDefinition {
   id: WorkspaceRole;
   label: string;
+  stickerName: string;
   badgeBg: string;
   badgeTextColor: string;
   descriptionTh: string;
@@ -25,7 +26,8 @@ export interface RoleDefinition {
 export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   OWNER: {
     id: 'OWNER',
-    label: '👑 เจ้าของโปรเจกต์ (Workspace Owner)',
+    label: 'เจ้าของโปรเจกต์ (Workspace Owner)',
+    stickerName: 'role-owner',
     badgeBg: 'bg-brand-indigo',
     badgeTextColor: 'text-white',
     descriptionTh: 'ถือสิทธิ์สูงสุด 100%: จัดการสมาชิก, บัญชีโซเชียล, เครดิต/บิลลิ่ง, ลบหรือแก้ไขโปรเจกต์',
@@ -45,7 +47,8 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   },
   MANAGER: {
     id: 'MANAGER',
-    label: '⭐ ผู้จัดการ (Team Manager)',
+    label: 'ผู้จัดการ (Team Manager)',
+    stickerName: 'role-manager',
     badgeBg: 'bg-semantic-info',
     badgeTextColor: 'text-white',
     descriptionTh: 'จัดการทีม, อนุมัติโพสต์ของ Contributor, ยิงโพสต์ได้ทุกช่องทาง, ดูแล Token และ Presets ประจำโปรเจกต์',
@@ -64,7 +67,8 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   },
   EDITOR: {
     id: 'EDITOR',
-    label: '✍️ ครีเอเตอร์ / บรรณาธิการ (Editor & Creator)',
+    label: 'ครีเอเตอร์ / บรรณาธิการ (Editor & Creator)',
+    stickerName: 'role-editor',
     badgeBg: 'bg-semantic-success',
     badgeTextColor: 'text-white',
     descriptionTh: 'สร้างและยิงโพสต์ได้โดยตรง (Feed, Story, Reels), ใช้งานเทมเพลตและคลัง AI, ส่งออกประวัติ Error ได้',
@@ -80,7 +84,8 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   },
   CONTRIBUTOR: {
     id: 'CONTRIBUTOR',
-    label: '👀 ผู้ช่วยเขียน / รออนุมัติ (Contributor - Needs Approval)',
+    label: 'ผู้ช่วยเขียน / รออนุมัติ (Contributor - Needs Approval)',
+    stickerName: 'role-contributor',
     badgeBg: 'bg-accent-terracotta',
     badgeTextColor: 'text-white',
     descriptionTh: 'เขียนแบบร่าง, เลือกรูปและเทมเพลตได้ แต่ยิงโพสต์ตรงไม่ได้ ต้องส่งให้ Manager อนุมัติก่อน (Approval Flow)',
@@ -93,7 +98,8 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   },
   VIEWER: {
     id: 'VIEWER',
-    label: '🔍 ผู้ตรวจงาน / ลูกค้าภายนอก (Client Viewer - Read Only)',
+    label: 'ผู้ตรวจงาน / ลูกค้าภายนอก (Client Viewer - Read Only)',
+    stickerName: 'role-viewer',
     badgeBg: 'bg-paper-subtle border border-border-rule',
     badgeTextColor: 'text-ink-secondary',
     descriptionTh: 'ดูภาพรวม Dashboard, ปฏิทินคอนเทนต์, และพรีวิวเสมือนจริงบนมือถือได้เท่านั้น ไม่สามารถแก้ไขหรือโพสต์ได้',

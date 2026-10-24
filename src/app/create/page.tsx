@@ -51,6 +51,7 @@ import {
   Disc
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { Sticker } from '@/components/ui/sticker';
 import { CustomDatePicker } from '@/components/ui/custom-date-picker';
 import { CustomTimePicker } from '@/components/ui/custom-time-picker';
 import { CustomDropdown } from '@/components/ui/custom-dropdown';
@@ -433,7 +434,7 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
       workspaceId: 'ws_acme',
       title: 'Daily Creator Combo',
       description: 'IG Feed + IG Story + FB Page Feed',
-      icon: '✨',
+      icon: 'sparkle-ai',
       targetPlacements: {
         'acme_ig_feed': true,
         'acme_ig_story': true,
@@ -445,7 +446,7 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
       workspaceId: 'ws_acme',
       title: 'Viral Shorts Blast',
       description: 'YT Shorts + TikTok + IG Reels',
-      icon: '🎬',
+      icon: 'camera-reel',
       targetPlacements: {
         'acme_yt_reel': true,
         'acme_tt_reel': true,
@@ -459,7 +460,7 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
       workspaceId: 'ws_coffee',
       title: 'Morning Cafe Vibe',
       description: 'IG Story (with Map Sticker) + FB Page Feed',
-      icon: '☕',
+      icon: 'ws-cafe',
       targetPlacements: {
         'coffee_ig_story': true,
         'coffee_fb_feed': true,
@@ -470,7 +471,7 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
       workspaceId: 'ws_coffee',
       title: 'Weekend Promo Album',
       description: 'FB Photo Album + IG Feed Carousel',
-      icon: '🥐',
+      icon: 'preset-croissant',
       targetPlacements: {
         'coffee_fb_feed': true,
         'coffee_ig_feed': true,
@@ -483,7 +484,7 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
       workspaceId: 'ws_retzpost',
       title: 'Product Changelog Release',
       description: 'FB Page + Threads + X Tweet',
-      icon: '🚀',
+      icon: 'paper-rocket',
       targetPlacements: {
         'retz_fb_feed': true,
         'retz_th_feed': true,
@@ -495,7 +496,7 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
       workspaceId: 'ws_retzpost',
       title: 'Feature Demo Shorts',
       description: 'YT Shorts + IG Reel',
-      icon: '📱',
+      icon: 'preset-mobile',
       targetPlacements: {
         'retz_yt_reel': true,
         'retz_ig_reel': true,
@@ -508,7 +509,7 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
       workspaceId: 'ws_capitalone',
       title: 'Bangkok Luxury Condo Launch',
       description: 'FB Thailand + KW Luxury + capitalonerealestate Feed & Story',
-      icon: '🏢',
+      icon: 'ws-realestate',
       targetPlacements: {
         'c1_fb_th_feed': true,
         'c1_fb_kw_lux_feed': true,
@@ -522,7 +523,7 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
       workspaceId: 'ws_capitalone',
       title: 'Daily Property 24h Stories',
       description: 'All Capital One IG & FB Stories with Link Sticker',
-      icon: '⚡',
+      icon: 'format-story',
       targetPlacements: {
         'c1_fb_th_story': true,
         'c1_fb_kw_lux_story': true,
@@ -535,7 +536,7 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
       workspaceId: 'ws_capitalone',
       title: 'Universal C1 Feed Push',
       description: 'Dispatches feed album to all Thai & partner agencies',
-      icon: '📢',
+      icon: 'herald-trumpet',
       targetPlacements: {
         'c1_fb_th_feed': true,
         'c1_fb_tw_feed': true,
@@ -1577,10 +1578,10 @@ export default function CreatePostPage() {
                       key={recipe.id}
                       type="button"
                       onClick={() => applyPreset(recipe)}
-                      className="px-2 py-0.5 rounded text-[10px] font-mono bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-primary transition-colors flex items-center gap-1 shadow-2xs text-left"
+                      className="px-2 py-0.5 rounded text-[10px] font-mono bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-primary transition-colors flex items-center gap-1.5 shadow-2xs text-left"
                       title={recipe.description}
                     >
-                      <span>{recipe.icon}</span>
+                      <Sticker name={recipe.icon} size="xs" inline />
                       <span className="font-medium truncate max-w-[120px]">{recipe.title}</span>
                     </button>
                   ))}

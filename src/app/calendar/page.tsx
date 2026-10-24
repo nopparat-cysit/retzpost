@@ -39,6 +39,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { Sticker } from '@/components/ui/sticker';
 import { CustomDatePicker } from '@/components/ui/custom-date-picker';
 import { CustomTimePicker } from '@/components/ui/custom-time-picker';
 import { CustomDropdown } from '@/components/ui/custom-dropdown';
@@ -97,11 +98,11 @@ export interface CalendarEventItem {
   };
 }
 
-const WORKSPACE_CONFIG: Record<string, { name: string; icon: string; color: string }> = {
-  CAPITAL_ONE: { name: 'Capital One Real Estate', icon: '🏢', color: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
-  ACME_CREATOR: { name: 'Acme Creator Studio', icon: '🎙️', color: 'bg-purple-50 text-purple-800 border-purple-200' },
-  RETZPOST: { name: 'RetzPost Software', icon: '⚡', color: 'bg-blue-50 text-blue-800 border-blue-200' },
-  COFFEE_CRAFT: { name: 'Coffee Craft BKK', icon: '☕', color: 'bg-amber-50 text-amber-800 border-amber-200' },
+const WORKSPACE_CONFIG: Record<string, { name: string; sticker: string; color: string }> = {
+  CAPITAL_ONE: { name: 'Capital One Real Estate', sticker: 'ws-realestate', color: 'bg-emerald-50 text-emerald-800 border-emerald-200' },
+  ACME_CREATOR: { name: 'Acme Creator Studio', sticker: 'ws-creator', color: 'bg-purple-50 text-purple-800 border-purple-200' },
+  RETZPOST: { name: 'RetzPost Software', sticker: 'ws-software', color: 'bg-blue-50 text-blue-800 border-blue-200' },
+  COFFEE_CRAFT: { name: 'Coffee Craft BKK', sticker: 'ws-cafe', color: 'bg-amber-50 text-amber-800 border-amber-200' },
 };
 
 const SAMPLE_EVENTS: CalendarEventItem[] = [
@@ -994,12 +995,12 @@ export default function EditorialCalendarPage() {
             </span>
           }
           items={[
-            { id: 'ALL', label: 'All Workspaces', count: events.length, icon: <span>🌐</span> },
+            { id: 'ALL', label: 'All Workspaces', count: events.length },
             ...(['CAPITAL_ONE', 'ACME_CREATOR', 'RETZPOST', 'COFFEE_CRAFT'] as const).map((wsKey) => ({
               id: wsKey,
               label: WORKSPACE_CONFIG[wsKey].name,
               count: events.filter((e) => e.workspace === wsKey).length,
-              icon: <span>{WORKSPACE_CONFIG[wsKey].icon}</span>,
+              icon: <Sticker name={WORKSPACE_CONFIG[wsKey].sticker} size="xs" inline />,
             })),
           ]}
           selectedId={selectedWorkspace}
@@ -1298,7 +1299,10 @@ export default function EditorialCalendarPage() {
                                 </p>
 
                                 <div className="flex items-center justify-between text-[8px] font-mono text-ink-secondary mt-0.5">
-                                  <span className="truncate max-w-[85px]">{WORKSPACE_CONFIG[ev.workspace]?.icon} {ev.handle}</span>
+                                  <span className="truncate max-w-[95px] inline-flex items-center gap-1">
+                                    <Sticker name={WORKSPACE_CONFIG[ev.workspace]?.sticker || 'ws-software'} size="xs" inline />
+                                    <span>{ev.handle}</span>
+                                  </span>
                                   {ev.storyLinkUrl && (
                                     <span className="text-accent-terracotta flex items-center gap-0.5" title="Story Link Sticker Attached">
                                       <Link2 className="w-2.5 h-2.5" />
@@ -1459,11 +1463,20 @@ export default function EditorialCalendarPage() {
                                 {ev.title}
                               </p>
                               <div className="flex items-center justify-between text-[8px] font-mono text-ink-secondary mt-0.5">
-                                <span>{WORKSPACE_CONFIG[ev.workspace]?.icon}</span>
+                                <Sticker name={WORKSPACE_CONFIG[ev.workspace]?.sticker || 'ws-software'} size="xs" inline />
                                 {ev.status === 'PUBLISHED' ? (
                                   <span className="text-semantic-success font-bold">LIVE ↗</span>
                                 ) : (
-                                  <span>{ev.aiForecast?.peakMatchScore ? `🔥 ${ev.aiForecast.peakMatchScore}%` : 'Queued'}</span>
+                                  <span className="inline-flex items-center gap-0.5">
+                                    {ev.aiForecast?.peakMatchScore ? (
+                                      <>
+                                        <Sticker name="viral-flame" size="xs" inline />
+                                        <span>{ev.aiForecast.peakMatchScore}%</span>
+                                      </>
+                                    ) : (
+                                      'Queued'
+                                    )}
+                                  </span>
                                 )}
                               </div>
                             </div>
@@ -1525,8 +1538,9 @@ export default function EditorialCalendarPage() {
                           <SocialPlatformIcon platform={ev.platform} format={ev.format} size={15} />
                           <span>{ev.dateStr} @ {ev.timeStr}</span>
                         </span>
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${ws.color}`}>
-                          {ws.icon} {ws.name}
+                        <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono border ${ws.color}`}>
+                          <Sticker name={ws.sticker} size="xs" inline />
+                          <span>{ws.name}</span>
                         </span>
                         <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border border-border-rule bg-paper-canvas flex items-center gap-1">
                           <SocialPlatformIcon platform={ev.platform} format={ev.format} size={14} />
@@ -1642,8 +1656,9 @@ export default function EditorialCalendarPage() {
             <div className="p-5 border-b border-border-rule bg-paper-raised flex items-start justify-between">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono border ${WORKSPACE_CONFIG[selectedEvent.workspace].color}`}>
-                    {WORKSPACE_CONFIG[selectedEvent.workspace].icon} {WORKSPACE_CONFIG[selectedEvent.workspace].name}
+                  <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono border ${WORKSPACE_CONFIG[selectedEvent.workspace].color}`}>
+                    <Sticker name={WORKSPACE_CONFIG[selectedEvent.workspace].sticker} size="xs" inline />
+                    <span>{WORKSPACE_CONFIG[selectedEvent.workspace].name}</span>
                   </span>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold border border-border-rule bg-paper-canvas flex items-center gap-1.5 shadow-2xs">
                     <SocialPlatformIcon platform={selectedEvent.platform} format={selectedEvent.format} size={15} />
@@ -2230,8 +2245,9 @@ export default function EditorialCalendarPage() {
                           <span className={`px-1.5 py-0.2 rounded text-[9px] font-mono font-bold ${fmt.color}`}>
                             {fmt.label}
                           </span>
-                          <span className={`px-1.5 py-0.2 rounded text-[9px] font-mono border ${WORKSPACE_CONFIG[ev.workspace].color}`}>
-                            {WORKSPACE_CONFIG[ev.workspace].icon} {WORKSPACE_CONFIG[ev.workspace].name}
+                          <span className={`inline-flex items-center gap-1 px-1.5 py-0.2 rounded text-[9px] font-mono border ${WORKSPACE_CONFIG[ev.workspace].color}`}>
+                            <Sticker name={WORKSPACE_CONFIG[ev.workspace].sticker} size="xs" inline />
+                            <span>{WORKSPACE_CONFIG[ev.workspace].name}</span>
                           </span>
                           {isLive ? (
                             <span className="px-1.5 py-0.2 rounded bg-semantic-success/15 text-semantic-success text-[9px] font-mono font-bold flex items-center gap-1">

@@ -80,6 +80,7 @@ import {
   LineLogo, 
   WebsiteLogo 
 } from '@/components/ui/social-icons';
+import { Sticker } from '@/components/ui/sticker';
 
 interface DispatchPlacement {
   platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK';
@@ -1728,11 +1729,13 @@ export default function HomePage() {
 
                     <div className="space-y-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                          {post.rankBadge}
+                        <span className="px-2 py-0.5 rounded font-mono text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 inline-flex items-center gap-1.5">
+                          <Sticker name={post.rank === 1 ? 'trophy-gold' : post.rank === 2 ? 'trophy-silver' : post.rank === 3 ? 'trophy-bronze' : 'award-ribbon'} size="xs" inline />
+                          <span>{post.rankBadge.replace(/^[^\w]+/, '')}</span>
                         </span>
-                        <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-paper-subtle text-brand-indigo border border-border-rule font-semibold">
-                          🏢 {post.workspaceName}
+                        <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-paper-subtle text-brand-indigo border border-border-rule font-semibold inline-flex items-center gap-1">
+                          <Sticker name={post.workspaceId === 'ws_capitalone' ? 'ws-realestate' : post.workspaceId === 'ws_acme' ? 'ws-creator' : post.workspaceId === 'ws_retzpost' ? 'ws-software' : 'ws-cafe'} size="xs" inline />
+                          <span>{post.workspaceName}</span>
                         </span>
                         <span className="text-[10px] font-mono text-ink-secondary">
                           • {post.publishedAt}

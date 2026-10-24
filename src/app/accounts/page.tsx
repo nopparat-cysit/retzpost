@@ -21,6 +21,7 @@ import {
   Info
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { Sticker } from '@/components/ui/sticker';
 import { StatusTag } from '@/components/ui/status-tag';
 import { 
   SocialPlatformIcon, 
@@ -185,28 +186,28 @@ const INITIAL_PROJECTS: WorkspaceItem[] = [
     id: 'ws_capitalone',
     name: 'Capital One Real Estate',
     category: 'อสังหาริมทรัพย์',
-    icon: '🏢',
+    icon: 'ws-realestate',
     selectedChannelIds: ['acc-fb-c1-th', 'acc-ig-c1-main', 'acc-fb-c1-kw'],
   },
   {
     id: 'ws_acme',
     name: 'Acme Creator Studio',
     category: 'ครีเอเตอร์ / สตูดิโอ',
-    icon: '🎙️',
+    icon: 'ws-creator',
     selectedChannelIds: ['acc-ig-acme', 'acc-fb-acme', 'acc-yt-acme', 'acc-tt-acme'],
   },
   {
     id: 'ws_retzpost',
     name: 'RetzPost Software',
     category: 'SaaS & ซอฟต์แวร์',
-    icon: '⚡',
+    icon: 'ws-software',
     selectedChannelIds: ['acc-fb-retz'],
   },
   {
     id: 'ws_coffee',
     name: 'Coffee Craft BKK',
     category: 'คาเฟ่ & อาหาร',
-    icon: '☕',
+    icon: 'ws-cafe',
     selectedChannelIds: ['acc-ig-coffee'],
   },
 ];
@@ -407,10 +408,11 @@ export default function ConnectedAccountsPage() {
         {/* Workspace Smart Filter Bar */}
         <SmartFilterBar
           items={[
-            { id: 'ALL', label: '🌐 Master Directory (บัญชีทั้งหมด)', count: MASTER_ACCOUNTS.length },
+            { id: 'ALL', label: 'Master Directory (บัญชีทั้งหมด)', count: MASTER_ACCOUNTS.length },
             ...workspaces.map((ws) => ({
               id: ws.id,
-              label: `${ws.icon} ${ws.name}`,
+              label: ws.name,
+              icon: <Sticker name={ws.icon} size="xs" inline />,
               count: `${ws.selectedChannelIds.length} ช่องทาง`,
             })),
           ]}
@@ -418,7 +420,7 @@ export default function ConnectedAccountsPage() {
           onSelect={(id) => setSelectedWorkspaceId(id)}
           maxVisiblePills={5}
           moreButtonText="โปรเจกต์อื่นๆ"
-          searchPlaceholder="🔍 ค้นหาโปรเจกต์ / Workspace..."
+          searchPlaceholder="ค้นหาโปรเจกต์ / Workspace..."
         />
 
         {/* Channel Filter Pills (เมื่อเลือก Workspace แล้ว) */}

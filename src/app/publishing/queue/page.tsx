@@ -22,6 +22,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { Sticker } from '@/components/ui/sticker';
 import { StatusTag } from '@/components/ui/status-tag';
 import { 
   SocialPlatformIcon, 
@@ -526,7 +527,7 @@ export default function PublishingQueuePage() {
                         </span>
                         {job.stickyFeedback && (
                           <div className="mt-2 p-2.5 bg-[#FFFDE7] border border-[#FBC02D]/70 rounded-editorial text-[10px] text-[#4A4000] font-sans flex items-start gap-1.5 shadow-2xs">
-                            <span className="shrink-0 text-xs">📌</span>
+                            <Sticker name="sticky-pushpin" size="xs" inline className="shrink-0 mt-0.5" />
                             <span className="leading-relaxed"><strong>โน้ตแก้ไข:</strong> {job.stickyFeedback}</span>
                           </div>
                         )}
@@ -815,7 +816,7 @@ export default function PublishingQueuePage() {
             <div className="p-4 bg-[#FFF9C4] border border-[#FBC02D] rounded-editorial shadow-xs text-xs space-y-2 text-[#4A4A20]">
               <div className="flex items-center justify-between font-mono font-bold text-[11px] uppercase tracking-wider text-[#F57F17]">
                 <span className="flex items-center gap-1.5">
-                  <span>📌</span>
+                  <Sticker name="sticky-pushpin" size="xs" inline />
                   <span>Sticky Feedback Memo (ข้อเสนอแนะสั่งแก้ไข)</span>
                 </span>
                 <span className="text-[9px] font-normal lowercase opacity-80">
@@ -847,15 +848,16 @@ export default function PublishingQueuePage() {
                   onClick={() => handleRequestChanges(selectedReviewJob.id)}
                   className="px-4 py-2 bg-paper-canvas hover:bg-semantic-warning/10 text-semantic-warning border border-semantic-warning/40 rounded-editorial text-xs font-mono font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>↩ ส่งกลับแก้ไข (Request Changes)</span>
+                  <Sticker name="needs-revision-stamp" size="xs" inline />
+                  <span>ส่งกลับแก้ไข (Request Changes)</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => handleApproveJob(selectedReviewJob.id)}
                   className="px-5 py-2 bg-semantic-success hover:bg-semantic-success/90 text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
                 >
-                  <Check className="w-3.5 h-3.5" />
-                  <span>✓ อนุมัติ & จัดคิว (Approve)</span>
+                  <Sticker name="approved-seal" size="xs" inline />
+                  <span>อนุมัติ & จัดคิว (Approve)</span>
                 </button>
               </div>
             </div>
