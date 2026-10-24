@@ -52,6 +52,13 @@ import {
   setActiveWorkspaceId, 
   subscribeToActiveWorkspace 
 } from '@/modules/workspaces/active-workspace';
+import { 
+  isMockDataCleared, 
+  clearAllMockData, 
+  loadSampleMockData, 
+  subscribeToMockDataChange 
+} from '@/modules/data/mock-data-manager';
+import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
 
 export interface MasterChannelAccount {
   id: string;
@@ -371,12 +378,26 @@ export default function ConnectedAccountsPage() {
   const errorMessage = searchParams.get('error');
 
   // Accounts & Workspaces state
-  const [accounts, setAccounts] = useState<MasterChannelAccount[]>(INITIAL_MASTER_ACCOUNTS);
+  const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
+  const [accounts, setAccounts] = useState<MasterChannelAccount[]>([]);
   const [workspaces, setWorkspaces] = useState<WorkspaceItem[]>(INITIAL_PROJECTS);
   const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [viewLayout, setViewLayout] = useState<'GRID' | 'LIST'>('GRID');
   const [channelFilterMode, setChannelFilterMode] = useState<'ALL' | 'ACTIVE' | 'BYPASSED'>('ALL');
+
+  // Sync mock data clean / demo state
+  useEffect(() => {
+    const cleared = isMockDataCleared();
+    setIsMockCleared(cleared);
+    setAccounts(cleared ? [] : INITIAL_MASTER_ACCOUNTS);
+
+    const unsub = subscribeToMockDataChange((newCleared) => {
+      setIsMockCleared(newCleared);
+      setAccounts(newCleared ? [] : INITIAL_MASTER_ACCOUNTS);
+    });
+    return unsub;
+  }, []);
 
   // Dropdown states
   const [openDropdownId, setOpenDropdownId] = useState<string | null>(null);
@@ -789,6 +810,57 @@ export default function ConnectedAccountsPage() {
         editionDate="MULTI-WORKSPACE & CHANNELS"
         title="Connected Channels & Project Hub"
         subtitle="Manage publication endpoints and map them into Projects with Zero-Touch API safety and flexible routing."
+        actions={
+          <div className="flex flex-wrap items-center gap-2">
+            {isMockCleared ? (
+              <button
+                type="button"
+                onClick={() => {
+                  loadSampleMockData();
+                  setAccounts(INITIAL_MASTER_ACCOUNTS);
+                  showToast('🎲 โหลดบัญชีโซเชียลตัวอย่าง (FB, IG, YT, TT, X, Lemon8) เรียบร้อยแล้ว');
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                title="โหลดบัญชีตัวอย่างเพื่อพรีวิว"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
+                <span>โหลดบัญชีตัวอย่าง (Demo Accounts)</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  clearAllMockData();
+                  setAccounts([]);
+                  showToast('🗑️ ล้างบัญชีจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate)');
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                title="ล้างบัญชีจำลองทั้งหมด"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>ล้างบัญชีจำลอง (Clear All)</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => setIsNewProjectModalOpen(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule rounded-editorial text-xs font-mono font-medium transition-colors shadow-2xs cursor-pointer"
+            >
+              <Building2 className="w-3.5 h-3.5 text-brand-indigo" />
+              <span>+ สร้างโปรเจกต์ใหม่</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleOpenConnect('FACEBOOK')}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-2xs cursor-pointer"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>+ เชื่อมต่อช่องทางโซเชียล</span>
+            </button>
+          </div>
+        }
       />
 
       {/* Notifications */}
@@ -1068,6 +1140,19 @@ export default function ConnectedAccountsPage() {
       {/* ========================================================================= */}
       {/* PLATFORM GROUPED SECTIONS (User Requested Layout: Grid 2x2 or List)       */}
       {/* ========================================================================= */}
+      {accounts.length === 0 && (
+        <EditorialEmptyState
+          stickerName="vault-keyhole"
+          badgeText={isMockCleared ? 'Social Vault • Clean Slate' : 'Zero Channels'}
+          title="ยังไม่มีช่องทางโซเชียลที่เชื่อมต่อในระบบ"
+          description="เชื่อมต่อเพจ Facebook, บัญชี Instagram Creator, ช่อง YouTube, TikTok, X และ Lemon8 เพื่อเริ่มต้นเผยแพร่ผลงานแบบ Multi-Format ได้ในคลิกเดียว"
+          tipText="RetzPost เข้ารหัส Token ด้วย AES-256 GCM ปลอดภัยตามมาตรฐาน Meta, Google และ TikTok Enterprise SLA"
+          actionLabel="+ เชื่อมต่อช่องทางแรก (Connect Channel)"
+          onActionClick={() => handleOpenConnect('FACEBOOK')}
+          onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setAccounts(INITIAL_MASTER_ACCOUNTS); } : undefined}
+        />
+      )}
+
       <div className={
         viewLayout === 'GRID'
           ? 'grid grid-cols-1 xl:grid-cols-2 gap-5 items-start'

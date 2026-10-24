@@ -445,7 +445,12 @@ export function resetEmployeeKpiEvaluations(): void {
   }
 }
 
+import { isMockDataCleared } from '../data/mock-data-manager';
+
 export function getEmployeeKPIs(workspaceId?: string): EmployeeKPI[] {
+  if (isMockDataCleared()) {
+    return [];
+  }
   const overrides = loadEmployeeKpiOverrides();
   
   const merged = MOCK_EMPLOYEE_KPIS.map((emp) => {
@@ -483,7 +488,7 @@ export function getDepartmentSummary(workspaceId?: string) {
 
   const totalImpressions = kpis.reduce((acc, curr) => acc + curr.totalImpressions, 0);
   const totalEngagements = kpis.reduce((acc, curr) => acc + curr.totalEngagements, 0);
-  const topPerformer = [...kpis].sort((a, b) => b.overallKpiScore - a.overallKpiScore)[0];
+  const topPerformer = kpis.length > 0 ? [...kpis].sort((a, b) => b.overallKpiScore - a.overallKpiScore)[0] : null;
 
   return {
     totalEmployees,

@@ -9,8 +9,13 @@ import {
   resetEmployeeKpiEvaluations 
 } from './kpi-engine';
 import { getPostDiagnosis, MOCK_POST_DIAGNOSES } from './ai-insights';
+import { setMockDataCleared, MOCK_CLEARED_STORAGE_KEY } from '../data/mock-data-manager';
 
 describe('Staff KPI Telemetry Engine', () => {
+  beforeEach(() => {
+    setMockDataCleared(false);
+  });
+
   it('loads all mock employee KPIs across workspaces', () => {
     const list = getEmployeeKPIs('ALL');
     expect(list.length).toBeGreaterThanOrEqual(5);
@@ -37,8 +42,19 @@ describe('Staff KPI Telemetry Engine', () => {
     expect(summary.totalActualPosts).toBeGreaterThan(0);
     expect(summary.overallCompletionRate).toBeGreaterThan(0);
     expect(summary.topPerformer).toBeDefined();
-    expect(summary.topPerformer.grade).toBe('A+');
+    expect(summary.topPerformer?.grade).toBe('A+');
     expect(summary.isMockData).toBe(true);
+  });
+
+  it('returns clean zero state when mock data is cleared', () => {
+    setMockDataCleared(true);
+    const list = getEmployeeKPIs('ALL');
+    expect(list).toEqual([]);
+
+    const summary = getDepartmentSummary('ALL');
+    expect(summary.totalEmployees).toBe(0);
+    expect(summary.topPerformer).toBeNull();
+    expect(summary.overallCompletionRate).toBe(0);
   });
 });
 
@@ -92,7 +108,9 @@ describe('AI Employee KPI Coaching Synthesis & Evaluation Persistence', () => {
     let mockStorage: Record<string, string> = {};
 
     beforeEach(() => {
-      mockStorage = {};
+      mockStorage = {
+        [MOCK_CLEARED_STORAGE_KEY]: 'false'
+      };
       const fakeLocalStorage = {
         getItem: (key: string) => mockStorage[key] || null,
         setItem: (key: string, value: string) => {

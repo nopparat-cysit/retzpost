@@ -1786,7 +1786,29 @@ export default function CreatePostPage() {
 
           {/* Scrollable Channel List Scoped to Active Project with 1-Click Card Activation */}
           <div className="max-h-[calc(100vh-320px)] overflow-y-auto pr-1 space-y-3">
-            {Array.from(groupedAccounts.entries()).map(([groupName, accounts]) => {
+            {groupedAccounts.size === 0 ? (
+              <div className="p-6 text-center rounded-editorial bg-paper-canvas border border-dashed border-border-rule space-y-3">
+                <div className="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-paper-raised border border-border-rule shadow-2xs">
+                  <Sticker name="vault-keyhole" size="md" />
+                </div>
+                <div className="space-y-1">
+                  <h4 className="font-serif font-bold text-xs text-ink-primary">
+                    ยังไม่มีช่องทางสำหรับโปรเจกต์นี้
+                  </h4>
+                  <p className="text-[11px] text-ink-secondary leading-snug">
+                    เปิดใช้งานหรือเชื่อมต่อเพจ Facebook, Instagram, TikTok หรือ YouTube เพื่อเริ่มกระจายโพสต์
+                  </p>
+                </div>
+                <Link
+                  href="/accounts"
+                  className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-editorial bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-mono font-semibold transition-colors shadow-2xs"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>ตั้งค่าช่องทางใน /accounts</span>
+                </Link>
+              </div>
+            ) : (
+              Array.from(groupedAccounts.entries()).map(([groupName, accounts]) => {
               const isCollapsed = collapsedGroups[groupName] === true;
               const activeCountInGroup = accounts.reduce((accCount, acc) => {
                 const isFeed = placements[`${acc.id}_feed`];
@@ -1970,7 +1992,8 @@ export default function CreatePostPage() {
                   )}
                 </div>
               );
-            })}
+            })
+            )}
           </div>
         </aside>
 

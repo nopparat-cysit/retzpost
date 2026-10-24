@@ -98,6 +98,13 @@ import {
   setActiveWorkspaceId, 
   subscribeToActiveWorkspace 
 } from '@/modules/workspaces/active-workspace';
+import { 
+  isMockDataCleared, 
+  clearAllMockData, 
+  loadSampleMockData, 
+  subscribeToMockDataChange 
+} from '@/modules/data/mock-data-manager';
+import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
 
 interface DispatchPlacement {
   platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK' | 'X' | 'LEMON8';
@@ -729,6 +736,16 @@ export default function HomePage() {
   const [isAiGeneratingCoaching, setIsAiGeneratingCoaching] = useState<boolean>(false);
   const [kpiEvaluationNotice, setKpiEvaluationNotice] = useState<string | null>(null);
   const [isEvaluationSlipOpen, setIsEvaluationSlipOpen] = useState<boolean>(false);
+  const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
+
+  // Subscribe to mock data clean / demo toggle
+  useEffect(() => {
+    setIsMockCleared(isMockDataCleared());
+    const unsub = subscribeToMockDataChange((cleared) => {
+      setIsMockCleared(cleared);
+    });
+    return unsub;
+  }, []);
 
   // Sync active workspace from shared engine and listen to changes
   useEffect(() => {
@@ -787,11 +804,11 @@ export default function HomePage() {
   // Employee KPI Queries
   const employeeKpis = useMemo(() => {
     return getEmployeeKPIs(workspaceFilter);
-  }, [workspaceFilter, kpiUpdateVersion]);
+  }, [workspaceFilter, kpiUpdateVersion, isMockCleared]);
 
   const departmentSummary = useMemo(() => {
     return getDepartmentSummary(workspaceFilter);
-  }, [workspaceFilter, kpiUpdateVersion]);
+  }, [workspaceFilter, kpiUpdateVersion, isMockCleared]);
 
   const handleOpenEmployeeScorecard = (emp: EmployeeKPI) => {
     setSelectedEmployeeKpi(emp);
@@ -870,16 +887,20 @@ export default function HomePage() {
   };
 
   // Filtered batches for Operational View
-  const filteredBatches = SAMPLE_BATCHES.filter((b) => {
-    if (workspaceFilter !== 'ALL' && b.workspaceId !== workspaceFilter) return false;
-    if (batchTab === 'CAPITAL_ONE') return b.workspaceId === 'ws_capitalone';
-    if (batchTab === 'ACME') return b.workspaceId === 'ws_acme';
-    if (batchTab === 'NEEDS_ATTENTION') return ['PARTIALLY_PUBLISHED', 'FAILED_RETRYABLE', 'FAILED_FINAL'].includes(b.status);
-    return true;
-  });
+  const filteredBatches = useMemo(() => {
+    if (isMockCleared) return [];
+    return SAMPLE_BATCHES.filter((b) => {
+      if (workspaceFilter !== 'ALL' && b.workspaceId !== workspaceFilter) return false;
+      if (batchTab === 'CAPITAL_ONE') return b.workspaceId === 'ws_capitalone';
+      if (batchTab === 'ACME') return b.workspaceId === 'ws_acme';
+      if (batchTab === 'NEEDS_ATTENTION') return ['PARTIALLY_PUBLISHED', 'FAILED_RETRYABLE', 'FAILED_FINAL'].includes(b.status);
+      return true;
+    });
+  }, [isMockCleared, workspaceFilter, batchTab]);
 
   // Filtered & Sorted Performance Posts for Tracking View
   const filteredPerformancePosts = useMemo(() => {
+    if (isMockCleared) return [];
     let posts = SAMPLE_PERFORMANCE_POSTS.filter((p) => {
       if (workspaceFilter !== 'ALL' && p.workspaceId !== workspaceFilter) return false;
       return true;
@@ -896,7 +917,13 @@ export default function HomePage() {
     }
 
     return posts;
-  }, [workspaceFilter, trackingSort]);
+  }, [isMockCleared, workspaceFilter, trackingSort]);
+
+  // Upcoming scheduled timeline items
+  const timelineItems = useMemo(() => {
+    if (isMockCleared) return [];
+    return SCHEDULED_TIMELINE;
+  }, [isMockCleared]);
 
   // Totals for Tracking
   const totalViews = useMemo(() => filteredPerformancePosts.reduce((acc, p) => acc + p.views, 0), [filteredPerformancePosts]);
@@ -1068,16 +1095,48 @@ export default function HomePage() {
         editionDate="ALL-IN-ONE ENTERPRISE SUITE"
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            <button
-              onClick={handleExportErrorLog}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-terracotta/10 hover:bg-accent-terracotta/20 text-accent-terracotta border border-accent-terracotta/30 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Export Error Log</span>
-              <span className="w-4 h-4 rounded-full bg-accent-terracotta text-white flex items-center justify-center text-[9px] font-bold">
-                2
-              </span>
-            </button>
+            {isMockCleared ? (
+              <button
+                type="button"
+                onClick={() => {
+                  loadSampleMockData();
+                  setDownloadToast('🎲 โหลดข้อมูลตัวอย่างสำหรับการพรีวิวและทดสอบระบบเรียบร้อยแล้ว');
+                  setTimeout(() => setDownloadToast(null), 3500);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre hover:text-accent-ochre/90 border border-accent-ochre/40 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                title="โหลดชุดข้อมูลตัวอย่าง (Dispatches, Telemetry, KPIs) เพื่อพรีวิวการแสดงผล"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
+                <span>โหลดข้อมูลตัวอย่าง (Demo)</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  clearAllMockData();
+                  setDownloadToast('🗑️ เคลียร์ข้อมูลจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate / Zero Data)');
+                  setTimeout(() => setDownloadToast(null), 3500);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                title="เคลียร์ข้อมูลจำลองทั้งหมด ให้ระบบกลับสู่ Zero State สำหรับใช้งานจริง"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-ink-secondary" />
+                <span>ล้างข้อมูลจำลอง (Clear All)</span>
+              </button>
+            )}
+
+            {!isMockCleared && (
+              <button
+                onClick={handleExportErrorLog}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-terracotta/10 hover:bg-accent-terracotta/20 text-accent-terracotta border border-accent-terracotta/30 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Export Error Log</span>
+                <span className="w-4 h-4 rounded-full bg-accent-terracotta text-white flex items-center justify-center text-[9px] font-bold">
+                  2
+                </span>
+              </button>
+            )}
             <button
               onClick={handleExportAllJobs}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
@@ -1204,44 +1263,46 @@ export default function HomePage() {
       {/* ========================================================================= */}
       {dashboardMode === 'OPERATIONS' && (
         <div className="space-y-7 animate-in fade-in duration-200">
-          {/* OPERATIONAL ALERT BANNER (Enterprise Warning) */}
-          <div className="bg-paper-raised border-l-4 border-accent-terracotta p-4 rounded-card border-r border-t border-b border-border-rule shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-full bg-accent-terracotta/10 text-accent-terracotta flex items-center justify-center shrink-0 mt-0.5">
-                <ShieldAlert className="w-4 h-4" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <h3 className="font-serif font-medium text-sm text-ink-primary">
-                    2 Dispatches Require Operational Attention
-                  </h3>
-                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-accent-terracotta/15 text-accent-terracotta font-semibold">
-                    Action Needed
-                  </span>
+          {/* OPERATIONAL ALERT BANNER (Enterprise Warning - Hidden in Clean State) */}
+          {!isMockCleared && (
+            <div className="bg-paper-raised border-l-4 border-accent-terracotta p-4 rounded-card border-r border-t border-b border-border-rule shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full bg-accent-terracotta/10 text-accent-terracotta flex items-center justify-center shrink-0 mt-0.5">
+                  <ShieldAlert className="w-4 h-4" />
                 </div>
-                <p className="text-xs text-ink-secondary mt-0.5 font-sans leading-relaxed">
-                  Facebook Token expired on <span className="font-mono text-ink-primary font-medium">Oknus Real Estate</span> & Instagram Story ratio mismatch on <span className="font-mono text-ink-primary font-medium">thailandprop.c1</span>.
-                </p>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-serif font-medium text-sm text-ink-primary">
+                      2 Dispatches Require Operational Attention
+                    </h3>
+                    <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-accent-terracotta/15 text-accent-terracotta font-semibold">
+                      Action Needed
+                    </span>
+                  </div>
+                  <p className="text-xs text-ink-secondary mt-0.5 font-sans leading-relaxed">
+                    Facebook Token expired on <span className="font-mono text-ink-primary font-medium">Oknus Real Estate</span> & Instagram Story ratio mismatch on <span className="font-mono text-ink-primary font-medium">thailandprop.c1</span>.
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
+                <button
+                  onClick={handleExportErrorLog}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-terracotta border border-accent-terracotta/40 rounded-editorial text-xs font-mono font-medium transition-colors cursor-pointer"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span>Download CSV</span>
+                </button>
+                <Link
+                  href="/publishing/queue"
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-accent-terracotta text-white hover:bg-accent-terracotta/90 rounded-editorial text-xs font-mono font-semibold transition-colors shadow-2xs"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>Resolve in Queue</span>
+                </Link>
               </div>
             </div>
-
-            <div className="flex items-center gap-2 shrink-0 self-end md:self-center">
-              <button
-                onClick={handleExportErrorLog}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-terracotta border border-accent-terracotta/40 rounded-editorial text-xs font-mono font-medium transition-colors cursor-pointer"
-              >
-                <Download className="w-3.5 h-3.5" />
-                <span>Download CSV</span>
-              </button>
-              <Link
-                href="/publishing/queue"
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-accent-terracotta text-white hover:bg-accent-terracotta/90 rounded-editorial text-xs font-mono font-semibold transition-colors shadow-2xs"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>Resolve in Queue</span>
-              </Link>
-            </div>
-          </div>
+          )}
 
           {/* TOP ROW: 4 COMPREHENSIVE OPERATIONAL PULSE CARDS */}
           <section className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -1249,14 +1310,18 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">Connected Channels</span>
-                <div className="w-2 h-2 rounded-full bg-semantic-success" />
+                <div className={`w-2 h-2 rounded-full ${isMockCleared ? 'bg-ink-muted' : 'bg-semantic-success animate-pulse'}`} />
               </div>
               <div className="flex items-baseline justify-between">
-                <p className="font-serif font-bold text-2xl text-ink-primary">17</p>
-                <span className="text-[10px] font-mono text-semantic-success font-medium">4 Workspaces</span>
+                <p className="font-serif font-bold text-2xl text-ink-primary">
+                  {isMockCleared ? 0 : 17}
+                </p>
+                <span className={`text-[10px] font-mono font-medium ${isMockCleared ? 'text-ink-secondary' : 'text-semantic-success'}`}>
+                  {isMockCleared ? '0 Channels' : '4 Workspaces'}
+                </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                FB (7) • IG (5) • YT (3) • TT (2)
+                {isMockCleared ? 'ยังไม่มีบัญชีเชื่อมต่อใน Workspace' : 'FB (7) • IG (5) • YT (3) • TT (2)'}
               </p>
             </div>
 
@@ -1267,11 +1332,15 @@ export default function HomePage() {
                 <TrendingUp className="w-3.5 h-3.5 text-brand-indigo" />
               </div>
               <div className="flex items-baseline justify-between">
-                <p className="font-serif font-bold text-2xl text-ink-primary">74</p>
-                <span className="text-[10px] font-mono text-semantic-success font-semibold">97.3% Clean</span>
+                <p className="font-serif font-bold text-2xl text-ink-primary">
+                  {isMockCleared ? 0 : 74}
+                </p>
+                <span className="text-[10px] font-mono text-semantic-success font-semibold">
+                  {isMockCleared ? '100% Ready' : '97.3% Clean'}
+                </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                33 Feeds • 26 Stories • 15 Reels
+                {isMockCleared ? 'พร้อมสำหรับการปล่อยโพสต์ใหม่' : '33 Feeds • 26 Stories • 15 Reels'}
               </p>
             </div>
 
@@ -1282,31 +1351,43 @@ export default function HomePage() {
                 <Clock className="w-3.5 h-3.5 text-semantic-info" />
               </div>
               <div className="flex items-baseline justify-between">
-                <p className="font-serif font-bold text-2xl text-ink-primary">4</p>
-                <span className="text-[10px] font-mono text-semantic-info font-medium">Next: 09:15 AM</span>
+                <p className="font-serif font-bold text-2xl text-ink-primary">
+                  {timelineItems.length}
+                </p>
+                <span className="text-[10px] font-mono text-semantic-info font-medium">
+                  {timelineItems.length > 0 ? 'Next: 09:15 AM' : 'No Tasks'}
+                </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                Timezone: Asia/Bangkok
+                {timelineItems.length > 0 ? 'Timezone: Asia/Bangkok' : 'คิวงานว่าง พร้อมจัดตารางเวลาใหม่'}
               </p>
             </div>
 
             {/* Metric 4: Attention Required */}
-            <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
+            <div className={`p-4 rounded-card border shadow-2xs ${isMockCleared ? 'bg-paper-raised border-border-rule' : 'bg-paper-raised border-border-rule'}`}>
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">Needs Attention</span>
-                <AlertTriangle className="w-3.5 h-3.5 text-accent-terracotta" />
+                <AlertTriangle className={`w-3.5 h-3.5 ${isMockCleared ? 'text-ink-muted' : 'text-accent-terracotta'}`} />
               </div>
               <div className="flex items-baseline justify-between">
-                <p className="font-serif font-bold text-2xl text-accent-terracotta">2</p>
-                <Link 
-                  href="/publishing/queue" 
-                  className="text-[10px] font-mono text-accent-terracotta hover:underline font-semibold"
-                >
-                  Export & Retry →
-                </Link>
+                <p className={`font-serif font-bold text-2xl ${isMockCleared ? 'text-ink-primary' : 'text-accent-terracotta'}`}>
+                  {isMockCleared ? 0 : 2}
+                </p>
+                {isMockCleared ? (
+                  <span className="text-[10px] font-mono text-semantic-success font-semibold">
+                    All Systems OK
+                  </span>
+                ) : (
+                  <Link 
+                    href="/publishing/queue" 
+                    className="text-[10px] font-mono text-accent-terracotta hover:underline font-semibold"
+                  >
+                    Export & Retry →
+                  </Link>
+                )}
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono truncate">
-                FB Token Expired & IG Story Ratio
+                {isMockCleared ? 'ระบบปกติ ไม่พบข้อผิดพลาดค้างท่อ' : 'FB Token Expired & IG Story Ratio'}
               </p>
             </div>
           </section>
@@ -1348,9 +1429,16 @@ export default function HomePage() {
 
                 <div className="divide-y divide-border-rule">
                   {filteredBatches.length === 0 ? (
-                    <p className="py-6 text-center text-xs font-mono text-ink-secondary">
-                      No publication batches found for this filter.
-                    </p>
+                    <EditorialEmptyState
+                      stickerName="broadsheet-newspaper"
+                      badgeText={isMockCleared ? 'Publishing Desk • Clean Slate' : 'Filter Empty'}
+                      title="ยังไม่มีประวัติการปล่อยโพสต์ (Operations Ledger Empty)"
+                      description="ระบบพร้อมรับงานโพสต์ใหม่ของคุณ เมื่อคุณเผยแพร่โพสต์ผ่าน Universal Composer สถานะและความคืบหน้าของแต่ละแพลตฟอร์มจะบันทึกที่นี่แบบ Real-Time"
+                      tipText="คุณสามารถสร้างโพสต์แบบ Multi-Placement พร้อมระบบ Live Phone Preview ได้ทันที"
+                      actionLabel="สร้างโพสต์แรก (Compose Dispatch)"
+                      actionHref="/create"
+                      onDemoActionClick={isMockCleared ? () => loadSampleMockData() : undefined}
+                    />
                   ) : (
                     filteredBatches.map((batch) => (
                       <div key={batch.id} className="py-4 first:pt-0 last:pb-0 space-y-2.5">
@@ -1473,7 +1561,7 @@ export default function HomePage() {
 
                 <div className="pt-3 border-t border-border-rule flex items-center justify-between text-xs font-mono">
                   <span className="text-ink-secondary text-[11px]">
-                    Showing {filteredBatches.length} of {SAMPLE_BATCHES.length} batches
+                    Showing {filteredBatches.length} of {isMockCleared ? 0 : SAMPLE_BATCHES.length} batches
                   </span>
                   <Link
                     href="/publishing/queue"
@@ -1504,7 +1592,25 @@ export default function HomePage() {
                 </div>
 
                 <div className="space-y-3">
-                  {SCHEDULED_TIMELINE.map((item, idx) => (
+                  {timelineItems.length === 0 ? (
+                    <div className="p-8 text-center rounded-editorial bg-paper-canvas border border-dashed border-border-rule space-y-3">
+                      <div className="w-12 h-12 mx-auto flex items-center justify-center rounded-full bg-paper-raised border border-border-rule shadow-2xs">
+                        <Sticker name="calendar-deadline" size="md" />
+                      </div>
+                      <div>
+                        <h4 className="font-serif font-bold text-sm text-ink-primary">ไม่มีกำหนดการใน 24 ชม. ข้างหน้า</h4>
+                        <p className="text-xs text-ink-secondary mt-0.5 font-sans">คิวงานว่าง พร้อมสำหรับจัดตารางปล่อยโพสต์ใหม่</p>
+                      </div>
+                      <Link
+                        href="/calendar"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-editorial bg-paper-raised hover:bg-paper-subtle border border-border-rule text-xs font-mono text-brand-indigo font-semibold transition-colors"
+                      >
+                        <span>เปิดดูปฏิทินงาน (Calendar)</span>
+                        <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
+                  ) : (
+                    timelineItems.map((item, idx) => (
                     <div
                       key={idx}
                       className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 hover:border-brand-indigo/40 transition-colors"
@@ -1532,7 +1638,8 @@ export default function HomePage() {
                         </span>
                       </div>
                     </div>
-                  ))}
+                  ))
+                  )}
                 </div>
               </div>
             </div>
@@ -1758,11 +1865,11 @@ export default function HomePage() {
                   {totalViews.toLocaleString()}
                 </p>
                 <span className="text-[10px] font-mono text-semantic-success font-semibold">
-                  +18.4% MoM
+                  {isMockCleared ? '0.0%' : '+18.4% MoM'}
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                Across FB, IG, YouTube & TikTok
+                {isMockCleared ? 'ยังไม่มีข้อมูลการเข้าชม' : 'Across FB, IG, YouTube & TikTok'}
               </p>
             </div>
 
@@ -1779,11 +1886,11 @@ export default function HomePage() {
                   {(totalLikes + totalComments + totalShares).toLocaleString()}
                 </p>
                 <span className="text-[10px] font-mono text-brand-indigo font-semibold">
-                  9.8% Avg Rate
+                  {isMockCleared ? '0.0% Avg' : '9.8% Avg Rate'}
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                {totalLikes.toLocaleString()} Likes • {totalComments} Comms • {totalShares} Shares
+                {isMockCleared ? '0 Likes • 0 Comms • 0 Shares' : `${totalLikes.toLocaleString()} Likes • ${totalComments} Comms • ${totalShares} Shares`}
               </p>
             </div>
 
@@ -1800,11 +1907,11 @@ export default function HomePage() {
                   {totalLinkClicks.toLocaleString()}
                 </p>
                 <span className="text-[10px] font-mono text-accent-terracotta font-semibold">
-                  5.4% Avg CTR
+                  {isMockCleared ? '0.0% CTR' : '5.4% Avg CTR'}
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                Direct Web & Landing Page Leads
+                {isMockCleared ? 'ยังไม่มีทราฟฟิกจากลิงก์สตอรี่' : 'Direct Web & Landing Page Leads'}
               </p>
             </div>
 
@@ -1818,14 +1925,14 @@ export default function HomePage() {
               </div>
               <div className="flex items-baseline justify-between">
                 <p className="font-serif font-bold text-lg text-ink-primary truncate max-w-[160px]">
-                  The Rich Rama 9
+                  {isMockCleared ? '-' : 'The Rich Rama 9'}
                 </p>
-                <span className="text-[10px] font-mono text-semantic-success font-semibold">
-                  890 Clicks
+                <span className={`text-[10px] font-mono font-semibold ${isMockCleared ? 'text-ink-secondary' : 'text-semantic-success'}`}>
+                  {isMockCleared ? 'No Data' : '890 Clicks'}
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono truncate">
-                Capital One Real Estate Album + Story
+                {isMockCleared ? 'ยังไม่มีชิ้นงานที่ติดอันดับ' : 'Capital One Real Estate Album + Story'}
               </p>
             </div>
           </section>
@@ -1880,7 +1987,19 @@ export default function HomePage() {
 
           {/* TOP PERFORMING POSTS LEADERBOARD LIST */}
           <div className="space-y-4">
-            {filteredPerformancePosts.map((post) => (
+            {filteredPerformancePosts.length === 0 ? (
+              <EditorialEmptyState
+                stickerName="award-star-badge"
+                badgeText={isMockCleared ? 'Telemetry Pulse • Zero Data' : 'Leaderboard Empty'}
+                title="ยังไม่มีข้อมูลสถิติและการมีส่วนร่วม (Content Telemetry Empty)"
+                description="เมื่อคุณเริ่มปล่อยโพสต์ ระบบจะเชื่อมโยง Telemetry Webhook จาก Meta Graph, YouTube Data API และ TikTok Content API เพื่อดึง Views, Engagements และ Clicks อัตโนมัติ"
+                tipText="เชื่อมต่อบัญชีโซเชียลที่หน้า /accounts เพื่อเปิดรับการวัดผลแบบ Real-Time"
+                actionLabel="ไปที่หน้าเชื่อมต่อบัญชี (Accounts)"
+                actionHref="/accounts"
+                onDemoActionClick={isMockCleared ? () => loadSampleMockData() : undefined}
+              />
+            ) : (
+              filteredPerformancePosts.map((post) => (
               <div
                 key={post.id}
                 className="p-5 bg-paper-raised border border-border-rule rounded-card shadow-xs hover:border-brand-indigo transition-all space-y-3.5"
@@ -2017,7 +2136,8 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            ))}
+            ))
+            )}
           </div>
 
           {/* FORMAT SYNERGY & CONVERSION DEEP-DIVE INSIGHT */}
@@ -2224,14 +2344,14 @@ export default function HomePage() {
               </div>
               <div className="flex items-baseline justify-between">
                 <p className="font-serif font-bold text-lg text-ink-primary truncate max-w-[150px]">
-                  {departmentSummary.topPerformer?.name.split(' ')[0]}
+                  {departmentSummary.topPerformer ? departmentSummary.topPerformer.name.split(' ')[0] : '-'}
                 </p>
                 <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-emerald-600 text-white">
-                  Score {departmentSummary.topPerformer?.overallKpiScore} (A+)
+                  {departmentSummary.topPerformer ? `Score ${departmentSummary.topPerformer.overallKpiScore} (${departmentSummary.topPerformer.grade})` : 'Zero State'}
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono truncate">
-                {departmentSummary.topPerformer?.roleTh}
+                {departmentSummary.topPerformer ? departmentSummary.topPerformer.roleTh : 'ยังไม่มีข้อมูลผลงาน'}
               </p>
             </div>
           </div>
@@ -2252,7 +2372,21 @@ export default function HomePage() {
               </span>
             </div>
 
-            <div className="overflow-x-auto">
+            {employeeKpis.length === 0 ? (
+              <div className="p-8">
+                <EditorialEmptyState
+                  stickerName="bullseye"
+                  badgeText={isMockCleared ? 'Team Scorecard • Clean State' : 'No Staff Found'}
+                  title="ยังไม่มีบันทึกการประเมิน KPI บุคลากร"
+                  description="ระบบคำนวณ KPI 4 มิติ (Output, Quality, Timeliness, Efficiency) พร้อม AI สังเคราะห์ข้อเสนอแนะโค้ชชิ่งรายบุคคลเมื่อทีมเริ่มสร้างและอนุมัติงาน"
+                  tipText="เริ่มต้นมอบหมายงานและอนุมัติโพสต์ในคิวงาน หรือคลิกโหลดข้อมูลตัวอย่างเพื่อพรีวิวการคำนวณเกรดและ Scorecard Slip"
+                  actionLabel="ไปที่คิวตรวจรับงาน (Queue)"
+                  actionHref="/publishing/queue"
+                  onDemoActionClick={isMockCleared ? () => loadSampleMockData() : undefined}
+                />
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
               <table className="w-full text-left font-mono text-xs">
                 <thead className="bg-paper-subtle text-[11px] text-ink-secondary uppercase border-b border-border-rule">
                   <tr>
@@ -2393,6 +2527,7 @@ export default function HomePage() {
                 </tbody>
               </table>
             </div>
+            )}
           </div>
         </div>
       )}

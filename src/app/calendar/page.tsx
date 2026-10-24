@@ -52,6 +52,13 @@ import {
   toStandardWorkspaceId 
 } from '@/modules/workspaces/active-workspace';
 import { 
+  isMockDataCleared, 
+  clearAllMockData, 
+  loadSampleMockData, 
+  subscribeToMockDataChange 
+} from '@/modules/data/mock-data-manager';
+import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
+import { 
   SocialPlatformIcon, 
   SocialMediaLiveButton, 
   FacebookLogo, 
@@ -561,9 +568,23 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
 ];
 
 export default function EditorialCalendarPage() {
-  const [events, setEvents] = useState<CalendarEventItem[]>(SAMPLE_EVENTS);
+  const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
+  const [events, setEvents] = useState<CalendarEventItem[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>('MONTH');
   const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceType>('ALL');
+
+  // Sync with mock data clean / demo state
+  useEffect(() => {
+    const cleared = isMockDataCleared();
+    setIsMockCleared(cleared);
+    setEvents(cleared ? [] : SAMPLE_EVENTS);
+
+    const unsub = subscribeToMockDataChange((newCleared) => {
+      setIsMockCleared(newCleared);
+      setEvents(newCleared ? [] : SAMPLE_EVENTS);
+    });
+    return unsub;
+  }, []);
 
   // Global active workspace sync
   useEffect(() => {
@@ -857,6 +878,36 @@ export default function EditorialCalendarPage() {
         subtitle="Unified multi-workspace calendar for Feed Posts, 24h Stories with Link Stickers, and 9:16 Video Releases across Meta, YouTube, and TikTok."
         actions={
           <div className="flex flex-wrap items-center gap-2.5">
+            {isMockCleared ? (
+              <button
+                type="button"
+                onClick={() => {
+                  loadSampleMockData();
+                  setEvents(SAMPLE_EVENTS);
+                  showToast('🎲 โหลดตารางงานปฏิทินตัวอย่างเรียบร้อยแล้ว');
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                title="โหลดกำหนดการจำลองสำหรับทดสอบระบบ"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
+                <span>โหลดปฏิทินตัวอย่าง (Demo Events)</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  clearAllMockData();
+                  setEvents([]);
+                  showToast('🗑️ ล้างกำหนดการจำลองในปฏิทินเรียบร้อยแล้ว (Clean Slate)');
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                title="ล้างปฏิทินให้ว่างเปล่า"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>ล้างปฏิทิน (Clear All)</span>
+              </button>
+            )}
+
             <Link
               href="/create"
               className="inline-flex items-center gap-2 px-4 py-2 bg-brand-indigo text-white text-xs font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-all shadow-xs active:scale-[0.98]"
@@ -873,7 +924,7 @@ export default function EditorialCalendarPage() {
                   workspace: selectedWorkspace === 'ALL' ? 'CAPITAL_ONE' : selectedWorkspace,
                 });
               }}
-              className="inline-flex items-center gap-2 px-3.5 py-2 bg-paper-raised border border-border-rule text-ink-primary text-xs font-semibold rounded-editorial hover:bg-paper-subtle transition-all shadow-xs"
+              className="inline-flex items-center gap-2 px-3.5 py-2 bg-paper-raised border border-border-rule text-ink-primary text-xs font-semibold rounded-editorial hover:bg-paper-subtle transition-all shadow-xs cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 text-accent-terracotta" />
               <span>Quick Dispatch</span>
@@ -1036,6 +1087,20 @@ export default function EditorialCalendarPage() {
           searchPlaceholder="ค้นหา Workspace..."
         />
       </div>
+
+      {/* Zero State Alert when Calendar has 0 Events */}
+      {filteredEvents.length === 0 && (
+        <EditorialEmptyState
+          stickerName="calendar-deadline"
+          badgeText={isMockCleared ? 'Editorial Calendar • Clean Slate' : 'No Events in View'}
+          title="ยังไม่มีกำหนดการเผยแพร่ในปฏิทิน"
+          description="จัดตารางเวลาเผยแพร่คอนเทนต์ล่วงหน้าในช่อง Golden Peak Slots หรือคลิกที่แต่ละวันในปฏิทินเพื่อตั้งเวลาปล่อยโพสต์ทันที"
+          tipText="RetzPost มีระบบคำนวณ Bangkok Golden Peak Slots (เวลาทองของคนไทย: 08:30 น. และ 19:30 น.) เพื่อเพิ่ม Organic Reach"
+          actionLabel="+ จัดตารางโพสต์ใหม่ (Compose Dispatch)"
+          actionHref="/create"
+          onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setEvents(SAMPLE_EVENTS); } : undefined}
+        />
+      )}
 
       {/* Control Toolbar: Navigation, View Modes & Filters */}
       <div className="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 p-4 bg-paper-raised border border-border-rule rounded-card text-xs">

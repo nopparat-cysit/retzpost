@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Play, 
@@ -20,7 +20,8 @@ import {
   Eye,
   ShieldAlert,
   ArrowRight,
-  Lightbulb
+  Lightbulb,
+  Sparkles
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { Sticker } from '@/components/ui/sticker';
@@ -40,6 +41,13 @@ import {
   downloadCsvFile,
   ExportableJob 
 } from '@/modules/publishing/export-csv';
+import { 
+  isMockDataCleared, 
+  clearAllMockData, 
+  loadSampleMockData, 
+  subscribeToMockDataChange 
+} from '@/modules/data/mock-data-manager';
+import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
 
 interface QueueJobItem extends ExportableJob {
   id: string;
@@ -222,13 +230,27 @@ const INITIAL_QUEUE_JOBS: QueueJobItem[] = [
 
 export default function PublishingQueuePage() {
   const [filterTab, setFilterTab] = useState<'ALL' | 'REVIEW' | 'IN_FLIGHT' | 'COMPLETED' | 'FAILED'>('ALL');
-  const [jobs, setJobs] = useState<QueueJobItem[]>(INITIAL_QUEUE_JOBS);
+  const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
+  const [jobs, setJobs] = useState<QueueJobItem[]>([]);
   const [selectedErrorJob, setSelectedErrorJob] = useState<QueueJobItem | null>(null);
   const [selectedReviewJob, setSelectedReviewJob] = useState<QueueJobItem | null>(null);
   const [managerNoteInput, setManagerNoteInput] = useState<string>('');
   const [managerActionNotice, setManagerActionNotice] = useState<string | null>(null);
   const [copiedNotification, setCopiedNotification] = useState(false);
   const [downloadNotice, setDownloadNotice] = useState<string | null>(null);
+
+  // Sync with Mock Data Clean / Demo Mode
+  useEffect(() => {
+    const cleared = isMockDataCleared();
+    setIsMockCleared(cleared);
+    setJobs(cleared ? [] : INITIAL_QUEUE_JOBS);
+
+    const unsub = subscribeToMockDataChange((newCleared) => {
+      setIsMockCleared(newCleared);
+      setJobs(newCleared ? [] : INITIAL_QUEUE_JOBS);
+    });
+    return unsub;
+  }, []);
 
   const handleRetry = (jobId: string) => {
     setJobs((prev) =>
@@ -315,19 +337,51 @@ export default function PublishingQueuePage() {
         title="Publishing Queue & Job Telemetry"
         subtitle="Inspect active multi-placement dispatches across Feed, Stories, and Reels/Shorts with real-time retry engine and error auditing."
         actions={
-          <div className="flex items-center gap-2">
-            <button
-              onClick={handleExportErrorCsv}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-terracotta/10 hover:bg-accent-terracotta/20 text-accent-terracotta border border-accent-terracotta/30 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-            >
-              <Download className="w-3.5 h-3.5" />
-              <span>Export Error Log (CSV)</span>
-              {failedJobsCount > 0 && (
+          <div className="flex flex-wrap items-center gap-2">
+            {isMockCleared ? (
+              <button
+                type="button"
+                onClick={() => {
+                  loadSampleMockData();
+                  setJobs(INITIAL_QUEUE_JOBS);
+                  setDownloadNotice('🎲 โหลดคิวงานตัวอย่าง 8 รายการเรียบร้อยแล้ว');
+                  setTimeout(() => setDownloadNotice(null), 3500);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                title="โหลดคิวงานจำลองเพื่อทดสอบการทำงาน"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
+                <span>โหลดคิวตัวอย่าง (Demo Queue)</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  clearAllMockData();
+                  setJobs([]);
+                  setDownloadNotice('🗑️ ล้างคิวงานจำลองทั้งหมดเรียบร้อยแล้ว');
+                  setTimeout(() => setDownloadNotice(null), 3500);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                title="ล้างคิวงานให้ว่างเปล่าสำหรับใช้งานจริง"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>ล้างคิวงาน (Clear Queue)</span>
+              </button>
+            )}
+
+            {!isMockCleared && failedJobsCount > 0 && (
+              <button
+                onClick={handleExportErrorCsv}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-terracotta/10 hover:bg-accent-terracotta/20 text-accent-terracotta border border-accent-terracotta/30 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5" />
+                <span>Export Error Log (CSV)</span>
                 <span className="w-4 h-4 rounded-full bg-accent-terracotta text-white flex items-center justify-center text-[9px] font-bold">
                   {failedJobsCount}
                 </span>
-              )}
-            </button>
+              </button>
+            )}
             <button
               onClick={handleExportAllCsv}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
@@ -366,7 +420,7 @@ export default function PublishingQueuePage() {
       )}
 
       {/* OPERATIONAL ATTENTION BANNER */}
-      {failedJobsCount > 0 && (
+      {!isMockCleared && failedJobsCount > 0 && (
         <div className="bg-paper-raised border-l-4 border-accent-terracotta p-4 rounded-card border-r border-t border-b border-border-rule shadow-2xs flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-full bg-accent-terracotta/10 text-accent-terracotta flex items-center justify-center shrink-0 mt-0.5">
@@ -465,8 +519,17 @@ export default function PublishingQueuePage() {
             <tbody className="divide-y divide-border-rule">
               {filteredJobs.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-8 text-center text-ink-secondary font-mono text-xs">
-                    No dispatches matching filter "{filterTab}".
+                  <td colSpan={6} className="p-8">
+                    <EditorialEmptyState
+                      stickerName="approved-seal"
+                      badgeText={isMockCleared ? 'Publishing Queue • Clean' : 'Filter Empty'}
+                      title="คิวการส่งโพสต์ว่างเปล่า (Publishing Queue Empty)"
+                      description="ไม่มีรายการงานค้างท่อ ทุกชิ้นงานได้รับการประมวลผลและส่งขึ้นแพลตฟอร์มปลายทางเรียบร้อยแล้ว หรือยังไม่มีการจัดคิวใหม่"
+                      tipText="คุณสามารถสร้างโพสต์และตั้งเวลาเผยแพร่ล่วงหน้าได้จากหน้า Universal Composer ชิ้นงานจะมาจัดเรียงในคิวนี้โดยอัตโนมัติ"
+                      actionLabel="สร้างโพสต์ใหม่ (Compose Dispatch)"
+                      actionHref="/create"
+                      onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setJobs(INITIAL_QUEUE_JOBS); } : undefined}
+                    />
                   </td>
                 </tr>
               ) : (

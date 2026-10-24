@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { 
   Plus, 
@@ -14,7 +14,9 @@ import {
   CheckCircle2,
   Play,
   Copy,
-  Globe
+  Globe,
+  Sparkles,
+  RefreshCw
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { StatusTag } from '@/components/ui/status-tag';
@@ -22,6 +24,13 @@ import {
   SocialPlatformIcon, 
   WebsiteLogo 
 } from '@/components/ui/social-icons';
+import { 
+  isMockDataCleared, 
+  clearAllMockData, 
+  loadSampleMockData, 
+  subscribeToMockDataChange 
+} from '@/modules/data/mock-data-manager';
+import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
 
 interface ContentChannel {
   platform: 'YOUTUBE' | 'TIKTOK' | 'INSTAGRAM' | 'FACEBOOK';
@@ -176,7 +185,21 @@ const DEFAULT_SAMPLE_ITEMS: ContentItem[] = [
 export default function ContentLibraryPage() {
   const [activeTab, setActiveTab] = useState<'ALL' | 'PUBLISHED' | 'SCHEDULED' | 'DRAFTS'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
-  const [items, setItems] = useState<ContentItem[]>(DEFAULT_SAMPLE_ITEMS);
+  const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
+  const [items, setItems] = useState<ContentItem[]>([]);
+
+  // Sync mock data clean / demo state
+  useEffect(() => {
+    const cleared = isMockDataCleared();
+    setIsMockCleared(cleared);
+    setItems(cleared ? [] : DEFAULT_SAMPLE_ITEMS);
+
+    const unsub = subscribeToMockDataChange((newCleared) => {
+      setIsMockCleared(newCleared);
+      setItems(newCleared ? [] : DEFAULT_SAMPLE_ITEMS);
+    });
+    return unsub;
+  }, []);
 
   const filteredItems = items.filter((item) => {
     if (activeTab === 'PUBLISHED' && !['PUBLISHED', 'PARTIALLY_PUBLISHED'].includes(item.status)) return false;
@@ -197,7 +220,35 @@ export default function ContentLibraryPage() {
         title="Content Archive & Dispatches"
         subtitle="Curated master assets, multi-platform adaptations, and direct links to view live posts on social media."
         actions={
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {isMockCleared ? (
+              <button
+                type="button"
+                onClick={() => {
+                  loadSampleMockData();
+                  setItems(DEFAULT_SAMPLE_ITEMS);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                title="โหลดชุดชิ้นงานตัวอย่างสำหรับพรีวิวคลังสื่อ"
+              >
+                <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
+                <span>โหลดคลังตัวอย่าง (Demo Assets)</span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  clearAllMockData();
+                  setItems([]);
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                title="ล้างคลังสื่อให้ว่างเปล่า"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>ล้างคลังสื่อ (Clear All)</span>
+              </button>
+            )}
+
             <Link
               href="/create"
               className="inline-flex items-center gap-2 px-4 py-2 bg-brand-indigo text-white text-xs font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-colors shadow-xs"
@@ -213,25 +264,27 @@ export default function ContentLibraryPage() {
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6 p-3 bg-paper-raised border border-border-rule rounded-card text-xs">
         <div>
           <span className="text-ink-secondary text-[10px] uppercase font-mono">Total Works</span>
-          <p className="font-serif font-bold text-lg text-ink-primary">24</p>
+          <p className="font-serif font-bold text-lg text-ink-primary">{items.length}</p>
         </div>
         <div>
           <span className="text-ink-secondary text-[10px] uppercase font-mono">Synchronized</span>
-          <p className="font-serif font-bold text-lg text-semantic-success">18</p>
+          <p className="font-serif font-bold text-lg text-semantic-success">{items.filter(i => i.status === 'PUBLISHED').length}</p>
         </div>
         <div>
           <span className="text-ink-secondary text-[10px] uppercase font-mono">Scheduled</span>
-          <p className="font-serif font-bold text-lg text-brand-indigo">4</p>
+          <p className="font-serif font-bold text-lg text-brand-indigo">{items.filter(i => i.status === 'READY').length}</p>
         </div>
         <div>
-          <span className="text-ink-secondary text-[10px] uppercase font-mono">In Pipeline</span>
-          <p className="font-serif font-bold text-lg text-ink-primary">1</p>
+          <span className="text-ink-secondary text-[10px] uppercase font-mono">Drafts</span>
+          <p className="font-serif font-bold text-lg text-ink-primary">{items.filter(i => i.status === 'DRAFT').length}</p>
         </div>
         <div>
           <span className="text-ink-secondary text-[10px] uppercase font-mono text-semantic-warning">
             Attention Needed
           </span>
-          <p className="font-serif font-bold text-lg text-semantic-warning">1 Failure</p>
+          <p className="font-serif font-bold text-lg text-semantic-warning">
+            {items.filter(i => i.status === 'FAILED').length} Failure
+          </p>
         </div>
       </div>
 
@@ -267,7 +320,19 @@ export default function ContentLibraryPage() {
 
       {/* Editorial Ledger List */}
       <div className="space-y-3">
-        {filteredItems.map((item) => (
+        {filteredItems.length === 0 ? (
+          <EditorialEmptyState
+            stickerName="camera-reel"
+            badgeText={isMockCleared ? 'Media Archive • Clean Slate' : 'Filter Empty'}
+            title="คลังสื่อยังไม่มีชิ้นงาน (Content Library Empty)"
+            description="คลังสื่อเป็นศูนย์กลางเก็บรวบรวมไฟล์ต้นฉบับ ชิ้นงานวิดีโอ 9:16 สตอรี่ และอัลบั้มภาพ พร้อมประวัติการเผยแพร่และ Direct Live Links"
+            tipText="อัปโหลดไฟล์ครั้งเดียว ระบบจะแปลงสัดส่วนและจัดเตรียมให้พร้อมส่งขึ้นทุกแพลตฟอร์ม"
+            actionLabel="สร้างและอัปโหลดชิ้นงานแรก (Create Post)"
+            actionHref="/create"
+            onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setItems(DEFAULT_SAMPLE_ITEMS); } : undefined}
+          />
+        ) : (
+          filteredItems.map((item) => (
           <div
             key={item.id}
             className="bg-paper-raised border border-border-rule rounded-card p-4 hover:border-brand-indigo/40 transition-colors flex flex-col md:flex-row items-start md:items-center gap-4"
@@ -366,7 +431,8 @@ export default function ContentLibraryPage() {
               </button>
             </div>
           </div>
-        ))}
+        ))
+        )}
       </div>
     </div>
   );
