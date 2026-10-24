@@ -18,9 +18,12 @@ import {
   Building2,
   Sparkles,
   Users,
-  Shield
+  Shield,
+  LogOut
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
+import { getCurrentUser, logoutUser, subscribeToAuthChange } from '@/modules/auth/auth-service';
+import { AuthUser } from '@/modules/auth/auth-types';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -46,6 +49,21 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeWorkspaceId, setActiveWorkspaceId] = useState('ws_acme');
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    setCurrentUser(getCurrentUser());
+    const unsubscribe = subscribeToAuthChange((user) => {
+      setCurrentUser(user);
+    });
+    return unsubscribe;
+  }, []);
+
+  const isAuthRoute = pathname === '/login' || pathname === '/register' || pathname === '/forgot-password';
+
+  if (isAuthRoute) {
+    return <div className="min-h-screen bg-paper-canvas text-ink-primary">{children}</div>;
+  }
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -217,27 +235,41 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
         {/* Sidebar Footer User Info */}
         <div className="p-3.5 border-t border-border-rule text-xs bg-paper-subtle/50">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-full bg-brand-indigo text-white flex items-center justify-center font-serif text-xs font-bold ring-1 ring-brand-indigo/30">
-                {activeWorkspaceId === 'ws_capitalone' ? 'NC' : 'AR'}
+          <div className="flex items-center justify-between gap-1.5">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className={`w-7 h-7 rounded-full ${currentUser?.avatarBg || 'bg-brand-indigo'} text-white flex items-center justify-center font-serif text-xs font-bold ring-1 ring-brand-indigo/30 shrink-0`}>
+                {currentUser?.avatarText || (activeWorkspaceId === 'ws_capitalone' ? 'NC' : 'AR')}
               </div>
               <div className="min-w-0">
                 <p className="font-semibold text-ink-primary text-xs leading-tight truncate">
-                  {activeWorkspaceId === 'ws_capitalone' ? 'Nopparat C.' : 'Alex Rivera'}
+                  {currentUser?.name || (activeWorkspaceId === 'ws_capitalone' ? 'Nopparat C.' : 'Alex Rivera')}
                 </p>
-                <p className="text-[10px] text-ink-secondary font-mono truncate max-w-[120px]">
-                  {activeWorkspace.name}
+                <p className="text-[10px] text-ink-secondary font-mono truncate max-w-[105px]">
+                  {currentUser?.email || activeWorkspace.name}
                 </p>
               </div>
             </div>
-            <Link
-              href="/settings/team"
-              className="text-[9px] font-mono text-brand-indigo hover:underline px-1.5 py-0.5 bg-brand-indigo/10 border border-brand-indigo/20 rounded font-semibold shrink-0"
-              title="View Role & Permissions"
-            >
-              {activeWorkspaceId === 'ws_capitalone' ? 'Role: Mgr' : 'Role: Owner'}
-            </Link>
+
+            <div className="flex items-center gap-1 shrink-0">
+              <Link
+                href="/settings/team"
+                className="text-[9px] font-mono text-brand-indigo hover:underline px-1.5 py-0.5 bg-brand-indigo/10 border border-brand-indigo/20 rounded font-semibold"
+                title="View Role & Permissions"
+              >
+                {currentUser?.role || (activeWorkspaceId === 'ws_capitalone' ? 'Role: Mgr' : 'Role: Owner')}
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  logoutUser();
+                  window.location.href = '/login';
+                }}
+                className="p-1 text-ink-secondary hover:text-accent-terracotta rounded hover:bg-paper-canvas transition-colors"
+                title="ออกจากระบบ (Sign Out)"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
       </aside>
