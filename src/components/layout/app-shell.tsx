@@ -60,19 +60,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     return unsubscribe;
   }, []);
 
-  const isPublicRoute = 
-    pathname === '/login' || 
-    pathname === '/register' || 
-    pathname === '/forgot-password' ||
-    pathname.startsWith('/docs') ||
-    pathname.startsWith('/guide') ||
-    pathname.startsWith('/privacy') ||
-    pathname.startsWith('/terms');
-
-  if (isPublicRoute) {
-    return <div className="min-h-screen bg-paper-canvas text-ink-primary">{children}</div>;
-  }
-
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('retzpost_active_workspace_id');
@@ -135,6 +122,19 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       ],
     },
   ];
+
+  const isPublicRoute = 
+    pathname === '/login' || 
+    pathname === '/register' || 
+    pathname === '/forgot-password' ||
+    pathname.startsWith('/docs') ||
+    pathname.startsWith('/guide') ||
+    pathname.startsWith('/privacy') ||
+    pathname.startsWith('/terms');
+
+  if (isPublicRoute) {
+    return <div className="min-h-screen bg-paper-canvas text-ink-primary">{children}</div>;
+  }
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-paper-canvas text-ink-primary">
