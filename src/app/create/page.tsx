@@ -637,6 +637,13 @@ export default function CreatePostPage() {
   const [sharedTags, setSharedTags] = useState('architecture, publishing, tech, design-system');
   const [storyLinkUrl, setStoryLinkUrl] = useState('https://retzpost.com/announcement');
 
+  // Auto-Save Draft & Recovery Engine
+  const [lastSavedDraftTime, setLastSavedDraftTime] = useState<string | null>(null);
+  const [draftRestoredNotice, setDraftRestoredNotice] = useState<boolean>(false);
+
+  // Safe-Zone Guide Overlay for 9:16 Formats
+  const [showSafeZone, setShowSafeZone] = useState<boolean>(false);
+
   // Post Text Templates State (Column 2)
   const [templates, setTemplates] = useState<PostTemplate[]>(() => getInitialTemplates());
   const [selectedTemplateId, setSelectedTemplateId] = useState<string>('');
@@ -1042,6 +1049,64 @@ export default function CreatePostPage() {
     }
   };
 
+  // Auto-Save Draft: Load saved draft on workspace change or initial mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const draftKey = `retzpost_draft_${activeWorkspaceId}`;
+      const saved = localStorage.getItem(draftKey);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          if (parsed.workingTitle) setWorkingTitle(parsed.workingTitle);
+          if (parsed.sharedCaption) setSharedCaption(parsed.sharedCaption);
+          if (parsed.storyLinkUrl !== undefined) setStoryLinkUrl(parsed.storyLinkUrl);
+          if (parsed.sharedTags !== undefined) setSharedTags(parsed.sharedTags);
+          if (parsed.mediaMode) setMediaMode(parsed.mediaMode);
+          if (parsed.placements) setPlacements(parsed.placements);
+          if (parsed.savedAt) setLastSavedDraftTime(parsed.savedAt);
+          setDraftRestoredNotice(true);
+        } catch (e) {
+          console.error('Failed to parse draft from localStorage', e);
+        }
+      } else {
+        setDraftRestoredNotice(false);
+      }
+    }
+  }, [activeWorkspaceId]);
+
+  // Auto-Save Draft: Debounced save when user edits fields
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const timer = setTimeout(() => {
+      const nowStr = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      const draftKey = `retzpost_draft_${activeWorkspaceId}`;
+      const payload = {
+        workingTitle,
+        sharedCaption,
+        storyLinkUrl,
+        sharedTags,
+        mediaMode,
+        placements,
+        savedAt: nowStr
+      };
+      localStorage.setItem(draftKey, JSON.stringify(payload));
+      setLastSavedDraftTime(nowStr);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, [workingTitle, sharedCaption, storyLinkUrl, sharedTags, mediaMode, placements, activeWorkspaceId]);
+
+  const handleClearDraft = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(`retzpost_draft_${activeWorkspaceId}`);
+    }
+    setWorkingTitle('Omni-Format Publishing: Simultaneous Feed, Story & Reels');
+    setSharedCaption('Architecture over aesthetics. In this issue we break down our modular publishing pipeline designed for simultaneous Feed Posts, 24h Stories, and Reels/Shorts.\n\nSwipe to explore the full stack diagrams.');
+    setStoryLinkUrl('https://retzpost.com/announcement');
+    setSharedTags('architecture, publishing, tech, design-system');
+    setLastSavedDraftTime(null);
+    setDraftRestoredNotice(false);
+  };
+
   // Smart Validation Helper
   const getFormatValidation = (format: 'feed' | 'story' | 'reel', account: DestinationAccount) => {
     const capability = account.capabilities[format];
@@ -1226,6 +1291,36 @@ export default function CreatePostPage() {
     const val = getFormatValidation('story', acc);
     return val.eligible && placements[`${acc.id}_story`];
   });
+
+  // Safe-Zone Guide Overlay Component for 9:16 Video / Reels / Shorts / TikTok / Story
+  const SafeZoneOverlay = () => (
+    <div className="absolute inset-0 z-30 pointer-events-none rounded-[20px] overflow-hidden border border-semantic-warning/60 animate-in fade-in duration-150">
+      {/* Top Safe Margin (15%) */}
+      <div className="absolute top-0 left-0 right-0 h-[15%] bg-semantic-warning/15 border-b border-dashed border-semantic-warning/70 flex items-center justify-center">
+        <span className="text-[7px] font-mono text-semantic-warning font-bold bg-black/85 px-1.5 py-0.5 rounded shadow">
+          ⚠️ Profile & Status Bar (15%)
+        </span>
+      </div>
+      {/* Bottom Safe Margin (25%) */}
+      <div className="absolute bottom-0 left-0 right-0 h-[25%] bg-semantic-warning/15 border-t border-dashed border-semantic-warning/70 flex items-center justify-center">
+        <span className="text-[7px] font-mono text-semantic-warning font-bold bg-black/85 px-1.5 py-0.5 rounded shadow">
+          ⚠️ Caption & Sound Marquee (25%)
+        </span>
+      </div>
+      {/* Right Safe Margin (18%) */}
+      <div className="absolute top-[15%] bottom-[25%] right-0 w-[18%] bg-semantic-warning/15 border-l border-dashed border-semantic-warning/70 flex items-center justify-center">
+        <span className="text-[6px] font-mono text-semantic-warning font-bold rotate-90 whitespace-nowrap bg-black/85 px-1 rounded shadow">
+          Action Rail (18%)
+        </span>
+      </div>
+      {/* Center 1:1 IG Grid Preview Box */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full aspect-square border border-semantic-info/60 pointer-events-none flex items-start justify-end p-1">
+        <span className="text-[6px] font-mono text-semantic-info font-bold bg-black/85 px-1 rounded shadow">
+          1:1 Feed Grid
+        </span>
+      </div>
+    </div>
+  );
 
   return (
     <div className="max-w-[1520px] mx-auto px-4 md:px-6 py-6 space-y-5">
@@ -1939,10 +2034,44 @@ export default function CreatePostPage() {
                   Caption & Narrative
                 </h2>
               </div>
-              <span className="text-[10px] font-mono text-ink-secondary">
-                {sharedCaption.length} chars
-              </span>
+              <div className="flex items-center gap-2">
+                {lastSavedDraftTime && (
+                  <span className="text-[10px] font-mono text-semantic-success flex items-center gap-1 font-medium bg-semantic-success/10 px-2 py-0.5 rounded border border-semantic-success/30">
+                    <span>💾 บันทึกอัตโนมัติ</span>
+                    <span className="text-ink-secondary">({lastSavedDraftTime})</span>
+                  </span>
+                )}
+                <span className="text-[10px] font-mono text-ink-secondary">
+                  {sharedCaption.length} chars
+                </span>
+              </div>
             </div>
+
+            {draftRestoredNotice && (
+              <div className="p-2.5 bg-brand-indigo/10 border border-brand-indigo/30 rounded-editorial flex items-center justify-between text-xs text-brand-indigo">
+                <span className="flex items-center gap-1.5 font-medium">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
+                  <span>กู้คืนแบบร่างล่าสุดของ <strong>{activeWorkspace.name}</strong> อัตโนมัติแล้ว</span>
+                </span>
+                <div className="flex items-center gap-2.5">
+                  <button
+                    type="button"
+                    onClick={handleClearDraft}
+                    className="text-[10px] font-mono text-ink-secondary hover:text-semantic-error underline cursor-pointer"
+                  >
+                    ล้างแบบร่าง (Reset)
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setDraftRestoredNotice(false)}
+                    className="text-ink-secondary hover:text-ink-primary text-xs cursor-pointer"
+                    title="ปิดข้อความแจ้งเตือน"
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* TEMPLATE PICKER & ACTIONS BAR (Boss's System Upgrade) */}
             <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial space-y-2.5">
@@ -2193,7 +2322,24 @@ export default function CreatePostPage() {
         >
           {/* Header */}
           <div className="flex items-center justify-between pb-2.5 border-b border-border-rule">
-            <span className="font-mono text-xs font-bold text-brand-indigo">Live Proof & Dispatch</span>
+            <div className="flex items-center gap-2">
+              <span className="font-mono text-xs font-bold text-brand-indigo">Live Proof & Dispatch</span>
+              {(previewTab === 'STORY' || previewTab === 'REEL') && (
+                <button
+                  type="button"
+                  onClick={() => setShowSafeZone(!showSafeZone)}
+                  className={`px-1.5 py-0.5 rounded text-[9px] font-mono border transition-all flex items-center gap-1 cursor-pointer ${
+                    showSafeZone
+                      ? 'bg-semantic-warning/20 text-semantic-warning border-semantic-warning/60 font-bold shadow-2xs'
+                      : 'bg-paper-canvas text-ink-secondary hover:text-ink-primary border-border-rule/80'
+                  }`}
+                  title="Toggle 9:16 Safe Zone Guidelines (ขอบบน 15%, ขอบล่าง 25%, เสาขวา 18% และ IG Grid 1:1)"
+                >
+                  <span>⛶ Safe Zone</span>
+                  <span className={`w-1.5 h-1.5 rounded-full ${showSafeZone ? 'bg-semantic-warning animate-pulse' : 'bg-ink-muted'}`} />
+                </button>
+              )}
+            </div>
             <span className="text-[10px] font-mono text-semantic-success flex items-center gap-1 font-semibold">
               <CheckCircle2 className="w-3.5 h-3.5" />
               <span>Ready</span>
@@ -2337,6 +2483,7 @@ export default function CreatePostPage() {
               {/* IG STORY */}
               {previewTab === 'STORY' && (
                 <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-gradient-to-b from-[#2a2d3e] to-[#12131a] rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  {showSafeZone && <SafeZoneOverlay />}
                   <div>
                     <div className="flex gap-1 mb-1.5">
                       <div className="h-0.5 flex-1 bg-white rounded-full"></div>
@@ -2391,6 +2538,7 @@ export default function CreatePostPage() {
               {/* IG REELS */}
               {previewTab === 'REEL' && (
                 <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  {showSafeZone && <SafeZoneOverlay />}
                   <div className="flex items-center justify-between text-[9px]">
                     <span className="font-semibold text-white/90">Reels</span>
                     <Camera className="w-3 h-3 text-white/70" />
@@ -2551,6 +2699,7 @@ export default function CreatePostPage() {
               {/* FB STORY */}
               {previewTab === 'STORY' && (
                 <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-gradient-to-b from-[#1877F2] via-[#0d47a1] to-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  {showSafeZone && <SafeZoneOverlay />}
                   <div>
                     <div className="flex gap-1 mb-1.5">
                       <div className="h-0.5 flex-1 bg-white rounded-full"></div>
@@ -2594,6 +2743,7 @@ export default function CreatePostPage() {
               {/* FB REELS */}
               {previewTab === 'REEL' && (
                 <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  {showSafeZone && <SafeZoneOverlay />}
                   <div className="flex items-center justify-between text-[9px]">
                     <span className="font-semibold text-white/90 flex items-center gap-1">
                       <FacebookLogo size={12} />
@@ -2640,6 +2790,7 @@ export default function CreatePostPage() {
               {/* YOUTUBE SHORTS */}
               {previewTab === 'REEL' && (
                 <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  {showSafeZone && <SafeZoneOverlay />}
                   <div className="flex items-center justify-between text-[9px]">
                     <div className="flex items-center gap-1">
                       <YouTubeLogo size={14} />
@@ -2744,6 +2895,7 @@ export default function CreatePostPage() {
               {/* TIKTOK 9:16 VIDEO */}
               {previewTab === 'REEL' && (
                 <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  {showSafeZone && <SafeZoneOverlay />}
                   <div className="flex items-center justify-between text-[10px]">
                     <div className="w-4"></div>
                     <div className="flex items-center gap-2">
@@ -2824,6 +2976,7 @@ export default function CreatePostPage() {
               {/* TIKTOK PHOTO SLIDE */}
               {previewTab === 'FEED' && (
                 <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-black rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  {showSafeZone && <SafeZoneOverlay />}
                   <div className="flex items-center justify-between text-[9px]">
                     <span className="font-semibold text-white/90">TikTok Photo Mode</span>
                     <span className="px-1.5 py-0.2 rounded-full bg-white/20 font-mono text-[8px]">
@@ -2858,6 +3011,7 @@ export default function CreatePostPage() {
               {/* TIKTOK STORY */}
               {previewTab === 'STORY' && (
                 <div className="w-full max-w-[210px] mx-auto aspect-[9/16] bg-gradient-to-b from-[#010101] via-[#161823] to-[#010101] rounded-[20px] p-2.5 text-white flex flex-col justify-between shadow-md relative overflow-hidden border border-border-rule">
+                  {showSafeZone && <SafeZoneOverlay />}
                   <div>
                     <div className="h-0.5 w-full bg-semantic-info rounded-full mb-1.5"></div>
                     <div className="flex items-center justify-between">
@@ -3689,6 +3843,58 @@ export default function CreatePostPage() {
           </div>
         </div>
       )}
+
+      {/* MOBILE / TABLET FLOATING THUMB-ZONE ACTION DOCK (Ergonomic UX for Mobile Users) */}
+      <div className="xl:hidden fixed bottom-4 left-1/2 -translate-x-1/2 z-40 bg-ink-primary/95 text-white backdrop-blur-md rounded-full shadow-2xl p-1.5 flex items-center gap-1 border border-white/20 text-xs">
+        <button
+          type="button"
+          onClick={() => {
+            setMobileTab('DESTINATIONS');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`px-3 py-1.5 rounded-full font-mono text-[11px] font-medium transition-all flex items-center gap-1 cursor-pointer ${
+            mobileTab === 'DESTINATIONS'
+              ? 'bg-brand-indigo text-white font-bold shadow-xs'
+              : 'text-white/70 hover:text-white'
+          }`}
+        >
+          <span>1. จุดหมาย</span>
+          <span className="px-1.5 py-0.2 rounded-full bg-white/20 text-[9px] font-bold">
+            {totalActivePlacements}
+          </span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setMobileTab('CANVAS');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`px-3 py-1.5 rounded-full font-mono text-[11px] font-medium transition-all flex items-center gap-1 cursor-pointer ${
+            mobileTab === 'CANVAS'
+              ? 'bg-brand-indigo text-white font-bold shadow-xs'
+              : 'text-white/70 hover:text-white'
+          }`}
+        >
+          <span>2. เขียนงาน</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setMobileTab('PROOF');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }}
+          className={`px-3 py-1.5 rounded-full font-mono text-[11px] font-medium transition-all flex items-center gap-1 cursor-pointer ${
+            mobileTab === 'PROOF'
+              ? 'bg-brand-indigo text-white font-bold shadow-xs'
+              : 'text-white/70 hover:text-white'
+          }`}
+        >
+          <span>3. พรีวิวสด</span>
+          <span className="w-2 h-2 rounded-full bg-semantic-success animate-pulse" />
+        </button>
+      </div>
     </div>
   );
 }

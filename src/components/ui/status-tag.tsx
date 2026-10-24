@@ -12,7 +12,7 @@ import {
 import { JobStatus, BatchAggregateStatus } from '@/modules/publishing/state-machine';
 
 interface StatusTagProps {
-  status: JobStatus | BatchAggregateStatus | 'CONNECTED' | 'EXPIRING' | 'REVOKED' | 'DRAFT' | 'READY';
+  status: JobStatus | BatchAggregateStatus | 'CONNECTED' | 'EXPIRING' | 'REVOKED' | 'DRAFT' | 'READY' | 'PENDING_REVIEW' | 'NEEDS_REVISION';
   className?: string;
 }
 
@@ -37,6 +37,22 @@ export const StatusTag: React.FC<StatusTagProps> = ({ status, className = '' }) 
       text = 'text-brand-indigo';
       border = 'border-brand-indigo/20';
       Icon = CheckCircle2;
+      break;
+
+    case 'PENDING_REVIEW':
+      bg = 'bg-accent-terracotta/10';
+      text = 'text-accent-terracotta';
+      border = 'border-accent-terracotta/30';
+      label = 'Pending Review';
+      Icon = Clock;
+      break;
+
+    case 'NEEDS_REVISION':
+      bg = 'bg-semantic-warning-bg';
+      text = 'text-semantic-warning';
+      border = 'border-semantic-warning/30';
+      label = 'Needs Revision';
+      Icon = AlertTriangle;
       break;
 
     case 'DRAFT':

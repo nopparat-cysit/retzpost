@@ -23,6 +23,7 @@ import {
   Share2,
   Copy,
   Check,
+  Edit3,
   X,
   Smartphone,
   Link2,
@@ -605,6 +606,11 @@ export default function EditorialCalendarPage() {
   const [rescheduleDate, setRescheduleDate] = useState('');
   const [rescheduleTime, setRescheduleTime] = useState('');
 
+  // Quick In-Modal Editor State (Edit title, caption, and schedule in place)
+  const [isQuickEditing, setIsQuickEditing] = useState(false);
+  const [quickEditTitle, setQuickEditTitle] = useState('');
+  const [quickEditCaption, setQuickEditCaption] = useState('');
+
   // Day dispatches list modal state
   const [dayModal, setDayModal] = useState<{ day: number; dateStr: string; events: CalendarEventItem[] } | null>(null);
 
@@ -678,6 +684,41 @@ export default function EditorialCalendarPage() {
     setSelectedEvent(ev);
     setRescheduleDate(ev.dateStr);
     setRescheduleTime(ev.timeStr);
+    setQuickEditTitle(ev.title);
+    setQuickEditCaption(ev.caption);
+    setIsQuickEditing(false);
+  };
+
+  // Handle Quick In-Modal Edit Save
+  const handleSaveQuickEdit = () => {
+    if (!selectedEvent) return;
+    const day = parseInt(rescheduleDate.split('-')[2], 10) || selectedEvent.dayOfMonth;
+    const finalTitle = quickEditTitle.trim() || selectedEvent.title;
+    const finalCaption = quickEditCaption.trim() || selectedEvent.caption;
+    const updated = events.map((item) => {
+      if (item.id === selectedEvent.id) {
+        return {
+          ...item,
+          title: finalTitle,
+          caption: finalCaption,
+          dateStr: rescheduleDate,
+          dayOfMonth: day,
+          timeStr: rescheduleTime,
+        };
+      }
+      return item;
+    });
+    setEvents(updated);
+    setSelectedEvent({
+      ...selectedEvent,
+      title: finalTitle,
+      caption: finalCaption,
+      dateStr: rescheduleDate,
+      dayOfMonth: day,
+      timeStr: rescheduleTime,
+    });
+    setIsQuickEditing(false);
+    showToast(`✓ บันทึกการแก้ไขโพสต์ "${finalTitle}" เรียบร้อยแล้ว`);
   };
 
   // Handle Rescheduling
@@ -1629,6 +1670,19 @@ export default function EditorialCalendarPage() {
               </div>
 
               <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsQuickEditing(!isQuickEditing)}
+                  className={`px-2.5 py-1.5 rounded-editorial text-xs font-mono font-semibold border transition-all flex items-center gap-1.5 cursor-pointer ${
+                    isQuickEditing
+                      ? 'bg-brand-indigo text-white border-brand-indigo shadow-xs'
+                      : 'bg-paper-canvas hover:bg-paper-subtle text-ink-primary border-border-rule'
+                  }`}
+                  title="แก้ไขหัวข้อ, แคปชัน และกำหนดเวลาด่วนในหน้าต่างนี้"
+                >
+                  <Edit3 className="w-3.5 h-3.5" />
+                  <span>{isQuickEditing ? 'โหมดพรีวิว (Preview)' : 'แก้ไขด่วน (Quick Edit)'}</span>
+                </button>
                 <span className="text-[10px] font-mono text-ink-muted border border-border-rule px-1.5 py-0.5 rounded hidden sm:inline-block">
                   ESC
                 </span>
@@ -1643,8 +1697,101 @@ export default function EditorialCalendarPage() {
               </div>
             </div>
 
-            {/* Drawer Body */}
-            <div className="p-6 space-y-6 flex-1">
+            {/* Drawer Body: Quick Edit Form vs Regular Visual Inspector */}
+            {isQuickEditing ? (
+              <div className="p-6 space-y-5 flex-1 bg-paper-canvas">
+                <div className="p-3 bg-brand-indigo/10 border border-brand-indigo/30 rounded-editorial text-xs text-brand-indigo flex items-center justify-between">
+                  <span className="font-semibold flex items-center gap-1.5">
+                    <Edit3 className="w-4 h-4" />
+                    <span>In-Modal Quick Editor: แก้ไขเนื้อหาและกำหนดเวลาได้ทันที</span>
+                  </span>
+                  <span className="text-[10px] font-mono">Real-time Calendar Sync</span>
+                </div>
+
+                {/* Edit Title */}
+                <div>
+                  <label className="block font-mono text-xs font-bold text-ink-primary uppercase tracking-wider mb-1.5">
+                    Post Headline / Title (หัวข้อโพสต์)
+                  </label>
+                  <input
+                    type="text"
+                    value={quickEditTitle}
+                    onChange={(e) => setQuickEditTitle(e.target.value)}
+                    className="w-full px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial font-serif text-sm font-bold text-ink-primary focus:outline-none focus:border-brand-indigo"
+                    placeholder="ใส่หัวข้อโพสต์..."
+                  />
+                </div>
+
+                {/* Edit Caption */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block font-mono text-xs font-bold text-ink-primary uppercase tracking-wider">
+                      Caption & Copywriting (ข้อความแคปชัน)
+                    </label>
+                    <span className="text-[10px] font-mono text-ink-secondary">
+                      {quickEditCaption.length} characters
+                    </span>
+                  </div>
+                  <textarea
+                    rows={6}
+                    value={quickEditCaption}
+                    onChange={(e) => setQuickEditCaption(e.target.value)}
+                    className="w-full px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial font-mono text-xs text-ink-primary leading-relaxed focus:outline-none focus:border-brand-indigo"
+                    placeholder="เขียนแคปชัน..."
+                  />
+                </div>
+
+                {/* Edit Target Date & Time */}
+                <div className="p-4 bg-paper-subtle border border-border-rule rounded-editorial space-y-3">
+                  <div className="font-mono text-xs font-bold text-ink-secondary uppercase tracking-wider flex items-center gap-1.5">
+                    <Clock className="w-3.5 h-3.5 text-brand-indigo" />
+                    <span>Schedule Date & Time (วันและเวลาที่เผยแพร่)</span>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <CustomDatePicker
+                      label="วันที่เผยแพร่"
+                      value={rescheduleDate}
+                      onChange={(d) => setRescheduleDate(d)}
+                      size="sm"
+                      showPresets={true}
+                    />
+                    <CustomTimePicker
+                      label="เวลาเผยแพร่ (Peak Slots)"
+                      value={rescheduleTime}
+                      onChange={(t) => setRescheduleTime(t)}
+                      size="sm"
+                      showPeakSlots={true}
+                    />
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="pt-3 border-t border-border-rule flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={handleSaveQuickEdit}
+                    className="flex-1 py-2.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white font-mono text-xs font-semibold rounded-editorial transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <Check className="w-4 h-4" />
+                    <span>บันทึกการแก้ไข (Save Changes)</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setQuickEditTitle(selectedEvent.title);
+                      setQuickEditCaption(selectedEvent.caption);
+                      setRescheduleDate(selectedEvent.dateStr);
+                      setRescheduleTime(selectedEvent.timeStr);
+                      setIsQuickEditing(false);
+                    }}
+                    className="px-4 py-2.5 bg-paper-canvas border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary font-mono text-xs rounded-editorial transition-colors cursor-pointer"
+                  >
+                    ยกเลิก
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="p-6 space-y-6 flex-1">
               {/* Preview Mode Switcher */}
               <div className="flex items-center justify-between border-b border-border-rule pb-3">
                 <div className="font-mono text-xs font-bold text-ink-secondary uppercase tracking-wider">
@@ -1943,6 +2090,7 @@ export default function EditorialCalendarPage() {
                 </button>
               </div>
             </div>
+            )}
 
             {/* Drawer Footer Actions */}
             <div className="p-4 border-t border-border-rule bg-paper-raised flex items-center justify-between">
