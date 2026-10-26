@@ -57,3 +57,38 @@ body {
   font-size: 0.75rem; /* 12px minimum for readability */
   letter-spacing: -0.01em;
 }
+
+/* Dream Press Atmospheric Texture & Motion */
+.dream-paper-texture {
+  background-image: radial-gradient(rgba(26, 26, 24, 0.045) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+@keyframes dreamFloat {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes dreamGlowPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.05);
+  }
+}
+
+.animate-dream-float {
+  animation: dreamFloat 4.5s ease-in-out infinite;
+}
+
+.animate-glow-pulse {
+  animation: dreamGlowPulse 3s ease-in-out infinite;
+}
+

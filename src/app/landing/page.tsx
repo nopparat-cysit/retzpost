@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { 
   PublicHeader, 
@@ -25,7 +25,6 @@ import {
   Coins, 
   Ticket, 
   RotateCcw, 
-  ExternalLink,
   ChevronRight,
   TrendingUp,
   AlertCircle,
@@ -33,23 +32,16 @@ import {
   Unlock,
   Star,
   Users,
-  Compass,
   LayoutGrid,
   Calendar as CalendarIcon,
   BarChart3,
   RefreshCw,
   FolderOpen,
-  Send,
-  Eye,
-  SlidersHorizontal,
-  Smartphone,
-  Laptop,
-  CheckCheck,
   Volume2,
   VolumeX,
   Sun,
   Moon,
-  MoveHorizontal
+  CheckCheck
 } from 'lucide-react';
 import { 
   FacebookLogo, 
@@ -62,7 +54,7 @@ import {
 import { Sticker } from '@/components/ui/sticker';
 
 // =============================================================================
-// RETRO-EDITORIAL AUDIO SYNTHESIZER (Pure Web Audio API — Zero External Files)
+// RETRO-EDITORIAL AUDIO SYNTHESIZER (Pure Web Audio API — Zero External Assets)
 // =============================================================================
 const playChimeSound = (soundEnabled: boolean) => {
   if (!soundEnabled || typeof window === 'undefined') return;
@@ -72,7 +64,6 @@ const playChimeSound = (soundEnabled: boolean) => {
     const ctx = new AudioCtx();
     const now = ctx.currentTime;
 
-    // Harmonic Coin Chime (D5 -> A5 -> D6)
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
@@ -87,9 +78,7 @@ const playChimeSound = (soundEnabled: boolean) => {
 
     osc.start(now);
     osc.stop(now + 0.38);
-  } catch (e) {
-    // AudioContext blocked by browser autoplay policy
-  }
+  } catch (e) {}
 };
 
 const playStampThud = (soundEnabled: boolean) => {
@@ -100,7 +89,6 @@ const playStampThud = (soundEnabled: boolean) => {
     const ctx = new AudioCtx();
     const now = ctx.currentTime;
 
-    // Heavy Wax Stamp Thud (Low frequency pitch drop)
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
     osc.connect(gain);
@@ -148,7 +136,7 @@ const PressCoinIcon: React.FC<PressCoinIconProps> = ({ size = 28, className = ''
         <stop offset="100%" stopColor="#78350F" />
       </linearGradient>
       <radialGradient id="coinShine" cx="30%" cy="30%" r="70%">
-        <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.8" />
+        <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.85" />
         <stop offset="60%" stopColor="#CA8A04" stopOpacity="0" />
       </radialGradient>
     </defs>
@@ -215,7 +203,7 @@ export default function LandingPage() {
   });
 
   // Floating Coin Particles Effect
-  const [floatingCoinFx, setFloatingCoinFx] = useState<{ id: number; text: string; x: number; y: number }[]>([]);
+  const [floatingCoinFx, setFloatingCoinFx] = useState<{ id: number; text: string }[]>([]);
 
   // Task 1: Selected Platforms
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['YT', 'IG']);
@@ -230,8 +218,8 @@ export default function LandingPage() {
   const [isScanningRescue, setIsScanningRescue] = useState<boolean>(false);
   const [isFailureResolved, setIsFailureResolved] = useState<boolean>(false);
 
-  // Section 02: Interactive Before / After Split Comparison Slider (0 to 100%)
-  const [problemSliderPos, setProblemSliderPos] = useState<number>(50);
+  // Section 02: Comparison View Mode
+  const [problemViewMode, setProblemViewMode] = useState<'ALL' | 'CHAOS' | 'DREAM'>('ALL');
 
   // Section 03: Interactive Workflow Step
   const [activeWorkflowStep, setActiveWorkflowStep] = useState<number>(1);
@@ -250,8 +238,6 @@ export default function LandingPage() {
 
   // Hero Preview Ratio Switcher
   const [heroRatio, setHeroRatio] = useState<'16:9' | '9:16'>('16:9');
-  // Hero Interactive Stamp Counter
-  const [heroStamps, setHeroStamps] = useState<{ x: number; y: number; id: number }[]>([]);
 
   // Section References for Smooth Navigation
   const pressStudioRef = useRef<HTMLDivElement>(null);
@@ -264,8 +250,6 @@ export default function LandingPage() {
     const newParticle = {
       id: Date.now(),
       text: `+${amount} Coins: ${label}`,
-      x: Math.random() * 40 - 20,
-      y: -20,
     };
     setFloatingCoinFx((prev) => [...prev, newParticle]);
     setTimeout(() => {
@@ -318,7 +302,7 @@ export default function LandingPage() {
     }
   };
 
-  // Task 4: AI Safe-Zone Rescue with Animated Scanline
+  // Task 4: AI Safe-Zone Rescue
   const handleTriggerRescue = () => {
     if (isScanningRescue || isFailureResolved) return;
     setIsScanningRescue(true);
@@ -329,7 +313,7 @@ export default function LandingPage() {
       if (!completedTasks.rescue) {
         awardCoins(30, 'Aspect Ratio Rescued', 'rescue');
       }
-    }, 1200);
+    }, 1100);
   };
 
   // Reset Playground
@@ -345,7 +329,6 @@ export default function LandingPage() {
     setIsFailureResolved(false);
     setIsScanningRescue(false);
     setIsPassRedeemed(false);
-    setHeroStamps([]);
     triggerCoinCelebration(0, 'Playground Reset');
   };
 
@@ -358,7 +341,7 @@ export default function LandingPage() {
     }, 1100);
   };
 
-  // Section 10: Redeem Ticket Action with Stamp Slam
+  // Section 10: Redeem Ticket Action with Stamp
   const handleRedeemTicket = () => {
     if (coins < 100 || isPassRedeemed) return;
     setIsRedeemingAnimation(true);
@@ -368,22 +351,37 @@ export default function LandingPage() {
       setIsRedeemingAnimation(false);
       setIsPassRedeemed(true);
       playChimeSound(soundEnabled);
-    }, 600);
-  };
-
-  // Hero Desk Stamp Interactive Toy
-  const handleStampHeroDesk = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    playStampThud(soundEnabled);
-    setHeroStamps((prev) => [...prev.slice(-4), { x, y, id: Date.now() }]);
+    }, 500);
   };
 
   const isPassUnlocked = coins >= 100;
 
   return (
     <div className="min-h-screen bg-paper-canvas text-ink-primary font-sans selection:bg-brand-indigo selection:text-white flex flex-col antialiased relative overflow-x-hidden">
+      
+      {/* ========================================================================= */}
+      {/* MASTER ATMOSPHERIC BACKGROUND (NO LONGER DULL: WARM OCHRE + INDIGO HALOS) */}
+      {/* ========================================================================= */}
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
+        {/* Archival Newsprint Paper Dot Pattern */}
+        <div className="absolute inset-0 dream-paper-texture opacity-80" />
+        
+        {/* Warm Ochre Daylight Halo (Top-Left) */}
+        <div className="absolute -top-32 -left-32 w-[650px] h-[650px] rounded-full bg-gradient-to-br from-amber-400/15 via-amber-200/5 to-transparent blur-3xl animate-glow-pulse" />
+        
+        {/* Royal Publishing Indigo Halo (Top-Right) */}
+        <div className="absolute top-10 -right-40 w-[700px] h-[700px] rounded-full bg-gradient-to-bl from-brand-indigo/15 via-brand-indigo/5 to-transparent blur-3xl" />
+        
+        {/* Terracotta Wax-Seal Ambient Halo (Middle/Lower) */}
+        <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-gradient-to-tr from-accent-terracotta/8 via-accent-ochre/5 to-transparent blur-3xl" />
+        
+        {/* Subtle Broadsheet Desktop Margin Double Hairlines */}
+        <div className="hidden 2xl:block absolute inset-y-0 left-12 w-px border-l border-border-rule/60" />
+        <div className="hidden 2xl:block absolute inset-y-0 left-14 w-px border-l border-border-rule/40" />
+        <div className="hidden 2xl:block absolute inset-y-0 right-12 w-px border-r border-border-rule/60" />
+        <div className="hidden 2xl:block absolute inset-y-0 right-14 w-px border-r border-border-rule/40" />
+      </div>
+
       {/* 1. PUBLIC EDITORIAL HEADER */}
       <PublicHeader />
 
@@ -409,7 +407,7 @@ export default function LandingPage() {
             type="button"
             onClick={() => setSoundEnabled(!soundEnabled)}
             className="w-7 h-7 rounded-full bg-paper-subtle hover:bg-paper-canvas flex items-center justify-center text-ink-secondary hover:text-ink-primary border border-border-rule transition-colors cursor-pointer"
-            title={soundEnabled ? 'Disable retro chime effects' : 'Enable retro chime effects'}
+            title={soundEnabled ? 'Disable sound effects' : 'Enable sound effects'}
           >
             {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-emerald-700" /> : <VolumeX className="w-3.5 h-3.5 text-ink-muted" />}
           </button>
@@ -460,23 +458,18 @@ export default function LandingPage() {
       </div>
 
       {/* ========================================================================= */}
-      {/* SECTION 01 — HERO: THE FRONT PAGE (TACTILE DESK WITH INTERACTIVE STAMPS) */}
+      {/* SECTION 01 — HERO: THE FRONT PAGE (BEAUTIFUL EDITORIAL COMPOSITION)       */}
       {/* ========================================================================= */}
-      <section id="hero" className="relative pt-8 pb-16 md:pt-12 md:pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full overflow-hidden">
-        {/* Subtle decorative background watermarks */}
-        <div className="absolute top-0 right-10 -z-10 opacity-5 pointer-events-none font-serif text-[180px] font-bold select-none text-ink-primary">
-          PRESS
-        </div>
-
+      <section id="hero" className="relative pt-10 pb-16 md:pt-14 md:pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
         {/* Real-time Ticker Tape Bar with Live Transmission */}
-        <div className="flex items-center justify-between border-b-2 border-border-rule pb-2.5 mb-8 text-[11px] font-mono text-ink-secondary bg-paper-raised/60 p-2 rounded-xl border border-border-rule/80">
+        <div className="flex items-center justify-between border-b-2 border-border-rule pb-2.5 mb-8 text-[11px] font-mono text-ink-secondary bg-paper-raised/70 p-2.5 rounded-xl border border-border-rule shadow-xs">
           <div className="flex items-center gap-2 overflow-hidden">
             <span className="font-bold uppercase tracking-widest text-brand-indigo flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               MULTIPOST GAZETTE
             </span>
             <span>•</span>
-            <span className="truncate">LIVE WIRE: BANGKOK PUBLISHING DESK (UTC+7)</span>
+            <span className="truncate">BANGKOK PUBLISHING DESK (UTC+7)</span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <span className="hidden sm:inline font-mono text-[10px] text-ink-secondary">TRANSMISSION: READY</span>
@@ -486,11 +479,10 @@ export default function LandingPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 items-center">
           {/* Left Broadsheet Editorial Column (7 cols) */}
-          <div className="lg:col-span-7 space-y-6 relative">
-            {/* Washi Tape Strip on Top Left */}
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#C98836]/15 border-t border-b border-[#C98836]/40 text-xs font-mono text-amber-900 rotate-[-1.5deg] shadow-2xs">
+          <div className="lg:col-span-7 space-y-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#C98836]/15 border-t border-b border-[#C98836]/40 text-xs font-mono text-amber-900 shadow-2xs">
               <Sticker name="press-monogram-seal" size="xs" inline />
               <span className="font-bold tracking-wider uppercase">THE CREATOR&apos;S PUBLISHING DESK</span>
             </div>
@@ -531,11 +523,11 @@ export default function LandingPage() {
               </button>
             </div>
 
-            {/* Sticky Note Editorial Pin */}
-            <div className="inline-flex items-center gap-2 p-2 px-3 rounded-lg bg-amber-100/80 border border-amber-300 text-amber-900 text-xs font-mono shadow-xs rotate-[1deg]">
+            {/* Editorial Sticky Note */}
+            <div className="inline-flex items-center gap-2 p-2.5 px-3.5 rounded-lg bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-mono shadow-xs">
               <span className="text-sm">📌</span>
               <span className="font-semibold">Note to Editor:</span>
-              <span className="text-amber-800">Complete the 4 tasks below to unlock your physical 7-Day Dream Pass!</span>
+              <span className="text-amber-800">Complete the 4 tasks in the Studio below to forge your physical 7-Day Dream Pass!</span>
             </div>
 
             {/* Trust Stamps Row */}
@@ -555,31 +547,11 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right Hero Tactile Desk Composition (5 cols) with Click-to-Stamp Feature */}
+          {/* Right Hero Tactile Centerpiece (5 cols) with Smooth Floating Animation */}
           <div className="lg:col-span-5 relative flex justify-center">
-            {/* The Tactile Desk Paper Card */}
-            <div 
-              onClick={handleStampHeroDesk}
-              className="w-full max-w-md bg-paper-raised border-2 border-border-rule rounded-3xl p-6 shadow-2xl relative overflow-hidden space-y-4 cursor-crosshair transform hover:-translate-y-1 transition-all duration-300 select-none"
-              title="Click anywhere inside to stamp the editorial desk!"
-            >
-              {/* Dynamic Ink Stamps placed by visitor clicks */}
-              {heroStamps.map((s) => (
-                <div
-                  key={s.id}
-                  style={{ left: s.x - 24, top: s.y - 24 }}
-                  className="absolute pointer-events-none z-30 animate-in zoom-in-50 duration-200"
-                >
-                  <div className="w-12 h-12 rounded-full border-2 border-dashed border-accent-terracotta/70 flex items-center justify-center text-accent-terracotta font-mono font-bold text-[9px] rotate-[-12deg] bg-accent-terracotta/10 shadow-xs backdrop-blur-2xs">
-                    APPROVED
-                  </div>
-                </div>
-              ))}
-
-              {/* Scalloped Notches on Left and Right */}
-              <div className="absolute top-1/2 -left-4 w-8 h-8 rounded-full bg-paper-canvas border border-border-rule shadow-inner -translate-y-1/2" />
-              <div className="absolute top-1/2 -right-4 w-8 h-8 rounded-full bg-paper-canvas border border-border-rule shadow-inner -translate-y-1/2" />
-
+            {/* The Tactile Desk Paper Card with Gentle Breathing Motion */}
+            <div className="w-full max-w-md bg-paper-raised border-2 border-border-rule rounded-3xl p-6 shadow-2xl space-y-4 animate-dream-float select-none">
+              
               {/* Pass Header */}
               <div className="flex items-center justify-between pb-3 border-b-2 border-dashed border-border-rule/80">
                 <div className="flex items-center gap-2">
@@ -601,33 +573,31 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Interactive Aspect Ratio Slider in Hero */}
+              {/* Interactive Aspect Ratio Switcher */}
               <div className="p-2 bg-paper-canvas rounded-xl border border-border-rule space-y-2">
                 <div className="flex items-center justify-between text-[10px] font-mono">
-                  <span className="text-ink-secondary font-bold">INTERACTIVE RATIO ADAPTATION:</span>
+                  <span className="text-ink-secondary font-bold">FORMAT VIEWPORT:</span>
                   <div className="flex gap-1">
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={() => {
                         setHeroRatio('16:9');
                         playChimeSound(soundEnabled);
                       }}
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold cursor-pointer transition-colors ${
-                        heroRatio === '16:9' ? 'bg-brand-indigo text-white' : 'text-ink-secondary hover:text-ink-primary'
+                      className={`px-2.5 py-0.5 rounded text-[10px] font-bold cursor-pointer transition-colors ${
+                        heroRatio === '16:9' ? 'bg-brand-indigo text-white shadow-xs' : 'text-ink-secondary hover:text-ink-primary'
                       }`}
                     >
                       16:9 Widescreen
                     </button>
                     <button
                       type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      onClick={() => {
                         setHeroRatio('9:16');
                         playChimeSound(soundEnabled);
                       }}
-                      className={`px-2 py-0.5 rounded text-[10px] font-bold cursor-pointer transition-colors ${
-                        heroRatio === '9:16' ? 'bg-brand-indigo text-white' : 'text-ink-secondary hover:text-ink-primary'
+                      className={`px-2.5 py-0.5 rounded text-[10px] font-bold cursor-pointer transition-colors ${
+                        heroRatio === '9:16' ? 'bg-brand-indigo text-white shadow-xs' : 'text-ink-secondary hover:text-ink-primary'
                       }`}
                     >
                       9:16 Vertical Reel
@@ -636,7 +606,7 @@ export default function LandingPage() {
                 </div>
 
                 {/* Simulated Visual Content with Animated Aspect Guidelines */}
-                <div className="aspect-[16/10] bg-paper-subtle rounded-xl border border-border-rule p-3 flex flex-col justify-between relative overflow-hidden transition-all duration-500">
+                <div className="aspect-[16/10] bg-paper-subtle rounded-xl border border-border-rule p-3 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
                   <div className="flex items-center justify-between text-[9px] font-mono text-ink-secondary">
                     <span>CANVAS: 4K MASTER PROBE</span>
                     <span className="text-brand-indigo font-bold">
@@ -644,8 +614,8 @@ export default function LandingPage() {
                     </span>
                   </div>
 
-                  <div className="my-auto p-2 bg-paper-canvas rounded-lg border border-border-rule text-center relative overflow-hidden">
-                    <div className="text-[11px] font-serif font-bold text-ink-primary">
+                  <div className="my-auto p-2.5 bg-paper-canvas rounded-lg border border-border-rule text-center relative overflow-hidden shadow-2xs">
+                    <div className="text-xs font-serif font-bold text-ink-primary">
                       &quot;Episode 04: The Bangkok Studio Dispatch&quot;
                     </div>
                     <div className="text-[9px] font-mono text-emerald-700 font-semibold mt-0.5">
@@ -675,14 +645,14 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Ticket Footer Perforation & Stamp Trigger */}
+              {/* Ticket Footer Perforation */}
               <div className="pt-2 border-t-2 border-dashed border-border-rule/80 flex items-center justify-between text-xs font-mono text-ink-secondary">
                 <span className="text-[10px] uppercase font-bold text-ink-primary">
                   BANGKOK PEAK: 07:30 PM
                 </span>
                 <span className="text-[10px] font-mono text-accent-terracotta font-bold flex items-center gap-1">
                   <Sticker name="approved-seal" size="xs" inline />
-                  CLICK DESK TO STAMP
+                  OFFICIAL DISPATCH
                 </span>
               </div>
             </div>
@@ -726,7 +696,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 02 — THE PUBLISHING PROBLEM (INTERACTIVE BEFORE/AFTER SLIDER)     */}
+      {/* SECTION 02 — THE PUBLISHING PROBLEM (CLEAN HIGH-CONTRAST COMPARISON)      */}
       {/* ========================================================================= */}
       <section id="the-problem" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10">
         <div className="text-center max-w-3xl mx-auto space-y-2">
@@ -737,127 +707,134 @@ export default function LandingPage() {
             The Cost of Fragmented Publishing
           </h2>
           <p className="font-sans text-sm sm:text-base text-ink-secondary leading-relaxed">
-            Drag the comparison slider below to inspect the real difference between traditional manual publishing and the unified Dream Press workflow.
+            Content creators and marketing teams lose 15+ hours each week wrestling with disconnected platform uploaders, inconsistent aspect ratios, and manual repetitive metadata entry.
           </p>
-        </div>
 
-        {/* Interactive Comparison Range Slider */}
-        <div className="max-w-2xl mx-auto space-y-2">
-          <div className="flex justify-between items-center text-xs font-mono font-bold">
-            <span className="text-accent-terracotta flex items-center gap-1">
-              <span>← The Old Fragmented Way</span>
-            </span>
-            <span className="text-ink-secondary text-[11px] font-normal flex items-center gap-1">
-              <MoveHorizontal className="w-3.5 h-3.5" /> Drag Slider
-            </span>
-            <span className="text-emerald-700 flex items-center gap-1">
-              <span>The Dream Press Way →</span>
-            </span>
+          {/* Clean View Tabs */}
+          <div className="pt-3 inline-flex p-1 bg-paper-subtle border border-border-rule rounded-xl font-mono text-xs">
+            <button
+              onClick={() => setProblemViewMode('ALL')}
+              className={`py-1.5 px-3 rounded-lg font-bold cursor-pointer transition-colors ${
+                problemViewMode === 'ALL' ? 'bg-paper-raised text-ink-primary shadow-xs' : 'text-ink-secondary hover:text-ink-primary'
+              }`}
+            >
+              Side-by-Side Comparison
+            </button>
+            <button
+              onClick={() => setProblemViewMode('CHAOS')}
+              className={`py-1.5 px-3 rounded-lg font-bold cursor-pointer transition-colors ${
+                problemViewMode === 'CHAOS' ? 'bg-accent-terracotta text-white shadow-xs' : 'text-ink-secondary hover:text-ink-primary'
+              }`}
+            >
+              The Chaos of 5 Apps
+            </button>
+            <button
+              onClick={() => setProblemViewMode('DREAM')}
+              className={`py-1.5 px-3 rounded-lg font-bold cursor-pointer transition-colors ${
+                problemViewMode === 'DREAM' ? 'bg-brand-indigo text-white shadow-xs' : 'text-ink-secondary hover:text-ink-primary'
+              }`}
+            >
+              The Dream Press Desk
+            </button>
           </div>
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={problemSliderPos}
-            onChange={(e) => setProblemSliderPos(Number(e.target.value))}
-            className="w-full h-2 bg-paper-subtle rounded-lg appearance-none cursor-pointer accent-brand-indigo"
-          />
         </div>
 
-        {/* Responsive Dual Comparison Cards */}
+        {/* Clean, Non-overlapping Dual Comparison Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-          {/* Left Column: The Old Way (Opacified by slider) */}
-          <div 
-            style={{ opacity: Math.max(0.2, (100 - problemSliderPos) / 50) }}
-            className="p-6 sm:p-8 rounded-3xl border-2 border-accent-terracotta/40 bg-accent-terracotta/5 space-y-6 relative overflow-hidden transition-opacity duration-200"
-          >
-            <div className="flex items-center justify-between pb-4 border-b border-accent-terracotta/20">
-              <span className="px-2.5 py-1 rounded bg-accent-terracotta/15 text-accent-terracotta font-mono text-xs font-bold uppercase">
-                THE OLD WAY
-              </span>
-              <span className="font-mono text-xs text-accent-terracotta font-bold">
-                ⚠️ 15+ Hours Wasted Weekly
-              </span>
+          {/* Left Column: The Old Way */}
+          {(problemViewMode === 'ALL' || problemViewMode === 'CHAOS') && (
+            <div className={`p-6 sm:p-8 rounded-3xl border-2 border-accent-terracotta/40 bg-accent-terracotta/5 space-y-6 relative overflow-hidden shadow-xs ${
+              problemViewMode === 'CHAOS' ? 'md:col-span-2 max-w-2xl mx-auto' : ''
+            }`}>
+              <div className="flex items-center justify-between pb-4 border-b border-accent-terracotta/20">
+                <span className="px-2.5 py-1 rounded bg-accent-terracotta/15 text-accent-terracotta font-mono text-xs font-bold uppercase">
+                  THE OLD WAY
+                </span>
+                <span className="font-mono text-xs text-accent-terracotta font-bold">
+                  ⚠️ 15+ Hours Wasted Weekly
+                </span>
+              </div>
+
+              <h3 className="font-serif font-bold text-2xl text-ink-primary">
+                &quot;One post. Too many repetitive steps.&quot;
+              </h3>
+
+              <ul className="space-y-4 font-sans text-sm text-ink-secondary">
+                <li className="flex items-start gap-3">
+                  <span className="w-5 h-5 rounded-full bg-accent-terracotta/20 text-accent-terracotta font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
+                  <div>
+                    <b className="text-ink-primary block font-mono text-xs uppercase">Manual Aspect Ratio Re-Encoding</b>
+                    Exporting 16:9, 1:1, and 9:16 separately, cluttering local drives with redundant video renders.
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-5 h-5 rounded-full bg-accent-terracotta/20 text-accent-terracotta font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
+                  <div>
+                    <b className="text-ink-primary block font-mono text-xs uppercase">Repetitive Copy-Pasting</b>
+                    Jumping across 5 to 7 browser tabs, manually copying captions, hashtags, and links over and over.
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-5 h-5 rounded-full bg-accent-terracotta/20 text-accent-terracotta font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
+                  <div>
+                    <b className="text-ink-primary block font-mono text-xs uppercase">Silent Publishing Failures</b>
+                    One channel fails silently due to an expired OAuth token while the team assumes the campaign went live.
+                  </div>
+                </li>
+              </ul>
             </div>
+          )}
 
-            <h3 className="font-serif font-bold text-2xl text-ink-primary">
-              &quot;One post. Too many repetitive steps.&quot;
-            </h3>
+          {/* Right Column: The Dream Press Way */}
+          {(problemViewMode === 'ALL' || problemViewMode === 'DREAM') && (
+            <div className={`p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/50 bg-emerald-500/5 space-y-6 relative overflow-hidden shadow-md ${
+              problemViewMode === 'DREAM' ? 'md:col-span-2 max-w-2xl mx-auto' : ''
+            }`}>
+              <div className="flex items-center justify-between pb-4 border-b border-emerald-500/20">
+                <span className="px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-800 font-mono text-xs font-bold uppercase">
+                  THE DREAM PRESS WAY
+                </span>
+                <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3.5 h-3.5" /> 100% Synchronized Desk
+                </span>
+              </div>
 
-            <ul className="space-y-4 font-sans text-sm text-ink-secondary">
-              <li className="flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-accent-terracotta/20 text-accent-terracotta font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
-                <div>
-                  <b className="text-ink-primary block font-mono text-xs uppercase">Manual Aspect Ratio Re-Encoding</b>
-                  Exporting 16:9, 1:1, and 9:16 separately, cluttering local drives with redundant video renders.
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-accent-terracotta/20 text-accent-terracotta font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
-                <div>
-                  <b className="text-ink-primary block font-mono text-xs uppercase">Repetitive Copy-Pasting</b>
-                  Jumping across 5 to 7 browser tabs, manually copying captions, hashtags, and links over and over.
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-accent-terracotta/20 text-accent-terracotta font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
-                <div>
-                  <b className="text-ink-primary block font-mono text-xs uppercase">Silent Publishing Failures</b>
-                  One channel fails silently due to an expired OAuth token while the team assumes the campaign went live.
-                </div>
-              </li>
-            </ul>
-          </div>
+              <h3 className="font-serif font-bold text-2xl text-ink-primary">
+                &quot;One workflow. Multiple destinations.&quot;
+              </h3>
 
-          {/* Right Column: The Dream Press Way (Opacified by slider) */}
-          <div 
-            style={{ opacity: Math.max(0.2, problemSliderPos / 50) }}
-            className="p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/50 bg-emerald-500/5 space-y-6 relative overflow-hidden transition-opacity duration-200 shadow-md"
-          >
-            <div className="flex items-center justify-between pb-4 border-b border-emerald-500/20">
-              <span className="px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-800 font-mono text-xs font-bold uppercase">
-                THE DREAM PRESS WAY
-              </span>
-              <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> 100% Synchronized Desk
-              </span>
+              <ul className="space-y-4 font-sans text-sm text-ink-secondary">
+                <li className="flex items-start gap-3">
+                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <div>
+                    <b className="text-ink-primary block font-mono text-xs uppercase">Universal Master Ingestion</b>
+                    Upload master 4K footage once. The publishing engine automatically adapts 16:9 to 9:16 vertical reels with AI safe framing.
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <div>
+                    <b className="text-ink-primary block font-mono text-xs uppercase">Synchronized Platform Nuances</b>
+                    Single shared story root with per-platform character counts, hashtag rules, and tone overrides customized in one screen.
+                  </div>
+                </li>
+                <li className="flex items-start gap-3">
+                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <div>
+                    <b className="text-ink-primary block font-mono text-xs uppercase">Isolated Worker Failure Recovery</b>
+                    Concurrent worker queues handle each network separately. Temporary rate limits on one channel never affect other dispatches.
+                  </div>
+                </li>
+              </ul>
             </div>
-
-            <h3 className="font-serif font-bold text-2xl text-ink-primary">
-              &quot;One workflow. Multiple destinations.&quot;
-            </h3>
-
-            <ul className="space-y-4 font-sans text-sm text-ink-secondary">
-              <li className="flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                <div>
-                  <b className="text-ink-primary block font-mono text-xs uppercase">Universal Master Ingestion</b>
-                  Upload master 4K footage once. The publishing engine automatically adapts 16:9 to 9:16 vertical reels with AI safe framing.
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                <div>
-                  <b className="text-ink-primary block font-mono text-xs uppercase">Synchronized Platform Nuances</b>
-                  Single shared story root with per-platform character counts, hashtag rules, and tone overrides customized in one screen.
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
-                <div>
-                  <b className="text-ink-primary block font-mono text-xs uppercase">Isolated Worker Failure Recovery</b>
-                  Concurrent worker queues handle each network separately. Temporary rate limits on one channel never affect other dispatches.
-                </div>
-              </li>
-            </ul>
-          </div>
+          )}
         </div>
       </section>
 
       {/* ========================================================================= */}
       {/* SECTION 03 — HOW THE PRESS WORKS                                          */}
       {/* ========================================================================= */}
-      <section id="how-it-works" className="py-20 bg-paper-raised border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
+      <section id="how-it-works" className="py-20 bg-paper-raised/70 border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-2">
             <span className="text-xs font-mono font-bold text-brand-indigo uppercase tracking-wider">
@@ -1141,7 +1118,7 @@ export default function LandingPage() {
                       <IconComponent size={14} className="shrink-0" />
                       <span className="text-xs truncate">{p.name}</span>
                     </div>
-                    {isSelected && <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0 animate-in zoom-in-50" />}
+                    {isSelected && <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />}
                   </button>
                 );
               })}
@@ -1222,7 +1199,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* TASK 03: SCHEDULE YOUR DISPATCH WITH DYNAMIC SKY GLOW (+25 COINS) */}
+          {/* TASK 03: SCHEDULE YOUR DISPATCH (+25 COINS) */}
           <div className={`p-6 rounded-3xl border-2 transition-all duration-300 space-y-4 ${
             selectedSlot === 'LUNCH'
               ? 'bg-gradient-to-br from-amber-500/10 to-paper-raised'
@@ -1286,7 +1263,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* TASK 04: RESCUE A FAILED POST WITH ANIMATED LASER SCANLINE (+30 COINS) */}
+          {/* TASK 04: RESCUE A FAILED POST (+30 COINS) */}
           <div className={`p-6 rounded-3xl border-2 transition-all duration-300 space-y-4 bg-paper-raised relative overflow-hidden ${
             completedTasks.rescue
               ? 'border-emerald-500/80 ring-2 ring-emerald-500/10 shadow-sm'
@@ -1415,7 +1392,7 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       {/* SECTION 05 — PRESS COINS (COLLECTIBLE 3D FLIPPABLE TOKEN SHOWCASE)        */}
       {/* ========================================================================= */}
-      <section id="press-coins" className="py-20 bg-paper-raised border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
+      <section id="press-coins" className="py-20 bg-paper-raised/70 border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-xs font-mono font-bold text-brand-indigo uppercase tracking-wider">
@@ -1431,7 +1408,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left: Collectible 3D Flippable Coin Showcase */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 bg-paper-canvas rounded-3xl border-2 border-border-rule text-center space-y-4">
+            <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 bg-paper-canvas rounded-3xl border-2 border-border-rule text-center space-y-4 shadow-sm">
               <button
                 type="button"
                 onClick={() => {
@@ -1464,7 +1441,7 @@ export default function LandingPage() {
             </div>
 
             {/* Right: Live Coin Ledger & Progress */}
-            <div className="lg:col-span-7 p-6 sm:p-8 bg-paper-canvas rounded-3xl border-2 border-border-rule space-y-6">
+            <div className="lg:col-span-7 p-6 sm:p-8 bg-paper-canvas rounded-3xl border-2 border-border-rule space-y-6 shadow-sm">
               <div className="flex items-center justify-between pb-4 border-b border-border-rule">
                 <div>
                   <span className="text-[10px] font-mono uppercase text-ink-secondary block">
@@ -1872,7 +1849,7 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       {/* SECTION 07 — FEATURES THAT MATTER (EDITORIAL MAGAZINE LAYOUT)             */}
       {/* ========================================================================= */}
-      <section id="features" className="py-20 bg-paper-raised border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
+      <section id="features" className="py-20 bg-paper-raised/70 border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-2">
             <span className="text-xs font-mono font-bold text-brand-indigo uppercase tracking-wider">
@@ -1888,7 +1865,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* 1. Upload Once */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 transition-transform">
+            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-brand-indigo/10 text-brand-indigo flex items-center justify-center font-bold">
                 <Film className="w-5 h-5" />
               </div>
@@ -1899,7 +1876,7 @@ export default function LandingPage() {
             </div>
 
             {/* 2. Shared Story */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 transition-transform">
+            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center font-bold">
                 <FileText className="w-5 h-5" />
               </div>
@@ -1910,7 +1887,7 @@ export default function LandingPage() {
             </div>
 
             {/* 3. Platform Editions */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 transition-transform">
+            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center font-bold">
                 <Sliders className="w-5 h-5" />
               </div>
@@ -1921,7 +1898,7 @@ export default function LandingPage() {
             </div>
 
             {/* 4. Smart Scheduling */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 transition-transform">
+            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-accent-terracotta/10 text-accent-terracotta flex items-center justify-center font-bold">
                 <Clock className="w-5 h-5" />
               </div>
@@ -1932,7 +1909,7 @@ export default function LandingPage() {
             </div>
 
             {/* 5. Publishing Queue */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 transition-transform">
+            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-brand-indigo/10 text-brand-indigo flex items-center justify-center font-bold">
                 <RefreshCw className="w-5 h-5" />
               </div>
@@ -1943,7 +1920,7 @@ export default function LandingPage() {
             </div>
 
             {/* 6. Retry & Recovery */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 transition-transform">
+            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-accent-terracotta/10 text-accent-terracotta flex items-center justify-center font-bold">
                 <Zap className="w-5 h-5" />
               </div>
@@ -1954,7 +1931,7 @@ export default function LandingPage() {
             </div>
 
             {/* 7. Connected Accounts */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 transition-transform">
+            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center font-bold">
                 <ShieldCheck className="w-5 h-5" />
               </div>
@@ -1965,7 +1942,7 @@ export default function LandingPage() {
             </div>
 
             {/* 8. Content Performance */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 transition-transform">
+            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center font-bold">
                 <BarChart3 className="w-5 h-5" />
               </div>
@@ -1997,7 +1974,7 @@ export default function LandingPage() {
         {/* 5 Audience Profiles Grid (STRICTLY NO FAKE STATS / NO FAKE REVIEWS) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* 1. Individual Creators */}
-          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-xs">
+          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
             <div className="w-8 h-8 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center font-mono font-bold text-xs">
               01
             </div>
@@ -2013,7 +1990,7 @@ export default function LandingPage() {
           </div>
 
           {/* 2. Social Media Managers */}
-          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-xs">
+          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
             <div className="w-8 h-8 rounded-full bg-accent-terracotta/10 text-accent-terracotta flex items-center justify-center font-mono font-bold text-xs">
               02
             </div>
@@ -2029,7 +2006,7 @@ export default function LandingPage() {
           </div>
 
           {/* 3. Content Teams & Newsrooms */}
-          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-xs">
+          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
             <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-800 flex items-center justify-center font-mono font-bold text-xs">
               03
             </div>
@@ -2045,7 +2022,7 @@ export default function LandingPage() {
           </div>
 
           {/* 4. Creative Studios */}
-          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-xs">
+          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
             <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-800 flex items-center justify-center font-mono font-bold text-xs">
               04
             </div>
@@ -2061,7 +2038,7 @@ export default function LandingPage() {
           </div>
 
           {/* 5. Small Businesses & Brands */}
-          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-xs md:col-span-2 lg:col-span-2">
+          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-sm md:col-span-2 lg:col-span-2 hover:-translate-y-1 transition-transform">
             <div className="w-8 h-8 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center font-mono font-bold text-xs">
               05
             </div>
@@ -2081,7 +2058,7 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       {/* SECTION 09 — THE DISPATCH BOARD (INTERACTIVE MULTI-PLATFORM STATUS DEMO) */}
       {/* ========================================================================= */}
-      <section id="dispatch-board" className="py-20 bg-paper-raised border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
+      <section id="dispatch-board" className="py-20 bg-paper-raised/70 border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-2">
             <span className="text-xs font-mono font-bold text-brand-indigo uppercase tracking-wider">
@@ -2096,7 +2073,7 @@ export default function LandingPage() {
           </div>
 
           {/* The Interactive Dispatch Matrix */}
-          <div className="p-6 sm:p-8 bg-paper-canvas rounded-3xl border-2 border-border-rule shadow-md space-y-6">
+          <div className="p-6 sm:p-8 bg-paper-canvas rounded-3xl border-2 border-border-rule shadow-lg space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-border-rule">
               <div>
                 <span className="text-[10px] font-mono text-ink-secondary uppercase block">CAMPAIGN DISPATCH MATRIX</span>
@@ -2112,7 +2089,7 @@ export default function LandingPage() {
             {/* Independent Platform Streams */}
             <div className="space-y-4">
               {/* YouTube Stream (Published) */}
-              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-red-600/10 text-red-600 flex items-center justify-center shrink-0">
                     <YouTubeLogo size={20} />
@@ -2134,7 +2111,7 @@ export default function LandingPage() {
               </div>
 
               {/* TikTok Stream (Processing) */}
-              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-neutral-900/10 text-ink-primary flex items-center justify-center shrink-0">
                     <TikTokLogo size={20} />
@@ -2158,7 +2135,7 @@ export default function LandingPage() {
               </div>
 
               {/* Instagram Stream (Scheduled) */}
-              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-pink-600/10 text-pink-600 flex items-center justify-center shrink-0">
                     <InstagramLogo size={20} />
@@ -2180,7 +2157,7 @@ export default function LandingPage() {
               </div>
 
               {/* X / Twitter Stream: Simulated Failure & Isolated Recovery Action */}
-              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-neutral-900/10 text-ink-primary flex items-center justify-center shrink-0">
                     <XLogo size={20} />
@@ -2238,7 +2215,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 10 — FINAL REWARD: THE 7-DAY DREAM PASS (STAMP SLAM & GLOW)      */}
+      {/* SECTION 10 — FINAL REWARD: THE 7-DAY DREAM PASS (CLEAN VINTAGE PASS)     */}
       {/* ========================================================================= */}
       <section ref={dreamPassRef} id="dream-pass" className="py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-10">
         <div className="text-center max-w-2xl mx-auto space-y-2">
@@ -2253,27 +2230,12 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {/* THE HORIZONTAL VINTAGE EDITORIAL TICKET WITH HOLOGRAPHIC GLOW */}
+        {/* THE HORIZONTAL VINTAGE EDITORIAL TICKET WITH CLEAN STAMP ZONE (NO TEXT OVERLAP) */}
         <div className={`rounded-3xl border-2 transition-all duration-500 relative overflow-hidden shadow-2xl ${
           isPassUnlocked
             ? 'bg-paper-canvas border-accent-terracotta/80 ring-4 ring-amber-400/40 shadow-amber-500/10'
             : 'bg-paper-raised border-border-rule opacity-90'
-        } ${isRedeemingAnimation ? 'scale-98 rotate-[-0.5deg]' : ''}`}>
-          
-          {/* Perforated Notches on Left and Right ticket edges */}
-          <div className="absolute top-1/2 -left-5 w-10 h-10 rounded-full bg-paper-canvas border-2 border-border-rule shadow-inner -translate-y-1/2" />
-          <div className="absolute top-1/2 -right-5 w-10 h-10 rounded-full bg-paper-canvas border-2 border-border-rule shadow-inner -translate-y-1/2" />
-
-          {/* Heavy Wax Seal Stamp Overlay when Redeemed */}
-          {isPassRedeemed && (
-            <div className="absolute top-8 right-12 z-30 pointer-events-none animate-in zoom-in-75 duration-300">
-              <div className="w-24 h-24 rounded-full border-4 border-dashed border-accent-terracotta/90 flex flex-col items-center justify-center text-accent-terracotta font-mono font-bold text-xs rotate-[-15deg] bg-accent-terracotta/15 shadow-xl backdrop-blur-2xs">
-                <span className="text-base">✓</span>
-                <span>APPROVED</span>
-                <span className="text-[8px]">PRESS DESK</span>
-              </div>
-            </div>
-          )}
+        } ${isRedeemingAnimation ? 'scale-98' : ''}`}>
 
           <div className="p-6 sm:p-10 space-y-6">
             {/* Ticket Masthead */}
@@ -2291,16 +2253,27 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              {/* Ticket Validation State Pill */}
-              <div className="text-right">
-                <span className="text-[10px] font-mono text-ink-secondary uppercase block">SPECIFICATION</span>
-                <span className={`inline-block px-3 py-1 rounded font-mono text-xs font-bold ${
-                  isPassUnlocked
-                    ? 'bg-emerald-500/15 text-emerald-800 border border-emerald-500/30'
-                    : 'bg-paper-subtle text-ink-secondary border border-border-rule'
-                }`}>
-                  {isPassUnlocked ? '✦ UNLOCKED & FORGED' : '🔒 LOCKED (REQUIRES 100 COINS)'}
-                </span>
+              {/* Dedicated Clean Stamp Zone (No text overlap) */}
+              <div className="flex items-center gap-3">
+                {isPassRedeemed && (
+                  <div className="animate-in zoom-in-75 duration-300">
+                    <div className="w-20 h-20 rounded-full border-2 border-dashed border-accent-terracotta flex flex-col items-center justify-center text-accent-terracotta font-mono font-bold text-[10px] rotate-[-12deg] bg-accent-terracotta/10 shadow-xs">
+                      <span className="text-sm">✓</span>
+                      <span>APPROVED</span>
+                      <span className="text-[7px]">BANGKOK</span>
+                    </div>
+                  </div>
+                )}
+                <div className="text-right">
+                  <span className="text-[10px] font-mono text-ink-secondary uppercase block">SPECIFICATION</span>
+                  <span className={`inline-block px-3 py-1 rounded font-mono text-xs font-bold ${
+                    isPassUnlocked
+                      ? 'bg-emerald-500/15 text-emerald-800 border border-emerald-500/30'
+                      : 'bg-paper-subtle text-ink-secondary border border-border-rule'
+                  }`}>
+                    {isPassUnlocked ? '✦ UNLOCKED & FORGED' : '🔒 LOCKED (REQUIRES 100 COINS)'}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -2347,7 +2320,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* LOCKED vs UNLOCKED INTERACTION AREA WITH STAMP SOUND */}
+            {/* LOCKED vs UNLOCKED INTERACTION AREA */}
             {!isPassUnlocked ? (
               <div className="p-5 bg-paper-subtle rounded-2xl border border-border-rule text-center space-y-3 font-mono">
                 <div className="flex items-center justify-center gap-2 text-ink-secondary text-xs">
