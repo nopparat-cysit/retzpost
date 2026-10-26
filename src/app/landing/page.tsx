@@ -580,11 +580,6 @@ export default function LandingPage() {
 
           {/* Right Hero: Luxury Obsidian Control Console (Living Publishing Desk) */}
           <div className="lg:col-span-5 relative flex justify-center">
-            {/* Tactile Washi Tape Strip on Top Edge */}
-            <div className="absolute -top-3.5 right-12 z-20 pointer-events-none drop-shadow-md rotate-[-2deg]">
-              <Sticker name="washi-indigo" size="lg" />
-            </div>
-
             <div className="w-full max-w-md bg-gradient-to-b from-[#181E2E] to-[#111520] text-white rounded-3xl p-6 shadow-[0_25px_60px_-10px_rgba(20,25,38,0.5)] border border-[#2E374D] space-y-4 animate-dream-float select-none ring-1 ring-white/10">
               
               {/* Console Masthead */}
@@ -667,33 +662,31 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Simulated Content Display Screen */}
+                {/* Simulated Content Display Screen (Clean, Roomy & Zero Overlap) */}
                 <div className={`bg-gradient-to-br from-stone-900 via-stone-950 to-black rounded-xl border border-white/15 p-3 flex flex-col justify-between relative overflow-hidden transition-all duration-500 ${
-                  heroRatio === '16:9' ? 'aspect-[16/10]' : 'aspect-[9/12]'
+                  heroRatio === '16:9' ? 'aspect-[16/10]' : 'aspect-[9/13]'
                 }`}>
-                  {/* Dynamic Safe-Zone Overlays */}
+                  {/* Discrete Non-Colliding Safe-Zone Corner Frame */}
                   {showHeroSafeZones && (
-                    <div className="absolute inset-0 pointer-events-none p-2 flex flex-col justify-between z-10">
-                      {/* Top Safe Area */}
-                      <div className="border-b border-dashed border-cyan-400/50 pb-1 flex justify-between text-[8px] font-mono text-cyan-300">
-                        <span>TOP MARGIN (15% SAFE)</span>
-                        <span>UI HEADER FREE</span>
+                    <div className="absolute inset-2 border border-dashed border-cyan-400/40 rounded-lg pointer-events-none z-10 flex flex-col justify-between p-1.5">
+                      <div className="flex justify-between text-[7px] font-mono text-cyan-300/80 uppercase">
+                        <span>┌ TOP SAFE 15%</span>
+                        <span>HEADER CLEAR ┐</span>
                       </div>
-                      {/* Bottom Safe Area */}
-                      <div className="border-t border-dashed border-amber-400/50 pt-1 flex justify-between text-[8px] font-mono text-amber-300">
-                        <span>BOTTOM CAPTION (25% SAFE)</span>
-                        <span>ENGAGEMENT DOCK</span>
+                      <div className="flex justify-between text-[7px] font-mono text-amber-300/80 uppercase">
+                        <span>└ BOTTOM SAFE 25%</span>
+                        <span>ACTION DOCK ┘</span>
                       </div>
                     </div>
                   )}
 
-                  {/* Header Spec Tag */}
-                  <div className="flex items-center justify-between text-[9px] font-mono text-stone-400 z-10">
-                    <span className="flex items-center gap-1 text-emerald-400">
+                  {/* Header Spec Tag (Clean & Spacious) */}
+                  <div className="flex items-center justify-between text-[9px] font-mono text-stone-300 z-10 pb-1.5 border-b border-white/10">
+                    <span className="flex items-center gap-1 text-emerald-400 font-semibold">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       MASTER FEED: 4K PROBE
                     </span>
-                    <span className="text-amber-300 font-bold">
+                    <span className="text-amber-300 font-bold px-1.5 py-0.5 rounded bg-white/5">
                       {heroRatio === '16:9' ? '1920 × 1080 (YouTube/FB)' : '1080 × 1920 (Reels/TikTok)'}
                     </span>
                   </div>
@@ -714,7 +707,7 @@ export default function LandingPage() {
                     </div>
 
                     <div className="text-[9px] font-mono text-emerald-300 font-semibold">
-                      ✓ AI Safe-Zone Clearance: Top 15% • Bottom 25% Passed
+                      ✓ AI Safe-Zone Clearance: 100% Passed
                     </div>
                   </div>
 
@@ -731,24 +724,38 @@ export default function LandingPage() {
                       />
                     </div>
                   </div>
+                </div>
 
-                  {/* Connected Endpoint Chips with Authentic Logos */}
-                  <div className="grid grid-cols-4 gap-1.5 pt-2 z-10">
-                    <div className="p-1 bg-white/10 rounded-lg border border-white/10 text-center shadow-2xs hover:bg-white/15 transition-colors">
-                      <YouTubeLogo size={12} className="mx-auto" />
-                      <span className="text-[8px] font-mono block font-bold text-white mt-0.5">YT 4K</span>
+                {/* Synchronized Destinations Dock (Cleanly Separated Below Video Screen) */}
+                <div className="pt-1 space-y-1.5">
+                  <div className="flex items-center justify-between text-[9px] font-mono text-stone-400 px-1">
+                    <span>SYNCHRONIZED DESTINATIONS:</span>
+                    <span className="text-emerald-400 font-bold flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      4 ENDPOINTS LINKED
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-4 gap-1.5">
+                    <div className="p-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-center transition-colors">
+                      <YouTubeLogo size={13} className="mx-auto" />
+                      <span className="text-[9px] font-mono block font-bold text-white mt-1">YT 4K</span>
+                      <span className="text-[8px] font-mono text-emerald-400 block font-semibold">16:9 Ready</span>
                     </div>
-                    <div className="p-1 bg-white/10 rounded-lg border border-white/10 text-center shadow-2xs hover:bg-white/15 transition-colors">
-                      <InstagramLogo size={12} className="mx-auto" />
-                      <span className="text-[8px] font-mono block font-bold text-white mt-0.5">IG Reel</span>
+                    <div className="p-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-center transition-colors">
+                      <InstagramLogo size={13} className="mx-auto" />
+                      <span className="text-[9px] font-mono block font-bold text-white mt-1">IG Reel</span>
+                      <span className="text-[8px] font-mono text-emerald-400 block font-semibold">9:16 Crop</span>
                     </div>
-                    <div className="p-1 bg-white/10 rounded-lg border border-white/10 text-center shadow-2xs hover:bg-white/15 transition-colors">
-                      <TikTokLogo size={12} className="mx-auto" />
-                      <span className="text-[8px] font-mono block font-bold text-white mt-0.5">TikTok</span>
+                    <div className="p-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-center transition-colors">
+                      <TikTokLogo size={13} className="mx-auto" />
+                      <span className="text-[9px] font-mono block font-bold text-white mt-1">TikTok</span>
+                      <span className="text-[8px] font-mono text-emerald-400 block font-semibold">Audio Sync</span>
                     </div>
-                    <div className="p-1 bg-white/10 rounded-lg border border-white/10 text-center shadow-2xs hover:bg-white/15 transition-colors">
-                      <FacebookLogo size={12} className="mx-auto" />
-                      <span className="text-[8px] font-mono block font-bold text-white mt-0.5">FB Page</span>
+                    <div className="p-2 bg-white/5 hover:bg-white/10 rounded-xl border border-white/10 text-center transition-colors">
+                      <FacebookLogo size={13} className="mx-auto" />
+                      <span className="text-[9px] font-mono block font-bold text-white mt-1">FB Page</span>
+                      <span className="text-[8px] font-mono text-emerald-400 block font-semibold">HD Live</span>
                     </div>
                   </div>
                 </div>
@@ -756,12 +763,12 @@ export default function LandingPage() {
 
               {/* Console Footer Perforation */}
               <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs font-mono text-stone-400">
-                <span className="text-[10px] uppercase font-bold text-white">
-                  BANGKOK PEAK: 07:30 PM
+                <span className="text-[10px] uppercase font-bold text-white flex items-center gap-1.5">
+                  <Clock className="w-3 h-3 text-amber-400" />
+                  <span>BANGKOK PEAK: 07:30 PM (UTC+7)</span>
                 </span>
-                <span className="text-[10px] font-mono text-amber-300 font-bold flex items-center gap-1">
-                  <Sticker name="approved-seal" size="xs" inline />
-                  OFFICIAL ENGINE
+                <span className="text-[10px] font-mono text-amber-300 font-bold px-2 py-0.5 rounded bg-amber-400/10 border border-amber-400/20">
+                  OFFICIAL ENGINE • 99.98% SLA
                 </span>
               </div>
             </div>
