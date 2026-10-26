@@ -251,14 +251,8 @@ export default function LandingPage() {
   const [showHeroSafeZones, setShowHeroSafeZones] = useState<boolean>(true);
   const [heroScrubber, setHeroScrubber] = useState<number>(45);
 
-  // Section 08: Retzlo-Style Interactive Fit Check Criteria
-  const [checkedCriteria, setCheckedCriteria] = useState<string[]>(['16:9-to-9:16', 'multi-channel']);
-  const toggleCriterion = (id: string) => {
-    setCheckedCriteria((prev) =>
-      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
-    );
-    playChimeSound(soundEnabled);
-  };
+  // Section 08: Creative Studio Scale Switcher
+  const [selectedScale, setSelectedScale] = useState<'SOLO' | 'AGENCY' | 'NEWSROOM' | 'STUDIO'>('SOLO');
 
   // Section References for Smooth Navigation
   const pressStudioRef = useRef<HTMLDivElement>(null);
@@ -1569,14 +1563,14 @@ export default function LandingPage() {
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs font-mono text-[#364165] font-bold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
-              <span>04 / INTERACTIVE PRESS STUDIO • ลูปความสนุก 3 ขั้นตอน</span>
+              <span>04 / LIVE BROADCAST CONSOLE • แท่นควบคุมการจัดพิมพ์และกระจายสื่อ</span>
             </div>
             <h2 className="font-serif font-bold text-2xl sm:text-4xl text-[#1A1A18]">
-              ทำไมคนใช้ MULTIPOST ถึงสนุกกับการโพสต์? ลองเล่นดูสิ
+              The Hands-On Publishing Studio Console
             </h2>
             <p className="text-xs sm:text-sm text-stone-600 max-w-2xl leading-relaxed">
-              <b>1. อัปโหลด Master 4K</b> → <b>2. แก้ปัญหา Safe-Zone & ปรับข้อความเพื่อสะสม Coins</b> → <b>3. นำ Coins ไปแลกตั๋ว 7-Day Dream Pass ด้านล่าง!</b>
-              <span className="block text-stone-500 mt-0.5">ไม่ต้องสมัครสมาชิกก็ลองจัดพิมพ์ได้เดี๋ยวนี้! หรือคลิก <b>&quot;⚡ รับ 100 Coins ทันที&quot;</b> เพื่อปลดล็อกตั๋วได้เลย</span>
+              ทดลองควบคุม 4 แท่นผลิตสื่อดิจิทัล: เลือกช่องทางเผยแพร่, ปรับจูนโทนเฉพาะแพลตฟอร์ม, ล็อกเวลาทองคำกรุงเทพฯ และตรวจเช็ก Safe-Zone เสมือนกำลังส่งสัญญาณจริง
+              <span className="block text-stone-500 mt-0.5">สะสมเครดิตจัดพิมพ์ครบ 100 Coins เพื่อปลดล็อก <b>7-Day Dream Pass</b> ด้านล่าง หรือคลิก <b>&quot;⚡ รับ 100 Coins ทันที&quot;</b> ได้เลย</span>
             </p>
           </div>
 
@@ -1630,7 +1624,7 @@ export default function LandingPage() {
                   1
                 </span>
                 <h3 className="font-serif font-bold text-base sm:text-lg text-[#1A1A18]">
-                  Task 01 — Choose Your Destinations
+                  Station 01 — Multi-Channel Routing
                 </h3>
               </div>
 
@@ -1707,7 +1701,7 @@ export default function LandingPage() {
                   2
                 </span>
                 <h3 className="font-serif font-bold text-base sm:text-lg text-[#1A1A18]">
-                  Task 02 — Customize Your Edition
+                  Station 02 — Tone & Nuance Calibration
                 </h3>
               </div>
 
@@ -1797,7 +1791,7 @@ export default function LandingPage() {
                   3
                 </span>
                 <h3 className="font-serif font-bold text-base sm:text-lg text-[#1A1A18]">
-                  Task 03 — Schedule Your Dispatch
+                  Station 03 — Bangkok Peak-Hour Scheduler
                 </h3>
               </div>
 
@@ -1867,7 +1861,7 @@ export default function LandingPage() {
                   4
                 </span>
                 <h3 className="font-serif font-bold text-base sm:text-lg text-[#1A1A18]">
-                  Task 04 — Rescue a Failed Post
+                  Station 04 — Autonomous Worker Rescue
                 </h3>
               </div>
 
@@ -1969,7 +1963,7 @@ export default function LandingPage() {
               <p className="text-xs text-stone-600 mt-0.5">
                 {isPassUnlocked
                   ? 'ยินดีด้วย! คุณสะสมครบ 100 Press Coins แล้ว สามารถเลื่อนลงไปดูตั๋ว 7-Day Dream Pass ได้ทันที'
-                  : 'ทำภารกิจด้านบนหรือกด "รับ 100 Coins ทันที" เพื่อปลดล็อกตั๋ว 7-Day Dream Pass ด้านล่างสุด'}
+                  : 'ทดลองสั่งการแท่นพิมพ์ด้านบน หรือกด "รับ 100 Coins ทันที" เพื่อปลดล็อกตั๋ว 7-Day Dream Pass ด้านล่างสุด'}
               </p>
             </div>
           </div>
@@ -2570,173 +2564,295 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 08 — BUILT FOR YOUR CREATIVE WORKFLOW                             */}
+      {/* SECTION 08 — BUILT FOR CREATIVE SCALE (ARCHITECTURAL MATRIX)             */}
       {/* ========================================================================= */}
       <section id="audience" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-2">
           <span className="text-xs font-mono font-bold text-[#364165] uppercase tracking-wider">
-            08 / BUILT FOR YOUR CREATIVE WORKFLOW
+            08 / BUILT FOR CREATIVE SCALE
           </span>
           <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
-            เช็กดูว่า MULTIPOST เข้ากับสไตล์การทำงานของคุณไหม?
+            สถาปัตยกรรมโต๊ะพิมพ์ที่ออกแบบมาเพื่อทุกสเกลงาน
           </h2>
           <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
-            ออกแบบมาเพื่อครีเอเตอร์และทีมมีเดียที่อยากผลิตงานอย่างมีความสุข ไม่เสียเวลากับความซ้ำซาก
+            ไม่ว่าคุณจะผลิตคอนเทนต์คนเดียว หรือบริหารการสื่อสารระดับสตูดิโอหลายแบรนด์พร้อมกัน MULTIPOST ตอบโจทย์ความแม่นยำในทุกมิติ
           </p>
         </div>
 
-        {/* ========================================================================= */}
-        {/* RETZLO-STYLE INTERACTIVE FIT CHECK CARDS (MEETS CREATOR CRITERIA)          */}
-        {/* ========================================================================= */}
-        <div id="check-readiness" className="grid grid-cols-1 md:grid-cols-2 gap-6 scroll-mt-20 sm:scroll-mt-24">
-          {/* Left Card: เหมาะกับคุณมาก ถ้า... (ลองคลิกติ๊กดู) */}
-          <div className="editorial-paper-card p-6 sm:p-8 rounded-3xl border-2 border-[#364165] flex flex-col justify-between gap-6 shadow-[6px_6px_0_rgba(54,65,101,0.16)] bg-white/95">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-lg bg-[#364165]/10 text-[#364165] flex items-center justify-center font-bold text-sm">
-                    ✓
-                  </span>
-                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
-                    เหมาะกับคุณมาก ถ้า... (ลองคลิกติ๊กดู)
-                  </h3>
-                </div>
-                <span className="font-mono text-xs px-3 py-1 rounded-full bg-[#364165]/10 text-[#364165] font-bold">
-                  ตรง {checkedCriteria.length}/5 ข้อ
-                </span>
-              </div>
-
-              {/* Sub-badge */}
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#364165]/5 border border-[#364165]/15">
-                <div className="w-10 h-10 rounded-xl bg-[#364165] text-white flex items-center justify-center font-mono font-bold text-base shrink-0 shadow-2xs">
-                  🎬
-                </div>
-                <div>
-                  <span className="text-[10px] font-mono font-bold tracking-wider text-[#364165] uppercase">
-                    CREATOR & STUDIO EDITION • จังหวะที่พอดี
-                  </span>
-                  <div className="text-xs font-bold text-[#1A1A18] mt-0.5">
-                    ชอบความแม่นยำ อัปโหลดครั้งเดียว ปล่อยได้ทุกช่องทางอย่างมั่นใจ
-                  </div>
-                </div>
-              </div>
-
-              {/* Interactive Checklist Buttons */}
-              <div className="space-y-2.5">
-                {[
-                  {
-                    id: '16:9-to-9:16',
-                    text: 'มีช่องทางโซเชียลหลายแพลตฟอร์ม (YouTube, TikTok, IG, FB) แต่ไม่อยากเสียเวลาเรนเดอร์แยกหลายไฟล์',
-                  },
-                  {
-                    id: 'multi-channel',
-                    text: 'อยากได้ระบบที่อัปโหลด 4K ครั้งเดียว แล้วแปลงสัดส่วน 16:9 สู่ 9:16 พร้อม Safe-Zone อัตโนมัติ',
-                  },
-                  {
-                    id: 'anti-copy-paste',
-                    text: 'เบื่อการสลับแท็บบราวเซอร์ 5 ช่องทางเพื่อพิมพ์แคปชันและติดแฮชแท็กซ้ำๆ',
-                  },
-                  {
-                    id: 'auto-recovery',
-                    text: 'อยากมีระบบ Retry คิวอัตโนมัติเมื่อ Token หลุดหรือเน็ตกระตุก โดยไม่ต้องมานั่งเฝ้าจอ',
-                  },
-                  {
-                    id: 'unified-board',
-                    text: 'อยากเห็นสถานะการเผยแพร่ทุกช่องทางพร้อมกันในบอร์ดเดียว ไม่ต้องเดาว่าช่องไหนผ่านไม่ผ่าน',
-                  },
-                ].map((item) => {
-                  const isChecked = checkedCriteria.includes(item.id);
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => toggleCriterion(item.id)}
-                      className={`w-full text-left flex items-start gap-3 p-3.5 rounded-xl transition-all cursor-pointer ${
-                        isChecked
-                          ? 'bg-[#364165]/8 border-2 border-[#364165] shadow-xs'
-                          : 'bg-white/60 hover:bg-white border border-black/10'
-                      }`}
+        {/* 4 Interactive Studio Scale Tabs */}
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {[
+              {
+                id: 'SOLO' as const,
+                num: '01',
+                title: 'Solo Creator',
+                sub: 'ยูทูบเบอร์ & สตรีมเมอร์',
+                color: '#364165',
+              },
+              {
+                id: 'AGENCY' as const,
+                num: '02',
+                title: 'Brand Agency',
+                sub: 'ทีม SMM จัดการหลายแบรนด์',
+                color: '#A24836',
+              },
+              {
+                id: 'NEWSROOM' as const,
+                num: '03',
+                title: 'Media Newsroom',
+                sub: 'สำนักข่าว & สื่อออนไลน์',
+                color: '#1D6F42',
+              },
+              {
+                id: 'STUDIO' as const,
+                num: '04',
+                title: '4K Production',
+                sub: 'โปรดักชันเฮาส์ไฟล์ใหญ่',
+                color: '#C98836',
+              },
+            ].map((scale) => {
+              const isSelected = selectedScale === scale.id;
+              return (
+                <button
+                  key={scale.id}
+                  onClick={() => {
+                    setSelectedScale(scale.id);
+                    playChimeSound(soundEnabled);
+                  }}
+                  className={`p-4 rounded-2xl text-left transition-all cursor-pointer border ${
+                    isSelected
+                      ? 'bg-white shadow-[4px_4px_0_rgba(54,65,101,0.14)] scale-[1.02]'
+                      : 'bg-white/60 hover:bg-white border-black/10'
+                  }`}
+                  style={{
+                    borderColor: isSelected ? scale.color : undefined,
+                    borderWidth: isSelected ? '2px' : '1px',
+                  }}
+                >
+                  <div className="flex items-center justify-between">
+                    <span
+                      className="w-6 h-6 rounded-lg font-mono font-bold text-xs flex items-center justify-center"
+                      style={{
+                        backgroundColor: isSelected ? scale.color : '#F3F0E8',
+                        color: isSelected ? '#FFFFFF' : '#52514B',
+                      }}
                     >
-                      <span
-                        className={`mt-0.5 w-5 h-5 rounded-md flex items-center justify-center shrink-0 text-xs font-bold transition-colors ${
-                          isChecked
-                            ? 'bg-[#364165] text-white'
-                            : 'border-2 border-stone-300 bg-white'
-                        }`}
-                      >
-                        {isChecked && '✓'}
-                      </span>
-                      <span className={`text-xs sm:text-sm leading-relaxed ${isChecked ? 'font-bold text-[#1A1A18]' : 'text-stone-700'}`}>
-                        {item.text}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* Dynamic Result Note */}
-            <div className="p-3.5 rounded-xl bg-amber-400/20 border border-amber-500/30 text-amber-950 font-mono text-xs font-bold">
-              {checkedCriteria.length >= 3
-                ? `🎯 ตรงถึง ${checkedCriteria.length} ข้อ! คุณคือสาย Creator Studio ที่เหมาะกับ MULTIPOST สุดๆ`
-                : '💡 ลองคลิกติ๊กข้อที่ตรงกับขั้นตอนการทำงานของคุณเพื่อดูผลลัพธ์'}
-            </div>
+                      {scale.num}
+                    </span>
+                    {isSelected && (
+                      <span className="w-2 h-2 rounded-full" style={{ backgroundColor: scale.color }} />
+                    )}
+                  </div>
+                  <h4 className="font-serif font-bold text-sm sm:text-base text-[#1A1A18] mt-2">
+                    {scale.title}
+                  </h4>
+                  <p className="font-mono text-[11px] text-stone-500 truncate">
+                    {scale.sub}
+                  </p>
+                </button>
+              );
+            })}
           </div>
 
-          {/* Right Card: อาจยังไม่จำเป็นต้องใช้ ถ้า... */}
-          <div className="editorial-paper-card p-6 sm:p-8 rounded-3xl border border-black/15 flex flex-col justify-between gap-6 bg-white/70">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="w-7 h-7 rounded-lg bg-stone-100 text-stone-600 flex items-center justify-center font-bold text-sm">
-                    —
+          {/* Dynamic Scale Spec Sheet (Tactile Editorial Broadsheet Card) */}
+          <div className="editorial-paper-card p-6 sm:p-8 rounded-3xl border border-black/10 shadow-[0_8px_30px_rgba(0,0,0,0.04)] space-y-5">
+            {selectedScale === 'SOLO' && (
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-black/10">
+                  <div>
+                    <span className="font-mono text-[10px] font-bold text-[#364165] uppercase tracking-wider">
+                      SCALE 01 • SOLO CREATOR & VIDEO BROADCASTER
+                    </span>
+                    <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1A1A18]">
+                      ตัดต่อคลิปเดียว ปล่อยครบทุกฟีดใน 2 นาที โดยไม่ต้องจ้างทีมช่วยโพสต์
+                    </h3>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-mono text-xs font-bold shrink-0 border border-emerald-200">
+                    ⏱️ ประหยัดเวลา 15+ ชม./สัปดาห์
                   </span>
-                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
-                    อาจยังไม่จำเป็นต้องใช้ ถ้า...
-                  </h3>
                 </div>
-                <span className="font-mono text-xs text-stone-500 font-semibold">
-                  บอกกันตรงไปตรงมา
-                </span>
-              </div>
-
-              {/* Sub-badge */}
-              <div className="flex items-center gap-3 p-3 rounded-2xl bg-stone-100 border border-stone-200">
-                <div className="w-10 h-10 rounded-xl bg-stone-300 text-stone-700 flex items-center justify-center font-mono font-bold text-base shrink-0 shadow-2xs">
-                  📦
-                </div>
-                <div>
-                  <span className="text-[10px] font-mono font-bold tracking-wider text-stone-600 uppercase">
-                    SINGLE-CHANNEL / MANUAL ONLY
-                  </span>
-                  <div className="text-xs font-bold text-[#1A1A18] mt-0.5">
-                    เน้นโพสต์แพลตฟอร์มเดียว หรือชอบกดมือทีละรายการ
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#364165] block">Universal Master Ingestion</b>
+                    <p className="text-stone-600 text-[11px] font-sans">อัปโหลดไฟล์ 4K แนวนอนครั้งเดียว ระบบจัดวางเฟรมแนวตั้ง 9:16 ให้ทันที</p>
+                  </div>
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#364165] block">AI Safe-Zone Framing</b>
+                    <p className="text-stone-600 text-[11px] font-sans">มองเห็นกรอบปุ่ม Like ของ Reels & TikTok ก่อนกดส่ง ซับไตเติลไม่โดนบัง</p>
+                  </div>
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#364165] block">Bangkok Peak Gold Slot</b>
+                    <p className="text-stone-600 text-[11px] font-sans">คลิกเดียวล็อกเวลา 19:30 น. ปล่อยคลิปตอนคนไทยออนไลน์มากที่สุด</p>
                   </div>
                 </div>
               </div>
+            )}
 
-              {/* 3 Honest Unfit Criteria */}
-              <div className="space-y-3">
-                {[
-                  'โพสต์คอนเทนต์ลงแค่แพลตฟอร์มเดียวเป็นประจำ และไม่มีแผนจะขยายไปยังช่องทางอื่น',
-                  'มีทีมงานขนาดใหญ่ที่ถนัดล็อกอินเข้าไปกดปุ่มโพสต์ทีละแพลตฟอร์มด้วยมือ',
-                  'แทบไม่ได้เผยแพร่วิดีโอหรือภาพกราฟิกใดๆ เน้นส่งข้อความสั้นในกลุ่มปิดเท่านั้น',
-                ].map((text, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-3 p-3.5 rounded-xl border border-black/8 bg-white/60 text-stone-600 text-xs sm:text-sm leading-relaxed"
-                  >
-                    <span className="text-stone-400 font-mono font-bold shrink-0 mt-0.5">—</span>
-                    <span>{text}</span>
+            {selectedScale === 'AGENCY' && (
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-black/10">
+                  <div>
+                    <span className="font-mono text-[10px] font-bold text-[#A24836] uppercase tracking-wider">
+                      SCALE 02 • SOCIAL MEDIA MANAGEMENT & MULTI-BRAND AGENCY
+                    </span>
+                    <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1A1A18]">
+                      บริหาร 10+ บัญชีลูกค้าพร้อมกัน แยก Workspaces ชัดเจน ป้องกันการโพสต์ผิดเพจ
+                    </h3>
                   </div>
-                ))}
+                  <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 font-mono text-xs font-bold shrink-0 border border-amber-200">
+                    🛡️ Multi-Brand Isolation 100%
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#A24836] block">Channel Vault Separation</b>
+                    <p className="text-stone-600 text-[11px] font-sans">สลับโต๊ะทำงานแต่ละแบรนด์ได้ในคลิกเดียว บัญชีและ Token แยกเก็บเข้ารหัส</p>
+                  </div>
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#A24836] block">Custom Hashtag Rulesets</b>
+                    <p className="text-stone-600 text-[11px] font-sans">บันทึกชุดแท็กประจำแบรนด์ แทรกอัตโนมัติตามข้อกำหนดของแต่ละโซเชียล</p>
+                  </div>
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#A24836] block">Autonomous Token Recovery</b>
+                    <p className="text-stone-600 text-[11px] font-sans">ระบบ Worker กู้คืนเซสชันอัตโนมัติ ลดปัญหาโพสต์ไม่ติดในวันหยุด</p>
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
 
-            {/* Note */}
-            <div className="p-3.5 rounded-xl bg-stone-100/90 border border-stone-200 text-stone-600 text-xs font-sans leading-relaxed">
-              เราตั้งใจออกแบบ MULTIPOST ให้เป็นสตูดิโอจัดพิมพ์ที่แม่นยำและคล่องตัวที่สุดสำหรับงาน Multi-Platform ไม่ใช่โปรแกรมเทอะทะที่ยุ่งยากเกินจำเป็น
+            {selectedScale === 'NEWSROOM' && (
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-black/10">
+                  <div>
+                    <span className="font-mono text-[10px] font-bold text-[#1D6F42] uppercase tracking-wider">
+                      SCALE 03 • DIGITAL NEWSROOM & EDITORIAL DESK
+                    </span>
+                    <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1A1A18]">
+                      คัดกรองข่าวด่วนด้วยระบบ Review Gate ปล่อยพาดหัวพร้อมกันทุกช่องทางไม่มีดีเลย์
+                    </h3>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-mono text-xs font-bold shrink-0 border border-emerald-200">
+                    ⚡ Concurrent Burst Dispatch
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#1D6F42] block">Editorial Gateways</b>
+                    <p className="text-stone-600 text-[11px] font-sans">นักข่าวร่างต้นฉบับ บรรณาธิการกด Approve ก่อนส่งสัญญาณออกสู่สาธารณะ</p>
+                  </div>
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#1D6F42] block">Breaking Flash Broadcast</b>
+                    <p className="text-stone-600 text-[11px] font-sans">ยิงแจ้งเตือนข่าวด่วนเข้าสู่ Facebook, X, และ Telegram พร้อมกันเสี้ยววินาที</p>
+                  </div>
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#1D6F42] block">Audit Log & Traceability</b>
+                    <p className="text-stone-600 text-[11px] font-sans">บันทึกประวัติการเผยแพร่ทุกขั้นตอน ตรวจสอบย้อนหลังได้ 100%</p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {selectedScale === 'STUDIO' && (
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-black/10">
+                  <div>
+                    <span className="font-mono text-[10px] font-bold text-[#C98836] uppercase tracking-wider">
+                      SCALE 04 • COMMERCIAL PRODUCTION & 4K STUDIOS
+                    </span>
+                    <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1A1A18]">
+                      รักษาบิตเรตและสีสันของไฟล์ 4K Master ดั้งเดิม ไม่ถูกบีบอัดจนเสียคุณภาพ
+                    </h3>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 font-mono text-xs font-bold shrink-0 border border-amber-200">
+                    💎 Uncompressed Fidelity
+                  </span>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#C98836] block">Pro Codec Probing</b>
+                    <p className="text-stone-600 text-[11px] font-sans">วิเคราะห์ Container, Keyframe Intervals, และ Color Space ก่อนส่ง</p>
+                  </div>
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#C98836] block">Full 4K Video Passthrough</b>
+                    <p className="text-stone-600 text-[11px] font-sans">ส่งสัญญาณไปยัง YouTube 4K v3 API โดยไม่มีการลดทอนบิตเรต</p>
+                  </div>
+                  <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
+                    <b className="text-[#C98836] block">Zero Redundant Renders</b>
+                    <p className="text-stone-600 text-[11px] font-sans">ไม่ต้อง Export ไฟล์แยกขนาดให้หนักเครื่องอีกต่อไป</p>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Side-by-Side Architectural Workflow Comparison */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Traditional Chaos */}
+          <div className="editorial-paper-card p-7 sm:p-9 rounded-3xl border border-red-200/80 space-y-5 bg-white/80">
+            <div className="flex items-center justify-between pb-3 border-b border-red-100">
+              <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-red-100 text-red-700 uppercase">
+                TRADITIONAL DISPATCH • วิธีแบบเดิม
+              </span>
+              <span className="font-mono text-xs text-red-600 font-bold">
+                ⚠️ สูญเสียเวลา 45 นาที/คลิป
+              </span>
             </div>
+            <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
+              ความยุ่งยากของการจัดการแบบกระจัดกระจาย
+            </h3>
+            <ul className="space-y-3 font-sans text-xs sm:text-sm text-stone-600">
+              <li className="flex items-start gap-2.5">
+                <span className="text-red-500 font-bold shrink-0">✕</span>
+                <span><b>Export แยก 3-4 ไฟล์</b> — ต้องเรนเดอร์ 16:9, 9:16, 1:1 แยกโปรเจกต์ เปลืองพื้นที่ฮาร์ดดิสก์</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="text-red-500 font-bold shrink-0">✕</span>
+                <span><b>ก๊อปวางข้าม 5 บราวเซอร์</b> — นั่งไล่แก้แฮชแท็กทีละแท็บ เสี่ยงพิมพ์ผิดและหลุดบริบท</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="text-red-500 font-bold shrink-0">✕</span>
+                <span><b>Token หมดอายุเงียบ</b> — ไม่มีระบบตรวจสอบอัตโนมัติ มารู้ตัวอีกทีคลิปไม่ขึ้น ยอดวิวจม</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="text-red-500 font-bold shrink-0">✕</span>
+                <span><b>หลุดช่วง Golden Hour</b> — คำนวณเวลา Timezone สับสน หรือลืมโพสต์ช่วงเวลาคนออนไลน์</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* MULTIPOST Integrated Desk */}
+          <div className="editorial-paper-card p-7 sm:p-9 rounded-3xl border border-emerald-200/80 space-y-5 bg-white/95 shadow-[0_8px_30px_rgba(29,111,66,0.06)]">
+            <div className="flex items-center justify-between pb-3 border-b border-emerald-100">
+              <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 uppercase">
+                MULTIPOST DESK • โต๊ะจัดพิมพ์แบบบูรณาการ
+              </span>
+              <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
+                <CheckCircle2 className="w-3.5 h-3.5" /> จบใน 2 นาที/คลิป
+              </span>
+            </div>
+            <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
+              ความแม่นยำและเสถียรภาพของการคุมงานพิมพ์สื่อ
+            </h3>
+            <ul className="space-y-3 font-sans text-xs sm:text-sm text-stone-600">
+              <li className="flex items-start gap-2.5">
+                <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                <span><b>Universal Master 4K Ingestion</b> — อัปโหลดไฟล์เดียว ระบบแปลง 16:9 สู่ 9:16 พร้อม AI Safe-Zone ทันที</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                <span><b>Synchronized Platform Nuances</b> — แต่งแคปชันจุดเดียว ปรับจูน Character Limit และแท็กรายช่องทางได้สดๆ</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                <span><b>Isolated Queue Workers</b> — ท่อส่งสัญญาณแยกขาดจากกัน พร้อมระบบ Exponential Backoff Auto-Retry</span>
+              </li>
+              <li className="flex items-start gap-2.5">
+                <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                <span><b>Bangkok Peak Precision</b> — ล็อกเวลาทองคำ (เช่น 19:30 น.) ปล่อยสัญญาณพร้อมกันทุกโซเชียลแบบแม่นยำ</span>
+              </li>
+            </ul>
           </div>
         </div>
 
@@ -3137,7 +3253,7 @@ export default function LandingPage() {
                   <span>Current balance: <b>{coins} / 100 Press Coins</b></span>
                 </div>
                 <p className="text-xs text-stone-500">
-                  ทำภารกิจใน Studio ด้านบน หรือคลิกปุ่ม &quot;รับ 100 Coins ทันที&quot; เพื่อเปิดใช้งานตั๋ว
+                  ทดลองสั่งการแท่นพิมพ์ใน Studio ด้านบน หรือคลิกปุ่ม &quot;รับ 100 Coins ทันที&quot; เพื่อเปิดใช้งานตั๋ว
                 </p>
                 <button
                   onClick={handleClaimAllCoins}
