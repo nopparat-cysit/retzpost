@@ -1137,6 +1137,14 @@ export default function HomePage() {
                 </span>
               </button>
             )}
+            <Link
+              href="/landing"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-brand-indigo border border-brand-indigo/30 text-xs font-mono font-semibold rounded-editorial transition-colors shadow-2xs"
+              title="เปิดดูหน้า Dream Press Landing Page สาธารณะ"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>Dream Press Landing</span>
+            </Link>
             <button
               onClick={handleExportAllJobs}
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"

@@ -113,6 +113,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       group: '01 — HOME',
       items: [
         { label: 'Dashboard', href: '/', icon: LayoutDashboard },
+        { label: 'Dream Press Landing', href: '/landing', icon: Sparkles },
       ],
     },
     {
@@ -153,6 +154,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   ];
 
   const isPublicRoute = 
+    pathname === '/landing' ||
     pathname === '/login' || 
     pathname === '/register' || 
     pathname === '/forgot-password' ||

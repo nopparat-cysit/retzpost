@@ -30,6 +30,7 @@ export const PublicHeader: React.FC = () => {
   }, []);
 
   const navLinks = [
+    { href: '/landing', label: 'Dream Press Desk', icon: Sparkles },
     { href: '/docs', label: 'คู่มือใช้งาน (Docs)', icon: BookOpen },
     { href: '/privacy', label: 'นโยบายความเป็นส่วนตัว (Privacy)', icon: ShieldCheck },
     { href: '/terms', label: 'ข้อกำหนดการใช้งาน (Terms)', icon: FileText },
