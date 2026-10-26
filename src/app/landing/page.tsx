@@ -19,6 +19,10 @@ import {
   FileText, 
   Sliders, 
   Play, 
+  Pause,
+  Eye,
+  EyeOff,
+  Scissors,
   Check, 
   Zap, 
   Award, 
@@ -238,8 +242,11 @@ export default function LandingPage() {
   const [isPassRedeemed, setIsPassRedeemed] = useState<boolean>(false);
   const [isRedeemingAnimation, setIsRedeemingAnimation] = useState<boolean>(false);
 
-  // Hero Preview Ratio Switcher
+  // Hero Preview Ratio Switcher & Living Studio Controls
   const [heroRatio, setHeroRatio] = useState<'16:9' | '9:16'>('16:9');
+  const [isPlayingHero, setIsPlayingHero] = useState<boolean>(true);
+  const [showHeroSafeZones, setShowHeroSafeZones] = useState<boolean>(true);
+  const [heroScrubber, setHeroScrubber] = useState<number>(45);
 
   // Section References for Smooth Navigation
   const pressStudioRef = useRef<HTMLDivElement>(null);
@@ -379,20 +386,34 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#F5F2EB] text-[#1A1A18] font-sans selection:bg-[#364165] selection:text-white flex flex-col antialiased relative overflow-x-hidden">
       
       {/* ========================================================================= */}
-      {/* MASTER ATMOSPHERIC BACKGROUND (WARM OCHRE + LUXURY INDIGO HALOS)          */}
+      {/* MASTER ATMOSPHERIC BACKGROUND (WARM OCHRE + LUXURY INDIGO HALOS + WATERMARK)*/}
       {/* ========================================================================= */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        {/* Archival Cotton Dot Pattern */}
-        <div className="absolute inset-0 dream-paper-texture opacity-70" />
+        {/* Archival Cotton Dot Pattern & Subtle Column Rules */}
+        <div className="absolute inset-0 dream-paper-texture opacity-80" />
+        <div className="absolute inset-0 editorial-column-guides opacity-40" />
         
+        {/* Background Editorial Watermark Typography */}
+        <div className="absolute top-24 left-1/2 -translate-x-1/2 pointer-events-none select-none -z-10 text-center w-full overflow-hidden opacity-[0.038] leading-none">
+          <div className="font-serif text-[17vw] font-bold tracking-tighter whitespace-nowrap text-[#1A1A18]">
+            DREAM PRESS
+          </div>
+          <div className="font-mono text-xs sm:text-sm tracking-[0.45em] uppercase text-[#364165] mt-1">
+            EST. 2026 • THE CREATOR&apos;S PUBLISHING DESK • BANGKOK ARCHIVE
+          </div>
+        </div>
+
         {/* Warm Ochre Sunlight Halo (Top-Left) */}
-        <div className="absolute -top-40 -left-40 w-[750px] h-[750px] rounded-full bg-gradient-to-br from-amber-400/20 via-amber-200/5 to-transparent blur-3xl animate-glow-pulse" />
+        <div className="absolute -top-40 -left-40 w-[850px] h-[850px] rounded-full bg-gradient-to-br from-amber-400/25 via-amber-200/10 to-transparent blur-3xl animate-glow-pulse" />
         
         {/* Royal Publishing Indigo Halo (Top-Right) */}
-        <div className="absolute top-0 -right-48 w-[800px] h-[800px] rounded-full bg-gradient-to-bl from-[#364165]/20 via-[#364165]/5 to-transparent blur-3xl" />
+        <div className="absolute top-0 -right-48 w-[900px] h-[900px] rounded-full bg-gradient-to-bl from-[#364165]/25 via-[#364165]/8 to-transparent blur-3xl" />
         
         {/* Terracotta Wax-Seal Ambient Halo (Middle/Lower) */}
-        <div className="absolute top-[38%] left-1/2 -translate-x-1/2 w-[950px] h-[750px] rounded-full bg-gradient-to-tr from-[#A24836]/10 via-[#C98836]/6 to-transparent blur-3xl" />
+        <div className="absolute top-[38%] left-1/2 -translate-x-1/2 w-[1050px] h-[850px] rounded-full bg-gradient-to-tr from-[#A24836]/12 via-[#C98836]/8 to-transparent blur-3xl" />
+
+        {/* Golden Dream Pass Ambient Halo (Bottom) */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-[800px] h-[600px] rounded-full bg-gradient-to-t from-amber-300/15 via-amber-100/5 to-transparent blur-3xl" />
         
         {/* Broadsheet Desktop Margin Double Hairlines */}
         <div className="hidden 2xl:block absolute inset-y-0 left-12 w-px border-l border-black/[0.08]" />
@@ -418,7 +439,7 @@ export default function LandingPage() {
         ))}
       </div>
 
-      {/* FLOATING REWARD HUD (With Instant 100 Coins Claim Button!) */}
+      {/* FLOATING REWARD HUD (With Luxury Shimmering Instant 100 Coins Claim Button!) */}
       <div className="fixed bottom-5 right-5 z-40 transition-all duration-300">
         <div className="p-1.5 pl-3 pr-2 bg-white/95 backdrop-blur-md border border-black/10 rounded-full shadow-[0_12px_36px_rgba(0,0,0,0.12)] flex items-center gap-2.5 ring-1 ring-black/5 hover:scale-[1.02] transition-transform">
           {/* Sound Toggle */}
@@ -457,11 +478,11 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Instant Claim Button inside HUD */}
+          {/* Luxury Shimmering Instant Claim Button inside HUD */}
           {coins < 100 ? (
             <button
               onClick={handleClaimAllCoins}
-              className="py-1.5 px-3 rounded-full text-[11px] font-mono font-bold bg-amber-400 hover:bg-amber-500 text-amber-950 flex items-center gap-1 shadow-sm transition-all cursor-pointer active:scale-95"
+              className="py-1.5 px-3.5 rounded-full text-[11px] font-mono font-bold animate-gold-shimmer text-amber-950 flex items-center gap-1.5 shadow-[0_4px_15px_rgba(245,158,11,0.45)] ring-2 ring-amber-300 hover:scale-105 active:scale-95 transition-all cursor-pointer"
               title="Instant Unlock: Get all 100 coins immediately"
             >
               <Zap className="w-3 h-3 fill-amber-950" />
@@ -470,7 +491,7 @@ export default function LandingPage() {
           ) : (
             <button
               onClick={() => dreamPassRef.current?.scrollIntoView({ behavior: 'smooth' })}
-              className="py-1.5 px-3 rounded-full text-[11px] font-mono font-bold bg-[#A24836] text-white hover:bg-[#8e3f2f] shadow-md animate-bounce flex items-center gap-1 cursor-pointer"
+              className="py-1.5 px-3.5 rounded-full text-[11px] font-mono font-bold bg-[#A24836] text-white hover:bg-[#8e3f2f] shadow-md animate-bounce flex items-center gap-1.5 cursor-pointer"
             >
               <Ticket className="w-3.5 h-3.5" />
               <span>เปิดดูตั๋ว Dream Pass!</span>
@@ -518,12 +539,12 @@ export default function LandingPage() {
               Create once, customize for every channel, and keep your publishing workflow beautifully organized. Upload master media, tailor platform-specific safe zones and captions, and dispatch with millisecond precision across YouTube, TikTok, Instagram, Facebook, X, and Lemon8.
             </p>
 
-            {/* CTAs with Instant Coin Action */}
+            {/* CTAs with Luxury Shimmering Instant Coin Action */}
             <div className="pt-2 flex flex-wrap items-center gap-3 text-xs font-mono">
               <button
                 type="button"
                 onClick={handleClaimAllCoins}
-                className="py-3.5 px-6 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold flex items-center gap-2 shadow-[0_10px_25px_-5px_rgba(245,158,11,0.4)] transition-all active:scale-[0.98] cursor-pointer text-sm"
+                className="py-3.5 px-6 rounded-xl animate-gold-shimmer text-amber-950 font-bold flex items-center gap-2 shadow-[0_10px_30px_-5px_rgba(245,158,11,0.5)] ring-2 ring-amber-300/80 transition-all hover:scale-105 active:scale-[0.98] cursor-pointer text-sm"
               >
                 <Zap className="w-4 h-4 fill-amber-950" />
                 <span>⚡ รับ 100 Coins ทันที (Auto-Complete)</span>
@@ -532,7 +553,7 @@ export default function LandingPage() {
               <button
                 type="button"
                 onClick={() => pressStudioRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                className="py-3.5 px-5 rounded-xl bg-[#364165] hover:bg-[#2B3452] text-white font-semibold flex items-center gap-2 shadow-sm transition-all cursor-pointer text-sm"
+                className="py-3.5 px-5 rounded-xl bg-[#364165] hover:bg-[#2B3452] text-white font-semibold flex items-center gap-2 shadow-md transition-all hover:scale-102 active:scale-98 cursor-pointer text-sm"
               >
                 <span>ทดลองทำทีละสเต็ป</span>
                 <ChevronRight className="w-4 h-4 text-stone-300" />
@@ -556,9 +577,14 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Right Hero: Luxury Obsidian Control Console (High-Contrast & Gorgeous!) */}
+          {/* Right Hero: Luxury Obsidian Control Console (Living Publishing Desk) */}
           <div className="lg:col-span-5 relative flex justify-center">
-            <div className="w-full max-w-md bg-gradient-to-b from-[#181E2E] to-[#111520] text-white rounded-3xl p-6 shadow-[0_25px_60px_-10px_rgba(20,25,38,0.4)] border border-[#2E374D] space-y-4 animate-dream-float select-none">
+            {/* Tactile Washi Tape Strip on Top Edge */}
+            <div className="absolute -top-3.5 right-12 z-20 pointer-events-none drop-shadow-md rotate-[-2deg]">
+              <Sticker name="washi-indigo" size="lg" />
+            </div>
+
+            <div className="w-full max-w-md bg-gradient-to-b from-[#181E2E] to-[#111520] text-white rounded-3xl p-6 shadow-[0_25px_60px_-10px_rgba(20,25,38,0.5)] border border-[#2E374D] space-y-4 animate-dream-float select-none ring-1 ring-white/10">
               
               {/* Console Masthead */}
               <div className="flex items-center justify-between pb-3 border-b border-white/10">
@@ -567,8 +593,9 @@ export default function LandingPage() {
                     RP
                   </div>
                   <div>
-                    <h3 className="font-serif font-bold text-sm tracking-tight text-white">
-                      MULTIPOST CONTROL DESK
+                    <h3 className="font-serif font-bold text-sm tracking-tight text-white flex items-center gap-1.5">
+                      <span>MULTIPOST CONTROL DESK</span>
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                     </h3>
                     <p className="text-[9px] font-mono text-stone-400">
                       № DP-2026-CONSOLE • STUDIO LIVE
@@ -582,22 +609,22 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Interactive Viewport Switcher */}
-              <div className="p-2 bg-white/5 rounded-xl border border-white/10 space-y-2">
-                <div className="flex items-center justify-between text-[10px] font-mono">
-                  <span className="text-stone-300 font-bold">PREVIEW VIEWPORT:</span>
-                  <div className="flex gap-1">
+              {/* Interactive Viewport & Live Studio Controls */}
+              <div className="p-3 bg-white/5 rounded-2xl border border-white/10 space-y-3">
+                {/* Control Bar: Ratio + Safe Zones + Live Play State */}
+                <div className="flex items-center justify-between text-[10px] font-mono gap-1">
+                  <div className="flex items-center gap-1">
                     <button
                       type="button"
                       onClick={() => {
                         setHeroRatio('16:9');
                         playChimeSound(soundEnabled);
                       }}
-                      className={`px-2.5 py-0.5 rounded text-[10px] font-bold cursor-pointer transition-colors ${
-                        heroRatio === '16:9' ? 'bg-amber-400 text-amber-950 shadow-xs' : 'text-stone-400 hover:text-white'
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer transition-all ${
+                        heroRatio === '16:9' ? 'bg-amber-400 text-amber-950 shadow-xs' : 'text-stone-400 hover:text-white bg-white/5'
                       }`}
                     >
-                      16:9 Widescreen
+                      16:9 Wide
                     </button>
                     <button
                       type="button"
@@ -605,48 +632,120 @@ export default function LandingPage() {
                         setHeroRatio('9:16');
                         playChimeSound(soundEnabled);
                       }}
-                      className={`px-2.5 py-0.5 rounded text-[10px] font-bold cursor-pointer transition-colors ${
-                        heroRatio === '9:16' ? 'bg-amber-400 text-amber-950 shadow-xs' : 'text-stone-400 hover:text-white'
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-bold cursor-pointer transition-all ${
+                        heroRatio === '9:16' ? 'bg-amber-400 text-amber-950 shadow-xs' : 'text-stone-400 hover:text-white bg-white/5'
                       }`}
                     >
-                      9:16 Vertical Reel
+                      9:16 Reel
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    {/* Safe-Zone Guide Toggle */}
+                    <button
+                      type="button"
+                      onClick={() => setShowHeroSafeZones(!showHeroSafeZones)}
+                      className={`px-2 py-1 rounded-lg text-[10px] font-mono flex items-center gap-1 transition-colors cursor-pointer ${
+                        showHeroSafeZones ? 'bg-cyan-900/60 text-cyan-300 border border-cyan-500/40' : 'bg-white/5 text-stone-400'
+                      }`}
+                      title="Toggle Safe-Zone Guides"
+                    >
+                      {showHeroSafeZones ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                      <span>Safe-Zone</span>
+                    </button>
+
+                    {/* Play/Pause Toggle */}
+                    <button
+                      type="button"
+                      onClick={() => setIsPlayingHero(!isPlayingHero)}
+                      className="p-1 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                      title={isPlayingHero ? 'Pause Master Stream' : 'Play Master Stream'}
+                    >
+                      {isPlayingHero ? <Pause className="w-3 h-3" /> : <Play className="w-3 h-3" />}
                     </button>
                   </div>
                 </div>
 
-                {/* Simulated Content Display */}
-                <div className="aspect-[16/10] bg-black/40 rounded-xl border border-white/10 p-3 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
-                  <div className="flex items-center justify-between text-[9px] font-mono text-stone-400">
-                    <span>INGEST: 4K PROBE</span>
+                {/* Simulated Content Display Screen */}
+                <div className={`bg-gradient-to-br from-stone-900 via-stone-950 to-black rounded-xl border border-white/15 p-3 flex flex-col justify-between relative overflow-hidden transition-all duration-500 ${
+                  heroRatio === '16:9' ? 'aspect-[16/10]' : 'aspect-[9/12]'
+                }`}>
+                  {/* Dynamic Safe-Zone Overlays */}
+                  {showHeroSafeZones && (
+                    <div className="absolute inset-0 pointer-events-none p-2 flex flex-col justify-between z-10">
+                      {/* Top Safe Area */}
+                      <div className="border-b border-dashed border-cyan-400/50 pb-1 flex justify-between text-[8px] font-mono text-cyan-300">
+                        <span>TOP MARGIN (15% SAFE)</span>
+                        <span>UI HEADER FREE</span>
+                      </div>
+                      {/* Bottom Safe Area */}
+                      <div className="border-t border-dashed border-amber-400/50 pt-1 flex justify-between text-[8px] font-mono text-amber-300">
+                        <span>BOTTOM CAPTION (25% SAFE)</span>
+                        <span>ENGAGEMENT DOCK</span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Header Spec Tag */}
+                  <div className="flex items-center justify-between text-[9px] font-mono text-stone-400 z-10">
+                    <span className="flex items-center gap-1 text-emerald-400">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      MASTER FEED: 4K PROBE
+                    </span>
                     <span className="text-amber-300 font-bold">
                       {heroRatio === '16:9' ? '1920 × 1080 (YouTube/FB)' : '1080 × 1920 (Reels/TikTok)'}
                     </span>
                   </div>
 
-                  <div className="my-auto p-2.5 bg-white/5 backdrop-blur-md rounded-lg border border-white/15 text-center relative overflow-hidden">
-                    <div className="text-xs font-serif font-bold text-white">
+                  {/* Video Center Graphic */}
+                  <div className="my-auto p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-center relative overflow-hidden z-10 shadow-lg">
+                    <div className="text-xs font-serif font-bold text-white tracking-wide">
                       &quot;Episode 04: The Bangkok Studio Dispatch&quot;
                     </div>
-                    <div className="text-[9px] font-mono text-emerald-400 font-semibold mt-0.5">
-                      ✓ AI Safe-Zone Clearance: Top 15% • Bottom 25%
+                    
+                    {/* Live Equalizer Spectrum */}
+                    <div className="flex items-center justify-center gap-1 h-5 my-1.5">
+                      <span className={`w-1 bg-amber-400 rounded-full ${isPlayingHero ? 'wave-bar-1' : 'h-1'}`} />
+                      <span className={`w-1 bg-amber-300 rounded-full ${isPlayingHero ? 'wave-bar-2' : 'h-1.5'}`} />
+                      <span className={`w-1 bg-emerald-400 rounded-full ${isPlayingHero ? 'wave-bar-3' : 'h-2'}`} />
+                      <span className={`w-1 bg-cyan-400 rounded-full ${isPlayingHero ? 'wave-bar-4' : 'h-1.5'}`} />
+                      <span className={`w-1 bg-indigo-400 rounded-full ${isPlayingHero ? 'wave-bar-5' : 'h-1'}`} />
+                    </div>
+
+                    <div className="text-[9px] font-mono text-emerald-300 font-semibold">
+                      ✓ AI Safe-Zone Clearance: Top 15% • Bottom 25% Passed
+                    </div>
+                  </div>
+
+                  {/* Scrubber & Timecode Bar */}
+                  <div className="space-y-1 z-10 pt-1">
+                    <div className="flex justify-between items-center text-[8px] font-mono text-stone-400">
+                      <span>00:14.2 / 00:30.0</span>
+                      <span>BITRATE: 45.2 Mbps</span>
+                    </div>
+                    <div className="w-full h-1 bg-white/20 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-gradient-to-r from-amber-400 to-amber-600 rounded-full transition-all duration-300"
+                        style={{ width: `${heroScrubber}%` }}
+                      />
                     </div>
                   </div>
 
                   {/* Connected Endpoint Chips with Authentic Logos */}
-                  <div className="grid grid-cols-4 gap-1.5">
-                    <div className="p-1 bg-white/10 rounded border border-white/10 text-center shadow-2xs">
+                  <div className="grid grid-cols-4 gap-1.5 pt-2 z-10">
+                    <div className="p-1 bg-white/10 rounded-lg border border-white/10 text-center shadow-2xs hover:bg-white/15 transition-colors">
                       <YouTubeLogo size={12} className="mx-auto" />
                       <span className="text-[8px] font-mono block font-bold text-white mt-0.5">YT 4K</span>
                     </div>
-                    <div className="p-1 bg-white/10 rounded border border-white/10 text-center shadow-2xs">
+                    <div className="p-1 bg-white/10 rounded-lg border border-white/10 text-center shadow-2xs hover:bg-white/15 transition-colors">
                       <InstagramLogo size={12} className="mx-auto" />
                       <span className="text-[8px] font-mono block font-bold text-white mt-0.5">IG Reel</span>
                     </div>
-                    <div className="p-1 bg-white/10 rounded border border-white/10 text-center shadow-2xs">
+                    <div className="p-1 bg-white/10 rounded-lg border border-white/10 text-center shadow-2xs hover:bg-white/15 transition-colors">
                       <TikTokLogo size={12} className="mx-auto" />
                       <span className="text-[8px] font-mono block font-bold text-white mt-0.5">TikTok</span>
                     </div>
-                    <div className="p-1 bg-white/10 rounded border border-white/10 text-center shadow-2xs">
+                    <div className="p-1 bg-white/10 rounded-lg border border-white/10 text-center shadow-2xs hover:bg-white/15 transition-colors">
                       <FacebookLogo size={12} className="mx-auto" />
                       <span className="text-[8px] font-mono block font-bold text-white mt-0.5">FB Page</span>
                     </div>
@@ -748,13 +847,18 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* High-Contrast Comparison Cards */}
+        {/* High-Contrast Tactile Comparison Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
           {/* Left Column: The Old Way */}
           {(problemViewMode === 'ALL' || problemViewMode === 'CHAOS') && (
-            <div className={`p-7 sm:p-9 rounded-3xl border border-red-200 bg-white shadow-[0_10px_30px_rgba(239,68,68,0.06)] space-y-6 relative overflow-hidden ${
+            <div className={`editorial-paper-card p-7 sm:p-9 rounded-3xl border border-red-200/80 space-y-6 relative overflow-hidden ${
               problemViewMode === 'CHAOS' ? 'md:col-span-2 max-w-2xl mx-auto' : ''
             }`}>
+              {/* Tactile Washi Tape Strip */}
+              <div className="absolute -top-3 left-10 pointer-events-none drop-shadow-xs rotate-[2deg]">
+                <Sticker name="washi-terracotta" size="md" />
+              </div>
+
               <div className="flex items-center justify-between pb-4 border-b border-red-100">
                 <span className="px-3 py-1 rounded-full bg-red-50 text-red-700 font-mono text-xs font-bold uppercase border border-red-200">
                   THE OLD WAY
@@ -796,9 +900,14 @@ export default function LandingPage() {
 
           {/* Right Column: The Dream Press Way */}
           {(problemViewMode === 'ALL' || problemViewMode === 'DREAM') && (
-            <div className={`p-7 sm:p-9 rounded-3xl border border-emerald-200 bg-white shadow-[0_12px_36px_rgba(29,111,66,0.08)] space-y-6 relative overflow-hidden ${
+            <div className={`editorial-paper-card p-7 sm:p-9 rounded-3xl border border-emerald-200/80 space-y-6 relative overflow-hidden ${
               problemViewMode === 'DREAM' ? 'md:col-span-2 max-w-2xl mx-auto' : ''
             }`}>
+              {/* Tactile Washi Tape Strip */}
+              <div className="absolute -top-3 right-10 pointer-events-none drop-shadow-xs rotate-[-2deg]">
+                <Sticker name="washi-indigo" size="md" />
+              </div>
+
               <div className="flex items-center justify-between pb-4 border-b border-emerald-100">
                 <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-mono text-xs font-bold uppercase border border-emerald-200">
                   THE DREAM PRESS WAY
@@ -1051,11 +1160,11 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Quick Actions (Master Instant Claim + Reset) */}
+          {/* Quick Actions (Master Shimmering Instant Claim + Reset) */}
           <div className="flex items-center gap-3">
             <button
               onClick={handleClaimAllCoins}
-              className="py-2 px-4 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-mono text-xs font-bold flex items-center gap-1.5 shadow-[0_4px_15px_rgba(245,158,11,0.35)] transition-all cursor-pointer active:scale-95"
+              className="py-2.5 px-5 rounded-xl animate-gold-shimmer text-amber-950 font-mono text-xs font-bold flex items-center gap-1.5 shadow-[0_4px_20px_rgba(245,158,11,0.5)] ring-2 ring-amber-300 hover:scale-105 active:scale-95 transition-all cursor-pointer"
             >
               <Zap className="w-3.5 h-3.5 fill-amber-950" />
               <span>⚡ รับ 100 Coins ทันที</span>
@@ -1063,7 +1172,7 @@ export default function LandingPage() {
 
             <button
               onClick={handleResetDemo}
-              className="py-2 px-3 rounded-xl bg-white hover:bg-stone-50 border border-black/10 text-xs font-mono text-stone-600 flex items-center gap-1.5 transition-colors cursor-pointer"
+              className="py-2.5 px-3.5 rounded-xl bg-white hover:bg-stone-50 border border-black/10 text-xs font-mono text-stone-600 flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs hover:scale-102"
               title="Reset playground back to 0"
             >
               <RotateCcw className="w-3 h-3" />
@@ -1081,15 +1190,20 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* 4 Interactive Task Cards Grid (Each with Individual Instant Claim!) */}
+        {/* 4 Interactive Task Cards Grid (Styled as Tactile Editorial Production Slips) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* TASK 01: CHOOSE YOUR DESTINATIONS (+20 COINS) */}
-          <div className={`p-6 rounded-3xl border transition-all duration-300 space-y-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] ${
+          <div className={`editorial-paper-card p-6 rounded-3xl relative overflow-hidden transition-all duration-300 space-y-4 ${
             completedTasks.destinations
               ? 'border-emerald-500 ring-2 ring-emerald-500/15'
-              : 'border-black/10 hover:border-[#364165]/50'
+              : 'hover:border-[#364165]/50'
           }`}>
+            {/* Tactile Washi Tape Strip */}
+            <div className="absolute -top-3 left-8 z-10 pointer-events-none drop-shadow-xs rotate-[-2deg]">
+              <Sticker name="washi-terracotta" size="sm" />
+            </div>
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="w-6 h-6 rounded-full bg-[#364165]/10 text-[#364165] font-mono font-bold text-xs flex items-center justify-center">
@@ -1100,13 +1214,13 @@ export default function LandingPage() {
                 </h3>
               </div>
 
-              {/* Instant Claim Button for Task 1 */}
+              {/* Shimmering Gold Instant Claim Button for Task 1 */}
               <button
                 onClick={() => awardCoins(20, '2 Channels Picked', 'destinations')}
                 className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold transition-all cursor-pointer ${
                   completedTasks.destinations 
-                    ? 'bg-emerald-100 text-emerald-800' 
-                    : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                    : 'animate-gold-shimmer text-amber-950 shadow-xs hover:scale-105 active:scale-95'
                 }`}
               >
                 {completedTasks.destinations ? '✓ สำเร็จ (+20 Coins)' : '⚡ รับทันที (+20 Coins)'}
@@ -1134,7 +1248,7 @@ export default function LandingPage() {
                     onClick={() => togglePlatform(p.id)}
                     className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between active:scale-95 ${
                       isSelected
-                        ? 'bg-[#364165]/10 border-[#364165] text-[#364165] font-bold shadow-xs'
+                        ? 'bg-[#364165]/10 border-[#364165] text-[#364165] font-bold shadow-xs scale-102'
                         : 'bg-stone-50 border-black/5 text-stone-600 hover:text-black hover:bg-stone-100'
                     }`}
                   >
@@ -1157,11 +1271,16 @@ export default function LandingPage() {
           </div>
 
           {/* TASK 02: CUSTOMIZE YOUR EDITION (+25 COINS) */}
-          <div className={`p-6 rounded-3xl border transition-all duration-300 space-y-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] ${
+          <div className={`editorial-paper-card p-6 rounded-3xl relative overflow-hidden transition-all duration-300 space-y-4 ${
             completedTasks.caption
               ? 'border-emerald-500 ring-2 ring-emerald-500/15'
-              : 'border-black/10 hover:border-[#364165]/50'
+              : 'hover:border-[#364165]/50'
           }`}>
+            {/* Tactile Washi Tape Strip */}
+            <div className="absolute -top-3 right-8 z-10 pointer-events-none drop-shadow-xs rotate-[2deg]">
+              <Sticker name="washi-indigo" size="sm" />
+            </div>
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="w-6 h-6 rounded-full bg-[#364165]/10 text-[#364165] font-mono font-bold text-xs flex items-center justify-center">
@@ -1172,13 +1291,13 @@ export default function LandingPage() {
                 </h3>
               </div>
 
-              {/* Instant Claim Button for Task 2 */}
+              {/* Shimmering Gold Instant Claim Button for Task 2 */}
               <button
                 onClick={() => awardCoins(25, 'Edition Caption Tailored', 'caption')}
                 className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold transition-all cursor-pointer ${
                   completedTasks.caption 
-                    ? 'bg-emerald-100 text-emerald-800' 
-                    : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                    : 'animate-gold-shimmer text-amber-950 shadow-xs hover:scale-105 active:scale-95'
                 }`}
               >
                 {completedTasks.caption ? '✓ สำเร็จ (+25 Coins)' : '⚡ รับทันที (+25 Coins)'}
@@ -1199,10 +1318,10 @@ export default function LandingPage() {
                 <button
                   key={t.id}
                   onClick={() => handleSelectTone(t.id as any)}
-                  className={`py-1 px-3 rounded-full border transition-all cursor-pointer text-xs active:scale-95 ${
+                  className={`py-1.5 px-3 rounded-full border transition-all cursor-pointer text-xs active:scale-95 ${
                     activeTone === t.id
-                      ? 'bg-[#364165] text-white font-bold border-[#364165] shadow-xs'
-                      : 'bg-stone-50 text-stone-600 hover:text-black border-black/5'
+                      ? 'bg-[#364165] text-white font-bold border-[#364165] shadow-xs scale-105'
+                      : 'bg-stone-50 text-stone-600 hover:text-black border-black/5 hover:bg-stone-100'
                   }`}
                 >
                   {t.label}
@@ -1210,12 +1329,23 @@ export default function LandingPage() {
               ))}
             </div>
 
-            {/* Live Typing Preview Caption Box */}
+            {/* Live Typing Preview Caption Box & Character Gauge Bar */}
             <div className="space-y-1.5">
               <div className="flex justify-between items-center text-[10px] font-mono text-stone-500">
                 <span>LIVE PLATFORM CAPTION PREVIEW</span>
-                <span>{customCaption.length} characters</span>
+                <span><b>{customCaption.length}</b> / 280 characters</span>
               </div>
+              
+              {/* Dynamic Animated Character Gauge Bar */}
+              <div className="w-full h-1.5 bg-stone-100 rounded-full overflow-hidden">
+                <div 
+                  className={`h-full rounded-full transition-all duration-300 ${
+                    customCaption.length > 250 ? 'bg-red-500' : customCaption.length > 180 ? 'bg-amber-500' : 'bg-emerald-500'
+                  }`}
+                  style={{ width: `${Math.min(100, (customCaption.length / 280) * 100)}%` }}
+                />
+              </div>
+
               <textarea
                 value={customCaption}
                 onChange={(e) => {
@@ -1225,17 +1355,22 @@ export default function LandingPage() {
                   }
                 }}
                 rows={2}
-                className="w-full p-2.5 bg-stone-50 rounded-xl border border-black/10 text-xs font-sans text-[#1A1A18] leading-relaxed focus:outline-none focus:ring-1 focus:ring-[#364165]"
+                className="w-full p-2.5 bg-stone-50 rounded-xl border border-black/10 text-xs font-sans text-[#1A1A18] leading-relaxed focus:outline-none focus:ring-2 focus:ring-[#364165]/30 focus:border-[#364165]"
               />
             </div>
           </div>
 
           {/* TASK 03: SCHEDULE YOUR DISPATCH (+25 COINS) */}
-          <div className={`p-6 rounded-3xl border transition-all duration-300 space-y-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] ${
+          <div className={`editorial-paper-card p-6 rounded-3xl relative overflow-hidden transition-all duration-300 space-y-4 ${
             completedTasks.schedule
               ? 'border-emerald-500 ring-2 ring-emerald-500/15'
-              : 'border-black/10 hover:border-[#364165]/50'
+              : 'hover:border-[#364165]/50'
           }`}>
+            {/* Tactile Washi Tape Strip */}
+            <div className="absolute -top-3 left-8 z-10 pointer-events-none drop-shadow-xs rotate-[1deg]">
+              <Sticker name="washi-indigo" size="sm" />
+            </div>
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="w-6 h-6 rounded-full bg-[#364165]/10 text-[#364165] font-mono font-bold text-xs flex items-center justify-center">
@@ -1246,13 +1381,13 @@ export default function LandingPage() {
                 </h3>
               </div>
 
-              {/* Instant Claim Button for Task 3 */}
+              {/* Shimmering Gold Instant Claim Button for Task 3 */}
               <button
                 onClick={() => awardCoins(25, 'Bangkok Golden Slot Confirmed', 'schedule')}
                 className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold transition-all cursor-pointer ${
                   completedTasks.schedule 
-                    ? 'bg-emerald-100 text-emerald-800' 
-                    : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                    : 'animate-gold-shimmer text-amber-950 shadow-xs hover:scale-105 active:scale-95'
                 }`}
               >
                 {completedTasks.schedule ? '✓ สำเร็จ (+25 Coins)' : '⚡ รับทันที (+25 Coins)'}
@@ -1277,7 +1412,7 @@ export default function LandingPage() {
                     onClick={() => handleSelectSlot(s.id as any)}
                     className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between active:scale-98 ${
                       isSelected
-                        ? 'bg-amber-50 border-amber-400 text-amber-950 font-bold shadow-xs'
+                        ? 'bg-amber-50/90 border-amber-400 text-amber-950 font-bold shadow-xs scale-101'
                         : 'bg-stone-50 border-black/5 text-stone-600 hover:text-black hover:bg-stone-100'
                     }`}
                   >
@@ -1296,11 +1431,16 @@ export default function LandingPage() {
           </div>
 
           {/* TASK 04: RESCUE A FAILED POST (+30 COINS) */}
-          <div className={`p-6 rounded-3xl border transition-all duration-300 space-y-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] ${
+          <div className={`editorial-paper-card p-6 rounded-3xl relative overflow-hidden transition-all duration-300 space-y-4 ${
             completedTasks.rescue
               ? 'border-emerald-500 ring-2 ring-emerald-500/15'
-              : 'border-black/10 hover:border-[#364165]/50'
+              : 'hover:border-[#364165]/50'
           }`}>
+            {/* Tactile Washi Tape Strip */}
+            <div className="absolute -top-3 right-8 z-10 pointer-events-none drop-shadow-xs rotate-[-2deg]">
+              <Sticker name="washi-terracotta" size="sm" />
+            </div>
+
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
                 <span className="w-6 h-6 rounded-full bg-[#364165]/10 text-[#364165] font-mono font-bold text-xs flex items-center justify-center">
@@ -1311,7 +1451,7 @@ export default function LandingPage() {
                 </h3>
               </div>
 
-              {/* Instant Claim Button for Task 4 */}
+              {/* Shimmering Gold Instant Claim Button for Task 4 */}
               <button
                 onClick={() => {
                   setIsFailureResolved(true);
@@ -1319,8 +1459,8 @@ export default function LandingPage() {
                 }}
                 className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold transition-all cursor-pointer ${
                   completedTasks.rescue 
-                    ? 'bg-emerald-100 text-emerald-800' 
-                    : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-300' 
+                    : 'animate-gold-shimmer text-amber-950 shadow-xs hover:scale-105 active:scale-95'
                 }`}
               >
                 {completedTasks.rescue ? '✓ สำเร็จ (+30 Coins)' : '⚡ รับทันที (+30 Coins)'}
@@ -1331,30 +1471,32 @@ export default function LandingPage() {
               Inspect a simulated aspect ratio mismatch and trigger automated AI Safe-Zone recovery:
             </p>
 
-            {/* Visual Simulated Crop Box with Scanline */}
-            <div className="p-3 bg-stone-50 rounded-xl border border-black/5 relative overflow-hidden text-center min-h-[90px] flex flex-col justify-center">
+            {/* Visual Simulated Crop Box with Live Animated Laser Scan */}
+            <div className="p-3 bg-stone-900 rounded-xl border border-stone-700 relative overflow-hidden text-center min-h-[96px] flex flex-col justify-center">
+              {/* Dynamic Laser Beam Overlay */}
               {isScanningRescue && (
-                <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent animate-pulse shadow-md top-1/2 -translate-y-1/2" />
+                <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_12px_#22d3ee] animate-laser-scan z-20 pointer-events-none" />
               )}
               
               {!isFailureResolved ? (
-                <div className="space-y-1">
-                  <div className="flex items-center justify-center gap-1.5 text-red-600 font-mono font-bold text-xs">
+                <div className="space-y-1.5 z-10">
+                  <div className="flex items-center justify-center gap-1.5 text-red-400 font-mono font-bold text-xs">
                     <AlertCircle className="w-3.5 h-3.5" />
                     <span>Meta Graph API 400: Aspect Ratio Mismatch</span>
                   </div>
-                  <p className="text-[11px] text-stone-500 font-mono">
-                    Input: 1:1 Square • Required: 9:16 Vertical Reel
+                  <p className="text-[11px] text-stone-400 font-mono">
+                    Input: 1:1 Square (1080×1080) • Required: 9:16 Vertical Reel
                   </p>
                 </div>
               ) : (
-                <div className="space-y-1">
-                  <div className="flex items-center justify-center gap-1.5 text-emerald-700 font-mono font-bold text-xs">
+                <div className="space-y-1.5 z-10 animate-in fade-in zoom-in-95 duration-300">
+                  <div className="flex items-center justify-center gap-1.5 text-emerald-400 font-mono font-bold text-xs">
                     <CheckCircle2 className="w-3.5 h-3.5" />
-                    <span>Framed to 1080 × 1920 with 15% Top / 25% Bottom Safe-Margins!</span>
+                    <span>Framed to 1080 × 1920 with Safe-Margins!</span>
                   </div>
-                  <p className="text-[10px] text-emerald-800 font-mono">
-                    ✓ Clean Safe-Zone • Zero Obstruction from Action Buttons
+                  <p className="text-[10px] text-stone-300 font-mono flex items-center justify-center gap-1">
+                    <Sticker name="safe-zone-guide" size="xs" inline />
+                    <span>Top 15% • Bottom 25% Safe • Zero UI Obstruction</span>
                   </p>
                 </div>
               )}
@@ -1365,14 +1507,15 @@ export default function LandingPage() {
                 type="button"
                 onClick={handleTriggerRescue}
                 disabled={isScanningRescue}
-                className="w-full py-2.5 px-4 rounded-xl bg-[#A24836] text-white font-bold hover:bg-[#8e3f2f] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md text-xs active:scale-98"
+                className="w-full py-3 px-4 rounded-xl bg-[#A24836] text-white font-bold hover:bg-[#8e3f2f] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md text-xs active:scale-98"
               >
                 <Sparkles className={`w-3.5 h-3.5 text-amber-300 ${isScanningRescue ? 'animate-spin' : ''}`} />
-                <span>{isScanningRescue ? 'Scanning & Re-framing Safe-Zone...' : '⚡ 1-Click AI Safe-Zone Rescue'}</span>
+                <span>{isScanningRescue ? 'Laser Scanning & Re-framing Safe-Zone...' : '⚡ 1-Click AI Safe-Zone Rescue'}</span>
               </button>
             ) : (
-              <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-center font-mono text-[11px] text-emerald-800 font-bold">
-                ✓ Post Successfully Recovered & Validated!
+              <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 text-center font-mono text-[11px] text-emerald-800 font-bold flex items-center justify-center gap-1.5">
+                <Check className="w-3.5 h-3.5" />
+                <span>Post Successfully Recovered & Validated!</span>
               </div>
             )}
           </div>
@@ -1607,7 +1750,11 @@ export default function LandingPage() {
         </div>
 
         {/* Interactive Workspace Tab Panels */}
-        <div className="p-7 sm:p-9 bg-white border border-black/10 rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.06)] relative min-h-[420px]">
+        <div className="editorial-paper-card p-7 sm:p-9 rounded-3xl relative min-h-[420px]">
+          {/* Tactile Washi Tape Strip */}
+          <div className="absolute -top-3.5 right-12 pointer-events-none drop-shadow-xs rotate-[2deg]">
+            <Sticker name="washi-indigo" size="md" />
+          </div>
           {/* TAB 1: DASHBOARD */}
           {activeTourTab === 'dashboard' && (
             <div className="space-y-6">
@@ -1912,7 +2059,7 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* 1. Upload Once */}
-            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
               <div className="w-10 h-10 rounded-xl bg-[#364165]/10 text-[#364165] flex items-center justify-center font-bold">
                 <Film className="w-5 h-5" />
               </div>
@@ -1923,7 +2070,7 @@ export default function LandingPage() {
             </div>
 
             {/* 2. Shared Story */}
-            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center font-bold">
                 <FileText className="w-5 h-5" />
               </div>
@@ -1934,7 +2081,7 @@ export default function LandingPage() {
             </div>
 
             {/* 3. Platform Editions */}
-            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center font-bold">
                 <Sliders className="w-5 h-5" />
               </div>
@@ -1945,7 +2092,7 @@ export default function LandingPage() {
             </div>
 
             {/* 4. Smart Scheduling */}
-            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
               <div className="w-10 h-10 rounded-xl bg-[#A24836]/10 text-[#A24836] flex items-center justify-center font-bold">
                 <Clock className="w-5 h-5" />
               </div>
@@ -1956,7 +2103,7 @@ export default function LandingPage() {
             </div>
 
             {/* 5. Publishing Queue */}
-            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
               <div className="w-10 h-10 rounded-xl bg-[#364165]/10 text-[#364165] flex items-center justify-center font-bold">
                 <RefreshCw className="w-5 h-5" />
               </div>
@@ -1967,7 +2114,7 @@ export default function LandingPage() {
             </div>
 
             {/* 6. Retry & Recovery */}
-            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
               <div className="w-10 h-10 rounded-xl bg-[#A24836]/10 text-[#A24836] flex items-center justify-center font-bold">
                 <Zap className="w-5 h-5" />
               </div>
@@ -1978,7 +2125,7 @@ export default function LandingPage() {
             </div>
 
             {/* 7. Connected Accounts */}
-            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center font-bold">
                 <ShieldCheck className="w-5 h-5" />
               </div>
@@ -1989,7 +2136,7 @@ export default function LandingPage() {
             </div>
 
             {/* 8. Content Performance */}
-            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center font-bold">
                 <BarChart3 className="w-5 h-5" />
               </div>
@@ -2021,7 +2168,7 @@ export default function LandingPage() {
         {/* 5 Audience Profiles Grid (STRICTLY NO FAKE STATS / NO FAKE REVIEWS) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* 1. Individual Creators */}
-          <div className="p-7 bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
+          <div className="editorial-paper-card p-7 rounded-3xl space-y-4">
             <div className="w-8 h-8 rounded-full bg-[#364165]/10 text-[#364165] flex items-center justify-center font-mono font-bold text-xs">
               01
             </div>
@@ -2037,7 +2184,7 @@ export default function LandingPage() {
           </div>
 
           {/* 2. Social Media Managers */}
-          <div className="p-7 bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
+          <div className="editorial-paper-card p-7 rounded-3xl space-y-4">
             <div className="w-8 h-8 rounded-full bg-[#A24836]/10 text-[#A24836] flex items-center justify-center font-mono font-bold text-xs">
               02
             </div>
@@ -2053,7 +2200,7 @@ export default function LandingPage() {
           </div>
 
           {/* 3. Content Teams & Newsrooms */}
-          <div className="p-7 bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
+          <div className="editorial-paper-card p-7 rounded-3xl space-y-4">
             <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-800 flex items-center justify-center font-mono font-bold text-xs">
               03
             </div>
@@ -2069,7 +2216,7 @@ export default function LandingPage() {
           </div>
 
           {/* 4. Creative Studios */}
-          <div className="p-7 bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
+          <div className="editorial-paper-card p-7 rounded-3xl space-y-4">
             <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-800 flex items-center justify-center font-mono font-bold text-xs">
               04
             </div>
@@ -2085,7 +2232,7 @@ export default function LandingPage() {
           </div>
 
           {/* 5. Small Businesses & Brands */}
-          <div className="p-7 bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm md:col-span-2 lg:col-span-2 hover:-translate-y-1 transition-transform">
+          <div className="editorial-paper-card p-7 rounded-3xl space-y-4 md:col-span-2 lg:col-span-2">
             <div className="w-8 h-8 rounded-full bg-[#364165]/10 text-[#364165] flex items-center justify-center font-mono font-bold text-xs">
               05
             </div>
@@ -2120,7 +2267,7 @@ export default function LandingPage() {
           </div>
 
           {/* The Interactive Dispatch Matrix */}
-          <div className="p-7 sm:p-9 bg-white rounded-3xl border border-black/10 shadow-[0_15px_40px_rgba(0,0,0,0.06)] space-y-6">
+          <div className="editorial-paper-card p-7 sm:p-9 rounded-3xl space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-black/10">
               <div>
                 <span className="text-[10px] font-mono text-stone-500 uppercase block font-bold">CAMPAIGN DISPATCH MATRIX</span>
@@ -2277,14 +2424,25 @@ export default function LandingPage() {
           </p>
         </div>
 
-        {/* Masterwork Ivory & Gold Ticket (High-End & Pristine) */}
-        <div className={`rounded-3xl border-2 transition-all duration-500 relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)] ${
+        {/* Masterwork Ivory & Gold Ticket (Physical Editorial Ticket with Notches) */}
+        <div className={`rounded-3xl border-2 transition-all duration-500 relative shadow-[0_20px_50px_rgba(0,0,0,0.08)] ${
           isPassUnlocked
-            ? 'bg-white border-amber-400 ring-4 ring-amber-400/20 shadow-[0_25px_60px_rgba(245,158,11,0.18)]'
-            : 'bg-white/90 border-black/10'
+            ? 'bg-gradient-to-b from-white via-[#FFFDF9] to-[#FBF8F0] border-amber-400 ring-4 ring-amber-400/25 shadow-[0_25px_60px_rgba(245,158,11,0.22)]'
+            : 'bg-white/95 border-black/10'
         } ${isRedeemingAnimation ? 'scale-98' : ''}`}>
+          
+          {/* Physical Ticket Semicircular Notches */}
+          <div className="ticket-notch-left" />
+          <div className="ticket-notch-right" />
 
           <div className="p-7 sm:p-12 space-y-6">
+            {/* Physical Brass Eyelet Loop (Lanyard Hole) */}
+            <div className="flex justify-center -mt-3 mb-2">
+              <div className="w-6 h-6 rounded-full border-2 border-amber-500/40 bg-stone-100 flex items-center justify-center shadow-inner">
+                <div className="w-2.5 h-2.5 rounded-full bg-stone-300 shadow-xs" />
+              </div>
+            </div>
+
             {/* Ticket Masthead */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b-2 border-dashed border-stone-200">
               <div className="space-y-1">
@@ -2300,15 +2458,11 @@ export default function LandingPage() {
                 </p>
               </div>
 
-              {/* Dedicated Clean Stamp Zone */}
+              {/* Dedicated Clean Stamp Zone with Authentic Wax-Seal Sticker */}
               <div className="flex items-center gap-3">
                 {isPassRedeemed && (
                   <div className="animate-in zoom-in-75 duration-300">
-                    <div className="w-20 h-20 rounded-full border-2 border-dashed border-[#A24836] flex flex-col items-center justify-center text-[#A24836] font-mono font-bold text-[10px] rotate-[-12deg] bg-[#A24836]/10 shadow-xs">
-                      <span className="text-sm">✓</span>
-                      <span>APPROVED</span>
-                      <span className="text-[7px]">BANGKOK</span>
-                    </div>
+                    <Sticker name="approved-seal" size="xl" className="rotate-[-12deg] drop-shadow-md" />
                   </div>
                 )}
                 <div className="text-right">
@@ -2326,7 +2480,7 @@ export default function LandingPage() {
 
             {/* Ticket Privileges */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
-              <div className="p-4 bg-stone-50 rounded-2xl border border-black/5 space-y-2">
+              <div className="p-4 bg-stone-50/80 rounded-2xl border border-black/5 space-y-2">
                 <span className="text-[10px] uppercase font-bold text-[#364165] block">
                   AUTHORIZED SPECIFICATIONS:
                 </span>
@@ -2346,7 +2500,7 @@ export default function LandingPage() {
                 </ul>
               </div>
 
-              <div className="p-4 bg-stone-50 rounded-2xl border border-black/5 space-y-2">
+              <div className="p-4 bg-stone-50/80 rounded-2xl border border-black/5 space-y-2">
                 <span className="text-[10px] uppercase font-bold text-[#364165] block">
                   SECURITY & INFRASTRUCTURE:
                 </span>
@@ -2369,7 +2523,7 @@ export default function LandingPage() {
 
             {/* LOCKED vs UNLOCKED INTERACTION AREA */}
             {!isPassUnlocked ? (
-              <div className="p-6 bg-stone-50 rounded-2xl border border-black/10 text-center space-y-3 font-mono">
+              <div className="p-6 bg-stone-50/80 rounded-2xl border border-black/10 text-center space-y-3 font-mono">
                 <div className="flex items-center justify-center gap-2 text-stone-600 text-xs">
                   <Lock className="w-4 h-4 text-[#A24836]" />
                   <span>Current balance: <b>{coins} / 100 Press Coins</b></span>
@@ -2379,7 +2533,7 @@ export default function LandingPage() {
                 </p>
                 <button
                   onClick={handleClaimAllCoins}
-                  className="py-2.5 px-6 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold text-xs shadow-md transition-all cursor-pointer active:scale-95"
+                  className="py-2.5 px-6 rounded-xl animate-gold-shimmer text-amber-950 font-bold text-xs shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
                 >
                   ⚡ รับ 100 Coins ทันที และเปิดตั๋ว →
                 </button>
@@ -2390,7 +2544,7 @@ export default function LandingPage() {
                   onClick={handleRedeemTicket}
                   className="w-full py-4 px-6 rounded-2xl bg-[#A24836] hover:bg-[#8e3f2f] text-white font-bold text-base shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-[0.98] ring-2 ring-amber-400/50"
                 >
-                  <Sticker name="approved-seal" size="xs" inline />
+                  <Sticker name="approved-seal" size="sm" inline />
                   <span>Redeem Dream Pass (ประทับตราครั่งเปิดใช้งานตั๋ว)</span>
                 </button>
                 <p className="text-[11px] text-center font-mono text-stone-500">
