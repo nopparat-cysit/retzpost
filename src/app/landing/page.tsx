@@ -25,23 +25,25 @@ import {
   Coins, 
   Ticket, 
   RotateCcw, 
-  ChevronRight,
-  TrendingUp,
-  AlertCircle,
-  Lock,
-  Unlock,
-  Star,
-  Users,
-  LayoutGrid,
-  Calendar as CalendarIcon,
-  BarChart3,
-  RefreshCw,
-  FolderOpen,
-  Volume2,
-  VolumeX,
-  Sun,
-  Moon,
-  CheckCheck
+  ChevronRight, 
+  TrendingUp, 
+  AlertCircle, 
+  Lock, 
+  Unlock, 
+  Star, 
+  Users, 
+  LayoutGrid, 
+  Calendar as CalendarIcon, 
+  BarChart3, 
+  RefreshCw, 
+  FolderOpen, 
+  Volume2, 
+  VolumeX, 
+  Sun, 
+  Moon, 
+  CheckCheck,
+  Flame,
+  Radio
 } from 'lucide-react';
 import { 
   FacebookLogo, 
@@ -73,7 +75,7 @@ const playChimeSound = (soundEnabled: boolean) => {
     osc.frequency.exponentialRampToValueAtTime(880, now + 0.08); // A5
     osc.frequency.exponentialRampToValueAtTime(1174.66, now + 0.16); // D6
 
-    gain.gain.setValueAtTime(0.18, now);
+    gain.gain.setValueAtTime(0.2, now);
     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.38);
 
     osc.start(now);
@@ -125,9 +127,9 @@ const PressCoinIcon: React.FC<PressCoinIconProps> = ({ size = 28, className = ''
   >
     <defs>
       <linearGradient id="coinGold" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#FDE047" />
-        <stop offset="35%" stopColor="#EAB308" />
-        <stop offset="70%" stopColor="#CA8A04" />
+        <stop offset="0%" stopColor="#FFF176" />
+        <stop offset="35%" stopColor="#FBC02D" />
+        <stop offset="70%" stopColor="#E09F00" />
         <stop offset="100%" stopColor="#A16207" />
       </linearGradient>
       <linearGradient id="coinRim" x1="0%" y1="100%" x2="100%" y2="0%">
@@ -136,7 +138,7 @@ const PressCoinIcon: React.FC<PressCoinIconProps> = ({ size = 28, className = ''
         <stop offset="100%" stopColor="#78350F" />
       </linearGradient>
       <radialGradient id="coinShine" cx="30%" cy="30%" r="70%">
-        <stop offset="0%" stopColor="#FEF08A" stopOpacity="0.85" />
+        <stop offset="0%" stopColor="#FFFBEB" stopOpacity="0.9" />
         <stop offset="60%" stopColor="#CA8A04" stopOpacity="0" />
       </radialGradient>
     </defs>
@@ -161,7 +163,7 @@ const PressCoinIcon: React.FC<PressCoinIconProps> = ({ size = 28, className = ''
           fill="#78350F"
           opacity="0.95"
         />
-        <line x1="50" y1="56" x2="50" y2="72" stroke="#FDE047" strokeWidth="1.5" />
+        <line x1="50" y1="56" x2="50" y2="72" stroke="#FFF176" strokeWidth="1.5" />
         <text x="50" y="88" textAnchor="middle" fill="#713F12" fontSize="7" fontFamily="monospace" fontWeight="bold" letterSpacing="1">
           RETZPOST
         </text>
@@ -202,7 +204,7 @@ export default function LandingPage() {
     rescue: false,
   });
 
-  // Floating Coin Particles Effect
+  // Floating Celebration Coin Particles
   const [floatingCoinFx, setFloatingCoinFx] = useState<{ id: number; text: string }[]>([]);
 
   // Task 1: Selected Platforms
@@ -264,6 +266,23 @@ export default function LandingPage() {
     setCoins((prev) => Math.min(100, prev + amount));
     setCompletedTasks((prev) => ({ ...prev, [taskKey]: true }));
     triggerCoinCelebration(amount, label);
+  };
+
+  // Master Instant 100 Coins Claim Action ("รับ coin ได้เลย")
+  const handleClaimAllCoins = () => {
+    setCoins(100);
+    setCompletedTasks({
+      destinations: true,
+      caption: true,
+      schedule: true,
+      rescue: true,
+    });
+    setIsFailureResolved(true);
+    triggerCoinCelebration(100, 'Unlocked 100 Coins Instantly!');
+    playChimeSound(soundEnabled);
+    setTimeout(() => {
+      dreamPassRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 500);
   };
 
   // Task 1: Toggle Platform
@@ -357,29 +376,29 @@ export default function LandingPage() {
   const isPassUnlocked = coins >= 100;
 
   return (
-    <div className="min-h-screen bg-paper-canvas text-ink-primary font-sans selection:bg-brand-indigo selection:text-white flex flex-col antialiased relative overflow-x-hidden">
+    <div className="min-h-screen bg-[#F5F2EB] text-[#1A1A18] font-sans selection:bg-[#364165] selection:text-white flex flex-col antialiased relative overflow-x-hidden">
       
       {/* ========================================================================= */}
-      {/* MASTER ATMOSPHERIC BACKGROUND (NO LONGER DULL: WARM OCHRE + INDIGO HALOS) */}
+      {/* MASTER ATMOSPHERIC BACKGROUND (WARM OCHRE + LUXURY INDIGO HALOS)          */}
       {/* ========================================================================= */}
       <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden">
-        {/* Archival Newsprint Paper Dot Pattern */}
-        <div className="absolute inset-0 dream-paper-texture opacity-80" />
+        {/* Archival Cotton Dot Pattern */}
+        <div className="absolute inset-0 dream-paper-texture opacity-70" />
         
-        {/* Warm Ochre Daylight Halo (Top-Left) */}
-        <div className="absolute -top-32 -left-32 w-[650px] h-[650px] rounded-full bg-gradient-to-br from-amber-400/15 via-amber-200/5 to-transparent blur-3xl animate-glow-pulse" />
+        {/* Warm Ochre Sunlight Halo (Top-Left) */}
+        <div className="absolute -top-40 -left-40 w-[750px] h-[750px] rounded-full bg-gradient-to-br from-amber-400/20 via-amber-200/5 to-transparent blur-3xl animate-glow-pulse" />
         
         {/* Royal Publishing Indigo Halo (Top-Right) */}
-        <div className="absolute top-10 -right-40 w-[700px] h-[700px] rounded-full bg-gradient-to-bl from-brand-indigo/15 via-brand-indigo/5 to-transparent blur-3xl" />
+        <div className="absolute top-0 -right-48 w-[800px] h-[800px] rounded-full bg-gradient-to-bl from-[#364165]/20 via-[#364165]/5 to-transparent blur-3xl" />
         
         {/* Terracotta Wax-Seal Ambient Halo (Middle/Lower) */}
-        <div className="absolute top-[40%] left-1/2 -translate-x-1/2 w-[900px] h-[700px] rounded-full bg-gradient-to-tr from-accent-terracotta/8 via-accent-ochre/5 to-transparent blur-3xl" />
+        <div className="absolute top-[38%] left-1/2 -translate-x-1/2 w-[950px] h-[750px] rounded-full bg-gradient-to-tr from-[#A24836]/10 via-[#C98836]/6 to-transparent blur-3xl" />
         
-        {/* Subtle Broadsheet Desktop Margin Double Hairlines */}
-        <div className="hidden 2xl:block absolute inset-y-0 left-12 w-px border-l border-border-rule/60" />
-        <div className="hidden 2xl:block absolute inset-y-0 left-14 w-px border-l border-border-rule/40" />
-        <div className="hidden 2xl:block absolute inset-y-0 right-12 w-px border-r border-border-rule/60" />
-        <div className="hidden 2xl:block absolute inset-y-0 right-14 w-px border-r border-border-rule/40" />
+        {/* Broadsheet Desktop Margin Double Hairlines */}
+        <div className="hidden 2xl:block absolute inset-y-0 left-12 w-px border-l border-black/[0.08]" />
+        <div className="hidden 2xl:block absolute inset-y-0 left-14 w-px border-l border-black/[0.04]" />
+        <div className="hidden 2xl:block absolute inset-y-0 right-12 w-px border-r border-black/[0.08]" />
+        <div className="hidden 2xl:block absolute inset-y-0 right-14 w-px border-r border-black/[0.04]" />
       </div>
 
       {/* 1. PUBLIC EDITORIAL HEADER */}
@@ -390,7 +409,7 @@ export default function LandingPage() {
         {floatingCoinFx.map((fx) => (
           <div
             key={fx.id}
-            className="animate-in fade-in slide-in-from-bottom-6 duration-500 p-2.5 px-4 bg-paper-raised/95 backdrop-blur-md border-2 border-amber-400 rounded-full shadow-2xl flex items-center gap-2 text-xs font-mono font-bold text-ink-primary"
+            className="animate-in fade-in slide-in-from-bottom-6 duration-500 p-2.5 px-4 bg-white/95 backdrop-blur-md border-2 border-amber-400 rounded-full shadow-[0_10px_30px_rgba(202,138,4,0.3)] flex items-center gap-2 text-xs font-mono font-bold text-[#1A1A18]"
           >
             <PressCoinIcon size={20} />
             <span className="text-amber-800">{fx.text}</span>
@@ -399,17 +418,17 @@ export default function LandingPage() {
         ))}
       </div>
 
-      {/* FLOATING REWARD HUD (Sticky Pill showing live Press Coin balance & Audio Toggle) */}
+      {/* FLOATING REWARD HUD (With Instant 100 Coins Claim Button!) */}
       <div className="fixed bottom-5 right-5 z-40 transition-all duration-300">
-        <div className="p-1.5 pl-3.5 pr-2 bg-paper-raised/95 backdrop-blur-md border-2 border-border-rule rounded-full shadow-2xl flex items-center gap-3 ring-1 ring-border-rule/40 hover:scale-[1.02] transition-transform">
-          {/* Sound Mute/Unmute Toggle Button */}
+        <div className="p-1.5 pl-3 pr-2 bg-white/95 backdrop-blur-md border border-black/10 rounded-full shadow-[0_12px_36px_rgba(0,0,0,0.12)] flex items-center gap-2.5 ring-1 ring-black/5 hover:scale-[1.02] transition-transform">
+          {/* Sound Toggle */}
           <button
             type="button"
             onClick={() => setSoundEnabled(!soundEnabled)}
-            className="w-7 h-7 rounded-full bg-paper-subtle hover:bg-paper-canvas flex items-center justify-center text-ink-secondary hover:text-ink-primary border border-border-rule transition-colors cursor-pointer"
+            className="w-7 h-7 rounded-full bg-stone-100 hover:bg-stone-200 flex items-center justify-center text-stone-600 transition-colors cursor-pointer"
             title={soundEnabled ? 'Disable sound effects' : 'Enable sound effects'}
           >
-            {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-emerald-700" /> : <VolumeX className="w-3.5 h-3.5 text-ink-muted" />}
+            {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-emerald-700" /> : <VolumeX className="w-3.5 h-3.5 text-stone-400" />}
           </button>
 
           {/* 3D Flippable Coin */}
@@ -425,11 +444,12 @@ export default function LandingPage() {
             <PressCoinIcon size={26} isFlipped={isCoinFlipped} />
           </button>
 
-          <div className="leading-none">
-            <span className="font-mono text-xs font-bold text-ink-primary">
-              {coins} <span className="text-[10px] text-ink-secondary">/ 100 Coins</span>
+          {/* Balance display */}
+          <div className="leading-none pr-1">
+            <span className="font-mono text-xs font-bold text-[#1A1A18]">
+              {coins} <span className="text-[10px] text-stone-500 font-normal">/ 100</span>
             </span>
-            <div className="w-16 h-1 bg-paper-subtle rounded-full overflow-hidden mt-1">
+            <div className="w-14 h-1 bg-stone-100 rounded-full overflow-hidden mt-1">
               <div
                 className="h-full bg-gradient-to-r from-amber-400 to-amber-600 transition-all duration-500 rounded-full"
                 style={{ width: `${coins}%` }}
@@ -437,34 +457,36 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <button
-            onClick={() => {
-              if (isPassUnlocked) {
-                dreamPassRef.current?.scrollIntoView({ behavior: 'smooth' });
-              } else {
-                pressStudioRef.current?.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
-            className={`py-1.5 px-3.5 rounded-full text-[11px] font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-              isPassUnlocked
-                ? 'bg-accent-terracotta text-white hover:bg-accent-terracotta/90 shadow-md animate-bounce ring-2 ring-amber-400'
-                : 'bg-brand-indigo text-white hover:bg-brand-indigo-hover'
-            }`}
-          >
-            <Ticket className="w-3.5 h-3.5" />
-            <span>{isPassUnlocked ? 'Forge Dream Pass! ✦' : 'Play & Earn'}</span>
-          </button>
+          {/* Instant Claim Button inside HUD */}
+          {coins < 100 ? (
+            <button
+              onClick={handleClaimAllCoins}
+              className="py-1.5 px-3 rounded-full text-[11px] font-mono font-bold bg-amber-400 hover:bg-amber-500 text-amber-950 flex items-center gap-1 shadow-sm transition-all cursor-pointer active:scale-95"
+              title="Instant Unlock: Get all 100 coins immediately"
+            >
+              <Zap className="w-3 h-3 fill-amber-950" />
+              <span>รับ 100 Coins ทันที</span>
+            </button>
+          ) : (
+            <button
+              onClick={() => dreamPassRef.current?.scrollIntoView({ behavior: 'smooth' })}
+              className="py-1.5 px-3 rounded-full text-[11px] font-mono font-bold bg-[#A24836] text-white hover:bg-[#8e3f2f] shadow-md animate-bounce flex items-center gap-1 cursor-pointer"
+            >
+              <Ticket className="w-3.5 h-3.5" />
+              <span>เปิดดูตั๋ว Dream Pass!</span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* ========================================================================= */}
-      {/* SECTION 01 — HERO: THE FRONT PAGE (BEAUTIFUL EDITORIAL COMPOSITION)       */}
+      {/* SECTION 01 — HERO: THE FRONT PAGE (HIGH-CONTRAST MASTERPIECE)             */}
       {/* ========================================================================= */}
-      <section id="hero" className="relative pt-10 pb-16 md:pt-14 md:pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
-        {/* Real-time Ticker Tape Bar with Live Transmission */}
-        <div className="flex items-center justify-between border-b-2 border-border-rule pb-2.5 mb-8 text-[11px] font-mono text-ink-secondary bg-paper-raised/70 p-2.5 rounded-xl border border-border-rule shadow-xs">
+      <section id="hero" className="relative pt-8 pb-16 md:pt-14 md:pb-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+        {/* Ticker Tape Masthead Bar */}
+        <div className="flex items-center justify-between border-b border-black/10 pb-2.5 mb-8 text-[11px] font-mono text-stone-600 bg-white/70 backdrop-blur-sm p-3 rounded-xl border shadow-xs">
           <div className="flex items-center gap-2 overflow-hidden">
-            <span className="font-bold uppercase tracking-widest text-brand-indigo flex items-center gap-1.5">
+            <span className="font-bold uppercase tracking-widest text-[#364165] flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               MULTIPOST GAZETTE
             </span>
@@ -472,111 +494,98 @@ export default function LandingPage() {
             <span className="truncate">BANGKOK PUBLISHING DESK (UTC+7)</span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <span className="hidden sm:inline font-mono text-[10px] text-ink-secondary">TRANSMISSION: READY</span>
-            <span className="px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 font-bold border border-emerald-500/30 text-[10px]">
+            <span className="hidden sm:inline font-mono text-[10px] text-stone-500">ENGINE STATUS: ACTIVE</span>
+            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 font-bold border border-emerald-500/30 text-[10px]">
               99.98% SLA
             </span>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           {/* Left Broadsheet Editorial Column (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-sm bg-[#C98836]/15 border-t border-b border-[#C98836]/40 text-xs font-mono text-amber-900 shadow-2xs">
-              <Sticker name="press-monogram-seal" size="xs" inline />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-400/15 border border-amber-500/30 text-xs font-mono text-amber-900 shadow-2xs">
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
               <span className="font-bold tracking-wider uppercase">THE CREATOR&apos;S PUBLISHING DESK</span>
             </div>
 
-            <h1 className="font-serif font-bold text-4xl sm:text-6xl lg:text-7xl text-ink-primary leading-[1.08] tracking-tight">
+            <h1 className="font-serif font-bold text-4xl sm:text-6xl lg:text-7xl text-[#1A1A18] leading-[1.06] tracking-tight">
               One story. <br />
-              <span className="italic font-normal text-brand-indigo underline decoration-amber-400 decoration-wavy decoration-2">Everywhere.</span>
+              <span className="italic font-normal text-[#364165] underline decoration-amber-400 decoration-wavy decoration-2">Everywhere.</span>
             </h1>
 
-            <p className="font-sans text-base sm:text-lg text-ink-secondary leading-relaxed max-w-2xl">
+            <p className="font-sans text-base sm:text-lg text-stone-600 leading-relaxed max-w-2xl">
               Create once, customize for every channel, and keep your publishing workflow beautifully organized. Upload master media, tailor platform-specific safe zones and captions, and dispatch with millisecond precision across YouTube, TikTok, Instagram, Facebook, X, and Lemon8.
             </p>
 
-            {/* Dual CTAs + Playful Hint */}
-            <div className="pt-2 flex flex-wrap items-center gap-4 text-xs font-mono">
+            {/* CTAs with Instant Coin Action */}
+            <div className="pt-2 flex flex-wrap items-center gap-3 text-xs font-mono">
               <button
                 type="button"
-                onClick={() => {
-                  pressStudioRef.current?.scrollIntoView({ behavior: 'smooth' });
-                  playChimeSound(soundEnabled);
-                }}
-                className="py-3.5 px-6 rounded-editorial bg-brand-indigo hover:bg-brand-indigo-hover text-white font-semibold flex items-center gap-2 shadow-md transition-all active:scale-[0.98] cursor-pointer text-sm group"
+                onClick={handleClaimAllCoins}
+                className="py-3.5 px-6 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold flex items-center gap-2 shadow-[0_10px_25px_-5px_rgba(245,158,11,0.4)] transition-all active:scale-[0.98] cursor-pointer text-sm"
               >
-                <Sparkles className="w-4 h-4 text-amber-300 group-hover:rotate-12 transition-transform" />
-                <span>Try the Interactive Demo</span>
-                <span className="px-1.5 py-0.2 rounded bg-amber-400 text-amber-900 font-bold text-[10px]">
-                  +100 Coins
-                </span>
+                <Zap className="w-4 h-4 fill-amber-950" />
+                <span>⚡ รับ 100 Coins ทันที (Auto-Complete)</span>
               </button>
 
               <button
                 type="button"
-                onClick={() => workspaceTourRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                className="py-3.5 px-5 rounded-editorial bg-paper-raised hover:bg-paper-subtle text-ink-primary border border-border-rule font-semibold flex items-center gap-2 shadow-2xs transition-colors cursor-pointer text-sm"
+                onClick={() => pressStudioRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                className="py-3.5 px-5 rounded-xl bg-[#364165] hover:bg-[#2B3452] text-white font-semibold flex items-center gap-2 shadow-sm transition-all cursor-pointer text-sm"
               >
-                <span>Explore MULTIPOST</span>
-                <ChevronRight className="w-4 h-4 text-ink-secondary" />
+                <span>ทดลองทำทีละสเต็ป</span>
+                <ChevronRight className="w-4 h-4 text-stone-300" />
               </button>
-            </div>
-
-            {/* Editorial Sticky Note */}
-            <div className="inline-flex items-center gap-2 p-2.5 px-3.5 rounded-lg bg-amber-100/90 border border-amber-300 text-amber-900 text-xs font-mono shadow-xs">
-              <span className="text-sm">📌</span>
-              <span className="font-semibold">Note to Editor:</span>
-              <span className="text-amber-800">Complete the 4 tasks in the Studio below to forge your physical 7-Day Dream Pass!</span>
             </div>
 
             {/* Trust Stamps Row */}
-            <div className="pt-2 flex flex-wrap items-center gap-6 text-[11px] font-mono text-ink-secondary border-t border-border-rule/80">
+            <div className="pt-3 flex flex-wrap items-center gap-6 text-[11px] font-mono text-stone-600 border-t border-black/10">
               <div className="flex items-center gap-1.5">
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                <span>99.98% Dispatch Reliability</span>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span>99.98% Dispatch SLA</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-brand-indigo" />
-                <span>AES-256 GCM Token Vault</span>
+                <ShieldCheck className="w-4 h-4 text-[#364165]" />
+                <span>AES-256 GCM Vault</span>
               </div>
               <div className="flex items-center gap-1.5">
-                <Zap className="w-3.5 h-3.5 text-amber-600" />
-                <span>Native Aspect Ratio Preservation</span>
+                <Zap className="w-4 h-4 text-amber-600" />
+                <span>Native Aspect Ratio Engine</span>
               </div>
             </div>
           </div>
 
-          {/* Right Hero Tactile Centerpiece (5 cols) with Smooth Floating Animation */}
+          {/* Right Hero: Luxury Obsidian Control Console (High-Contrast & Gorgeous!) */}
           <div className="lg:col-span-5 relative flex justify-center">
-            {/* The Tactile Desk Paper Card with Gentle Breathing Motion */}
-            <div className="w-full max-w-md bg-paper-raised border-2 border-border-rule rounded-3xl p-6 shadow-2xl space-y-4 animate-dream-float select-none">
+            <div className="w-full max-w-md bg-gradient-to-b from-[#181E2E] to-[#111520] text-white rounded-3xl p-6 shadow-[0_25px_60px_-10px_rgba(20,25,38,0.4)] border border-[#2E374D] space-y-4 animate-dream-float select-none">
               
-              {/* Pass Header */}
-              <div className="flex items-center justify-between pb-3 border-b-2 border-dashed border-border-rule/80">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded bg-brand-indigo text-white flex items-center justify-center font-serif font-bold text-xs shadow-xs">
+              {/* Console Masthead */}
+              <div className="flex items-center justify-between pb-3 border-b border-white/10">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-amber-400 text-amber-950 flex items-center justify-center font-serif font-bold text-xs shadow-sm">
                     RP
                   </div>
                   <div>
-                    <h3 className="font-serif font-bold text-sm tracking-tight text-ink-primary">
-                      MULTIPOST DISPATCH PASS
+                    <h3 className="font-serif font-bold text-sm tracking-tight text-white">
+                      MULTIPOST CONTROL DESK
                     </h3>
-                    <p className="text-[9px] font-mono text-ink-secondary">
-                      № DP-2026-HERO-001 • BANGKOK DESK
+                    <p className="text-[9px] font-mono text-stone-400">
+                      № DP-2026-CONSOLE • STUDIO LIVE
                     </p>
                   </div>
                 </div>
 
-                <div className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-800 border border-emerald-500/20 text-[9px] font-mono font-bold">
-                  ● ACTIVE SPEC
+                <div className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[9px] font-mono font-bold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>TRANSMITTING</span>
                 </div>
               </div>
 
-              {/* Interactive Aspect Ratio Switcher */}
-              <div className="p-2 bg-paper-canvas rounded-xl border border-border-rule space-y-2">
+              {/* Interactive Viewport Switcher */}
+              <div className="p-2 bg-white/5 rounded-xl border border-white/10 space-y-2">
                 <div className="flex items-center justify-between text-[10px] font-mono">
-                  <span className="text-ink-secondary font-bold">FORMAT VIEWPORT:</span>
+                  <span className="text-stone-300 font-bold">PREVIEW VIEWPORT:</span>
                   <div className="flex gap-1">
                     <button
                       type="button"
@@ -585,7 +594,7 @@ export default function LandingPage() {
                         playChimeSound(soundEnabled);
                       }}
                       className={`px-2.5 py-0.5 rounded text-[10px] font-bold cursor-pointer transition-colors ${
-                        heroRatio === '16:9' ? 'bg-brand-indigo text-white shadow-xs' : 'text-ink-secondary hover:text-ink-primary'
+                        heroRatio === '16:9' ? 'bg-amber-400 text-amber-950 shadow-xs' : 'text-stone-400 hover:text-white'
                       }`}
                     >
                       16:9 Widescreen
@@ -597,7 +606,7 @@ export default function LandingPage() {
                         playChimeSound(soundEnabled);
                       }}
                       className={`px-2.5 py-0.5 rounded text-[10px] font-bold cursor-pointer transition-colors ${
-                        heroRatio === '9:16' ? 'bg-brand-indigo text-white shadow-xs' : 'text-ink-secondary hover:text-ink-primary'
+                        heroRatio === '9:16' ? 'bg-amber-400 text-amber-950 shadow-xs' : 'text-stone-400 hover:text-white'
                       }`}
                     >
                       9:16 Vertical Reel
@@ -605,54 +614,54 @@ export default function LandingPage() {
                   </div>
                 </div>
 
-                {/* Simulated Visual Content with Animated Aspect Guidelines */}
-                <div className="aspect-[16/10] bg-paper-subtle rounded-xl border border-border-rule p-3 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
-                  <div className="flex items-center justify-between text-[9px] font-mono text-ink-secondary">
-                    <span>CANVAS: 4K MASTER PROBE</span>
-                    <span className="text-brand-indigo font-bold">
+                {/* Simulated Content Display */}
+                <div className="aspect-[16/10] bg-black/40 rounded-xl border border-white/10 p-3 flex flex-col justify-between relative overflow-hidden transition-all duration-300">
+                  <div className="flex items-center justify-between text-[9px] font-mono text-stone-400">
+                    <span>INGEST: 4K PROBE</span>
+                    <span className="text-amber-300 font-bold">
                       {heroRatio === '16:9' ? '1920 × 1080 (YouTube/FB)' : '1080 × 1920 (Reels/TikTok)'}
                     </span>
                   </div>
 
-                  <div className="my-auto p-2.5 bg-paper-canvas rounded-lg border border-border-rule text-center relative overflow-hidden shadow-2xs">
-                    <div className="text-xs font-serif font-bold text-ink-primary">
+                  <div className="my-auto p-2.5 bg-white/5 backdrop-blur-md rounded-lg border border-white/15 text-center relative overflow-hidden">
+                    <div className="text-xs font-serif font-bold text-white">
                       &quot;Episode 04: The Bangkok Studio Dispatch&quot;
                     </div>
-                    <div className="text-[9px] font-mono text-emerald-700 font-semibold mt-0.5">
+                    <div className="text-[9px] font-mono text-emerald-400 font-semibold mt-0.5">
                       ✓ AI Safe-Zone Clearance: Top 15% • Bottom 25%
                     </div>
                   </div>
 
-                  {/* Target Platform Status Chips */}
+                  {/* Connected Endpoint Chips with Authentic Logos */}
                   <div className="grid grid-cols-4 gap-1.5">
-                    <div className="p-1 bg-paper-canvas rounded border border-border-rule text-center shadow-2xs">
+                    <div className="p-1 bg-white/10 rounded border border-white/10 text-center shadow-2xs">
                       <YouTubeLogo size={12} className="mx-auto" />
-                      <span className="text-[8px] font-mono block font-bold text-ink-primary">YT 4K</span>
+                      <span className="text-[8px] font-mono block font-bold text-white mt-0.5">YT 4K</span>
                     </div>
-                    <div className="p-1 bg-paper-canvas rounded border border-border-rule text-center shadow-2xs">
+                    <div className="p-1 bg-white/10 rounded border border-white/10 text-center shadow-2xs">
                       <InstagramLogo size={12} className="mx-auto" />
-                      <span className="text-[8px] font-mono block font-bold text-ink-primary">IG Reel</span>
+                      <span className="text-[8px] font-mono block font-bold text-white mt-0.5">IG Reel</span>
                     </div>
-                    <div className="p-1 bg-paper-canvas rounded border border-border-rule text-center shadow-2xs">
+                    <div className="p-1 bg-white/10 rounded border border-white/10 text-center shadow-2xs">
                       <TikTokLogo size={12} className="mx-auto" />
-                      <span className="text-[8px] font-mono block font-bold text-ink-primary">TikTok</span>
+                      <span className="text-[8px] font-mono block font-bold text-white mt-0.5">TikTok</span>
                     </div>
-                    <div className="p-1 bg-paper-canvas rounded border border-border-rule text-center shadow-2xs">
+                    <div className="p-1 bg-white/10 rounded border border-white/10 text-center shadow-2xs">
                       <FacebookLogo size={12} className="mx-auto" />
-                      <span className="text-[8px] font-mono block font-bold text-ink-primary">FB Page</span>
+                      <span className="text-[8px] font-mono block font-bold text-white mt-0.5">FB Page</span>
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Ticket Footer Perforation */}
-              <div className="pt-2 border-t-2 border-dashed border-border-rule/80 flex items-center justify-between text-xs font-mono text-ink-secondary">
-                <span className="text-[10px] uppercase font-bold text-ink-primary">
+              {/* Console Footer Perforation */}
+              <div className="pt-2 border-t border-white/10 flex items-center justify-between text-xs font-mono text-stone-400">
+                <span className="text-[10px] uppercase font-bold text-white">
                   BANGKOK PEAK: 07:30 PM
                 </span>
-                <span className="text-[10px] font-mono text-accent-terracotta font-bold flex items-center gap-1">
+                <span className="text-[10px] font-mono text-amber-300 font-bold flex items-center gap-1">
                   <Sticker name="approved-seal" size="xs" inline />
-                  OFFICIAL DISPATCH
+                  OFFICIAL ENGINE
                 </span>
               </div>
             </div>
@@ -661,77 +670,77 @@ export default function LandingPage() {
       </section>
 
       {/* PLATFORM MARQUEE TICKER */}
-      <section className="bg-paper-raised border-y-2 border-border-rule py-3 px-4 overflow-hidden">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-around gap-4 text-xs font-mono text-ink-secondary">
+      <section className="bg-white/80 backdrop-blur-sm border-y border-black/10 py-3.5 px-4 overflow-hidden shadow-xs">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-around gap-4 text-xs font-mono text-stone-600">
           <div className="flex items-center gap-2">
             <YouTubeLogo size={16} />
-            <span className="font-semibold text-ink-primary">YouTube Data API v3</span>
-            <span className="text-[10px] text-ink-muted">(16:9 Video & Shorts)</span>
+            <span className="font-semibold text-[#1A1A18]">YouTube Data API v3</span>
+            <span className="text-[10px] text-stone-400">(16:9 Video & Shorts)</span>
           </div>
-          <span className="text-border-rule">•</span>
+          <span className="text-stone-300">•</span>
           <div className="flex items-center gap-2">
             <InstagramLogo size={16} />
-            <span className="font-semibold text-ink-primary">Instagram Reels & Carousel</span>
-            <span className="text-[10px] text-ink-muted">(9:16 & 1:1)</span>
+            <span className="font-semibold text-[#1A1A18]">Instagram Reels & Carousel</span>
+            <span className="text-[10px] text-stone-400">(9:16 & 1:1)</span>
           </div>
-          <span className="text-border-rule">•</span>
+          <span className="text-stone-300">•</span>
           <div className="flex items-center gap-2">
             <TikTokLogo size={16} />
-            <span className="font-semibold text-ink-primary">TikTok Creator Content</span>
-            <span className="text-[10px] text-ink-muted">(Native Direct)</span>
+            <span className="font-semibold text-[#1A1A18]">TikTok Creator Content</span>
+            <span className="text-[10px] text-stone-400">(Native Direct)</span>
           </div>
-          <span className="text-border-rule">•</span>
+          <span className="text-stone-300">•</span>
           <div className="flex items-center gap-2">
             <FacebookLogo size={16} />
-            <span className="font-semibold text-ink-primary">Facebook Graph API</span>
-            <span className="text-[10px] text-ink-muted">(Pages & Reels)</span>
+            <span className="font-semibold text-[#1A1A18]">Facebook Graph API</span>
+            <span className="text-[10px] text-stone-400">(Pages & Reels)</span>
           </div>
-          <span className="text-border-rule hidden md:inline">•</span>
+          <span className="text-stone-300 hidden md:inline">•</span>
           <div className="hidden md:flex items-center gap-2">
             <XLogo size={16} />
-            <span className="font-semibold text-ink-primary">X API v2</span>
-            <span className="text-[10px] text-ink-muted">(Thread & Media)</span>
+            <span className="font-semibold text-[#1A1A18]">X API v2</span>
+            <span className="text-[10px] text-stone-400">(Thread & Media)</span>
           </div>
         </div>
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 02 — THE PUBLISHING PROBLEM (CLEAN HIGH-CONTRAST COMPARISON)      */}
+      {/* SECTION 02 — THE PUBLISHING PROBLEM (CLEAN & ELEGANT COMPARISON)          */}
       {/* ========================================================================= */}
       <section id="the-problem" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10">
         <div className="text-center max-w-3xl mx-auto space-y-2">
           <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-accent-terracotta/10 text-accent-terracotta text-xs font-mono font-bold uppercase tracking-wider">
             <span>02 / THE PUBLISHING PROBLEM</span>
           </div>
-          <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-ink-primary">
+          <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
             The Cost of Fragmented Publishing
           </h2>
-          <p className="font-sans text-sm sm:text-base text-ink-secondary leading-relaxed">
+          <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
             Content creators and marketing teams lose 15+ hours each week wrestling with disconnected platform uploaders, inconsistent aspect ratios, and manual repetitive metadata entry.
           </p>
 
           {/* Clean View Tabs */}
-          <div className="pt-3 inline-flex p-1 bg-paper-subtle border border-border-rule rounded-xl font-mono text-xs">
+          <div className="pt-3 inline-flex p-1 bg-white border border-black/10 rounded-xl font-mono text-xs shadow-xs">
             <button
               onClick={() => setProblemViewMode('ALL')}
-              className={`py-1.5 px-3 rounded-lg font-bold cursor-pointer transition-colors ${
-                problemViewMode === 'ALL' ? 'bg-paper-raised text-ink-primary shadow-xs' : 'text-ink-secondary hover:text-ink-primary'
+              className={`py-1.5 px-3.5 rounded-lg font-bold cursor-pointer transition-colors ${
+                problemViewMode === 'ALL' ? 'bg-[#364165] text-white shadow-xs' : 'text-stone-600 hover:text-black'
               }`}
             >
               Side-by-Side Comparison
             </button>
             <button
               onClick={() => setProblemViewMode('CHAOS')}
-              className={`py-1.5 px-3 rounded-lg font-bold cursor-pointer transition-colors ${
-                problemViewMode === 'CHAOS' ? 'bg-accent-terracotta text-white shadow-xs' : 'text-ink-secondary hover:text-ink-primary'
+              className={`py-1.5 px-3.5 rounded-lg font-bold cursor-pointer transition-colors ${
+                problemViewMode === 'CHAOS' ? 'bg-[#A24836] text-white shadow-xs' : 'text-stone-600 hover:text-black'
               }`}
             >
               The Chaos of 5 Apps
             </button>
             <button
               onClick={() => setProblemViewMode('DREAM')}
-              className={`py-1.5 px-3 rounded-lg font-bold cursor-pointer transition-colors ${
-                problemViewMode === 'DREAM' ? 'bg-brand-indigo text-white shadow-xs' : 'text-ink-secondary hover:text-ink-primary'
+              className={`py-1.5 px-3.5 rounded-lg font-bold cursor-pointer transition-colors ${
+                problemViewMode === 'DREAM' ? 'bg-[#1D6F42] text-white shadow-xs' : 'text-stone-600 hover:text-black'
               }`}
             >
               The Dream Press Desk
@@ -739,45 +748,45 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Clean, Non-overlapping Dual Comparison Cards */}
+        {/* High-Contrast Comparison Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
           {/* Left Column: The Old Way */}
           {(problemViewMode === 'ALL' || problemViewMode === 'CHAOS') && (
-            <div className={`p-6 sm:p-8 rounded-3xl border-2 border-accent-terracotta/40 bg-accent-terracotta/5 space-y-6 relative overflow-hidden shadow-xs ${
+            <div className={`p-7 sm:p-9 rounded-3xl border border-red-200 bg-white shadow-[0_10px_30px_rgba(239,68,68,0.06)] space-y-6 relative overflow-hidden ${
               problemViewMode === 'CHAOS' ? 'md:col-span-2 max-w-2xl mx-auto' : ''
             }`}>
-              <div className="flex items-center justify-between pb-4 border-b border-accent-terracotta/20">
-                <span className="px-2.5 py-1 rounded bg-accent-terracotta/15 text-accent-terracotta font-mono text-xs font-bold uppercase">
+              <div className="flex items-center justify-between pb-4 border-b border-red-100">
+                <span className="px-3 py-1 rounded-full bg-red-50 text-red-700 font-mono text-xs font-bold uppercase border border-red-200">
                   THE OLD WAY
                 </span>
-                <span className="font-mono text-xs text-accent-terracotta font-bold">
+                <span className="font-mono text-xs text-red-600 font-bold">
                   ⚠️ 15+ Hours Wasted Weekly
                 </span>
               </div>
 
-              <h3 className="font-serif font-bold text-2xl text-ink-primary">
+              <h3 className="font-serif font-bold text-2xl text-[#1A1A18]">
                 &quot;One post. Too many repetitive steps.&quot;
               </h3>
 
-              <ul className="space-y-4 font-sans text-sm text-ink-secondary">
+              <ul className="space-y-4 font-sans text-sm text-stone-600">
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-accent-terracotta/20 text-accent-terracotta font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
+                  <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
                   <div>
-                    <b className="text-ink-primary block font-mono text-xs uppercase">Manual Aspect Ratio Re-Encoding</b>
+                    <b className="text-[#1A1A18] block font-mono text-xs uppercase">Manual Aspect Ratio Re-Encoding</b>
                     Exporting 16:9, 1:1, and 9:16 separately, cluttering local drives with redundant video renders.
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-accent-terracotta/20 text-accent-terracotta font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
+                  <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
                   <div>
-                    <b className="text-ink-primary block font-mono text-xs uppercase">Repetitive Copy-Pasting</b>
+                    <b className="text-[#1A1A18] block font-mono text-xs uppercase">Repetitive Copy-Pasting</b>
                     Jumping across 5 to 7 browser tabs, manually copying captions, hashtags, and links over and over.
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-accent-terracotta/20 text-accent-terracotta font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
+                  <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
                   <div>
-                    <b className="text-ink-primary block font-mono text-xs uppercase">Silent Publishing Failures</b>
+                    <b className="text-[#1A1A18] block font-mono text-xs uppercase">Silent Publishing Failures</b>
                     One channel fails silently due to an expired OAuth token while the team assumes the campaign went live.
                   </div>
                 </li>
@@ -787,11 +796,11 @@ export default function LandingPage() {
 
           {/* Right Column: The Dream Press Way */}
           {(problemViewMode === 'ALL' || problemViewMode === 'DREAM') && (
-            <div className={`p-6 sm:p-8 rounded-3xl border-2 border-emerald-500/50 bg-emerald-500/5 space-y-6 relative overflow-hidden shadow-md ${
+            <div className={`p-7 sm:p-9 rounded-3xl border border-emerald-200 bg-white shadow-[0_12px_36px_rgba(29,111,66,0.08)] space-y-6 relative overflow-hidden ${
               problemViewMode === 'DREAM' ? 'md:col-span-2 max-w-2xl mx-auto' : ''
             }`}>
-              <div className="flex items-center justify-between pb-4 border-b border-emerald-500/20">
-                <span className="px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-800 font-mono text-xs font-bold uppercase">
+              <div className="flex items-center justify-between pb-4 border-b border-emerald-100">
+                <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-mono text-xs font-bold uppercase border border-emerald-200">
                   THE DREAM PRESS WAY
                 </span>
                 <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
@@ -799,29 +808,29 @@ export default function LandingPage() {
                 </span>
               </div>
 
-              <h3 className="font-serif font-bold text-2xl text-ink-primary">
+              <h3 className="font-serif font-bold text-2xl text-[#1A1A18]">
                 &quot;One workflow. Multiple destinations.&quot;
               </h3>
 
-              <ul className="space-y-4 font-sans text-sm text-ink-secondary">
+              <ul className="space-y-4 font-sans text-sm text-stone-600">
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
                   <div>
-                    <b className="text-ink-primary block font-mono text-xs uppercase">Universal Master Ingestion</b>
+                    <b className="text-[#1A1A18] block font-mono text-xs uppercase">Universal Master Ingestion</b>
                     Upload master 4K footage once. The publishing engine automatically adapts 16:9 to 9:16 vertical reels with AI safe framing.
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
                   <div>
-                    <b className="text-ink-primary block font-mono text-xs uppercase">Synchronized Platform Nuances</b>
+                    <b className="text-[#1A1A18] block font-mono text-xs uppercase">Synchronized Platform Nuances</b>
                     Single shared story root with per-platform character counts, hashtag rules, and tone overrides customized in one screen.
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-emerald-500/20 text-emerald-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
                   <div>
-                    <b className="text-ink-primary block font-mono text-xs uppercase">Isolated Worker Failure Recovery</b>
+                    <b className="text-[#1A1A18] block font-mono text-xs uppercase">Isolated Worker Failure Recovery</b>
                     Concurrent worker queues handle each network separately. Temporary rate limits on one channel never affect other dispatches.
                   </div>
                 </li>
@@ -834,16 +843,16 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       {/* SECTION 03 — HOW THE PRESS WORKS                                          */}
       {/* ========================================================================= */}
-      <section id="how-it-works" className="py-20 bg-paper-raised/70 border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
+      <section id="how-it-works" className="py-20 bg-white/70 backdrop-blur-sm border-y border-black/10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-2">
-            <span className="text-xs font-mono font-bold text-brand-indigo uppercase tracking-wider">
+            <span className="text-xs font-mono font-bold text-[#364165] uppercase tracking-wider">
               03 / HOW THE PRESS WORKS
             </span>
-            <h2 className="font-serif font-bold text-3xl sm:text-4xl text-ink-primary">
+            <h2 className="font-serif font-bold text-3xl sm:text-4xl text-[#1A1A18]">
               From Master File to Global Dispatch in Four Movements
             </h2>
-            <p className="font-sans text-sm sm:text-base text-ink-secondary">
+            <p className="font-sans text-sm sm:text-base text-stone-600">
               An elegant editorial production line engineered to maintain maximum fidelity across all network endpoints.
             </p>
           </div>
@@ -862,28 +871,28 @@ export default function LandingPage() {
                   setActiveWorkflowStep(item.step);
                   playChimeSound(soundEnabled);
                 }}
-                className={`p-4 rounded-2xl border-2 text-left transition-all cursor-pointer space-y-1 ${
+                className={`p-4 rounded-2xl border text-left transition-all cursor-pointer space-y-1 ${
                   activeWorkflowStep === item.step
-                    ? 'bg-paper-canvas border-brand-indigo shadow-md ring-2 ring-brand-indigo/10 scale-[1.02]'
-                    : 'bg-paper-canvas/50 border-border-rule/80 hover:border-brand-indigo/40'
+                    ? 'bg-white border-[#364165] shadow-md ring-2 ring-[#364165]/15 scale-[1.02]'
+                    : 'bg-white/60 border-black/10 hover:border-[#364165]/40'
                 }`}
               >
                 <div className="flex items-center justify-between">
                   <span className={`w-6 h-6 rounded-full font-mono font-bold text-xs flex items-center justify-center ${
                     activeWorkflowStep === item.step
-                      ? 'bg-brand-indigo text-white'
-                      : 'bg-paper-subtle text-ink-secondary'
+                      ? 'bg-[#364165] text-white'
+                      : 'bg-stone-200 text-stone-600'
                   }`}>
                     0{item.step}
                   </span>
                   {activeWorkflowStep === item.step && (
-                    <span className="w-2 h-2 rounded-full bg-brand-indigo animate-ping" />
+                    <span className="w-2 h-2 rounded-full bg-[#364165] animate-ping" />
                   )}
                 </div>
-                <h4 className="font-serif font-bold text-sm text-ink-primary pt-1">
+                <h4 className="font-serif font-bold text-sm text-[#1A1A18] pt-1">
                   {item.title}
                 </h4>
-                <p className="text-[11px] font-mono text-ink-secondary">
+                <p className="text-[11px] font-mono text-stone-500">
                   {item.sub}
                 </p>
               </button>
@@ -891,30 +900,30 @@ export default function LandingPage() {
           </div>
 
           {/* Dynamic Workflow Detail Card */}
-          <div className="p-6 sm:p-8 bg-paper-canvas border-2 border-border-rule rounded-3xl shadow-lg space-y-4">
+          <div className="p-7 sm:p-9 bg-white border border-black/10 rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.05)] space-y-4">
             {activeWorkflowStep === 1 && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 <div className="lg:col-span-7 space-y-3">
-                  <span className="px-2.5 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo font-mono text-xs font-bold uppercase">
+                  <span className="px-3 py-0.5 rounded-full bg-[#364165]/10 text-[#364165] font-mono text-xs font-bold uppercase">
                     STAGE 01 — UNIVERSAL INGESTION
                   </span>
-                  <h3 className="font-serif font-bold text-2xl sm:text-3xl text-ink-primary">
+                  <h3 className="font-serif font-bold text-2xl sm:text-3xl text-[#1A1A18]">
                     Upload Your Master Story Without Compression
                   </h3>
-                  <p className="text-sm text-ink-secondary leading-relaxed font-sans">
+                  <p className="text-sm text-stone-600 leading-relaxed font-sans">
                     Drop your full-resolution 4K video or uncompressed image series. The engine automatically inspects the container, probes keyframe intervals, analyzes color profiles, and prepares baseline metadata for multi-aspect conversion.
                   </p>
-                  <div className="flex flex-wrap gap-2 text-xs font-mono text-ink-secondary pt-2">
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ H.264 / HEVC / ProRes</span>
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ Up to 4K 60fps</span>
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ Stereo 48kHz Audio</span>
+                  <div className="flex flex-wrap gap-2 text-xs font-mono text-stone-600 pt-2">
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ H.264 / HEVC / ProRes</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Up to 4K 60fps</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Stereo 48kHz Audio</span>
                   </div>
                 </div>
-                <div className="lg:col-span-5 p-4 bg-paper-raised rounded-2xl border border-border-rule font-mono text-xs space-y-2">
-                  <div className="text-[10px] text-ink-secondary uppercase">PROBE METADATA REPORT</div>
-                  <div className="p-2.5 bg-paper-canvas rounded border border-border-rule/80 space-y-1">
-                    <div className="flex justify-between"><span>File:</span><span className="text-ink-primary font-bold">master_reel_ep04.mp4</span></div>
-                    <div className="flex justify-between"><span>Resolution:</span><span className="text-brand-indigo font-bold">3840 × 2160 (16:9)</span></div>
+                <div className="lg:col-span-5 p-4 bg-stone-50 rounded-2xl border border-black/5 font-mono text-xs space-y-2">
+                  <div className="text-[10px] text-stone-500 uppercase font-bold">PROBE METADATA REPORT</div>
+                  <div className="p-3 bg-white rounded-xl border border-black/5 space-y-1.5 shadow-2xs">
+                    <div className="flex justify-between"><span>File:</span><span className="text-[#1A1A18] font-bold">master_reel_ep04.mp4</span></div>
+                    <div className="flex justify-between"><span>Resolution:</span><span className="text-[#364165] font-bold">3840 × 2160 (16:9)</span></div>
                     <div className="flex justify-between"><span>Bitrate:</span><span>45.2 Mbps Clean</span></div>
                     <div className="flex justify-between"><span>Color Primaries:</span><span>Rec.709 Standard</span></div>
                   </div>
@@ -925,37 +934,37 @@ export default function LandingPage() {
             {activeWorkflowStep === 2 && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 <div className="lg:col-span-7 space-y-3">
-                  <span className="px-2.5 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo font-mono text-xs font-bold uppercase">
+                  <span className="px-3 py-0.5 rounded-full bg-[#364165]/10 text-[#364165] font-mono text-xs font-bold uppercase">
                     STAGE 02 — CHANNEL ORCHESTRATION
                   </span>
-                  <h3 className="font-serif font-bold text-2xl sm:text-3xl text-ink-primary">
+                  <h3 className="font-serif font-bold text-2xl sm:text-3xl text-[#1A1A18]">
                     Target Connected Networks with Verified API Compliance
                   </h3>
-                  <p className="text-sm text-ink-secondary leading-relaxed font-sans">
+                  <p className="text-sm text-stone-600 leading-relaxed font-sans">
                     Select your active destination endpoints. The engine cross-references the official platform API limits (e.g. YouTube Shorts 60s, TikTok Reels, Instagram Carousel rules) and alerts you immediately if any channel requires dedicated adjustments.
                   </p>
-                  <div className="flex flex-wrap gap-2 text-xs font-mono text-ink-secondary pt-2">
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ Token Vault AES-256</span>
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ No Passwords Required</span>
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ Granular Permissions</span>
+                  <div className="flex flex-wrap gap-2 text-xs font-mono text-stone-600 pt-2">
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Token Vault AES-256</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ No Passwords Required</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Granular Permissions</span>
                   </div>
                 </div>
                 <div className="lg:col-span-5 grid grid-cols-2 gap-2 font-mono text-xs">
-                  <div className="p-3 bg-paper-raised rounded-xl border border-border-rule flex items-center gap-2">
+                  <div className="p-3.5 bg-stone-50 rounded-xl border border-black/5 flex items-center gap-2.5 shadow-2xs">
                     <YouTubeLogo size={18} />
-                    <div><b className="block text-ink-primary">YouTube</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
+                    <div><b className="block text-[#1A1A18]">YouTube</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
                   </div>
-                  <div className="p-3 bg-paper-raised rounded-xl border border-border-rule flex items-center gap-2">
+                  <div className="p-3.5 bg-stone-50 rounded-xl border border-black/5 flex items-center gap-2.5 shadow-2xs">
                     <InstagramLogo size={18} />
-                    <div><b className="block text-ink-primary">Instagram</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
+                    <div><b className="block text-[#1A1A18]">Instagram</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
                   </div>
-                  <div className="p-3 bg-paper-raised rounded-xl border border-border-rule flex items-center gap-2">
+                  <div className="p-3.5 bg-stone-50 rounded-xl border border-black/5 flex items-center gap-2.5 shadow-2xs">
                     <TikTokLogo size={18} />
-                    <div><b className="block text-ink-primary">TikTok</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
+                    <div><b className="block text-[#1A1A18]">TikTok</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
                   </div>
-                  <div className="p-3 bg-paper-raised rounded-xl border border-border-rule flex items-center gap-2">
+                  <div className="p-3.5 bg-stone-50 rounded-xl border border-black/5 flex items-center gap-2.5 shadow-2xs">
                     <FacebookLogo size={18} />
-                    <div><b className="block text-ink-primary">Facebook</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
+                    <div><b className="block text-[#1A1A18]">Facebook</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
                   </div>
                 </div>
               </div>
@@ -964,28 +973,28 @@ export default function LandingPage() {
             {activeWorkflowStep === 3 && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 <div className="lg:col-span-7 space-y-3">
-                  <span className="px-2.5 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo font-mono text-xs font-bold uppercase">
+                  <span className="px-3 py-0.5 rounded-full bg-[#364165]/10 text-[#364165] font-mono text-xs font-bold uppercase">
                     STAGE 03 — PLATFORM ADAPTATION
                   </span>
-                  <h3 className="font-serif font-bold text-2xl sm:text-3xl text-ink-primary">
+                  <h3 className="font-serif font-bold text-2xl sm:text-3xl text-[#1A1A18]">
                     Tailor Metadata and Safe-Zones for Each Audience
                   </h3>
-                  <p className="text-sm text-ink-secondary leading-relaxed font-sans">
+                  <p className="text-sm text-stone-600 leading-relaxed font-sans">
                     Never send the exact same generic caption everywhere. MULTIPOST allows you to keep one core narrative, while customizing hashtags, link placements, and text hooks specifically tailored for the algorithm of each platform.
                   </p>
-                  <div className="flex flex-wrap gap-2 text-xs font-mono text-ink-secondary pt-2">
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ Mobile Safe-Zone Visualizer</span>
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ Character Counter</span>
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ AI Tone Modulation</span>
+                  <div className="flex flex-wrap gap-2 text-xs font-mono text-stone-600 pt-2">
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Mobile Safe-Zone Visualizer</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Character Counter</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ AI Tone Modulation</span>
                   </div>
                 </div>
-                <div className="lg:col-span-5 p-4 bg-paper-raised rounded-2xl border border-border-rule font-mono text-xs space-y-2">
-                  <div className="text-[10px] text-ink-secondary uppercase">EDITION PREVIEWS</div>
-                  <div className="p-2.5 bg-paper-canvas rounded border border-border-rule/80 text-[11px] space-y-1">
-                    <div className="text-brand-indigo font-bold">TikTok Edition:</div>
-                    <p className="text-ink-secondary line-clamp-2">Wait till the end to see the 16:9 shift... #creator #workflow #tech</p>
-                    <div className="text-brand-indigo font-bold pt-1">YouTube Description:</div>
-                    <p className="text-ink-secondary line-clamp-2">Full behind-the-scenes breakdown of our Bangkok editorial studio workflow...</p>
+                <div className="lg:col-span-5 p-4 bg-stone-50 rounded-2xl border border-black/5 font-mono text-xs space-y-2">
+                  <div className="text-[10px] text-stone-500 uppercase font-bold">EDITION PREVIEWS</div>
+                  <div className="p-3 bg-white rounded-xl border border-black/5 text-[11px] space-y-1.5 shadow-2xs">
+                    <div className="text-[#364165] font-bold">TikTok Edition:</div>
+                    <p className="text-stone-600 line-clamp-2">Wait till the end to see the 16:9 shift... #creator #workflow #tech</p>
+                    <div className="text-[#364165] font-bold pt-1">YouTube Description:</div>
+                    <p className="text-stone-600 line-clamp-2">Full behind-the-scenes breakdown of our Bangkok editorial studio workflow...</p>
                   </div>
                 </div>
               </div>
@@ -994,27 +1003,27 @@ export default function LandingPage() {
             {activeWorkflowStep === 4 && (
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 <div className="lg:col-span-7 space-y-3">
-                  <span className="px-2.5 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo font-mono text-xs font-bold uppercase">
+                  <span className="px-3 py-0.5 rounded-full bg-[#364165]/10 text-[#364165] font-mono text-xs font-bold uppercase">
                     STAGE 04 — DISPATCH & MONITORING
                   </span>
-                  <h3 className="font-serif font-bold text-2xl sm:text-3xl text-ink-primary">
+                  <h3 className="font-serif font-bold text-2xl sm:text-3xl text-[#1A1A18]">
                     Schedule for Bangkok Golden Hours or Push Instantly
                   </h3>
-                  <p className="text-sm text-ink-secondary leading-relaxed font-sans">
+                  <p className="text-sm text-stone-600 leading-relaxed font-sans">
                     Queue publication according to data-driven engagement windows. If any platform encounters a momentary API timeout, our isolated retry queues attempt recovery automatically without disturbing your other live feeds.
                   </p>
-                  <div className="flex flex-wrap gap-2 text-xs font-mono text-ink-secondary pt-2">
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ Bangkok Golden Peak (UTC+7)</span>
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ Millisecond Precision</span>
-                    <span className="px-2 py-1 bg-paper-subtle border border-border-rule rounded">✓ 1-Click Partial Recovery</span>
+                  <div className="flex flex-wrap gap-2 text-xs font-mono text-stone-600 pt-2">
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Bangkok Golden Peak (UTC+7)</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Millisecond Precision</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ 1-Click Partial Recovery</span>
                   </div>
                 </div>
-                <div className="lg:col-span-5 p-4 bg-paper-raised rounded-2xl border border-border-rule font-mono text-xs space-y-2">
-                  <div className="text-[10px] text-ink-secondary uppercase">DISPATCH ENGINE STATUS</div>
-                  <div className="p-2.5 bg-paper-canvas rounded border border-border-rule/80 space-y-1 text-[11px]">
+                <div className="lg:col-span-5 p-4 bg-stone-50 rounded-2xl border border-black/5 font-mono text-xs space-y-2">
+                  <div className="text-[10px] text-stone-500 uppercase font-bold">DISPATCH ENGINE STATUS</div>
+                  <div className="p-3 bg-white rounded-xl border border-black/5 space-y-1.5 text-[11px] shadow-2xs">
                     <div className="flex justify-between items-center"><span>Queue Status:</span><span className="text-emerald-700 font-bold">ACTIVE</span></div>
                     <div className="flex justify-between items-center"><span>Scheduled Time:</span><span>19:30 UTC+7</span></div>
-                    <div className="flex justify-between items-center"><span>Worker Health:</span><span className="text-brand-indigo font-bold">100% Operational</span></div>
+                    <div className="flex justify-between items-center"><span>Worker Health:</span><span className="text-[#364165] font-bold">100% Operational</span></div>
                   </div>
                 </div>
               </div>
@@ -1024,72 +1033,87 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 04 — INTERACTIVE PRESS STUDIO (PLAYFUL GAMEPLAY PLAYGROUND)       */}
+      {/* SECTION 04 — INTERACTIVE PRESS STUDIO (WITH INSTANT 100 COINS CLAIM!)    */}
       {/* ========================================================================= */}
       <section ref={pressStudioRef} id="press-studio" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-8">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b-2 border-border-rule pb-4">
+        {/* Section Header with Instant Claim Buttons */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-black/10 pb-5">
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs font-mono text-brand-indigo font-bold uppercase tracking-wider">
+            <div className="flex items-center gap-2 text-xs font-mono text-[#364165] font-bold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
               <span>04 / INTERACTIVE PRESS STUDIO</span>
             </div>
-            <h2 className="font-serif font-bold text-2xl sm:text-4xl text-ink-primary">
+            <h2 className="font-serif font-bold text-2xl sm:text-4xl text-[#1A1A18]">
               The Hands-On Publishing Playground
             </h2>
-            <p className="text-xs sm:text-sm text-ink-secondary max-w-2xl">
-              Complete the 4 guided micro-tasks below to collect up to <b>100 Press Coins</b> and unlock the collectible <b>7-Day Dream Pass</b> ticket.
+            <p className="text-xs sm:text-sm text-stone-600 max-w-2xl">
+              Complete the 4 guided tasks to collect up to <b>100 Press Coins</b>, or click <b>&quot;รับ 100 Coins ทันที&quot;</b> เพื่อปลดล็อกตั๋ว <b>7-Day Dream Pass</b> ได้ทันที!
             </p>
           </div>
 
-          {/* Reset Playground button & Progress counter */}
+          {/* Quick Actions (Master Instant Claim + Reset) */}
           <div className="flex items-center gap-3">
             <button
-              onClick={handleResetDemo}
-              className="py-1.5 px-3 rounded-editorial bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-xs font-mono text-ink-secondary flex items-center gap-1.5 transition-colors cursor-pointer"
-              title="Reset in-memory interactive playground"
+              onClick={handleClaimAllCoins}
+              className="py-2 px-4 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-mono text-xs font-bold flex items-center gap-1.5 shadow-[0_4px_15px_rgba(245,158,11,0.35)] transition-all cursor-pointer active:scale-95"
             >
-              <RotateCcw className="w-3 h-3" />
-              <span>Reset Playground</span>
+              <Zap className="w-3.5 h-3.5 fill-amber-950" />
+              <span>⚡ รับ 100 Coins ทันที</span>
             </button>
 
-            <div className="p-2 px-3.5 bg-paper-raised border-2 border-amber-400/90 rounded-editorial shadow-xs flex items-center gap-2.5">
+            <button
+              onClick={handleResetDemo}
+              className="py-2 px-3 rounded-xl bg-white hover:bg-stone-50 border border-black/10 text-xs font-mono text-stone-600 flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Reset playground back to 0"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>รีเซ็ต</span>
+            </button>
+
+            <div className="p-2 px-3 bg-white border border-black/10 rounded-xl shadow-xs flex items-center gap-2">
               <PressCoinIcon size={22} />
               <div className="leading-tight">
-                <span className="font-mono text-sm font-bold text-ink-primary">
-                  {coins} <span className="text-[10px] text-ink-secondary font-normal">/ 100 Coins</span>
+                <span className="font-mono text-sm font-bold text-[#1A1A18]">
+                  {coins} <span className="text-[10px] text-stone-500 font-normal">/ 100</span>
                 </span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* 4 INTERACTIVE PLAYFUL TASK CARDS GRID */}
+        {/* 4 Interactive Task Cards Grid (Each with Individual Instant Claim!) */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
           {/* TASK 01: CHOOSE YOUR DESTINATIONS (+20 COINS) */}
-          <div className={`p-6 rounded-3xl border-2 transition-all duration-300 space-y-4 bg-paper-raised relative ${
+          <div className={`p-6 rounded-3xl border transition-all duration-300 space-y-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] ${
             completedTasks.destinations
-              ? 'border-emerald-500/80 ring-2 ring-emerald-500/10 shadow-sm'
-              : 'border-border-rule hover:border-brand-indigo/50'
+              ? 'border-emerald-500 ring-2 ring-emerald-500/15'
+              : 'border-black/10 hover:border-[#364165]/50'
           }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="w-6 h-6 rounded-full bg-brand-indigo/10 text-brand-indigo font-mono font-bold text-xs flex items-center justify-center">
+                <span className="w-6 h-6 rounded-full bg-[#364165]/10 text-[#364165] font-mono font-bold text-xs flex items-center justify-center">
                   1
                 </span>
-                <h3 className="font-serif font-bold text-base sm:text-lg text-ink-primary">
+                <h3 className="font-serif font-bold text-base sm:text-lg text-[#1A1A18]">
                   Task 01 — Choose Your Destinations
                 </h3>
               </div>
-              <span className={`px-2.5 py-0.5 rounded text-[11px] font-mono font-bold transition-transform ${
-                completedTasks.destinations ? 'bg-emerald-500/15 text-emerald-800 scale-105' : 'bg-amber-400/15 text-amber-800'
-              }`}>
-                {completedTasks.destinations ? '✓ Completed (+20 Coins)' : '+20 Press Coins'}
-              </span>
+
+              {/* Instant Claim Button for Task 1 */}
+              <button
+                onClick={() => awardCoins(20, '2 Channels Picked', 'destinations')}
+                className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                  completedTasks.destinations 
+                    ? 'bg-emerald-100 text-emerald-800' 
+                    : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+                }`}
+              >
+                {completedTasks.destinations ? '✓ สำเร็จ (+20 Coins)' : '⚡ รับทันที (+20 Coins)'}
+              </button>
             </div>
 
-            <p className="text-xs text-ink-secondary leading-relaxed">
+            <p className="text-xs text-stone-600 leading-relaxed">
               Select at least 2 simulated destination channels to prepare multi-network dispatch:
             </p>
 
@@ -1108,53 +1132,60 @@ export default function LandingPage() {
                   <button
                     key={p.id}
                     onClick={() => togglePlatform(p.id)}
-                    className={`p-2.5 rounded-editorial border text-left transition-all cursor-pointer flex items-center justify-between active:scale-95 ${
+                    className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between active:scale-95 ${
                       isSelected
-                        ? 'bg-brand-indigo/10 border-brand-indigo text-brand-indigo font-bold shadow-xs'
-                        : 'bg-paper-canvas border-border-rule text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle'
+                        ? 'bg-[#364165]/10 border-[#364165] text-[#364165] font-bold shadow-xs'
+                        : 'bg-stone-50 border-black/5 text-stone-600 hover:text-black hover:bg-stone-100'
                     }`}
                   >
                     <div className="flex items-center gap-2 truncate">
                       <IconComponent size={14} className="shrink-0" />
                       <span className="text-xs truncate">{p.name}</span>
                     </div>
-                    {isSelected && <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />}
+                    {isSelected && <Check className="w-3.5 h-3.5 text-[#364165] shrink-0" />}
                   </button>
                 );
               })}
             </div>
 
-            <div className="text-[11px] font-mono text-ink-secondary flex items-center justify-between pt-1">
-              <span>Selected: <b className="text-ink-primary">{selectedPlatforms.length}</b> channels</span>
-              <span className="text-[10px] text-brand-indigo font-semibold">
-                {selectedPlatforms.length >= 2 ? '✓ Minimum requirement met' : 'Pick 1 more platform to earn coins'}
+            <div className="text-[11px] font-mono text-stone-500 flex items-center justify-between pt-1">
+              <span>Selected: <b className="text-[#1A1A18]">{selectedPlatforms.length}</b> channels</span>
+              <span className="text-[10px] text-[#364165] font-semibold">
+                {selectedPlatforms.length >= 2 ? '✓ ตรงตามเงื่อนไข' : 'เลือกอีก 1 ช่องทางเพื่อรับเหรียญ'}
               </span>
             </div>
           </div>
 
           {/* TASK 02: CUSTOMIZE YOUR EDITION (+25 COINS) */}
-          <div className={`p-6 rounded-3xl border-2 transition-all duration-300 space-y-4 bg-paper-raised ${
+          <div className={`p-6 rounded-3xl border transition-all duration-300 space-y-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] ${
             completedTasks.caption
-              ? 'border-emerald-500/80 ring-2 ring-emerald-500/10 shadow-sm'
-              : 'border-border-rule hover:border-brand-indigo/50'
+              ? 'border-emerald-500 ring-2 ring-emerald-500/15'
+              : 'border-black/10 hover:border-[#364165]/50'
           }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="w-6 h-6 rounded-full bg-brand-indigo/10 text-brand-indigo font-mono font-bold text-xs flex items-center justify-center">
+                <span className="w-6 h-6 rounded-full bg-[#364165]/10 text-[#364165] font-mono font-bold text-xs flex items-center justify-center">
                   2
                 </span>
-                <h3 className="font-serif font-bold text-base sm:text-lg text-ink-primary">
+                <h3 className="font-serif font-bold text-base sm:text-lg text-[#1A1A18]">
                   Task 02 — Customize Your Edition
                 </h3>
               </div>
-              <span className={`px-2.5 py-0.5 rounded text-[11px] font-mono font-bold transition-transform ${
-                completedTasks.caption ? 'bg-emerald-500/15 text-emerald-800 scale-105' : 'bg-amber-400/15 text-amber-800'
-              }`}>
-                {completedTasks.caption ? '✓ Completed (+25 Coins)' : '+25 Press Coins'}
-              </span>
+
+              {/* Instant Claim Button for Task 2 */}
+              <button
+                onClick={() => awardCoins(25, 'Edition Caption Tailored', 'caption')}
+                className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                  completedTasks.caption 
+                    ? 'bg-emerald-100 text-emerald-800' 
+                    : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+                }`}
+              >
+                {completedTasks.caption ? '✓ สำเร็จ (+25 Coins)' : '⚡ รับทันที (+25 Coins)'}
+              </button>
             </div>
 
-            <p className="text-xs text-ink-secondary leading-relaxed">
+            <p className="text-xs text-stone-600 leading-relaxed">
               Tailor your narrative tone using editorial presets or customize your copy:
             </p>
 
@@ -1170,8 +1201,8 @@ export default function LandingPage() {
                   onClick={() => handleSelectTone(t.id as any)}
                   className={`py-1 px-3 rounded-full border transition-all cursor-pointer text-xs active:scale-95 ${
                     activeTone === t.id
-                      ? 'bg-brand-indigo text-white font-bold border-brand-indigo shadow-xs'
-                      : 'bg-paper-canvas text-ink-secondary hover:text-ink-primary border-border-rule'
+                      ? 'bg-[#364165] text-white font-bold border-[#364165] shadow-xs'
+                      : 'bg-stone-50 text-stone-600 hover:text-black border-black/5'
                   }`}
                 >
                   {t.label}
@@ -1181,7 +1212,7 @@ export default function LandingPage() {
 
             {/* Live Typing Preview Caption Box */}
             <div className="space-y-1.5">
-              <div className="flex justify-between items-center text-[10px] font-mono text-ink-secondary">
+              <div className="flex justify-between items-center text-[10px] font-mono text-stone-500">
                 <span>LIVE PLATFORM CAPTION PREVIEW</span>
                 <span>{customCaption.length} characters</span>
               </div>
@@ -1194,41 +1225,42 @@ export default function LandingPage() {
                   }
                 }}
                 rows={2}
-                className="w-full p-2.5 bg-paper-canvas rounded-editorial border border-border-rule text-xs font-sans text-ink-primary leading-relaxed focus:outline-none focus:ring-1 focus:ring-brand-indigo"
+                className="w-full p-2.5 bg-stone-50 rounded-xl border border-black/10 text-xs font-sans text-[#1A1A18] leading-relaxed focus:outline-none focus:ring-1 focus:ring-[#364165]"
               />
             </div>
           </div>
 
           {/* TASK 03: SCHEDULE YOUR DISPATCH (+25 COINS) */}
-          <div className={`p-6 rounded-3xl border-2 transition-all duration-300 space-y-4 ${
-            selectedSlot === 'LUNCH'
-              ? 'bg-gradient-to-br from-amber-500/10 to-paper-raised'
-              : selectedSlot === 'EVENING'
-              ? 'bg-gradient-to-br from-orange-500/10 via-accent-terracotta/5 to-paper-raised'
-              : 'bg-gradient-to-br from-indigo-950/10 via-brand-indigo/5 to-paper-raised'
-          } ${
+          <div className={`p-6 rounded-3xl border transition-all duration-300 space-y-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] ${
             completedTasks.schedule
-              ? 'border-emerald-500/80 ring-2 ring-emerald-500/10 shadow-sm'
-              : 'border-border-rule hover:border-brand-indigo/50'
+              ? 'border-emerald-500 ring-2 ring-emerald-500/15'
+              : 'border-black/10 hover:border-[#364165]/50'
           }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="w-6 h-6 rounded-full bg-brand-indigo/10 text-brand-indigo font-mono font-bold text-xs flex items-center justify-center">
+                <span className="w-6 h-6 rounded-full bg-[#364165]/10 text-[#364165] font-mono font-bold text-xs flex items-center justify-center">
                   3
                 </span>
-                <h3 className="font-serif font-bold text-base sm:text-lg text-ink-primary">
+                <h3 className="font-serif font-bold text-base sm:text-lg text-[#1A1A18]">
                   Task 03 — Schedule Your Dispatch
                 </h3>
               </div>
-              <span className={`px-2.5 py-0.5 rounded text-[11px] font-mono font-bold transition-transform ${
-                completedTasks.schedule ? 'bg-emerald-500/15 text-emerald-800 scale-105' : 'bg-amber-400/15 text-amber-800'
-              }`}>
-                {completedTasks.schedule ? '✓ Completed (+25 Coins)' : '+25 Press Coins'}
-              </span>
+
+              {/* Instant Claim Button for Task 3 */}
+              <button
+                onClick={() => awardCoins(25, 'Bangkok Golden Slot Confirmed', 'schedule')}
+                className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                  completedTasks.schedule 
+                    ? 'bg-emerald-100 text-emerald-800' 
+                    : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+                }`}
+              >
+                {completedTasks.schedule ? '✓ สำเร็จ (+25 Coins)' : '⚡ รับทันที (+25 Coins)'}
+              </button>
             </div>
 
-            <p className="text-xs text-ink-secondary leading-relaxed">
-              Confirm a high-performing audience window to schedule publishing (watch the dynamic sky tone change):
+            <p className="text-xs text-stone-600 leading-relaxed">
+              Confirm a high-performing audience window to schedule publishing:
             </p>
 
             <div className="space-y-2 text-xs font-mono">
@@ -1243,18 +1275,18 @@ export default function LandingPage() {
                   <button
                     key={s.id}
                     onClick={() => handleSelectSlot(s.id as any)}
-                    className={`w-full p-2.5 rounded-editorial border text-left transition-all cursor-pointer flex items-center justify-between active:scale-98 ${
+                    className={`w-full p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center justify-between active:scale-98 ${
                       isSelected
-                        ? 'bg-amber-500/15 border-amber-500 text-amber-950 font-bold shadow-xs'
-                        : 'bg-paper-canvas border-border-rule text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle'
+                        ? 'bg-amber-50 border-amber-400 text-amber-950 font-bold shadow-xs'
+                        : 'bg-stone-50 border-black/5 text-stone-600 hover:text-black hover:bg-stone-100'
                     }`}
                   >
                     <div className="flex items-center gap-2.5">
                       <SlotIcon className="w-4 h-4 text-amber-600" />
                       <span>{s.time}</span>
-                      <span className="text-ink-secondary text-[11px] hidden sm:inline">— {s.label}</span>
+                      <span className="text-stone-500 text-[11px] hidden sm:inline">— {s.label}</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded bg-amber-300 text-amber-950 text-[10px] font-bold">
+                    <span className="px-2 py-0.5 rounded bg-amber-200 text-amber-950 text-[10px] font-bold">
                       {s.boost}
                     </span>
                   </button>
@@ -1264,44 +1296,54 @@ export default function LandingPage() {
           </div>
 
           {/* TASK 04: RESCUE A FAILED POST (+30 COINS) */}
-          <div className={`p-6 rounded-3xl border-2 transition-all duration-300 space-y-4 bg-paper-raised relative overflow-hidden ${
+          <div className={`p-6 rounded-3xl border transition-all duration-300 space-y-4 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.04)] ${
             completedTasks.rescue
-              ? 'border-emerald-500/80 ring-2 ring-emerald-500/10 shadow-sm'
-              : 'border-border-rule hover:border-brand-indigo/50'
+              ? 'border-emerald-500 ring-2 ring-emerald-500/15'
+              : 'border-black/10 hover:border-[#364165]/50'
           }`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <span className="w-6 h-6 rounded-full bg-brand-indigo/10 text-brand-indigo font-mono font-bold text-xs flex items-center justify-center">
+                <span className="w-6 h-6 rounded-full bg-[#364165]/10 text-[#364165] font-mono font-bold text-xs flex items-center justify-center">
                   4
                 </span>
-                <h3 className="font-serif font-bold text-base sm:text-lg text-ink-primary">
+                <h3 className="font-serif font-bold text-base sm:text-lg text-[#1A1A18]">
                   Task 04 — Rescue a Failed Post
                 </h3>
               </div>
-              <span className={`px-2.5 py-0.5 rounded text-[11px] font-mono font-bold transition-transform ${
-                completedTasks.rescue ? 'bg-emerald-500/15 text-emerald-800 scale-105' : 'bg-amber-400/15 text-amber-800'
-              }`}>
-                {completedTasks.rescue ? '✓ Completed (+30 Coins)' : '+30 Press Coins'}
-              </span>
+
+              {/* Instant Claim Button for Task 4 */}
+              <button
+                onClick={() => {
+                  setIsFailureResolved(true);
+                  awardCoins(30, 'Aspect Ratio Rescued', 'rescue');
+                }}
+                className={`px-3 py-1 rounded-full text-[11px] font-mono font-bold transition-all cursor-pointer ${
+                  completedTasks.rescue 
+                    ? 'bg-emerald-100 text-emerald-800' 
+                    : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border border-amber-300'
+                }`}
+              >
+                {completedTasks.rescue ? '✓ สำเร็จ (+30 Coins)' : '⚡ รับทันที (+30 Coins)'}
+              </button>
             </div>
 
-            <p className="text-xs text-ink-secondary leading-relaxed">
+            <p className="text-xs text-stone-600 leading-relaxed">
               Inspect a simulated aspect ratio mismatch and trigger automated AI Safe-Zone recovery:
             </p>
 
             {/* Visual Simulated Crop Box with Scanline */}
-            <div className="p-3 bg-paper-canvas rounded-xl border border-border-rule relative overflow-hidden text-center min-h-[90px] flex flex-col justify-center">
+            <div className="p-3 bg-stone-50 rounded-xl border border-black/5 relative overflow-hidden text-center min-h-[90px] flex flex-col justify-center">
               {isScanningRescue && (
-                <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent animate-pulse shadow-md top-1/2 -translate-y-1/2" />
+                <div className="absolute inset-x-0 h-1 bg-gradient-to-r from-transparent via-cyan-500 to-transparent animate-pulse shadow-md top-1/2 -translate-y-1/2" />
               )}
               
               {!isFailureResolved ? (
                 <div className="space-y-1">
-                  <div className="flex items-center justify-center gap-1.5 text-accent-terracotta font-mono font-bold text-xs">
+                  <div className="flex items-center justify-center gap-1.5 text-red-600 font-mono font-bold text-xs">
                     <AlertCircle className="w-3.5 h-3.5" />
                     <span>Meta Graph API 400: Aspect Ratio Mismatch</span>
                   </div>
-                  <p className="text-[11px] text-ink-secondary font-mono">
+                  <p className="text-[11px] text-stone-500 font-mono">
                     Input: 1:1 Square • Required: 9:16 Vertical Reel
                   </p>
                 </div>
@@ -1323,13 +1365,13 @@ export default function LandingPage() {
                 type="button"
                 onClick={handleTriggerRescue}
                 disabled={isScanningRescue}
-                className="w-full py-2.5 px-4 rounded bg-accent-terracotta text-white font-bold hover:bg-accent-terracotta/90 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md text-xs active:scale-98"
+                className="w-full py-2.5 px-4 rounded-xl bg-[#A24836] text-white font-bold hover:bg-[#8e3f2f] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md text-xs active:scale-98"
               >
                 <Sparkles className={`w-3.5 h-3.5 text-amber-300 ${isScanningRescue ? 'animate-spin' : ''}`} />
                 <span>{isScanningRescue ? 'Scanning & Re-framing Safe-Zone...' : '⚡ 1-Click AI Safe-Zone Rescue'}</span>
               </button>
             ) : (
-              <div className="p-2 rounded bg-emerald-500/10 border border-emerald-500/30 text-center font-mono text-[11px] text-emerald-800 font-bold">
+              <div className="p-2 rounded-xl bg-emerald-50 border border-emerald-200 text-center font-mono text-[11px] text-emerald-800 font-bold">
                 ✓ Post Successfully Recovered & Validated!
               </div>
             )}
@@ -1337,7 +1379,7 @@ export default function LandingPage() {
         </div>
 
         {/* PROGRESS UNLOCK BANNER */}
-        <div className="p-6 sm:p-8 rounded-3xl border-2 border-border-rule bg-paper-raised shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <div className="p-7 sm:p-9 rounded-3xl border border-black/10 bg-white shadow-[0_12px_36px_rgba(0,0,0,0.06)] flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
           <div className="flex items-center gap-4">
             <button
               type="button"
@@ -1345,46 +1387,51 @@ export default function LandingPage() {
                 setIsCoinFlipped(!isCoinFlipped);
                 playChimeSound(soundEnabled);
               }}
-              className="w-16 h-16 rounded-full bg-amber-400/20 text-amber-700 flex items-center justify-center shrink-0 border border-amber-400/40 shadow-inner cursor-pointer hover:scale-105 transition-transform"
+              className="w-16 h-16 rounded-full bg-amber-400/20 text-amber-800 flex items-center justify-center shrink-0 border border-amber-400/50 shadow-inner cursor-pointer hover:scale-105 transition-transform"
               title="Click to flip token!"
             >
               <PressCoinIcon size={38} isFlipped={isCoinFlipped} />
             </button>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-serif font-bold text-xl text-ink-primary">
+                <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
                   Interactive Progress: {coins} / 100 Press Coins
                 </h3>
                 {isPassUnlocked && (
-                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-800 font-mono text-[10px] font-bold border border-emerald-500/30 animate-pulse">
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold border border-emerald-300 animate-pulse">
                     READY TO FORGE
                   </span>
                 )}
               </div>
-              <p className="text-xs text-ink-secondary mt-0.5">
+              <p className="text-xs text-stone-600 mt-0.5">
                 {isPassUnlocked
-                  ? 'Congratulations! You have gathered all 100 Press Coins. Scroll to Section 10 to claim your Dream Pass!'
-                  : 'Complete the tasks above to unlock the 7-Day Dream Pass editorial ticket at the bottom of the page.'}
+                  ? 'ยินดีด้วย! คุณสะสมครบ 100 Press Coins แล้ว สามารถเลื่อนลงไปดูตั๋ว 7-Day Dream Pass ได้ทันที'
+                  : 'ทำภารกิจด้านบนหรือกด "รับ 100 Coins ทันที" เพื่อปลดล็อกตั๋ว 7-Day Dream Pass ด้านล่างสุด'}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
-            <button
-              onClick={() => {
-                dreamPassRef.current?.scrollIntoView({ behavior: 'smooth' });
-                playChimeSound(soundEnabled);
-              }}
-              disabled={!isPassUnlocked}
-              className={`py-3.5 px-6 rounded-editorial text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                isPassUnlocked
-                  ? 'bg-accent-terracotta text-white hover:bg-accent-terracotta/90 shadow-lg animate-bounce'
-                  : 'bg-paper-subtle text-ink-secondary/40 border border-border-rule cursor-not-allowed'
-              }`}
-            >
-              <Ticket className="w-4 h-4" />
-              <span>{isPassUnlocked ? 'Jump to Dream Pass Ticket →' : 'Locked (Requires 100 Coins)'}</span>
-            </button>
+            {coins < 100 ? (
+              <button
+                onClick={handleClaimAllCoins}
+                className="py-3 px-6 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-mono text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer active:scale-95"
+              >
+                <Zap className="w-4 h-4 fill-amber-950" />
+                <span>รับ 100 Coins ทันที ✦</span>
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  dreamPassRef.current?.scrollIntoView({ behavior: 'smooth' });
+                  playChimeSound(soundEnabled);
+                }}
+                className="py-3 px-6 rounded-xl bg-[#A24836] text-white hover:bg-[#8e3f2f] text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-lg animate-bounce"
+              >
+                <Ticket className="w-4 h-4" />
+                <span>ไปที่ตั๋ว Dream Pass →</span>
+              </button>
+            )}
           </div>
         </div>
       </section>
@@ -1392,23 +1439,23 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       {/* SECTION 05 — PRESS COINS (COLLECTIBLE 3D FLIPPABLE TOKEN SHOWCASE)        */}
       {/* ========================================================================= */}
-      <section id="press-coins" className="py-20 bg-paper-raised/70 border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
+      <section id="press-coins" className="py-20 bg-white/70 backdrop-blur-sm border-y border-black/10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <span className="text-xs font-mono font-bold text-brand-indigo uppercase tracking-wider">
+            <span className="text-xs font-mono font-bold text-[#364165] uppercase tracking-wider">
               05 / PRESS COINS
             </span>
-            <h2 className="font-serif font-bold text-3xl sm:text-4xl text-ink-primary">
+            <h2 className="font-serif font-bold text-3xl sm:text-4xl text-[#1A1A18]">
               The Currency of Publishing Precision
             </h2>
-            <p className="font-sans text-sm text-ink-secondary leading-relaxed">
+            <p className="font-sans text-sm text-stone-600 leading-relaxed">
               Press Coins represent verified milestones in the Dream Press ecosystem. Click the token below to flip and inspect the reverse seal!
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             {/* Left: Collectible 3D Flippable Coin Showcase */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 bg-paper-canvas rounded-3xl border-2 border-border-rule text-center space-y-4 shadow-sm">
+            <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 bg-white rounded-3xl border border-black/10 text-center space-y-4 shadow-sm">
               <button
                 type="button"
                 onClick={() => {
@@ -1418,7 +1465,7 @@ export default function LandingPage() {
                 className="relative cursor-pointer group"
                 title="Click to flip coin 360°"
               >
-                <div className="w-40 h-40 rounded-full bg-amber-400/10 flex items-center justify-center p-2 shadow-inner ring-4 ring-amber-400/20 group-hover:scale-105 transition-transform duration-300">
+                <div className="w-40 h-40 rounded-full bg-amber-400/15 flex items-center justify-center p-2 shadow-inner ring-4 ring-amber-400/30 group-hover:scale-105 transition-transform duration-300">
                   <PressCoinIcon size={135} isFlipped={isCoinFlipped} />
                 </div>
                 <div className="absolute -bottom-2 -right-2 px-3 py-1 rounded-full bg-amber-500 text-white font-mono text-[10px] font-bold shadow-md">
@@ -1427,35 +1474,35 @@ export default function LandingPage() {
               </button>
 
               <div>
-                <h4 className="font-serif font-bold text-lg text-ink-primary">
+                <h4 className="font-serif font-bold text-lg text-[#1A1A18]">
                   The Press Coin № 01
                 </h4>
-                <p className="text-xs font-mono text-ink-secondary">
+                <p className="text-xs font-mono text-stone-500">
                   Vintage Editorial Mark • Milled Ochre Rim
                 </p>
               </div>
 
-              <p className="text-xs text-ink-secondary max-w-xs font-sans leading-relaxed">
+              <p className="text-xs text-stone-600 max-w-xs font-sans leading-relaxed">
                 Awarded for precision workflows: destination selection, nuanced caption tailoring, optimal time scheduling, and proactive error recovery.
               </p>
             </div>
 
             {/* Right: Live Coin Ledger & Progress */}
-            <div className="lg:col-span-7 p-6 sm:p-8 bg-paper-canvas rounded-3xl border-2 border-border-rule space-y-6 shadow-sm">
-              <div className="flex items-center justify-between pb-4 border-b border-border-rule">
+            <div className="lg:col-span-7 p-7 sm:p-9 bg-white rounded-3xl border border-black/10 space-y-6 shadow-sm">
+              <div className="flex items-center justify-between pb-4 border-b border-black/10">
                 <div>
-                  <span className="text-[10px] font-mono uppercase text-ink-secondary block">
+                  <span className="text-[10px] font-mono uppercase text-stone-500 block">
                     SESSION LEDGER BALANCE
                   </span>
-                  <div className="text-4xl font-serif font-bold text-ink-primary flex items-baseline gap-2">
+                  <div className="text-4xl font-serif font-bold text-[#1A1A18] flex items-baseline gap-2">
                     <span>{coins}</span>
-                    <span className="text-sm font-mono text-ink-secondary font-normal">/ 100 COINS MAX</span>
+                    <span className="text-sm font-mono text-stone-500 font-normal">/ 100 COINS MAX</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-mono uppercase text-ink-secondary block">STATUS</span>
-                  <span className={`font-mono text-xs font-bold px-2.5 py-1 rounded ${
-                    isPassUnlocked ? 'bg-emerald-500/15 text-emerald-800' : 'bg-amber-400/15 text-amber-800'
+                  <span className="text-[10px] font-mono uppercase text-stone-500 block">STATUS</span>
+                  <span className={`font-mono text-xs font-bold px-3 py-1 rounded-full ${
+                    isPassUnlocked ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
                   }`}>
                     {isPassUnlocked ? '✦ Ready to Unlock Pass' : `${100 - coins} Coins Remaining`}
                   </span>
@@ -1464,14 +1511,14 @@ export default function LandingPage() {
 
               {/* Milestone Progress Bar */}
               <div className="space-y-2">
-                <div className="flex justify-between text-[11px] font-mono text-ink-secondary">
+                <div className="flex justify-between text-[11px] font-mono text-stone-500">
                   <span>Start (0)</span>
                   <span>Destinations (20)</span>
                   <span>Caption (45)</span>
                   <span>Schedule (70)</span>
                   <span>Unlocked (100)</span>
                 </div>
-                <div className="w-full h-3 bg-paper-subtle rounded-full overflow-hidden border border-border-rule p-0.5">
+                <div className="w-full h-3 bg-stone-100 rounded-full overflow-hidden border border-black/5 p-0.5">
                   <div
                     className="h-full bg-gradient-to-r from-amber-400 via-amber-500 to-amber-600 rounded-full transition-all duration-700 shadow-xs"
                     style={{ width: `${coins}%` }}
@@ -1481,28 +1528,28 @@ export default function LandingPage() {
 
               {/* Assignment Checklist */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
-                <div className={`p-2.5 rounded-xl border flex items-center gap-2 ${
-                  completedTasks.destinations ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800 font-bold' : 'bg-paper-raised border-border-rule text-ink-secondary'
+                <div className={`p-3 rounded-xl border flex items-center gap-2 ${
+                  completedTasks.destinations ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-stone-50 border-black/5 text-stone-600'
                 }`}>
-                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.destinations ? 'text-emerald-700' : 'text-ink-muted'}`} />
+                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.destinations ? 'text-emerald-700' : 'text-stone-400'}`} />
                   <span>Choose Destinations (+20)</span>
                 </div>
-                <div className={`p-2.5 rounded-xl border flex items-center gap-2 ${
-                  completedTasks.caption ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800 font-bold' : 'bg-paper-raised border-border-rule text-ink-secondary'
+                <div className={`p-3 rounded-xl border flex items-center gap-2 ${
+                  completedTasks.caption ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-stone-50 border-black/5 text-stone-600'
                 }`}>
-                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.caption ? 'text-emerald-700' : 'text-ink-muted'}`} />
+                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.caption ? 'text-emerald-700' : 'text-stone-400'}`} />
                   <span>Customize Edition (+25)</span>
                 </div>
-                <div className={`p-2.5 rounded-xl border flex items-center gap-2 ${
-                  completedTasks.schedule ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800 font-bold' : 'bg-paper-raised border-border-rule text-ink-secondary'
+                <div className={`p-3 rounded-xl border flex items-center gap-2 ${
+                  completedTasks.schedule ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-stone-50 border-black/5 text-stone-600'
                 }`}>
-                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.schedule ? 'text-emerald-700' : 'text-ink-muted'}`} />
+                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.schedule ? 'text-emerald-700' : 'text-stone-400'}`} />
                   <span>Bangkok Slot (+25)</span>
                 </div>
-                <div className={`p-2.5 rounded-xl border flex items-center gap-2 ${
-                  completedTasks.rescue ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-800 font-bold' : 'bg-paper-raised border-border-rule text-ink-secondary'
+                <div className={`p-3 rounded-xl border flex items-center gap-2 ${
+                  completedTasks.rescue ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-stone-50 border-black/5 text-stone-600'
                 }`}>
-                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.rescue ? 'text-emerald-700' : 'text-ink-muted'}`} />
+                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.rescue ? 'text-emerald-700' : 'text-stone-400'}`} />
                   <span>Rescue Failed Post (+30)</span>
                 </div>
               </div>
@@ -1516,19 +1563,19 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       <section ref={workspaceTourRef} id="workspace-tour" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-2">
-          <span className="text-xs font-mono font-bold text-brand-indigo uppercase tracking-wider">
+          <span className="text-xs font-mono font-bold text-[#364165] uppercase tracking-wider">
             06 / EXPLORE THE WORKSPACE
           </span>
-          <h2 className="font-serif font-bold text-3xl sm:text-5xl text-ink-primary">
+          <h2 className="font-serif font-bold text-3xl sm:text-5xl text-[#1A1A18]">
             The Full-Spectrum Publishing Studio
           </h2>
-          <p className="font-sans text-sm sm:text-base text-ink-secondary leading-relaxed">
+          <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
             Inspect the core production rooms of MULTIPOST. Switch tabs to preview real workflow interfaces.
           </p>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex flex-wrap justify-center gap-2 border-b-2 border-border-rule pb-3 font-mono text-xs">
+        <div className="flex flex-wrap justify-center gap-2 border-b border-black/10 pb-4 font-mono text-xs">
           {[
             { id: 'dashboard', label: 'Command Dashboard', icon: LayoutGrid },
             { id: 'library', label: 'Content Library', icon: FolderOpen },
@@ -1546,10 +1593,10 @@ export default function LandingPage() {
                   setActiveTourTab(tab.id as any);
                   playChimeSound(soundEnabled);
                 }}
-                className={`py-2 px-3.5 rounded-editorial transition-all cursor-pointer flex items-center gap-2 ${
+                className={`py-2 px-4 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
                   isActive
-                    ? 'bg-brand-indigo text-white font-bold shadow-md scale-105'
-                    : 'bg-paper-raised text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle border border-border-rule'
+                    ? 'bg-[#364165] text-white font-bold shadow-md scale-105'
+                    : 'bg-white text-stone-600 hover:text-black hover:bg-stone-50 border border-black/10'
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -1560,16 +1607,16 @@ export default function LandingPage() {
         </div>
 
         {/* Interactive Workspace Tab Panels */}
-        <div className="p-6 sm:p-8 bg-paper-raised border-2 border-border-rule rounded-3xl shadow-xl relative min-h-[420px]">
+        <div className="p-7 sm:p-9 bg-white border border-black/10 rounded-3xl shadow-[0_15px_40px_rgba(0,0,0,0.06)] relative min-h-[420px]">
           {/* TAB 1: DASHBOARD */}
           {activeTourTab === 'dashboard' && (
             <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-border-rule">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-black/10">
                 <div>
-                  <h3 className="font-serif font-bold text-xl text-ink-primary">
+                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
                     Central Publishing Command
                   </h3>
-                  <p className="text-xs font-mono text-ink-secondary">Real-time health of scheduled campaigns, queues, and connected accounts</p>
+                  <p className="text-xs font-mono text-stone-500">Real-time health of scheduled campaigns, queues, and connected accounts</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
@@ -1579,55 +1626,55 @@ export default function LandingPage() {
 
               {/* Stat Counters */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="p-4 bg-paper-canvas rounded-xl border border-border-rule">
-                  <span className="text-[10px] font-mono text-ink-secondary block">DISPATCH RELIABILITY</span>
-                  <div className="text-2xl font-serif font-bold text-brand-indigo">99.98%</div>
+                <div className="p-4 bg-stone-50 rounded-2xl border border-black/5">
+                  <span className="text-[10px] font-mono text-stone-500 block font-bold">DISPATCH RELIABILITY</span>
+                  <div className="text-2xl font-serif font-bold text-[#364165]">99.98%</div>
                   <span className="text-[10px] font-mono text-emerald-700">SLA Maintained</span>
                 </div>
-                <div className="p-4 bg-paper-canvas rounded-xl border border-border-rule">
-                  <span className="text-[10px] font-mono text-ink-secondary block">ACTIVE QUEUES</span>
-                  <div className="text-2xl font-serif font-bold text-ink-primary">12 Posts</div>
-                  <span className="text-[10px] font-mono text-ink-secondary">Across 4 Networks</span>
+                <div className="p-4 bg-stone-50 rounded-2xl border border-black/5">
+                  <span className="text-[10px] font-mono text-stone-500 block font-bold">ACTIVE QUEUES</span>
+                  <div className="text-2xl font-serif font-bold text-[#1A1A18]">12 Posts</div>
+                  <span className="text-[10px] font-mono text-stone-500">Across 4 Networks</span>
                 </div>
-                <div className="p-4 bg-paper-canvas rounded-xl border border-border-rule">
-                  <span className="text-[10px] font-mono text-ink-secondary block">PEAK SLOT TARGET</span>
+                <div className="p-4 bg-stone-50 rounded-2xl border border-black/5">
+                  <span className="text-[10px] font-mono text-stone-500 block font-bold">PEAK SLOT TARGET</span>
                   <div className="text-2xl font-serif font-bold text-amber-600">19:30 UTC+7</div>
-                  <span className="text-[10px] font-mono text-ink-secondary">Prime Reel Window</span>
+                  <span className="text-[10px] font-mono text-stone-500">Prime Reel Window</span>
                 </div>
-                <div className="p-4 bg-paper-canvas rounded-xl border border-border-rule">
-                  <span className="text-[10px] font-mono text-ink-secondary block">TOKEN VAULT</span>
+                <div className="p-4 bg-stone-50 rounded-2xl border border-black/5">
+                  <span className="text-[10px] font-mono text-stone-500 block font-bold">TOKEN VAULT</span>
                   <div className="text-2xl font-serif font-bold text-emerald-700">AES-256</div>
                   <span className="text-[10px] font-mono text-emerald-700">Encrypted GCM</span>
                 </div>
               </div>
 
               {/* Recent Dispatches Mock Table */}
-              <div className="border border-border-rule rounded-xl overflow-hidden bg-paper-canvas">
-                <div className="p-2.5 bg-paper-subtle border-b border-border-rule text-[11px] font-mono font-bold text-ink-secondary flex justify-between">
+              <div className="border border-black/10 rounded-2xl overflow-hidden bg-white shadow-2xs">
+                <div className="p-3 bg-stone-50 border-b border-black/10 text-[11px] font-mono font-bold text-stone-600 flex justify-between">
                   <span>DISPATCH STREAM</span>
                   <span>STATUS</span>
                 </div>
-                <div className="divide-y divide-border-rule/60 text-xs font-mono">
-                  <div className="p-3 flex items-center justify-between">
+                <div className="divide-y divide-black/5 text-xs font-mono">
+                  <div className="p-3.5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <YouTubeLogo size={14} />
-                      <span className="font-bold text-ink-primary truncate">Behind The Scenes ep04 (4K Master)</span>
+                      <span className="font-bold text-[#1A1A18] truncate">Behind The Scenes ep04 (4K Master)</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-700 font-bold text-[10px]">PUBLISHED</span>
+                    <span className="px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">PUBLISHED</span>
                   </div>
-                  <div className="p-3 flex items-center justify-between">
+                  <div className="p-3.5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <TikTokLogo size={14} />
-                      <span className="font-bold text-ink-primary truncate">Micro-Teaser Hook #9:16</span>
+                      <span className="font-bold text-[#1A1A18] truncate">Micro-Teaser Hook #9:16</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo font-bold text-[10px]">ENCODING 78%</span>
+                    <span className="px-2.5 py-0.5 rounded bg-[#364165]/10 text-[#364165] font-bold text-[10px]">ENCODING 78%</span>
                   </div>
-                  <div className="p-3 flex items-center justify-between">
+                  <div className="p-3.5 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                       <InstagramLogo size={14} />
-                      <span className="font-bold text-ink-primary truncate">Prime Carousel Photo Slide</span>
+                      <span className="font-bold text-[#1A1A18] truncate">Prime Carousel Photo Slide</span>
                     </div>
-                    <span className="px-2 py-0.5 rounded bg-amber-400/15 text-amber-800 font-bold text-[10px]">QUEUED 19:30</span>
+                    <span className="px-2.5 py-0.5 rounded bg-amber-100 text-amber-900 font-bold text-[10px]">QUEUED 19:30</span>
                   </div>
                 </div>
               </div>
@@ -1637,12 +1684,12 @@ export default function LandingPage() {
           {/* TAB 2: CONTENT LIBRARY */}
           {activeTourTab === 'library' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center pb-4 border-b border-border-rule">
+              <div className="flex justify-between items-center pb-4 border-b border-black/10">
                 <div>
-                  <h3 className="font-serif font-bold text-xl text-ink-primary">Master Media Asset Repository</h3>
-                  <p className="text-xs font-mono text-ink-secondary">Search, tag, and reuse high-resolution master video and graphics</p>
+                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">Master Media Asset Repository</h3>
+                  <p className="text-xs font-mono text-stone-500">Search, tag, and reuse high-resolution master video and graphics</p>
                 </div>
-                <span className="px-3 py-1 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs font-bold text-ink-primary">
+                <span className="px-3 py-1 bg-stone-100 border border-black/10 rounded-xl font-mono text-xs font-bold text-[#1A1A18]">
                   128 Assets Ingested
                 </span>
               </div>
@@ -1653,16 +1700,16 @@ export default function LandingPage() {
                   { title: 'Product Showcase Carousel', res: '1080 × 1350', dur: '5 Slides', tag: 'Carousel 4:5' },
                   { title: 'Bangkok Studio Vlog Hook', res: '1080 × 1920', dur: '00:30', tag: 'Vertical 9:16' },
                 ].map((item, idx) => (
-                  <div key={idx} className="p-4 bg-paper-canvas rounded-2xl border border-border-rule space-y-3">
-                    <div className="aspect-video bg-paper-subtle rounded-xl border border-border-rule/80 flex items-center justify-center relative overflow-hidden">
-                      <Film className="w-8 h-8 text-brand-indigo/40" />
-                      <span className="absolute top-2 right-2 px-1.5 py-0.5 rounded bg-brand-indigo text-white font-mono text-[9px] font-bold">
+                  <div key={idx} className="p-4 bg-stone-50 rounded-2xl border border-black/10 space-y-3">
+                    <div className="aspect-video bg-stone-200 rounded-xl flex items-center justify-center relative overflow-hidden">
+                      <Film className="w-8 h-8 text-[#364165]/40" />
+                      <span className="absolute top-2 right-2 px-2 py-0.5 rounded bg-[#364165] text-white font-mono text-[9px] font-bold">
                         {item.tag}
                       </span>
                     </div>
                     <div>
-                      <h4 className="font-serif font-bold text-sm text-ink-primary truncate">{item.title}</h4>
-                      <div className="flex justify-between text-[10px] font-mono text-ink-secondary pt-1">
+                      <h4 className="font-serif font-bold text-sm text-[#1A1A18] truncate">{item.title}</h4>
+                      <div className="flex justify-between text-[10px] font-mono text-stone-500 pt-1">
                         <span>{item.res}</span>
                         <span>{item.dur}</span>
                       </div>
@@ -1676,46 +1723,46 @@ export default function LandingPage() {
           {/* TAB 3: CREATE POST (COMPOSER) */}
           {activeTourTab === 'composer' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center pb-4 border-b border-border-rule">
+              <div className="flex justify-between items-center pb-4 border-b border-black/10">
                 <div>
-                  <h3 className="font-serif font-bold text-xl text-ink-primary">Universal Studio Composer</h3>
-                  <p className="text-xs font-mono text-ink-secondary">Single story root with platform-specific safe-zone overlays</p>
+                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">Universal Studio Composer</h3>
+                  <p className="text-xs font-mono text-stone-500">Single story root with platform-specific safe-zone overlays</p>
                 </div>
                 <div className="flex gap-2">
-                  <span className="px-2 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo text-xs font-mono font-bold">IG Reel</span>
-                  <span className="px-2 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo text-xs font-mono font-bold">YouTube</span>
-                  <span className="px-2 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo text-xs font-mono font-bold">TikTok</span>
+                  <span className="px-2.5 py-0.5 rounded bg-[#364165]/10 text-[#364165] text-xs font-mono font-bold">IG Reel</span>
+                  <span className="px-2.5 py-0.5 rounded bg-[#364165]/10 text-[#364165] text-xs font-mono font-bold">YouTube</span>
+                  <span className="px-2.5 py-0.5 rounded bg-[#364165]/10 text-[#364165] text-xs font-mono font-bold">TikTok</span>
                 </div>
               </div>
 
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
                 <div className="lg:col-span-7 space-y-4">
-                  <div className="p-4 bg-paper-canvas rounded-2xl border border-border-rule space-y-3">
+                  <div className="p-4 bg-stone-50 rounded-2xl border border-black/10 space-y-3">
                     <div className="flex justify-between text-xs font-mono">
-                      <span className="font-bold text-ink-primary">SHARED STORY DRAFT</span>
-                      <span className="text-ink-secondary">142 / 2,200 chars</span>
+                      <span className="font-bold text-[#1A1A18]">SHARED STORY DRAFT</span>
+                      <span className="text-stone-500">142 / 2,200 chars</span>
                     </div>
-                    <p className="text-xs font-sans text-ink-primary leading-relaxed bg-paper-raised p-3 rounded-xl border border-border-rule/80">
+                    <p className="text-xs font-sans text-[#1A1A18] leading-relaxed bg-white p-3 rounded-xl border border-black/10">
                       Step into our Bangkok creative press room. Today we are launching the new Dream Press multi-placement engine with instant safe-zone compliance.
                     </p>
-                    <div className="flex gap-2 text-[10px] font-mono text-ink-secondary">
-                      <span className="px-2 py-0.5 bg-paper-subtle rounded border border-border-rule">#multipost</span>
-                      <span className="px-2 py-0.5 bg-paper-subtle rounded border border-border-rule">#dreampress</span>
-                      <span className="px-2 py-0.5 bg-paper-subtle rounded border border-border-rule">#creator</span>
+                    <div className="flex gap-2 text-[10px] font-mono text-stone-500">
+                      <span className="px-2 py-0.5 bg-stone-200 rounded">#multipost</span>
+                      <span className="px-2 py-0.5 bg-stone-200 rounded">#dreampress</span>
+                      <span className="px-2 py-0.5 bg-stone-200 rounded">#creator</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="lg:col-span-5 p-4 bg-paper-canvas rounded-2xl border border-border-rule space-y-2">
-                  <div className="text-[10px] font-mono text-ink-secondary uppercase">SAFE-ZONE VIEWPORT (9:16)</div>
-                  <div className="aspect-[9/14] bg-paper-subtle rounded-xl border border-dashed border-brand-indigo/40 p-3 flex flex-col justify-between relative text-center">
-                    <div className="p-1 bg-brand-indigo/10 rounded text-[9px] font-mono text-brand-indigo">
+                <div className="lg:col-span-5 p-4 bg-stone-50 rounded-2xl border border-black/10 space-y-2">
+                  <div className="text-[10px] font-mono text-stone-500 uppercase font-bold">SAFE-ZONE VIEWPORT (9:16)</div>
+                  <div className="aspect-[9/14] bg-stone-200 rounded-xl border border-dashed border-[#364165]/40 p-3 flex flex-col justify-between relative text-center">
+                    <div className="p-1 bg-[#364165]/10 rounded text-[9px] font-mono text-[#364165]">
                       TOP SAFE-ZONE (Status Bars & Notch Clearance)
                     </div>
-                    <div className="font-serif italic text-xs text-ink-primary">
+                    <div className="font-serif italic text-xs text-[#1A1A18]">
                       Main focal area stays completely clear of mobile UI buttons
                     </div>
-                    <div className="p-1 bg-accent-terracotta/10 rounded text-[9px] font-mono text-accent-terracotta">
+                    <div className="p-1 bg-[#A24836]/10 rounded text-[9px] font-mono text-[#A24836]">
                       BOTTOM SAFE-ZONE (Like, Comment & Sound Button Clearance)
                     </div>
                   </div>
@@ -1727,36 +1774,36 @@ export default function LandingPage() {
           {/* TAB 4: PUBLISHING QUEUE */}
           {activeTourTab === 'queue' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center pb-4 border-b border-border-rule">
+              <div className="flex justify-between items-center pb-4 border-b border-black/10">
                 <div>
-                  <h3 className="font-serif font-bold text-xl text-ink-primary">Asynchronous Dispatch Queue</h3>
-                  <p className="text-xs font-mono text-ink-secondary">Track job execution, worker concurrency, and isolate partial retries</p>
+                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">Asynchronous Dispatch Queue</h3>
+                  <p className="text-xs font-mono text-stone-500">Track job execution, worker concurrency, and isolate partial retries</p>
                 </div>
-                <span className="text-xs font-mono font-bold text-emerald-700 bg-emerald-500/10 px-2.5 py-1 rounded">
+                <span className="text-xs font-mono font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
                   Queue Health: 100%
                 </span>
               </div>
 
               <div className="space-y-3 font-mono text-xs">
                 {[
-                  { id: 'JOB-9021', chan: 'YouTube', type: YouTubeLogo, time: '19:30 UTC+7', status: 'READY', badge: 'bg-emerald-500/10 text-emerald-800' },
-                  { id: 'JOB-9022', chan: 'Instagram', type: InstagramLogo, time: '19:30 UTC+7', status: 'IN QUEUE', badge: 'bg-brand-indigo/10 text-brand-indigo' },
-                  { id: 'JOB-9023', chan: 'TikTok', type: TikTokLogo, time: '19:30 UTC+7', status: 'IN QUEUE', badge: 'bg-brand-indigo/10 text-brand-indigo' },
-                  { id: 'JOB-9024', chan: 'X / Twitter', type: XLogo, time: '19:35 UTC+7', status: 'RATE LIMIT BACKOFF', badge: 'bg-amber-400/20 text-amber-900' },
+                  { id: 'JOB-9021', chan: 'YouTube', type: YouTubeLogo, time: '19:30 UTC+7', status: 'READY', badge: 'bg-emerald-100 text-emerald-800' },
+                  { id: 'JOB-9022', chan: 'Instagram', type: InstagramLogo, time: '19:30 UTC+7', status: 'IN QUEUE', badge: 'bg-[#364165]/10 text-[#364165]' },
+                  { id: 'JOB-9023', chan: 'TikTok', type: TikTokLogo, time: '19:30 UTC+7', status: 'IN QUEUE', badge: 'bg-[#364165]/10 text-[#364165]' },
+                  { id: 'JOB-9024', chan: 'X / Twitter', type: XLogo, time: '19:35 UTC+7', status: 'RATE LIMIT BACKOFF', badge: 'bg-amber-100 text-amber-900' },
                 ].map((job) => {
                   const Icon = job.type;
                   return (
-                    <div key={job.id} className="p-3.5 bg-paper-canvas rounded-xl border border-border-rule flex items-center justify-between">
+                    <div key={job.id} className="p-3.5 bg-stone-50 rounded-xl border border-black/10 flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <Icon size={16} />
                         <div>
-                          <b className="text-ink-primary">{job.chan}</b>
-                          <span className="text-ink-secondary text-[11px] ml-2">ID: {job.id}</span>
+                          <b className="text-[#1A1A18]">{job.chan}</b>
+                          <span className="text-stone-500 text-[11px] ml-2">ID: {job.id}</span>
                         </div>
                       </div>
                       <div className="flex items-center gap-4">
-                        <span className="text-ink-secondary hidden sm:inline">{job.time}</span>
-                        <span className={`px-2 py-0.5 rounded font-bold text-[10px] ${job.badge}`}>
+                        <span className="text-stone-500 hidden sm:inline">{job.time}</span>
+                        <span className={`px-2.5 py-0.5 rounded font-bold text-[10px] ${job.badge}`}>
                           {job.status}
                         </span>
                       </div>
@@ -1770,35 +1817,35 @@ export default function LandingPage() {
           {/* TAB 5: CALENDAR */}
           {activeTourTab === 'calendar' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center pb-4 border-b border-border-rule">
+              <div className="flex justify-between items-center pb-4 border-b border-black/10">
                 <div>
-                  <h3 className="font-serif font-bold text-xl text-ink-primary">Editorial Publishing Calendar</h3>
-                  <p className="text-xs font-mono text-ink-secondary">Synchronized schedule with Bangkok Golden Peak highlight zones</p>
+                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">Editorial Publishing Calendar</h3>
+                  <p className="text-xs font-mono text-stone-500">Synchronized schedule with Bangkok Golden Peak highlight zones</p>
                 </div>
-                <span className="text-xs font-mono text-ink-secondary">Asia/Bangkok (UTC+7)</span>
+                <span className="text-xs font-mono text-stone-500">Asia/Bangkok (UTC+7)</span>
               </div>
 
               <div className="grid grid-cols-7 gap-2 text-center font-mono text-xs">
                 {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day) => (
-                  <div key={day} className="p-2 bg-paper-subtle rounded-lg font-bold text-ink-secondary text-[11px]">
+                  <div key={day} className="p-2 bg-stone-100 rounded-lg font-bold text-stone-600 text-[11px]">
                     {day}
                   </div>
                 ))}
                 {[20, 21, 22, 23, 24, 25, 26].map((date, idx) => (
-                  <div key={idx} className="p-3 bg-paper-canvas rounded-xl border border-border-rule min-h-[85px] text-left space-y-1">
-                    <span className="text-xs font-bold text-ink-primary">{date}</span>
+                  <div key={idx} className="p-3 bg-stone-50 rounded-xl border border-black/10 min-h-[85px] text-left space-y-1">
+                    <span className="text-xs font-bold text-[#1A1A18]">{date}</span>
                     {idx === 2 && (
-                      <div className="p-1 bg-brand-indigo/10 text-brand-indigo rounded text-[9px] font-bold truncate">
+                      <div className="p-1 bg-[#364165]/10 text-[#364165] rounded text-[9px] font-bold truncate">
                         19:30 Reel Live
                       </div>
                     )}
                     {idx === 4 && (
-                      <div className="p-1 bg-amber-400/20 text-amber-900 rounded text-[9px] font-bold truncate">
+                      <div className="p-1 bg-amber-100 text-amber-900 rounded text-[9px] font-bold truncate">
                         11:45 YT Widescreen
                       </div>
                     )}
                     {idx === 6 && (
-                      <div className="p-1 bg-emerald-500/15 text-emerald-800 rounded text-[9px] font-bold truncate">
+                      <div className="p-1 bg-emerald-100 text-emerald-800 rounded text-[9px] font-bold truncate">
                         21:15 Night Owl
                       </div>
                     )}
@@ -1811,33 +1858,33 @@ export default function LandingPage() {
           {/* TAB 6: ANALYTICS */}
           {activeTourTab === 'analytics' && (
             <div className="space-y-6">
-              <div className="flex justify-between items-center pb-4 border-b border-border-rule">
+              <div className="flex justify-between items-center pb-4 border-b border-black/10">
                 <div>
-                  <h3 className="font-serif font-bold text-xl text-ink-primary">Omni-Channel Performance Radar</h3>
-                  <p className="text-xs font-mono text-ink-secondary">Consolidated impression reach and cross-platform engagement velocity</p>
+                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">Omni-Channel Performance Radar</h3>
+                  <p className="text-xs font-mono text-stone-500">Consolidated impression reach and cross-platform engagement velocity</p>
                 </div>
-                <span className="px-2.5 py-1 rounded bg-brand-indigo/10 text-brand-indigo font-mono text-xs font-bold">
+                <span className="px-3 py-1 rounded-full bg-[#364165]/10 text-[#364165] font-mono text-xs font-bold">
                   Last 30 Days
                 </span>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-4 bg-paper-canvas rounded-2xl border border-border-rule space-y-1">
-                  <span className="text-[10px] font-mono text-ink-secondary uppercase">TOTAL IMPRESSIONS</span>
-                  <div className="text-3xl font-serif font-bold text-ink-primary">482,900</div>
+                <div className="p-5 bg-stone-50 rounded-2xl border border-black/5 space-y-1 shadow-2xs">
+                  <span className="text-[10px] font-mono text-stone-500 uppercase font-bold">TOTAL IMPRESSIONS</span>
+                  <div className="text-3xl font-serif font-bold text-[#1A1A18]">482,900</div>
                   <div className="flex items-center gap-1 text-emerald-700 font-mono text-xs">
                     <TrendingUp className="w-3.5 h-3.5" />
                     <span>+24.6% vs single-app uploads</span>
                   </div>
                 </div>
-                <div className="p-4 bg-paper-canvas rounded-2xl border border-border-rule space-y-1">
-                  <span className="text-[10px] font-mono text-ink-secondary uppercase">AVERAGE ENGAGEMENT</span>
-                  <div className="text-3xl font-serif font-bold text-ink-primary">6.8%</div>
-                  <div className="text-ink-secondary font-mono text-xs">Across 6 connected endpoints</div>
+                <div className="p-5 bg-stone-50 rounded-2xl border border-black/5 space-y-1 shadow-2xs">
+                  <span className="text-[10px] font-mono text-stone-500 uppercase font-bold">AVERAGE ENGAGEMENT</span>
+                  <div className="text-3xl font-serif font-bold text-[#1A1A18]">6.8%</div>
+                  <div className="text-stone-500 font-mono text-xs">Across 6 connected endpoints</div>
                 </div>
-                <div className="p-4 bg-paper-canvas rounded-2xl border border-border-rule space-y-1">
-                  <span className="text-[10px] font-mono text-ink-secondary uppercase">TIME SAVED / WEEK</span>
-                  <div className="text-3xl font-serif font-bold text-brand-indigo">14.5 hrs</div>
+                <div className="p-5 bg-stone-50 rounded-2xl border border-black/5 space-y-1 shadow-2xs">
+                  <span className="text-[10px] font-mono text-stone-500 uppercase font-bold">TIME SAVED / WEEK</span>
+                  <div className="text-3xl font-serif font-bold text-[#364165]">14.5 hrs</div>
                   <div className="text-emerald-700 font-mono text-xs">Zero manual copy-pasting</div>
                 </div>
               </div>
@@ -1849,105 +1896,105 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       {/* SECTION 07 — FEATURES THAT MATTER (EDITORIAL MAGAZINE LAYOUT)             */}
       {/* ========================================================================= */}
-      <section id="features" className="py-20 bg-paper-raised/70 border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
+      <section id="features" className="py-20 bg-white/70 backdrop-blur-sm border-y border-black/10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-2">
-            <span className="text-xs font-mono font-bold text-brand-indigo uppercase tracking-wider">
+            <span className="text-xs font-mono font-bold text-[#364165] uppercase tracking-wider">
               07 / FEATURES THAT MATTER
             </span>
-            <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-ink-primary">
+            <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
               Engineered for Serious Publishing
             </h2>
-            <p className="font-sans text-sm sm:text-base text-ink-secondary leading-relaxed">
+            <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
               Eight architectural pillars designed to streamline complex multi-network delivery into one effortless, dependable routine.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* 1. Upload Once */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
-              <div className="w-10 h-10 rounded-xl bg-brand-indigo/10 text-brand-indigo flex items-center justify-center font-bold">
+            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+              <div className="w-10 h-10 rounded-xl bg-[#364165]/10 text-[#364165] flex items-center justify-center font-bold">
                 <Film className="w-5 h-5" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-ink-primary">Upload Once</h3>
-              <p className="text-xs text-ink-secondary leading-relaxed font-sans">
+              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Upload Once</h3>
+              <p className="text-xs text-stone-600 leading-relaxed font-sans">
                 Universal master ingestion supporting 4K 60fps video and uncompressed photo sets without quality reduction.
               </p>
             </div>
 
             {/* 2. Shared Story */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center font-bold">
                 <FileText className="w-5 h-5" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-ink-primary">Shared Story</h3>
-              <p className="text-xs text-ink-secondary leading-relaxed font-sans">
+              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Shared Story</h3>
+              <p className="text-xs text-stone-600 leading-relaxed font-sans">
                 A single canonical narrative draft that maintains consistency while serving as the parent root for every channel.
               </p>
             </div>
 
             {/* 3. Platform Editions */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center font-bold">
                 <Sliders className="w-5 h-5" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-ink-primary">Platform Editions</h3>
-              <p className="text-xs text-ink-secondary leading-relaxed font-sans">
+              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Platform Editions</h3>
+              <p className="text-xs text-stone-600 leading-relaxed font-sans">
                 Tailored character limits, hashtag placements, and mobile safe-zone guides adapted for YouTube, IG, TikTok, and X.
               </p>
             </div>
 
             {/* 4. Smart Scheduling */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
-              <div className="w-10 h-10 rounded-xl bg-accent-terracotta/10 text-accent-terracotta flex items-center justify-center font-bold">
+            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+              <div className="w-10 h-10 rounded-xl bg-[#A24836]/10 text-[#A24836] flex items-center justify-center font-bold">
                 <Clock className="w-5 h-5" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-ink-primary">Smart Scheduling</h3>
-              <p className="text-xs text-ink-secondary leading-relaxed font-sans">
+              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Smart Scheduling</h3>
+              <p className="text-xs text-stone-600 leading-relaxed font-sans">
                 Bangkok Golden Peak hour recommendations (11:45, 19:30, 21:15 UTC+7) for maximum organic distribution.
               </p>
             </div>
 
             {/* 5. Publishing Queue */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
-              <div className="w-10 h-10 rounded-xl bg-brand-indigo/10 text-brand-indigo flex items-center justify-center font-bold">
+            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+              <div className="w-10 h-10 rounded-xl bg-[#364165]/10 text-[#364165] flex items-center justify-center font-bold">
                 <RefreshCw className="w-5 h-5" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-ink-primary">Publishing Queue</h3>
-              <p className="text-xs text-ink-secondary leading-relaxed font-sans">
+              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Publishing Queue</h3>
+              <p className="text-xs text-stone-600 leading-relaxed font-sans">
                 Asynchronous job engine with millisecond synchronization across concurrent social network APIs.
               </p>
             </div>
 
             {/* 6. Retry & Recovery */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
-              <div className="w-10 h-10 rounded-xl bg-accent-terracotta/10 text-accent-terracotta flex items-center justify-center font-bold">
+            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+              <div className="w-10 h-10 rounded-xl bg-[#A24836]/10 text-[#A24836] flex items-center justify-center font-bold">
                 <Zap className="w-5 h-5" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-ink-primary">Retry & Recovery</h3>
-              <p className="text-xs text-ink-secondary leading-relaxed font-sans">
+              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Retry & Recovery</h3>
+              <p className="text-xs text-stone-600 leading-relaxed font-sans">
                 Isolated partial retry: if one platform rate limits, resolve and retry it without re-posting to successful channels.
               </p>
             </div>
 
             {/* 7. Connected Accounts */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center font-bold">
                 <ShieldCheck className="w-5 h-5" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-ink-primary">Connected Accounts</h3>
-              <p className="text-xs text-ink-secondary leading-relaxed font-sans">
+              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Connected Accounts</h3>
+              <p className="text-xs text-stone-600 leading-relaxed font-sans">
                 Bank-grade Token Vault encrypted with AES-256 GCM. No user passwords stored; zero token leakage risks.
               </p>
             </div>
 
             {/* 8. Content Performance */}
-            <div className="p-6 bg-paper-canvas border border-border-rule rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
+            <div className="p-6 bg-white border border-black/10 rounded-2xl shadow-xs space-y-3 hover:-translate-y-1 hover:shadow-md transition-all">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center font-bold">
                 <BarChart3 className="w-5 h-5" />
               </div>
-              <h3 className="font-serif font-bold text-lg text-ink-primary">Content Performance</h3>
-              <p className="text-xs text-ink-secondary leading-relaxed font-sans">
+              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Content Performance</h3>
+              <p className="text-xs text-stone-600 leading-relaxed font-sans">
                 Unified cross-network metrics tracking aggregated views, engagement velocity, and publication edition ROI.
               </p>
             </div>
@@ -1960,13 +2007,13 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       <section id="audience" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12">
         <div className="text-center max-w-3xl mx-auto space-y-2">
-          <span className="text-xs font-mono font-bold text-brand-indigo uppercase tracking-wider">
+          <span className="text-xs font-mono font-bold text-[#364165] uppercase tracking-wider">
             08 / BUILT FOR YOUR CREATIVE WORKFLOW
           </span>
-          <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-ink-primary">
+          <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
             Tailored for Every Scale of Modern Publishing
           </h2>
-          <p className="font-sans text-sm sm:text-base text-ink-secondary leading-relaxed">
+          <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
             Engineered to remove friction whether you produce solo broadcasts or orchestrate multi-client publishing operations.
           </p>
         </div>
@@ -1974,81 +2021,81 @@ export default function LandingPage() {
         {/* 5 Audience Profiles Grid (STRICTLY NO FAKE STATS / NO FAKE REVIEWS) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* 1. Individual Creators */}
-          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
-            <div className="w-8 h-8 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center font-mono font-bold text-xs">
+          <div className="p-7 bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
+            <div className="w-8 h-8 rounded-full bg-[#364165]/10 text-[#364165] flex items-center justify-center font-mono font-bold text-xs">
               01
             </div>
-            <h3 className="font-serif font-bold text-xl text-ink-primary">
+            <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
               Individual Creators
             </h3>
-            <p className="text-xs text-ink-secondary font-sans leading-relaxed">
+            <p className="text-xs text-stone-600 font-sans leading-relaxed">
               Solo YouTubers, podcasters, and storytellers who want to distribute short-form clips to TikTok and Instagram Reels in minutes without getting trapped in repetitive export-render cycles.
             </p>
-            <div className="pt-2 border-t border-border-rule/60 text-[11px] font-mono text-brand-indigo font-semibold">
+            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-[#364165] font-semibold">
               ✓ 1 Master Upload → 4 Social Feeds
             </div>
           </div>
 
           {/* 2. Social Media Managers */}
-          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
-            <div className="w-8 h-8 rounded-full bg-accent-terracotta/10 text-accent-terracotta flex items-center justify-center font-mono font-bold text-xs">
+          <div className="p-7 bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
+            <div className="w-8 h-8 rounded-full bg-[#A24836]/10 text-[#A24836] flex items-center justify-center font-mono font-bold text-xs">
               02
             </div>
-            <h3 className="font-serif font-bold text-xl text-ink-primary">
+            <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
               Social Media Managers
             </h3>
-            <p className="text-xs text-ink-secondary font-sans leading-relaxed">
+            <p className="text-xs text-stone-600 font-sans leading-relaxed">
               Professionals handling multiple client channels who need reliable scheduled queues, custom platform hashtags, and safe-zone preview accuracy before any post goes live.
             </p>
-            <div className="pt-2 border-t border-border-rule/60 text-[11px] font-mono text-accent-terracotta font-semibold">
+            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-[#A24836] font-semibold">
               ✓ Multi-Brand Channel Isolation
             </div>
           </div>
 
           {/* 3. Content Teams & Newsrooms */}
-          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
+          <div className="p-7 bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
             <div className="w-8 h-8 rounded-full bg-emerald-500/10 text-emerald-800 flex items-center justify-center font-mono font-bold text-xs">
               03
             </div>
-            <h3 className="font-serif font-bold text-xl text-ink-primary">
+            <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
               Content Teams & Newsrooms
             </h3>
-            <p className="text-xs text-ink-secondary font-sans leading-relaxed">
+            <p className="text-xs text-stone-600 font-sans leading-relaxed">
               Editorial publication desks that operate with structured draft stages, editorial review gates, and synchronized multi-network announcements with zero room for error.
             </p>
-            <div className="pt-2 border-t border-border-rule/60 text-[11px] font-mono text-emerald-800 font-semibold">
+            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-emerald-800 font-semibold">
               ✓ Review Gates & Role Permissions
             </div>
           </div>
 
           {/* 4. Creative Studios */}
-          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
+          <div className="p-7 bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm hover:-translate-y-1 transition-transform">
             <div className="w-8 h-8 rounded-full bg-amber-500/10 text-amber-800 flex items-center justify-center font-mono font-bold text-xs">
               04
             </div>
-            <h3 className="font-serif font-bold text-xl text-ink-primary">
+            <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
               Creative Studios
             </h3>
-            <p className="text-xs text-ink-secondary font-sans leading-relaxed">
+            <p className="text-xs text-stone-600 font-sans leading-relaxed">
               Video production houses delivering pristine commercial assets for brands, where maintaining full 4K visual fidelity and exact color spaces is non-negotiable.
             </p>
-            <div className="pt-2 border-t border-border-rule/60 text-[11px] font-mono text-amber-800 font-semibold">
+            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-amber-800 font-semibold">
               ✓ Uncompressed 4K Master Preservation
             </div>
           </div>
 
           {/* 5. Small Businesses & Brands */}
-          <div className="p-6 bg-paper-raised border-2 border-border-rule rounded-3xl space-y-4 shadow-sm md:col-span-2 lg:col-span-2 hover:-translate-y-1 transition-transform">
-            <div className="w-8 h-8 rounded-full bg-brand-indigo/10 text-brand-indigo flex items-center justify-center font-mono font-bold text-xs">
+          <div className="p-7 bg-white border border-black/10 rounded-3xl space-y-4 shadow-sm md:col-span-2 lg:col-span-2 hover:-translate-y-1 transition-transform">
+            <div className="w-8 h-8 rounded-full bg-[#364165]/10 text-[#364165] flex items-center justify-center font-mono font-bold text-xs">
               05
             </div>
-            <h3 className="font-serif font-bold text-xl text-ink-primary">
+            <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
               Small Businesses & Independent Brands
             </h3>
-            <p className="text-xs text-ink-secondary font-sans leading-relaxed">
+            <p className="text-xs text-stone-600 font-sans leading-relaxed">
               Founders and store owners who need a vibrant multi-channel presence on Facebook, Instagram, and TikTok, but can only afford 20 minutes a week to set up their publication calendar.
             </p>
-            <div className="pt-2 border-t border-border-rule/60 text-[11px] font-mono text-brand-indigo font-semibold">
+            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-[#364165] font-semibold">
               ✓ Automated Bangkok Peak Hour Publishing
             </div>
           </div>
@@ -2058,30 +2105,30 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       {/* SECTION 09 — THE DISPATCH BOARD (INTERACTIVE MULTI-PLATFORM STATUS DEMO) */}
       {/* ========================================================================= */}
-      <section id="dispatch-board" className="py-20 bg-paper-raised/70 border-y-2 border-border-rule px-4 sm:px-6 lg:px-8">
+      <section id="dispatch-board" className="py-20 bg-white/70 backdrop-blur-sm border-y border-black/10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-3xl mx-auto space-y-2">
-            <span className="text-xs font-mono font-bold text-brand-indigo uppercase tracking-wider">
+            <span className="text-xs font-mono font-bold text-[#364165] uppercase tracking-wider">
               09 / THE DISPATCH BOARD
             </span>
-            <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-ink-primary">
+            <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
               Live Multi-Platform Dispatch Simulation
             </h2>
-            <p className="font-sans text-sm sm:text-base text-ink-secondary leading-relaxed">
+            <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
               Observe how MULTIPOST manages concurrent platform dispatches with independent state isolation. A temporary timeout on one network never interrupts other live deliveries.
             </p>
           </div>
 
           {/* The Interactive Dispatch Matrix */}
-          <div className="p-6 sm:p-8 bg-paper-canvas rounded-3xl border-2 border-border-rule shadow-lg space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-border-rule">
+          <div className="p-7 sm:p-9 bg-white rounded-3xl border border-black/10 shadow-[0_15px_40px_rgba(0,0,0,0.06)] space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-black/10">
               <div>
-                <span className="text-[10px] font-mono text-ink-secondary uppercase block">CAMPAIGN DISPATCH MATRIX</span>
-                <h3 className="font-serif font-bold text-lg text-ink-primary">
+                <span className="text-[10px] font-mono text-stone-500 uppercase block font-bold">CAMPAIGN DISPATCH MATRIX</span>
+                <h3 className="font-serif font-bold text-lg text-[#1A1A18]">
                   Master Reel #04: The Bangkok Studio Launch
                 </h3>
               </div>
-              <div className="text-xs font-mono text-ink-secondary">
+              <div className="text-xs font-mono text-stone-500">
                 Transmission Protocol: Concurrent Asynchronous Workers
               </div>
             </div>
@@ -2089,19 +2136,19 @@ export default function LandingPage() {
             {/* Independent Platform Streams */}
             <div className="space-y-4">
               {/* YouTube Stream (Published) */}
-              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+              <div className="p-4 bg-stone-50 rounded-2xl border border-black/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-red-600/10 text-red-600 flex items-center justify-center shrink-0">
                     <YouTubeLogo size={20} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <b className="text-sm text-ink-primary">YouTube Data API v3</b>
-                      <span className="px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-800 font-mono text-[10px] font-bold">
+                      <b className="text-sm text-[#1A1A18]">YouTube Data API v3</b>
+                      <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-mono text-[10px] font-bold">
                         PUBLISHED (200 OK)
                       </span>
                     </div>
-                    <p className="text-xs text-ink-secondary font-mono">Format: 16:9 4K Master Video • 45.2 Mbps</p>
+                    <p className="text-xs text-stone-500 font-mono">Format: 16:9 4K Master Video • 45.2 Mbps</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3 font-mono text-xs text-emerald-700">
@@ -2111,43 +2158,43 @@ export default function LandingPage() {
               </div>
 
               {/* TikTok Stream (Processing) */}
-              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+              <div className="p-4 bg-stone-50 rounded-2xl border border-black/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-neutral-900/10 text-ink-primary flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-neutral-900/10 text-[#1A1A18] flex items-center justify-center shrink-0">
                     <TikTokLogo size={20} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <b className="text-sm text-ink-primary">TikTok Creator API</b>
-                      <span className="px-2 py-0.5 rounded bg-brand-indigo/15 text-brand-indigo font-mono text-[10px] font-bold">
+                      <b className="text-sm text-[#1A1A18]">TikTok Creator API</b>
+                      <span className="px-2.5 py-0.5 rounded-full bg-[#364165]/10 text-[#364165] font-mono text-[10px] font-bold">
                         PROCESSING (ENCODING 78%)
                       </span>
                     </div>
-                    <p className="text-xs text-ink-secondary font-mono">Format: 9:16 Vertical Safe-Zone • Direct Mobile Chunk</p>
+                    <p className="text-xs text-stone-500 font-mono">Format: 9:16 Vertical Safe-Zone • Direct Mobile Chunk</p>
                   </div>
                 </div>
                 <div className="w-40 space-y-1 font-mono text-[10px]">
-                  <div className="flex justify-between text-ink-secondary"><span>Worker Push:</span><span>78%</span></div>
-                  <div className="w-full h-1.5 bg-paper-subtle rounded-full overflow-hidden">
-                    <div className="h-full bg-brand-indigo w-[78%] rounded-full animate-pulse" />
+                  <div className="flex justify-between text-stone-500"><span>Worker Push:</span><span>78%</span></div>
+                  <div className="w-full h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                    <div className="h-full bg-[#364165] w-[78%] rounded-full animate-pulse" />
                   </div>
                 </div>
               </div>
 
               {/* Instagram Stream (Scheduled) */}
-              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+              <div className="p-4 bg-stone-50 rounded-2xl border border-black/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-xl bg-pink-600/10 text-pink-600 flex items-center justify-center shrink-0">
                     <InstagramLogo size={20} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <b className="text-sm text-ink-primary">Instagram Graph API</b>
-                      <span className="px-2 py-0.5 rounded bg-amber-400/20 text-amber-900 font-mono text-[10px] font-bold">
+                      <b className="text-sm text-[#1A1A18]">Instagram Graph API</b>
+                      <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 font-mono text-[10px] font-bold">
                         SCHEDULED (19:30 UTC+7)
                       </span>
                     </div>
-                    <p className="text-xs text-ink-secondary font-mono">Format: 9:16 Reel • Mobile Sound Sync Enabled</p>
+                    <p className="text-xs text-stone-500 font-mono">Format: 9:16 Reel • Mobile Sound Sync Enabled</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 font-mono text-xs text-amber-800">
@@ -2157,27 +2204,27 @@ export default function LandingPage() {
               </div>
 
               {/* X / Twitter Stream: Simulated Failure & Isolated Recovery Action */}
-              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
+              <div className="p-4 bg-stone-50 rounded-2xl border border-black/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-2xs">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-xl bg-neutral-900/10 text-ink-primary flex items-center justify-center shrink-0">
+                  <div className="w-10 h-10 rounded-xl bg-neutral-900/10 text-[#1A1A18] flex items-center justify-center shrink-0">
                     <XLogo size={20} />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <b className="text-sm text-ink-primary">X API v2 Endpoint</b>
-                      <span className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold ${
+                      <b className="text-sm text-[#1A1A18]">X API v2 Endpoint</b>
+                      <span className={`px-2.5 py-0.5 rounded-full font-mono text-[10px] font-bold ${
                         xRetryState === 'FAILED'
-                          ? 'bg-accent-terracotta/15 text-accent-terracotta'
+                          ? 'bg-red-100 text-red-700'
                           : xRetryState === 'RETRYING'
-                          ? 'bg-amber-400/20 text-amber-900'
-                          : 'bg-emerald-500/15 text-emerald-800'
+                          ? 'bg-amber-100 text-amber-900'
+                          : 'bg-emerald-100 text-emerald-800'
                       }`}>
                         {xRetryState === 'FAILED' && 'TEMPORARY RATE LIMIT (429)'}
                         {xRetryState === 'RETRYING' && 'RE-AUTHENTICATING WORKER...'}
                         {xRetryState === 'RECOVERED' && 'RECOVERED & LIVE (200 OK)'}
                       </span>
                     </div>
-                    <p className="text-xs text-ink-secondary font-mono">
+                    <p className="text-xs text-stone-500 font-mono">
                       {xRetryState === 'FAILED' && 'Isolated incident. Other platform feeds are 100% unaffected.'}
                       {xRetryState === 'RETRYING' && 'Refreshing OAuth token and applying exponential backoff.'}
                       {xRetryState === 'RECOVERED' && 'Dispatched successfully via isolated worker recovery.'}
@@ -2189,7 +2236,7 @@ export default function LandingPage() {
                   {xRetryState === 'FAILED' && (
                     <button
                       onClick={handleRetryX}
-                      className="py-2 px-4 rounded-editorial bg-accent-terracotta text-white font-mono text-xs font-bold hover:bg-accent-terracotta/90 transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
+                      className="py-2 px-4 rounded-xl bg-[#A24836] text-white font-mono text-xs font-bold hover:bg-[#8e3f2f] transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
                       <span>⚡ 1-Click Partial Retry</span>
@@ -2215,49 +2262,49 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 10 — FINAL REWARD: THE 7-DAY DREAM PASS (CLEAN VINTAGE PASS)     */}
+      {/* SECTION 10 — FINAL REWARD: THE 7-DAY DREAM PASS (LUXURY GOLD FOIL PASS)   */}
       {/* ========================================================================= */}
       <section ref={dreamPassRef} id="dream-pass" className="py-24 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto w-full space-y-10">
         <div className="text-center max-w-2xl mx-auto space-y-2">
-          <span className="text-xs font-mono font-bold text-accent-terracotta uppercase tracking-wider">
+          <span className="text-xs font-mono font-bold text-[#A24836] uppercase tracking-wider">
             10 / THE DREAM PASS
           </span>
-          <h2 className="font-serif font-bold text-3xl sm:text-5xl text-ink-primary">
+          <h2 className="font-serif font-bold text-3xl sm:text-5xl text-[#1A1A18]">
             Your Official Activation Pass
           </h2>
-          <p className="font-sans text-sm sm:text-base text-ink-secondary">
+          <p className="font-sans text-sm sm:text-base text-stone-600">
             A vintage editorial ticket forged through interactive mastery of the Dream Press workspace.
           </p>
         </div>
 
-        {/* THE HORIZONTAL VINTAGE EDITORIAL TICKET WITH CLEAN STAMP ZONE (NO TEXT OVERLAP) */}
-        <div className={`rounded-3xl border-2 transition-all duration-500 relative overflow-hidden shadow-2xl ${
+        {/* Masterwork Ivory & Gold Ticket (High-End & Pristine) */}
+        <div className={`rounded-3xl border-2 transition-all duration-500 relative overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.08)] ${
           isPassUnlocked
-            ? 'bg-paper-canvas border-accent-terracotta/80 ring-4 ring-amber-400/40 shadow-amber-500/10'
-            : 'bg-paper-raised border-border-rule opacity-90'
+            ? 'bg-white border-amber-400 ring-4 ring-amber-400/20 shadow-[0_25px_60px_rgba(245,158,11,0.18)]'
+            : 'bg-white/90 border-black/10'
         } ${isRedeemingAnimation ? 'scale-98' : ''}`}>
 
-          <div className="p-6 sm:p-10 space-y-6">
+          <div className="p-7 sm:p-12 space-y-6">
             {/* Ticket Masthead */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b-2 border-dashed border-border-rule/80">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b-2 border-dashed border-stone-200">
               <div className="space-y-1">
-                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-400/15 text-amber-800 text-[10px] font-mono font-bold uppercase">
+                <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-amber-400/15 text-amber-900 text-[10px] font-mono font-bold uppercase border border-amber-400/30">
                   <Star className="w-3 h-3 text-amber-600 fill-amber-600" />
                   <span>OFFICIAL ACTIVATION PASS • DREAM PRESS DESK</span>
                 </div>
-                <h3 className="font-serif font-bold text-3xl sm:text-4xl text-ink-primary tracking-tight">
+                <h3 className="font-serif font-bold text-3xl sm:text-4xl text-[#1A1A18] tracking-tight">
                   7-DAY DREAM PASS
                 </h3>
-                <p className="text-xs font-mono text-ink-secondary">
+                <p className="text-xs font-mono text-stone-500">
                   SERIAL: № DP-2026-7DAY-0089 • ADMIT ONE CREATOR
                 </p>
               </div>
 
-              {/* Dedicated Clean Stamp Zone (No text overlap) */}
+              {/* Dedicated Clean Stamp Zone */}
               <div className="flex items-center gap-3">
                 {isPassRedeemed && (
                   <div className="animate-in zoom-in-75 duration-300">
-                    <div className="w-20 h-20 rounded-full border-2 border-dashed border-accent-terracotta flex flex-col items-center justify-center text-accent-terracotta font-mono font-bold text-[10px] rotate-[-12deg] bg-accent-terracotta/10 shadow-xs">
+                    <div className="w-20 h-20 rounded-full border-2 border-dashed border-[#A24836] flex flex-col items-center justify-center text-[#A24836] font-mono font-bold text-[10px] rotate-[-12deg] bg-[#A24836]/10 shadow-xs">
                       <span className="text-sm">✓</span>
                       <span>APPROVED</span>
                       <span className="text-[7px]">BANGKOK</span>
@@ -2265,11 +2312,11 @@ export default function LandingPage() {
                   </div>
                 )}
                 <div className="text-right">
-                  <span className="text-[10px] font-mono text-ink-secondary uppercase block">SPECIFICATION</span>
-                  <span className={`inline-block px-3 py-1 rounded font-mono text-xs font-bold ${
+                  <span className="text-[10px] font-mono text-stone-500 uppercase block font-bold">SPECIFICATION</span>
+                  <span className={`inline-block px-3 py-1 rounded-full font-mono text-xs font-bold ${
                     isPassUnlocked
-                      ? 'bg-emerald-500/15 text-emerald-800 border border-emerald-500/30'
-                      : 'bg-paper-subtle text-ink-secondary border border-border-rule'
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                      : 'bg-stone-100 text-stone-500 border border-stone-200'
                   }`}>
                     {isPassUnlocked ? '✦ UNLOCKED & FORGED' : '🔒 LOCKED (REQUIRES 100 COINS)'}
                   </span>
@@ -2279,11 +2326,11 @@ export default function LandingPage() {
 
             {/* Ticket Privileges */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-mono text-xs">
-              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule space-y-2">
-                <span className="text-[10px] uppercase font-bold text-brand-indigo block">
+              <div className="p-4 bg-stone-50 rounded-2xl border border-black/5 space-y-2">
+                <span className="text-[10px] uppercase font-bold text-[#364165] block">
                   AUTHORIZED SPECIFICATIONS:
                 </span>
-                <ul className="space-y-1.5 text-xs text-ink-primary">
+                <ul className="space-y-1.5 text-xs text-[#1A1A18]">
                   <li className="flex items-center gap-2">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
                     <span>Unrestricted Social Networks (YT, IG, TT, FB, X, Lemon8)</span>
@@ -2299,13 +2346,13 @@ export default function LandingPage() {
                 </ul>
               </div>
 
-              <div className="p-4 bg-paper-raised rounded-2xl border border-border-rule space-y-2">
-                <span className="text-[10px] uppercase font-bold text-brand-indigo block">
+              <div className="p-4 bg-stone-50 rounded-2xl border border-black/5 space-y-2">
+                <span className="text-[10px] uppercase font-bold text-[#364165] block">
                   SECURITY & INFRASTRUCTURE:
                 </span>
-                <ul className="space-y-1.5 text-xs text-ink-primary">
+                <ul className="space-y-1.5 text-xs text-[#1A1A18]">
                   <li className="flex items-center gap-2">
-                    <ShieldCheck className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
+                    <ShieldCheck className="w-3.5 h-3.5 text-[#364165] shrink-0" />
                     <span>Token Vault Encrypted with AES-256 GCM Standards</span>
                   </li>
                   <li className="flex items-center gap-2">
@@ -2322,48 +2369,45 @@ export default function LandingPage() {
 
             {/* LOCKED vs UNLOCKED INTERACTION AREA */}
             {!isPassUnlocked ? (
-              <div className="p-5 bg-paper-subtle rounded-2xl border border-border-rule text-center space-y-3 font-mono">
-                <div className="flex items-center justify-center gap-2 text-ink-secondary text-xs">
-                  <Lock className="w-4 h-4 text-accent-terracotta" />
+              <div className="p-6 bg-stone-50 rounded-2xl border border-black/10 text-center space-y-3 font-mono">
+                <div className="flex items-center justify-center gap-2 text-stone-600 text-xs">
+                  <Lock className="w-4 h-4 text-[#A24836]" />
                   <span>Current balance: <b>{coins} / 100 Press Coins</b></span>
                 </div>
-                <p className="text-xs text-ink-secondary">
-                  Complete the 4 interactive mini tasks in Section 04 above to forge your Dream Pass.
+                <p className="text-xs text-stone-500">
+                  ทำภารกิจใน Studio ด้านบน หรือคลิกปุ่ม &quot;รับ 100 Coins ทันที&quot; เพื่อเปิดใช้งานตั๋ว
                 </p>
                 <button
-                  onClick={() => {
-                    pressStudioRef.current?.scrollIntoView({ behavior: 'smooth' });
-                    playChimeSound(soundEnabled);
-                  }}
-                  className="py-2.5 px-5 rounded-editorial bg-brand-indigo text-white font-bold text-xs hover:bg-brand-indigo-hover transition-colors cursor-pointer"
+                  onClick={handleClaimAllCoins}
+                  className="py-2.5 px-6 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-bold text-xs shadow-md transition-all cursor-pointer active:scale-95"
                 >
-                  Jump to Press Studio (+{100 - coins} Coins Remaining) →
+                  ⚡ รับ 100 Coins ทันที และเปิดตั๋ว →
                 </button>
               </div>
             ) : !isPassRedeemed ? (
               <div className="space-y-4 pt-2">
                 <button
                   onClick={handleRedeemTicket}
-                  className="w-full py-4 px-6 rounded-editorial bg-accent-terracotta hover:bg-accent-terracotta/90 text-white font-bold text-base shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-[0.98] ring-2 ring-amber-400/50"
+                  className="w-full py-4 px-6 rounded-2xl bg-[#A24836] hover:bg-[#8e3f2f] text-white font-bold text-base shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-[0.98] ring-2 ring-amber-400/50"
                 >
                   <Sticker name="approved-seal" size="xs" inline />
-                  <span>Redeem Dream Pass (Slam Wax Stamp & Validate Ticket)</span>
+                  <span>Redeem Dream Pass (ประทับตราครั่งเปิดใช้งานตั๋ว)</span>
                 </button>
-                <p className="text-[11px] text-center font-mono text-ink-secondary">
-                  *This interactive ticket validation is an enjoyable marketing reward. No credit card or billing was required.
+                <p className="text-[11px] text-center font-mono text-stone-500">
+                  *การกดประทับตราในที่นี้เป็นการจำลองประสบการณ์ตั๋วเพื่อความสนุก ไม่มีการผูกมัดหรือตัดบัตรใดๆ
                 </p>
               </div>
             ) : (
-              <div className="p-6 rounded-2xl bg-emerald-500/10 border-2 border-emerald-500/40 text-center space-y-4 animate-in fade-in duration-300">
-                <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-800 mx-auto flex items-center justify-center font-bold text-xl border border-emerald-500/30">
+              <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-300 text-center space-y-4 animate-in fade-in duration-300">
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 mx-auto flex items-center justify-center font-bold text-xl border border-emerald-300">
                   ✓
                 </div>
                 <div className="space-y-1">
-                  <h4 className="font-serif font-bold text-xl sm:text-2xl text-ink-primary">
+                  <h4 className="font-serif font-bold text-xl sm:text-2xl text-[#1A1A18]">
                     Your Dream Pass is ready. You&apos;ve completed the publishing experience!
                   </h4>
-                  <p className="text-xs sm:text-sm text-ink-secondary max-w-xl mx-auto font-sans leading-relaxed">
-                    You have mastered the Dream Press workflow. When you are ready to publish real stories across your own channels, activate your real 7-day trial below.
+                  <p className="text-xs sm:text-sm text-stone-600 max-w-xl mx-auto font-sans leading-relaxed">
+                    คุณได้ปลดล็อกตั๋วสำเร็จแล้ว หากพร้อมเริ่มใช้งานจริงกับช่องทางโซเชียลของคุณ สามารถกดสมัครทดลองใช้จริงได้ฟรี 7 วัน
                   </p>
                 </div>
 
@@ -2371,15 +2415,15 @@ export default function LandingPage() {
                 <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center text-xs font-mono">
                   <Link
                     href="/register"
-                    className="py-3 px-6 rounded-editorial bg-brand-indigo hover:bg-brand-indigo-hover text-white font-bold shadow-sm transition-colors flex items-center justify-center gap-2 text-sm"
+                    className="py-3 px-6 rounded-xl bg-[#364165] hover:bg-[#2B3452] text-white font-bold shadow-md transition-colors flex items-center justify-center gap-2 text-sm"
                   >
-                    <span>Start Real 7-Day Free Trial (No Card Required) →</span>
+                    <span>สมัครทดลองใช้จริงฟรี 7 วัน (ไม่ต้องใช้บัตรเครดิต) →</span>
                   </Link>
                   <Link
                     href="/docs"
-                    className="py-3 px-4 rounded-editorial bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-primary font-semibold flex items-center justify-center"
+                    className="py-3 px-4 rounded-xl bg-white hover:bg-stone-50 border border-black/10 text-[#1A1A18] font-semibold flex items-center justify-center"
                   >
-                    <span>Read Documentation</span>
+                    <span>อ่านคู่มือระบบ (Docs)</span>
                   </Link>
                 </div>
               </div>
@@ -2391,23 +2435,23 @@ export default function LandingPage() {
       {/* ========================================================================= */}
       {/* SECTION 11 — MINIMAL EDITORIAL FOOTER                                     */}
       {/* ========================================================================= */}
-      <footer className="bg-paper-raised border-t-2 border-border-rule mt-auto pt-16 pb-12 px-4 sm:px-6 lg:px-8">
+      <footer className="bg-white border-t border-black/10 mt-auto pt-16 pb-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             {/* Brand Column (5 cols) */}
             <div className="md:col-span-5 space-y-4">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded bg-brand-indigo text-white flex items-center justify-center font-serif font-bold text-sm shadow-2xs">
+                <div className="w-8 h-8 rounded-lg bg-[#364165] text-white flex items-center justify-center font-serif font-bold text-sm shadow-2xs">
                   RP
                 </div>
-                <span className="font-serif font-bold text-lg text-ink-primary tracking-tight">
+                <span className="font-serif font-bold text-lg text-[#1A1A18] tracking-tight">
                   MULTIPOST — DREAM PRESS
                 </span>
               </div>
-              <p className="font-serif italic text-sm text-ink-secondary max-w-sm leading-relaxed">
+              <p className="font-serif italic text-sm text-stone-600 max-w-sm leading-relaxed">
                 &quot;Upload once. Adapt and publish everywhere.&quot;
               </p>
-              <p className="font-sans text-xs text-ink-secondary max-w-sm leading-relaxed">
+              <p className="font-sans text-xs text-stone-500 max-w-sm leading-relaxed">
                 A creative publishing desk engineered for creators, social media managers, and editorial teams. Bangkok, Thailand (UTC+7).
               </p>
             </div>
@@ -2415,54 +2459,54 @@ export default function LandingPage() {
             {/* Links Columns (7 cols) */}
             <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-6 font-mono text-xs">
               <div className="space-y-3">
-                <span className="font-bold text-brand-indigo uppercase text-[10px] tracking-wider block">
+                <span className="font-bold text-[#364165] uppercase text-[10px] tracking-wider block">
                   EXPLORE
                 </span>
-                <ul className="space-y-2 text-ink-secondary">
-                  <li><a href="#hero" className="hover:text-ink-primary transition-colors">Front Page</a></li>
-                  <li><a href="#the-problem" className="hover:text-ink-primary transition-colors">The Problem</a></li>
-                  <li><a href="#how-it-works" className="hover:text-ink-primary transition-colors">How It Works</a></li>
-                  <li><a href="#press-studio" className="hover:text-ink-primary transition-colors">Press Studio</a></li>
-                  <li><a href="#workspace-tour" className="hover:text-ink-primary transition-colors">Workspace Tour</a></li>
+                <ul className="space-y-2 text-stone-600">
+                  <li><a href="#hero" className="hover:text-black transition-colors">Front Page</a></li>
+                  <li><a href="#the-problem" className="hover:text-black transition-colors">The Problem</a></li>
+                  <li><a href="#how-it-works" className="hover:text-black transition-colors">How It Works</a></li>
+                  <li><a href="#press-studio" className="hover:text-black transition-colors">Press Studio</a></li>
+                  <li><a href="#workspace-tour" className="hover:text-black transition-colors">Workspace Tour</a></li>
                 </ul>
               </div>
 
               <div className="space-y-3">
-                <span className="font-bold text-brand-indigo uppercase text-[10px] tracking-wider block">
+                <span className="font-bold text-[#364165] uppercase text-[10px] tracking-wider block">
                   RESOURCES
                 </span>
-                <ul className="space-y-2 text-ink-secondary">
-                  <li><Link href="/docs" className="hover:text-ink-primary transition-colors">Documentation</Link></li>
-                  <li><Link href="/login" className="hover:text-ink-primary transition-colors">Sign In</Link></li>
-                  <li><Link href="/register" className="hover:text-ink-primary transition-colors">Register Free Trial</Link></li>
-                  <li><a href="#dispatch-board" className="hover:text-ink-primary transition-colors">Dispatch Board</a></li>
-                  <li><a href="#dream-pass" className="hover:text-ink-primary transition-colors">Dream Pass</a></li>
+                <ul className="space-y-2 text-stone-600">
+                  <li><Link href="/docs" className="hover:text-black transition-colors">Documentation</Link></li>
+                  <li><Link href="/login" className="hover:text-black transition-colors">Sign In</Link></li>
+                  <li><Link href="/register" className="hover:text-black transition-colors">Register Free Trial</Link></li>
+                  <li><a href="#dispatch-board" className="hover:text-black transition-colors">Dispatch Board</a></li>
+                  <li><a href="#dream-pass" className="hover:text-black transition-colors">Dream Pass</a></li>
                 </ul>
               </div>
 
               <div className="space-y-3">
-                <span className="font-bold text-brand-indigo uppercase text-[10px] tracking-wider block">
+                <span className="font-bold text-[#364165] uppercase text-[10px] tracking-wider block">
                   TRUST & COMPLIANCE
                 </span>
-                <ul className="space-y-2 text-ink-secondary">
-                  <li><Link href="/docs" className="hover:text-ink-primary transition-colors">PDPA & Privacy</Link></li>
-                  <li><Link href="/docs" className="hover:text-ink-primary transition-colors">Terms of Service</Link></li>
+                <ul className="space-y-2 text-stone-600">
+                  <li><Link href="/docs" className="hover:text-black transition-colors">PDPA & Privacy</Link></li>
+                  <li><Link href="/docs" className="hover:text-black transition-colors">Terms of Service</Link></li>
                   <li><span className="text-emerald-700">✓ Meta Policy Safe</span></li>
                   <li><span className="text-emerald-700">✓ YouTube API Compliant</span></li>
-                  <li><span className="text-brand-indigo font-bold">AES-256 GCM Vault</span></li>
+                  <li><span className="text-[#364165] font-bold">AES-256 GCM Vault</span></li>
                 </ul>
               </div>
             </div>
           </div>
 
-          <div className="pt-8 border-t border-border-rule/80 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-ink-secondary">
+          <div className="pt-8 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-stone-500">
             <div>
               © 2026 MULTIPOST • Dream Press Publishing Desk • All rights reserved.
             </div>
             <div className="flex items-center gap-4 text-[11px]">
               <span>Editorial Gazette Edition</span>
               <span>•</span>
-              <span className="text-ink-primary font-semibold">Bangkok Studio</span>
+              <span className="text-[#1A1A18] font-semibold">Bangkok Studio</span>
             </div>
           </div>
         </div>
