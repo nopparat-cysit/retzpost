@@ -47,7 +47,11 @@ import {
   Moon, 
   CheckCheck,
   Flame,
-  Radio
+  Radio,
+  Activity,
+  Search,
+  Filter,
+  HardDrive
 } from 'lucide-react';
 import { 
   FacebookLogo, 
@@ -2625,30 +2629,30 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 06 — EXPLORE THE WORKSPACE (INTERACTIVE FEATURE TOUR)             */}
+      {/* SECTION 06 — EXPLORE THE WORKSPACE (INTERACTIVE FULL-SPECTRUM STUDIO)     */}
       {/* ========================================================================= */}
-      <section ref={workspaceTourRef} id="workspace-tour" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-12">
-        <div className="text-center max-w-3xl mx-auto space-y-2">
-          <span className="text-xs font-mono font-bold text-[#364165] uppercase tracking-wider">
-            06 / EXPLORE THE WORKSPACE
-          </span>
-          <h2 className="font-serif font-bold text-3xl sm:text-5xl text-[#1A1A18]">
+      <section ref={workspaceTourRef} id="workspace-tour" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10">
+        <div className="text-center max-w-3xl mx-auto space-y-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-[#364165]/10 text-[#364165] text-xs font-mono font-bold uppercase tracking-wider">
+            <span>06 / EXPLORE THE WORKSPACE</span>
+          </div>
+          <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18] tracking-tight">
             The Full-Spectrum Publishing Studio
           </h2>
-          <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
-            Inspect the core production rooms of MULTIPOST. Switch tabs to preview real workflow interfaces.
+          <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed max-w-2xl mx-auto">
+            สำรวจห้องปฏิบัติการผลิตคอนเทนต์จริงของ MULTIPOST ที่ผสานความแม่นยำระดับห้องข่าว เข้ากับเวิร์กโฟลว์ของครีเอเตอร์ยุคใหม่ ลองคลิกสลับแท็บเพื่อดูหน้าจอระบบจริง
           </p>
         </div>
 
-        {/* Tab Navigation */}
-        <div className="flex flex-wrap justify-center gap-2 border-b border-black/10 pb-4 font-mono text-xs">
+        {/* Tab Navigation (Physical Studio Console Switcher) */}
+        <div className="flex flex-wrap justify-center gap-2 p-1.5 bg-stone-100/90 backdrop-blur-sm border border-black/10 rounded-2xl max-w-fit mx-auto font-mono text-xs shadow-inner">
           {[
-            { id: 'dashboard', label: 'Command Dashboard', icon: LayoutGrid },
-            { id: 'library', label: 'Content Library', icon: FolderOpen },
-            { id: 'composer', label: 'Create Post (Composer)', icon: FileText },
-            { id: 'queue', label: 'Publishing Queue', icon: RefreshCw },
-            { id: 'calendar', label: 'Editorial Calendar', icon: CalendarIcon },
-            { id: 'analytics', label: 'Performance Radar', icon: BarChart3 },
+            { id: 'dashboard', label: 'Command Desk', icon: LayoutGrid, tag: 'Live 99.98%' },
+            { id: 'library', label: 'Asset Vault', icon: FolderOpen, tag: '128 Assets' },
+            { id: 'composer', label: 'Universal Composer', icon: FileText, tag: 'Safe-Zone 9:16' },
+            { id: 'queue', label: 'Dispatch Queue', icon: RefreshCw, tag: '12 Jobs' },
+            { id: 'calendar', label: 'Editorial Calendar', icon: CalendarIcon, tag: 'Bangkok Peak' },
+            { id: 'analytics', label: 'Performance Radar', icon: BarChart3, tag: '+24.6%' },
           ].map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTourTab === tab.id;
@@ -2659,307 +2663,756 @@ export default function LandingPage() {
                   setActiveTourTab(tab.id as any);
                   playChimeSound(soundEnabled);
                 }}
-                className={`py-2 px-4 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
+                className={`py-2 px-3.5 sm:px-4 rounded-xl transition-all cursor-pointer flex items-center gap-2 ${
                   isActive
-                    ? 'bg-[#364165] text-white font-bold shadow-md scale-105'
-                    : 'bg-white text-stone-600 hover:text-black hover:bg-stone-50 border border-black/10'
+                    ? 'bg-[#1A1A18] text-white font-bold shadow-md scale-102'
+                    : 'bg-white/70 text-stone-600 hover:text-black hover:bg-white border border-black/5'
                 }`}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-amber-400' : 'text-stone-500'}`} />
                 <span>{tab.label}</span>
+                <span className={`text-[10px] px-1.5 py-0.2 rounded font-mono hidden md:inline ${
+                  isActive ? 'bg-white/15 text-amber-200' : 'bg-black/5 text-stone-500'
+                }`}>
+                  {tab.tag}
+                </span>
               </button>
             );
           })}
         </div>
 
-        {/* Interactive Workspace Tab Panels */}
-        <div className="editorial-paper-card p-7 sm:p-9 rounded-3xl relative min-h-[420px]">
-          {/* Tactile Washi Tape Strip */}
-          <div className="absolute -top-3.5 right-12 pointer-events-none drop-shadow-xs rotate-[2deg]">
-            <Sticker name="washi-indigo" size="md" />
+        {/* Master Studio Workspace Window (Titanium App Viewport Chrome) */}
+        <div className="rounded-3xl border-2 border-stone-800 bg-[#FCFAF5] shadow-[0_25px_60px_rgba(26,26,24,0.14)] overflow-hidden transition-all duration-300">
+          {/* Studio Viewport Title Bar */}
+          <div className="bg-[#181614] px-5 py-3 flex items-center justify-between border-b border-white/10 text-xs font-mono text-stone-300">
+            <div className="flex items-center gap-3">
+              <div className="flex items-center gap-1.5">
+                <span className="w-3 h-3 rounded-full bg-[#E05252] shadow-xs" />
+                <span className="w-3 h-3 rounded-full bg-[#E5A93C] shadow-xs" />
+                <span className="w-3 h-3 rounded-full bg-[#3FB950] shadow-xs" />
+              </div>
+              <div className="h-4 w-px bg-white/10 hidden sm:block mx-1" />
+              <div className="font-bold text-white text-[11px] tracking-wide hidden sm:flex items-center gap-2">
+                <span className="text-amber-400">MULTIPOST STUDIO v2.4</span>
+                <span className="text-stone-500">•</span>
+                <span className="text-stone-400 font-normal">Workspace:</span>
+                <span className="text-amber-200 font-mono">@bangkok_editorial_press</span>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-mono text-[10px] font-bold border border-emerald-500/30">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                <span>ALL WORKERS HEALTHY • 18ms</span>
+              </span>
+              <span className="text-[10px] font-mono text-stone-400 hidden md:inline border-l border-white/10 pl-3">
+                UTC+7 BANGKOK
+              </span>
+            </div>
           </div>
-          {/* TAB 1: DASHBOARD */}
-          {activeTourTab === 'dashboard' && (
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-black/10">
-                <div>
-                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
-                    Central Publishing Command
-                  </h3>
-                  <p className="text-xs font-mono text-stone-500">Real-time health of scheduled campaigns, queues, and connected accounts</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  <span className="font-mono text-xs font-bold text-emerald-700">All Workers Healthy</span>
-                </div>
-              </div>
 
-              {/* Stat Counters */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="p-4 bg-stone-50 rounded-2xl border border-black/5">
-                  <span className="text-[10px] font-mono text-stone-500 block font-bold">DISPATCH RELIABILITY</span>
-                  <div className="text-2xl font-serif font-bold text-[#364165]">99.98%</div>
-                  <span className="text-[10px] font-mono text-emerald-700">SLA Maintained</span>
-                </div>
-                <div className="p-4 bg-stone-50 rounded-2xl border border-black/5">
-                  <span className="text-[10px] font-mono text-stone-500 block font-bold">ACTIVE QUEUES</span>
-                  <div className="text-2xl font-serif font-bold text-[#1A1A18]">12 Posts</div>
-                  <span className="text-[10px] font-mono text-stone-500">Across 4 Networks</span>
-                </div>
-                <div className="p-4 bg-stone-50 rounded-2xl border border-black/5">
-                  <span className="text-[10px] font-mono text-stone-500 block font-bold">PEAK SLOT TARGET</span>
-                  <div className="text-2xl font-serif font-bold text-amber-600">19:30 UTC+7</div>
-                  <span className="text-[10px] font-mono text-stone-500">Prime Reel Window</span>
-                </div>
-                <div className="p-4 bg-stone-50 rounded-2xl border border-black/5">
-                  <span className="text-[10px] font-mono text-stone-500 block font-bold">TOKEN VAULT</span>
-                  <div className="text-2xl font-serif font-bold text-emerald-700">AES-256</div>
-                  <span className="text-[10px] font-mono text-emerald-700">Encrypted GCM</span>
-                </div>
-              </div>
-
-              {/* Recent Dispatches Mock Table */}
-              <div className="border border-black/10 rounded-2xl overflow-hidden bg-white shadow-2xs">
-                <div className="p-3 bg-stone-50 border-b border-black/10 text-[11px] font-mono font-bold text-stone-600 flex justify-between">
-                  <span>DISPATCH STREAM</span>
-                  <span>STATUS</span>
-                </div>
-                <div className="divide-y divide-black/5 text-xs font-mono">
-                  <div className="p-3.5 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <YouTubeLogo size={14} />
-                      <span className="font-bold text-[#1A1A18] truncate">Behind The Scenes ep04 (4K Master)</span>
-                    </div>
-                    <span className="px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">PUBLISHED</span>
-                  </div>
-                  <div className="p-3.5 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <TikTokLogo size={14} />
-                      <span className="font-bold text-[#1A1A18] truncate">Micro-Teaser Hook #9:16</span>
-                    </div>
-                    <span className="px-2.5 py-0.5 rounded bg-[#364165]/10 text-[#364165] font-bold text-[10px]">ENCODING 78%</span>
-                  </div>
-                  <div className="p-3.5 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <InstagramLogo size={14} />
-                      <span className="font-bold text-[#1A1A18] truncate">Prime Carousel Photo Slide</span>
-                    </div>
-                    <span className="px-2.5 py-0.5 rounded bg-amber-100 text-amber-900 font-bold text-[10px]">QUEUED 19:30</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 2: CONTENT LIBRARY */}
-          {activeTourTab === 'library' && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center pb-4 border-b border-black/10">
-                <div>
-                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">Master Media Asset Repository</h3>
-                  <p className="text-xs font-mono text-stone-500">Search, tag, and reuse high-resolution master video and graphics</p>
-                </div>
-                <span className="px-3 py-1 bg-stone-100 border border-black/10 rounded-xl font-mono text-xs font-bold text-[#1A1A18]">
-                  128 Assets Ingested
-                </span>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {[
-                  { title: 'Brand Launch Reel 2026', res: '3840 × 2160', dur: '01:45', tag: 'Master 4K' },
-                  { title: 'Product Showcase Carousel', res: '1080 × 1350', dur: '5 Slides', tag: 'Carousel 4:5' },
-                  { title: 'Bangkok Studio Vlog Hook', res: '1080 × 1920', dur: '00:30', tag: 'Vertical 9:16' },
-                ].map((item, idx) => (
-                  <div key={idx} className="p-4 bg-stone-50 rounded-2xl border border-black/10 space-y-3">
-                    <div className="aspect-video bg-stone-200 rounded-xl flex items-center justify-center relative overflow-hidden">
-                      <Film className="w-8 h-8 text-[#364165]/40" />
-                      <span className="absolute top-2 right-2 px-2 py-0.5 rounded bg-[#364165] text-white font-mono text-[9px] font-bold">
-                        {item.tag}
-                      </span>
-                    </div>
-                    <div>
-                      <h4 className="font-serif font-bold text-sm text-[#1A1A18] truncate">{item.title}</h4>
-                      <div className="flex justify-between text-[10px] font-mono text-stone-500 pt-1">
-                        <span>{item.res}</span>
-                        <span>{item.dur}</span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 3: CREATE POST (COMPOSER) */}
-          {activeTourTab === 'composer' && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center pb-4 border-b border-black/10">
-                <div>
-                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">Universal Studio Composer</h3>
-                  <p className="text-xs font-mono text-stone-500">Single story root with platform-specific safe-zone overlays</p>
-                </div>
-                <div className="flex gap-2">
-                  <span className="px-2.5 py-0.5 rounded bg-[#364165]/10 text-[#364165] text-xs font-mono font-bold">IG Reel</span>
-                  <span className="px-2.5 py-0.5 rounded bg-[#364165]/10 text-[#364165] text-xs font-mono font-bold">YouTube</span>
-                  <span className="px-2.5 py-0.5 rounded bg-[#364165]/10 text-[#364165] text-xs font-mono font-bold">TikTok</span>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-                <div className="lg:col-span-7 space-y-4">
-                  <div className="p-4 bg-stone-50 rounded-2xl border border-black/10 space-y-3">
-                    <div className="flex justify-between text-xs font-mono">
-                      <span className="font-bold text-[#1A1A18]">SHARED STORY DRAFT</span>
-                      <span className="text-stone-500">142 / 2,200 chars</span>
-                    </div>
-                    <p className="text-xs font-sans text-[#1A1A18] leading-relaxed bg-white p-3 rounded-xl border border-black/10">
-                      Step into our Bangkok creative press room. Today we are launching the new Dream Press multi-placement engine with instant safe-zone compliance.
+          {/* Interior Viewport Body */}
+          <div className="p-6 sm:p-8">
+            {/* TAB 1: COMMAND DASHBOARD */}
+            {activeTourTab === 'dashboard' && (
+              <div className="space-y-6">
+                {/* Dashboard Header Bar */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/10">
+                  <div>
+                    <h3 className="font-serif font-bold text-2xl text-[#1A1A18] tracking-tight">
+                      Central Publishing Command
+                    </h3>
+                    <p className="text-xs font-mono text-stone-500 mt-0.5">
+                      Real-time orchestration of scheduled multi-channel dispatches, encoding pipelines, and OAuth tokens
                     </p>
-                    <div className="flex gap-2 text-[10px] font-mono text-stone-500">
-                      <span className="px-2 py-0.5 bg-stone-200 rounded">#multipost</span>
-                      <span className="px-2 py-0.5 bg-stone-200 rounded">#dreampress</span>
-                      <span className="px-2 py-0.5 bg-stone-200 rounded">#creator</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 font-mono text-xs font-bold flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                      <span>Cluster Status: 99.98% SLA</span>
+                    </span>
+                  </div>
+                </div>
+
+                {/* 4 High-Density Operational Telemetry Tiles */}
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                  <div className="p-4 bg-white rounded-2xl border border-black/10 shadow-2xs space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-stone-500 font-bold">
+                      <span>DISPATCH RELIABILITY</span>
+                      <span className="text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-bold">+0.02%</span>
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-serif font-bold text-[#364165]">99.98%</div>
+                    <div className="text-[10px] font-mono text-emerald-700 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                      <span className="truncate">0 Uncaught Worker Failures</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-white rounded-2xl border border-black/10 shadow-2xs space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-stone-500 font-bold">
+                      <span>ACTIVE PIPELINES</span>
+                      <span className="text-stone-400">4 Workers</span>
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-serif font-bold text-[#1A1A18]">12 Posts</div>
+                    <div className="flex items-center gap-1.5 pt-0.5">
+                      <YouTubeLogo size={12} />
+                      <InstagramLogo size={12} />
+                      <TikTokLogo size={12} />
+                      <FacebookLogo size={12} />
+                      <XLogo size={12} />
+                      <span className="text-[10px] font-mono text-stone-500 ml-1">5 Networks</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-white rounded-2xl border border-black/10 shadow-2xs space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-stone-500 font-bold">
+                      <span>BANGKOK PEAK TARGET</span>
+                      <span className="text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded font-bold">UTC+7</span>
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-serif font-bold text-amber-600">19:30 ICT</div>
+                    <div className="text-[10px] font-mono text-stone-600 flex items-center gap-1">
+                      <Clock className="w-3 h-3 text-amber-600 shrink-0" />
+                      <span className="truncate">Next Slot in 2h 45m (2.4x)</span>
+                    </div>
+                  </div>
+
+                  <div className="p-4 bg-white rounded-2xl border border-black/10 shadow-2xs space-y-1.5">
+                    <div className="flex items-center justify-between text-[10px] font-mono text-stone-500 font-bold">
+                      <span>TOKEN VAULT SECURITY</span>
+                      <span className="text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded font-bold">SEALED</span>
+                    </div>
+                    <div className="text-2xl sm:text-3xl font-serif font-bold text-emerald-700">AES-256</div>
+                    <div className="text-[10px] font-mono text-stone-600 flex items-center gap-1">
+                      <ShieldCheck className="w-3 h-3 text-emerald-600 shrink-0" />
+                      <span className="truncate">6 OAuth Tokens Sealed</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="lg:col-span-5 p-4 bg-stone-50 rounded-2xl border border-black/10 space-y-2">
-                  <div className="text-[10px] font-mono text-stone-500 uppercase font-bold">SAFE-ZONE VIEWPORT (9:16)</div>
-                  <div className="aspect-[9/14] bg-stone-200 rounded-xl border border-dashed border-[#364165]/40 p-3 flex flex-col justify-between relative text-center">
-                    <div className="p-1 bg-[#364165]/10 rounded text-[9px] font-mono text-[#364165]">
-                      TOP SAFE-ZONE (Status Bars & Notch Clearance)
-                    </div>
-                    <div className="font-serif italic text-xs text-[#1A1A18]">
-                      Main focal area stays completely clear of mobile UI buttons
-                    </div>
-                    <div className="p-1 bg-[#A24836]/10 rounded text-[9px] font-mono text-[#A24836]">
-                      BOTTOM SAFE-ZONE (Like, Comment & Sound Button Clearance)
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* TAB 4: PUBLISHING QUEUE */}
-          {activeTourTab === 'queue' && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center pb-4 border-b border-black/10">
-                <div>
-                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">Asynchronous Dispatch Queue</h3>
-                  <p className="text-xs font-mono text-stone-500">Track job execution, worker concurrency, and isolate partial retries</p>
-                </div>
-                <span className="text-xs font-mono font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">
-                  Queue Health: 100%
-                </span>
-              </div>
-
-              <div className="space-y-3 font-mono text-xs">
-                {[
-                  { id: 'JOB-9021', chan: 'YouTube', type: YouTubeLogo, time: '19:30 UTC+7', status: 'READY', badge: 'bg-emerald-100 text-emerald-800' },
-                  { id: 'JOB-9022', chan: 'Instagram', type: InstagramLogo, time: '19:30 UTC+7', status: 'IN QUEUE', badge: 'bg-[#364165]/10 text-[#364165]' },
-                  { id: 'JOB-9023', chan: 'TikTok', type: TikTokLogo, time: '19:30 UTC+7', status: 'IN QUEUE', badge: 'bg-[#364165]/10 text-[#364165]' },
-                  { id: 'JOB-9024', chan: 'X / Twitter', type: XLogo, time: '19:35 UTC+7', status: 'RATE LIMIT BACKOFF', badge: 'bg-amber-100 text-amber-900' },
-                ].map((job) => {
-                  const Icon = job.type;
-                  return (
-                    <div key={job.id} className="p-3.5 bg-stone-50 rounded-xl border border-black/10 flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <Icon size={16} />
-                        <div>
-                          <b className="text-[#1A1A18]">{job.chan}</b>
-                          <span className="text-stone-500 text-[11px] ml-2">ID: {job.id}</span>
-                        </div>
+                {/* Dual-Column Main Production Workspace */}
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column (7 cols): Live Dispatch Stream */}
+                  <div className="lg:col-span-7 bg-white rounded-2xl border border-black/10 overflow-hidden shadow-2xs">
+                    <div className="p-3.5 bg-stone-50 border-b border-black/10 flex items-center justify-between font-mono text-xs">
+                      <div className="flex items-center gap-2">
+                        <Activity className="w-4 h-4 text-[#364165]" />
+                        <span className="font-bold text-[#1A1A18]">CONCURRENT DISPATCH STREAM</span>
                       </div>
-                      <div className="flex items-center gap-4">
-                        <span className="text-stone-500 hidden sm:inline">{job.time}</span>
-                        <span className={`px-2.5 py-0.5 rounded font-bold text-[10px] ${job.badge}`}>
-                          {job.status}
+                      <span className="text-[10px] font-bold text-stone-500">5 JOBS ACTIVE</span>
+                    </div>
+                    <div className="divide-y divide-black/5 text-xs font-mono">
+                      {/* Job 1 */}
+                      <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-stone-50/50 transition-colors">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-red-50 flex items-center justify-center shrink-0 mt-0.5 border border-red-100">
+                            <YouTubeLogo size={14} />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-bold text-[#1A1A18] truncate">
+                              EP 04: The Bangkok Press Room Master [4K ProRes]
+                            </div>
+                            <div className="text-[10px] text-stone-500 flex items-center gap-2 mt-0.5">
+                              <span>3840×2160 • 45.2 Mbps</span>
+                              <span>•</span>
+                              <span>03:45 min</span>
+                              <span>•</span>
+                              <span className="text-emerald-700 font-bold">18ms Ping</span>
+                            </div>
+                          </div>
+                        </div>
+                        <span className="px-2.5 py-1 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px] shrink-0 border border-emerald-200">
+                          PUBLISHED 19:30
+                        </span>
+                      </div>
+
+                      {/* Job 2 */}
+                      <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-stone-50/50 transition-colors">
+                        <div className="flex items-start gap-3 min-w-0 flex-1">
+                          <div className="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center shrink-0 mt-0.5 border border-stone-200">
+                            <TikTokLogo size={14} />
+                          </div>
+                          <div className="min-w-0 flex-1 pr-2">
+                            <div className="font-bold text-[#1A1A18] truncate">
+                              Micro-Teaser Hook #09: Safe-Zone Demo [9:16]
+                            </div>
+                            <div className="flex items-center gap-2 mt-1">
+                              <div className="w-28 h-1.5 bg-stone-200 rounded-full overflow-hidden">
+                                <div className="h-full bg-[#364165] rounded-full w-[78%]" />
+                              </div>
+                              <span className="text-[10px] text-[#364165] font-bold">78% Transcoding</span>
+                            </div>
+                          </div>
+                        </div>
+                        <span className="px-2.5 py-1 rounded bg-[#364165]/10 text-[#364165] font-bold text-[10px] shrink-0 border border-[#364165]/20 animate-pulse">
+                          ENCODING H.265
+                        </span>
+                      </div>
+
+                      {/* Job 3 */}
+                      <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-stone-50/50 transition-colors">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-pink-50 flex items-center justify-center shrink-0 mt-0.5 border border-pink-100">
+                            <InstagramLogo size={14} />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-bold text-[#1A1A18] truncate">
+                              Editorial Color Palette & Typography Manual
+                            </div>
+                            <div className="text-[10px] text-stone-500 flex items-center gap-2 mt-0.5">
+                              <span>5 Slides Carousel • 4:5 Portrait</span>
+                              <span>•</span>
+                              <span className="text-amber-700">First Comment Staged</span>
+                            </div>
+                          </div>
+                        </div>
+                        <span className="px-2.5 py-1 rounded bg-amber-100 text-amber-900 font-bold text-[10px] shrink-0 border border-amber-200">
+                          QUEUED 19:30
+                        </span>
+                      </div>
+
+                      {/* Job 4 */}
+                      <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-stone-50/50 transition-colors">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center shrink-0 mt-0.5 border border-blue-100">
+                            <FacebookLogo size={14} />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-bold text-[#1A1A18] truncate">
+                              Official Product Keynote & System Architecture
+                            </div>
+                            <div className="text-[10px] text-stone-500 flex items-center gap-2 mt-0.5">
+                              <span>1080p HD • Embedded Thai Subtitles</span>
+                              <span>•</span>
+                              <span className="text-emerald-700">Safe-Zone Passed</span>
+                            </div>
+                          </div>
+                        </div>
+                        <span className="px-2.5 py-1 rounded bg-blue-50 text-blue-800 font-bold text-[10px] shrink-0 border border-blue-200">
+                          VALIDATED
+                        </span>
+                      </div>
+
+                      {/* Job 5 */}
+                      <div className="p-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:bg-stone-50/50 transition-colors">
+                        <div className="flex items-start gap-3 min-w-0">
+                          <div className="w-7 h-7 rounded-lg bg-stone-100 flex items-center justify-center shrink-0 mt-0.5 border border-stone-200">
+                            <XLogo size={14} />
+                          </div>
+                          <div className="min-w-0">
+                            <div className="font-bold text-[#1A1A18] truncate">
+                              4-Part Thread: Why Boundary Collisions Drop Retention
+                            </div>
+                            <div className="text-[10px] text-stone-500 flex items-center gap-2 mt-0.5">
+                              <span>280-char verified • 4 Cards Attached</span>
+                              <span>•</span>
+                              <span className="text-stone-600">Rate-Limit Guard</span>
+                            </div>
+                          </div>
+                        </div>
+                        <span className="px-2.5 py-1 rounded bg-stone-100 text-stone-700 font-bold text-[10px] shrink-0 border border-stone-300">
+                          STAGED 19:35
                         </span>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* TAB 5: CALENDAR */}
-          {activeTourTab === 'calendar' && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center pb-4 border-b border-black/10">
-                <div>
-                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">Editorial Publishing Calendar</h3>
-                  <p className="text-xs font-mono text-stone-500">Synchronized schedule with Bangkok Golden Peak highlight zones</p>
-                </div>
-                <span className="text-xs font-mono text-stone-500">Asia/Bangkok (UTC+7)</span>
-              </div>
-
-              <div className="grid grid-cols-7 gap-2 text-center font-mono text-xs">
-                {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day) => (
-                  <div key={day} className="p-2 bg-stone-100 rounded-lg font-bold text-stone-600 text-[11px]">
-                    {day}
                   </div>
-                ))}
-                {[20, 21, 22, 23, 24, 25, 26].map((date, idx) => (
-                  <div key={idx} className="p-3 bg-stone-50 rounded-xl border border-black/10 min-h-[85px] text-left space-y-1">
-                    <span className="text-xs font-bold text-[#1A1A18]">{date}</span>
-                    {idx === 2 && (
-                      <div className="p-1 bg-[#364165]/10 text-[#364165] rounded text-[9px] font-bold truncate">
-                        19:30 Reel Live
-                      </div>
-                    )}
-                    {idx === 4 && (
-                      <div className="p-1 bg-amber-100 text-amber-900 rounded text-[9px] font-bold truncate">
-                        11:45 YT Widescreen
-                      </div>
-                    )}
-                    {idx === 6 && (
-                      <div className="p-1 bg-emerald-100 text-emerald-800 rounded text-[9px] font-bold truncate">
-                        21:15 Night Owl
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
-          {/* TAB 6: ANALYTICS */}
-          {activeTourTab === 'analytics' && (
-            <div className="space-y-6">
-              <div className="flex justify-between items-center pb-4 border-b border-black/10">
-                <div>
-                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">Omni-Channel Performance Radar</h3>
-                  <p className="text-xs font-mono text-stone-500">Consolidated impression reach and cross-platform engagement velocity</p>
-                </div>
-                <span className="px-3 py-1 rounded-full bg-[#364165]/10 text-[#364165] font-mono text-xs font-bold">
-                  Last 30 Days
-                </span>
-              </div>
+                  {/* Right Column (5 cols): Live Network Health & Peak Hour Radar */}
+                  <div className="lg:col-span-5 space-y-4">
+                    {/* Network Health Matrix */}
+                    <div className="bg-white rounded-2xl border border-black/10 p-4 shadow-2xs space-y-3 font-mono text-xs">
+                      <div className="flex items-center justify-between pb-2 border-b border-black/5">
+                        <span className="font-bold text-[#1A1A18] text-[11px] uppercase tracking-wider">
+                          CONNECTED API MATRIX
+                        </span>
+                        <span className="text-[10px] text-emerald-700 font-bold">5 OF 5 LINKED</span>
+                      </div>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-[11px]">
+                          <div className="flex items-center gap-2">
+                            <YouTubeLogo size={13} />
+                            <span className="font-bold text-stone-800">YouTube Data API v3</span>
+                          </div>
+                          <span className="text-emerald-700 font-bold text-[10px]">18ms ● OPERATIONAL</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[11px]">
+                          <div className="flex items-center gap-2">
+                            <InstagramLogo size={13} />
+                            <span className="font-bold text-stone-800">Instagram Graph API</span>
+                          </div>
+                          <span className="text-emerald-700 font-bold text-[10px]">24ms ● TOKEN VALID</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[11px]">
+                          <div className="flex items-center gap-2">
+                            <TikTokLogo size={13} />
+                            <span className="font-bold text-stone-800">TikTok Direct API</span>
+                          </div>
+                          <span className="text-emerald-700 font-bold text-[10px]">32ms ● OPERATIONAL</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[11px]">
+                          <div className="flex items-center gap-2">
+                            <FacebookLogo size={13} />
+                            <span className="font-bold text-stone-800">Facebook Pages API</span>
+                          </div>
+                          <span className="text-emerald-700 font-bold text-[10px]">21ms ● LINKED</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[11px]">
+                          <div className="flex items-center gap-2">
+                            <XLogo size={13} />
+                            <span className="font-bold text-stone-800">X API v2</span>
+                          </div>
+                          <span className="text-emerald-700 font-bold text-[10px]">42ms ● RATE-SAFE</span>
+                        </div>
+                      </div>
+                    </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="p-5 bg-stone-50 rounded-2xl border border-black/5 space-y-1 shadow-2xs">
-                  <span className="text-[10px] font-mono text-stone-500 uppercase font-bold">TOTAL IMPRESSIONS</span>
-                  <div className="text-3xl font-serif font-bold text-[#1A1A18]">482,900</div>
-                  <div className="flex items-center gap-1 text-emerald-700 font-mono text-xs">
-                    <TrendingUp className="w-3.5 h-3.5" />
-                    <span>+24.6% vs single-app uploads</span>
+                    {/* Bangkok Peak Audience Timeline */}
+                    <div className="bg-white rounded-2xl border border-black/10 p-4 shadow-2xs space-y-3 font-mono text-xs">
+                      <div className="flex items-center justify-between pb-2 border-b border-black/5">
+                        <span className="font-bold text-[#1A1A18] text-[11px] uppercase tracking-wider">
+                          BANGKOK HOURLY AUDIENCE RADAR
+                        </span>
+                        <span className="text-[10px] text-amber-700 font-bold">UTC+7 ICT</span>
+                      </div>
+                      
+                      {/* Mini Traffic Histogram */}
+                      <div className="grid grid-cols-5 gap-1.5 text-center pt-1">
+                        <div className="space-y-1">
+                          <div className="h-14 bg-stone-100 rounded-md flex items-end justify-center p-1">
+                            <div className="w-full bg-stone-300 rounded-sm h-[35%]" />
+                          </div>
+                          <span className="text-[9px] text-stone-500 block">08:00</span>
+                          <span className="text-[9px] font-bold text-stone-600 block">35%</span>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="h-14 bg-stone-100 rounded-md flex items-end justify-center p-1">
+                            <div className="w-full bg-amber-400 rounded-sm h-[75%]" />
+                          </div>
+                          <span className="text-[9px] text-amber-800 font-bold block">11:45</span>
+                          <span className="text-[9px] font-bold text-amber-800 block">75%</span>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="h-14 bg-stone-100 rounded-md flex items-end justify-center p-1">
+                            <div className="w-full bg-stone-300 rounded-sm h-[45%]" />
+                          </div>
+                          <span className="text-[9px] text-stone-500 block">15:00</span>
+                          <span className="text-[9px] font-bold text-stone-600 block">45%</span>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="h-14 bg-amber-500/15 rounded-md flex items-end justify-center p-1 border border-amber-500/30">
+                            <div className="w-full bg-amber-500 rounded-sm h-[100%]" />
+                          </div>
+                          <span className="text-[9px] text-amber-900 font-bold block">19:30</span>
+                          <span className="text-[9px] font-bold text-amber-900 block">★ 100%</span>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="h-14 bg-stone-100 rounded-md flex items-end justify-center p-1">
+                            <div className="w-full bg-emerald-400 rounded-sm h-[80%]" />
+                          </div>
+                          <span className="text-[9px] text-emerald-800 font-bold block">21:15</span>
+                          <span className="text-[9px] font-bold text-emerald-800 block">80%</span>
+                        </div>
+                      </div>
+
+                      <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[10px] text-amber-900 font-sans leading-relaxed">
+                        ★ <b>Bangkok Prime Peak (19:30 ICT):</b> ช่วยเพิ่มอัตราการมองเห็นและการเข้าถึง (Reach Multiplier) ขึ้นเฉลี่ย <b>+2.4 เท่า</b> สำหรับคอนเทนต์ภาษาไทย
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="p-5 bg-stone-50 rounded-2xl border border-black/5 space-y-1 shadow-2xs">
-                  <span className="text-[10px] font-mono text-stone-500 uppercase font-bold">AVERAGE ENGAGEMENT</span>
-                  <div className="text-3xl font-serif font-bold text-[#1A1A18]">6.8%</div>
-                  <div className="text-stone-500 font-mono text-xs">Across 6 connected endpoints</div>
+              </div>
+            )}
+
+            {/* TAB 2: CONTENT LIBRARY (ASSET VAULT) */}
+            {activeTourTab === 'library' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/10">
+                  <div>
+                    <h3 className="font-serif font-bold text-2xl text-[#1A1A18] tracking-tight">
+                      Master Media Asset Vault
+                    </h3>
+                    <p className="text-xs font-mono text-stone-500 mt-0.5">
+                      Ingest, inspect, transcoder-tag, and reuse 4K ProRes video masters and multi-layer graphics
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-3 py-1 bg-white border border-black/10 rounded-xl font-mono text-xs font-bold text-[#1A1A18] shadow-2xs">
+                      128 Assets Ingested (48.6 GB)
+                    </span>
+                  </div>
                 </div>
-                <div className="p-5 bg-stone-50 rounded-2xl border border-black/5 space-y-1 shadow-2xs">
-                  <span className="text-[10px] font-mono text-stone-500 uppercase font-bold">TIME SAVED / WEEK</span>
-                  <div className="text-3xl font-serif font-bold text-[#364165]">14.5 hrs</div>
-                  <div className="text-emerald-700 font-mono text-xs">Zero manual copy-pasting</div>
+
+                {/* Filter Pills Bar */}
+                <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-black/10 rounded-xl text-stone-700 shadow-2xs">
+                    <Search className="w-3.5 h-3.5 text-stone-400" />
+                    <span className="text-stone-400">ค้นหาไฟล์ Asset...</span>
+                  </div>
+                  <span className="px-3 py-1.5 bg-[#1A1A18] text-white font-bold rounded-xl shadow-xs">ทั้งหมด (128)</span>
+                  <span className="px-3 py-1.5 bg-white hover:bg-stone-50 border border-black/10 text-stone-700 rounded-xl cursor-pointer">4K Masters (42)</span>
+                  <span className="px-3 py-1.5 bg-white hover:bg-stone-50 border border-black/10 text-stone-700 rounded-xl cursor-pointer">Vertical 9:16 (56)</span>
+                  <span className="px-3 py-1.5 bg-white hover:bg-stone-50 border border-black/10 text-stone-700 rounded-xl cursor-pointer">Carousels (18)</span>
+                  <span className="px-3 py-1.5 bg-white hover:bg-stone-50 border border-black/10 text-stone-700 rounded-xl cursor-pointer">Audio Stems (12)</span>
+                </div>
+
+                {/* 6 Rich Media Cards Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {[
+                    { title: 'Brand Launch Reel 2026', res: '3840 × 2160', dur: '01:45', size: '1.2 GB', tag: 'Master 4K', codec: 'ProRes 422', bg: 'from-amber-950 to-stone-900' },
+                    { title: 'Bangkok Studio Vlog Hook', res: '1080 × 1920', dur: '00:30', size: '84 MB', tag: 'Vertical 9:16', codec: 'H.265 Safe', bg: 'from-slate-900 to-indigo-950' },
+                    { title: 'Product Showcase Carousel', res: '1080 × 1350', dur: '5 Slides', size: '42 MB', tag: 'Carousel 4:5', codec: 'RGB Lossless', bg: 'from-emerald-950 to-stone-900' },
+                    { title: 'Architecture Keynote Full', res: '1920 × 1080', dur: '04:20', size: '420 MB', tag: 'Widescreen 16:9', codec: 'H.264 HD', bg: 'from-stone-900 to-neutral-950' },
+                    { title: 'Night Drone B-Roll Footage', res: '3840 × 2160', dur: '00:45', size: '650 MB', tag: '4K 60fps', codec: 'Rec.709 DCI', bg: 'from-blue-950 to-stone-900' },
+                    { title: 'Studio Audio Master Theme', res: '48kHz 24-bit', dur: '02:10', size: '28 MB', tag: 'Audio Stem', codec: '-14 LUFS WAV', bg: 'from-purple-950 to-stone-900' },
+                  ].map((item, idx) => (
+                    <div key={idx} className="p-4 bg-white rounded-2xl border border-black/10 space-y-3 shadow-2xs hover:shadow-md transition-shadow">
+                      <div className={`aspect-video rounded-xl bg-gradient-to-br ${item.bg} flex items-center justify-center relative overflow-hidden text-white`}>
+                        <Film className="w-8 h-8 opacity-40" />
+                        <span className="absolute top-2 right-2 px-2 py-0.5 rounded bg-black/60 backdrop-blur-xs font-mono text-[9px] font-bold text-amber-200 border border-white/10">
+                          {item.tag}
+                        </span>
+                        <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded bg-black/60 backdrop-blur-xs font-mono text-[9px] text-white/80">
+                          {item.dur}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <h4 className="font-serif font-bold text-sm text-[#1A1A18] truncate">{item.title}</h4>
+                        <div className="flex justify-between text-[10px] font-mono text-stone-500 pt-1 border-t border-black/5">
+                          <span>{item.res}</span>
+                          <span className="text-stone-700 font-bold">{item.codec}</span>
+                          <span>{item.size}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
-          )}
+            )}
+
+            {/* TAB 3: CREATE POST (UNIVERSAL COMPOSER) */}
+            {activeTourTab === 'composer' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/10">
+                  <div>
+                    <h3 className="font-serif font-bold text-2xl text-[#1A1A18] tracking-tight">
+                      Universal Studio Composer
+                    </h3>
+                    <p className="text-xs font-mono text-stone-500 mt-0.5">
+                      Single canonical story root with platform-specific character ceiling and real-time safe-zone reticle
+                    </p>
+                  </div>
+                  <div className="flex gap-2">
+                    <span className="px-2.5 py-1 rounded bg-[#364165]/10 text-[#364165] text-xs font-mono font-bold">YouTube 16:9</span>
+                    <span className="px-2.5 py-1 rounded bg-amber-500/15 text-amber-800 text-xs font-mono font-bold">IG Reel 9:16</span>
+                    <span className="px-2.5 py-1 rounded bg-emerald-500/15 text-emerald-800 text-xs font-mono font-bold">TikTok 9:16</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+                  {/* Left Column (7 cols): Draft Editor */}
+                  <div className="lg:col-span-7 space-y-4">
+                    <div className="p-5 bg-white rounded-2xl border border-black/10 space-y-4 shadow-2xs">
+                      {/* Editor Toolbar */}
+                      <div className="flex items-center justify-between pb-3 border-b border-black/5 font-mono text-xs">
+                        <div className="flex items-center gap-2">
+                          <span className="px-2.5 py-1 rounded bg-stone-900 text-white font-bold text-[11px]">Universal Master</span>
+                          <span className="px-2.5 py-1 rounded hover:bg-stone-100 text-stone-600 text-[11px] cursor-pointer">Instagram Edition</span>
+                          <span className="px-2.5 py-1 rounded hover:bg-stone-100 text-stone-600 text-[11px] cursor-pointer">X Edition</span>
+                        </div>
+                        <span className="text-stone-500 text-[11px]">142 / 2,200 chars</span>
+                      </div>
+
+                      {/* Main Caption Textarea Mock */}
+                      <div className="p-3.5 bg-stone-50 rounded-xl border border-black/10 font-sans text-xs sm:text-sm text-[#1A1A18] leading-relaxed">
+                        ยินดีต้อนรับสู่สตูดิโอ MULTIPOST — วันนี้เราเปิดตัวเอนจินกระจายสัญญาณฉบับสมบูรณ์ โพสต์วิดีโอ 4K และรูปภาพไปยัง YouTube, Instagram, TikTok และ Facebook ได้พร้อมกันในคลิกเดียว พร้อมระบบตรวจจับ Safe-Zone อัตโนมัติ!
+                      </div>
+
+                      {/* First Comment Box for IG */}
+                      <div className="space-y-1.5 pt-1">
+                        <div className="flex items-center justify-between text-[11px] font-mono">
+                          <span className="font-bold text-[#364165]">INSTAGRAM FIRST COMMENT (SEPARATE HASHTAGS)</span>
+                          <span className="text-emerald-700 font-bold">Auto-Post Active</span>
+                        </div>
+                        <div className="p-2.5 bg-white rounded-lg border border-black/10 text-xs font-mono text-stone-600">
+                          #multipost #dreampress #socialmediatools #contentcreator #bangkokstudio
+                        </div>
+                      </div>
+
+                      {/* Attached Media Spec */}
+                      <div className="p-3 bg-stone-50 rounded-xl border border-black/5 flex items-center justify-between font-mono text-xs">
+                        <div className="flex items-center gap-2">
+                          <Film className="w-4 h-4 text-[#364165]" />
+                          <span className="font-bold text-[#1A1A18]">Brand Launch Reel 2026.mov</span>
+                          <span className="text-stone-500">(1.2 GB • 4K ProRes)</span>
+                        </div>
+                        <span className="text-emerald-700 font-bold text-[10px]">VERIFIED ✓</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Column (5 cols): Safe-Zone Phone Simulator */}
+                  <div className="lg:col-span-5 p-5 bg-white rounded-2xl border border-black/10 space-y-3 shadow-2xs">
+                    <div className="flex items-center justify-between font-mono text-[10px]">
+                      <span className="font-bold text-stone-500 uppercase tracking-wider">
+                        SAFE-ZONE VIEWPORT (9:16 REELS & TIKTOK)
+                      </span>
+                      <span className="text-emerald-700 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                        100% PASS
+                      </span>
+                    </div>
+
+                    {/* Smartphone Bezel Mockup */}
+                    <div className="aspect-[9/13] max-w-[240px] mx-auto rounded-3xl border-4 border-stone-800 bg-[#121214] p-3 text-white flex flex-col justify-between relative shadow-lg overflow-hidden">
+                      {/* Top Safe-Zone Boundary */}
+                      <div className="p-2 rounded bg-indigo-500/20 border border-indigo-400/40 text-[8px] font-mono text-indigo-200 text-center">
+                        ▲ TOP 15% SAFE (Status & Search)
+                      </div>
+
+                      {/* Video Focal Subject Center */}
+                      <div className="text-center space-y-1 my-auto">
+                        <div className="w-10 h-10 rounded-full bg-amber-400/20 text-amber-300 mx-auto flex items-center justify-center font-bold text-xs border border-amber-400/30">
+                          ▶
+                        </div>
+                        <span className="font-serif italic text-xs text-amber-100 block">
+                          Main Content Focal Area
+                        </span>
+                        <span className="text-[8px] font-mono text-stone-400 block">
+                          Zero collision with buttons
+                        </span>
+                      </div>
+
+                      {/* Right Action Rail Clearance */}
+                      <div className="absolute right-2 top-1/2 -translate-y-1/2 space-y-2 text-right">
+                        <div className="w-5 h-5 rounded-full bg-white/20 mx-auto flex items-center justify-center text-[7px]">❤</div>
+                        <div className="w-5 h-5 rounded-full bg-white/20 mx-auto flex items-center justify-center text-[7px]">💬</div>
+                        <div className="w-5 h-5 rounded-full bg-white/20 mx-auto flex items-center justify-center text-[7px]">↗</div>
+                      </div>
+
+                      {/* Bottom Safe-Zone Boundary */}
+                      <div className="p-2 rounded bg-amber-500/20 border border-amber-400/40 text-[8px] font-mono text-amber-200 text-center">
+                        ▼ BOTTOM 25% SAFE (Captions & Audio)
+                      </div>
+                    </div>
+
+                    <div className="text-center font-mono text-[10px] text-stone-500">
+                      ระบบคำนวณตำแหน่งซับไตเติลและโลโก้ ไม่ให้ชนกับปุ่มไลก์และแถบเสียง
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 4: PUBLISHING QUEUE */}
+            {activeTourTab === 'queue' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/10">
+                  <div>
+                    <h3 className="font-serif font-bold text-2xl text-[#1A1A18] tracking-tight">
+                      Asynchronous Dispatch Queue
+                    </h3>
+                    <p className="text-xs font-mono text-stone-500 mt-0.5">
+                      Track job execution, worker concurrency, and isolate partial retries without duplication
+                    </p>
+                  </div>
+                  <span className="text-xs font-mono font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full border border-emerald-300">
+                    Queue Health: 100% • 4 Parallel Workers
+                  </span>
+                </div>
+
+                <div className="space-y-3 font-mono text-xs">
+                  {[
+                    { id: 'JOB-9021', chan: 'YouTube Data API v3', type: YouTubeLogo, time: '19:30 UTC+7', status: 'READY TO DISPATCH', badge: 'bg-emerald-100 text-emerald-800 border-emerald-300', retry: 'Normal (1/3)' },
+                    { id: 'JOB-9022', chan: 'Instagram Reels Graph', type: InstagramLogo, time: '19:30 UTC+7', status: 'IN QUEUE (AUDIO SYNC)', badge: 'bg-[#364165]/10 text-[#364165] border-[#364165]/20', retry: 'Normal (1/3)' },
+                    { id: 'JOB-9023', chan: 'TikTok Creator Content', type: TikTokLogo, time: '19:30 UTC+7', status: 'IN QUEUE (H.265 READY)', badge: 'bg-[#364165]/10 text-[#364165] border-[#364165]/20', retry: 'Normal (1/3)' },
+                    { id: 'JOB-9024', chan: 'Facebook Graph Pages', type: FacebookLogo, time: '19:30 UTC+7', status: 'STAGED IN BUFFER', badge: 'bg-blue-100 text-blue-900 border-blue-200', retry: 'Normal (1/3)' },
+                    { id: 'JOB-9025', chan: 'X API v2 Thread Engine', type: XLogo, time: '19:35 UTC+7', status: 'RATE LIMIT BACKOFF', badge: 'bg-amber-100 text-amber-900 border-amber-300', retry: 'Safe Isolated (2/3)' },
+                  ].map((job) => {
+                    const Icon = job.type;
+                    return (
+                      <div key={job.id} className="p-4 bg-white rounded-xl border border-black/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs hover:bg-stone-50/50 transition-colors">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg bg-stone-100 flex items-center justify-center shrink-0 border border-stone-200">
+                            <Icon size={16} />
+                          </div>
+                          <div>
+                            <b className="text-[#1A1A18] text-sm">{job.chan}</b>
+                            <div className="text-stone-500 text-[11px] flex items-center gap-2 mt-0.5">
+                              <span>JOB ID: {job.id}</span>
+                              <span>•</span>
+                              <span>Retry Status: {job.retry}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <span className="text-stone-600 font-bold">{job.time}</span>
+                          <span className={`px-3 py-1 rounded-full font-bold text-[10px] border ${job.badge}`}>
+                            {job.status}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* TAB 5: EDITORIAL CALENDAR */}
+            {activeTourTab === 'calendar' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/10">
+                  <div>
+                    <h3 className="font-serif font-bold text-2xl text-[#1A1A18] tracking-tight">
+                      Editorial Publishing Calendar
+                    </h3>
+                    <p className="text-xs font-mono text-stone-500 mt-0.5">
+                      Synchronized master broadcast schedule with Bangkok Golden Peak highlight zones
+                    </p>
+                  </div>
+                  <span className="text-xs font-mono text-stone-700 bg-white border border-black/10 px-3 py-1 rounded-xl shadow-2xs">
+                    Timezone: Asia/Bangkok (UTC+7)
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-7 gap-2 text-center font-mono text-xs">
+                  {['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'].map((day) => (
+                    <div key={day} className="p-2.5 bg-stone-900 text-white rounded-xl font-bold text-[11px] shadow-xs">
+                      {day}
+                    </div>
+                  ))}
+                  {[
+                    { date: 20, tag: '19:30 YT 4K', chan: 'YouTube', peak: true, title: 'BTS Master' },
+                    { date: 21, tag: '11:45 TT Teaser', chan: 'TikTok', peak: false, title: 'Safe-Zone Hook' },
+                    { date: 22, tag: '19:30 IG Carousel', chan: 'Instagram', peak: true, title: 'Brand Guide' },
+                    { date: 23, tag: '15:00 FB Video', chan: 'Facebook', peak: false, title: 'Docu Part 1' },
+                    { date: 24, tag: '11:45 YT Shorts', chan: 'YouTube', peak: false, title: 'Product Clip' },
+                    { date: 25, tag: '19:30 All-Network', chan: 'All 5 Channels', peak: true, title: '★ Prime Drop' },
+                    { date: 26, tag: '21:15 X Thread', chan: 'X API', peak: false, title: 'Night Owl' },
+                  ].map((item, idx) => (
+                    <div key={idx} className={`p-3 rounded-2xl border text-left space-y-2 min-h-[110px] flex flex-col justify-between transition-colors ${
+                      item.peak
+                        ? 'bg-amber-50/70 border-amber-300 ring-2 ring-amber-400/20'
+                        : 'bg-white border-black/10'
+                    }`}>
+                      <div className="flex justify-between items-center">
+                        <span className="text-xs font-bold text-[#1A1A18]">{item.date}</span>
+                        {item.peak && (
+                          <span className="text-[9px] font-bold text-amber-800 bg-amber-200/60 px-1.5 py-0.2 rounded font-mono">
+                            PEAK ★
+                          </span>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <div className={`p-1.5 rounded-lg text-[9px] font-bold truncate ${
+                          item.peak ? 'bg-amber-200 text-amber-950' : 'bg-stone-100 text-stone-800'
+                        }`}>
+                          {item.tag}
+                        </div>
+                        <div className="text-[9px] text-stone-500 truncate">
+                          {item.title}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="p-3 bg-white rounded-xl border border-black/10 flex flex-wrap items-center justify-between gap-4 font-mono text-[11px] text-stone-600 shadow-2xs">
+                  <div className="flex items-center gap-3">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
+                      <span>11:45 ICT (Lunch Surge)</span>
+                    </span>
+                    <span className="flex items-center gap-1.5 font-bold text-amber-900">
+                      <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                      <span>19:30 ICT (Bangkok Prime Peak ★)</span>
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                      <span>21:15 ICT (Night Owl)</span>
+                    </span>
+                  </div>
+                  <span className="text-stone-400">คลิกที่วันเพื่อตั้งค่าเวลาเผยแพร่</span>
+                </div>
+              </div>
+            )}
+
+            {/* TAB 6: PERFORMANCE RADAR */}
+            {activeTourTab === 'analytics' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-black/10">
+                  <div>
+                    <h3 className="font-serif font-bold text-2xl text-[#1A1A18] tracking-tight">
+                      Omni-Channel Performance Radar
+                    </h3>
+                    <p className="text-xs font-mono text-stone-500 mt-0.5">
+                      Consolidated impression reach and cross-platform engagement velocity
+                    </p>
+                  </div>
+                  <span className="px-3 py-1 rounded-full bg-[#364165]/10 text-[#364165] font-mono text-xs font-bold border border-[#364165]/20">
+                    Last 30 Days Consolidated
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-5 bg-white rounded-2xl border border-black/10 space-y-2 shadow-2xs">
+                    <span className="text-[10px] font-mono text-stone-500 uppercase font-bold">TOTAL IMPRESSIONS</span>
+                    <div className="text-3xl font-serif font-bold text-[#1A1A18]">482,900</div>
+                    <div className="flex items-center gap-1 text-emerald-700 font-mono text-xs">
+                      <TrendingUp className="w-3.5 h-3.5" />
+                      <span>+24.6% vs single-app uploads</span>
+                    </div>
+                  </div>
+                  <div className="p-5 bg-white rounded-2xl border border-black/10 space-y-2 shadow-2xs">
+                    <span className="text-[10px] font-mono text-stone-500 uppercase font-bold">AVERAGE ENGAGEMENT</span>
+                    <div className="text-3xl font-serif font-bold text-[#1A1A18]">6.8%</div>
+                    <div className="text-stone-500 font-mono text-xs">Across 5 synchronized networks</div>
+                  </div>
+                  <div className="p-5 bg-white rounded-2xl border border-black/10 space-y-2 shadow-2xs">
+                    <span className="text-[10px] font-mono text-stone-500 uppercase font-bold">TIME SAVED / WEEK</span>
+                    <div className="text-3xl font-serif font-bold text-[#364165]">14.5 hrs</div>
+                    <div className="text-emerald-700 font-mono text-xs">Zero manual copy-pasting</div>
+                  </div>
+                </div>
+
+                {/* Omni-Channel Breakdown Table */}
+                <div className="bg-white rounded-2xl border border-black/10 overflow-hidden shadow-2xs font-mono text-xs">
+                  <div className="p-3.5 bg-stone-50 border-b border-black/10 flex items-center justify-between font-bold text-stone-700">
+                    <span>NETWORK METRICS BREAKDOWN</span>
+                    <span>RETENTION STATUS</span>
+                  </div>
+                  <div className="divide-y divide-black/5">
+                    <div className="p-3.5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <YouTubeLogo size={15} />
+                        <div>
+                          <b className="text-[#1A1A18]">YouTube Channel (4K + Shorts)</b>
+                          <div className="text-[11px] text-stone-500">210,400 views • 8.2% CTR • 04:12 Avg Duration</div>
+                        </div>
+                      </div>
+                      <span className="px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold text-[10px]">HIGHEST WATCH TIME</span>
+                    </div>
+                    <div className="p-3.5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <InstagramLogo size={15} />
+                        <div>
+                          <b className="text-[#1A1A18]">Instagram (Reels & Carousels)</b>
+                          <div className="text-[11px] text-stone-500">145,200 reach • 7.4% save rate • 12.8K likes</div>
+                        </div>
+                      </div>
+                      <span className="px-2.5 py-0.5 rounded bg-pink-100 text-pink-900 font-bold text-[10px]">VIRAL REACH</span>
+                    </div>
+                    <div className="p-3.5 flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <TikTokLogo size={15} />
+                        <div>
+                          <b className="text-[#1A1A18]">TikTok Creator Account</b>
+                          <div className="text-[11px] text-stone-500">98,100 views • 6.1% share rate • 18.4K completions</div>
+                        </div>
+                      </div>
+                      <span className="px-2.5 py-0.5 rounded bg-blue-100 text-blue-900 font-bold text-[10px]">HIGH VELOCITY</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
