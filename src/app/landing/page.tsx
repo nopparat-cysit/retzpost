@@ -62,6 +62,24 @@ import {
   Lemon8Logo 
 } from '@/components/ui/social-icons';
 import { Sticker } from '@/components/ui/sticker';
+import {
+  EditorialZap,
+  EditorialNewspaper,
+  EditorialSparkles,
+  EditorialSun,
+  EditorialFlame,
+  EditorialMoon,
+  EditorialAlert,
+  EditorialHeart,
+  EditorialComment,
+  EditorialShare,
+  EditorialLock,
+  EditorialShield,
+  EditorialDiamond,
+  EditorialStar,
+  EditorialCheck,
+  EditorialCross,
+} from '@/components/ui/editorial-icons';
 
 // =============================================================================
 // RETRO-EDITORIAL AUDIO SYNTHESIZER (Pure Web Audio API — Zero External Assets)
@@ -383,7 +401,7 @@ export default function LandingPage() {
   // Task 2: Caption Tone & Live Customization
   const [activeTone, setActiveTone] = useState<'HOOK' | 'BROADSHEET' | 'LUXURY'>('HOOK');
   const [customCaption, setCustomCaption] = useState<string>(
-    '⚡ Stop exporting 5 versions! Dream Press transforms 16:9 master footage into 9:16 vertical stories with zero quality loss.'
+    'Stop exporting 5 versions! Dream Press transforms 16:9 master footage into 9:16 vertical stories with zero quality loss.'
   );
   // Task 3: Scheduled Golden Slot
   const [selectedSlot, setSelectedSlot] = useState<'LUNCH' | 'EVENING' | 'NIGHT'>('EVENING');
@@ -484,11 +502,11 @@ export default function LandingPage() {
   const handleSelectTone = (tone: 'HOOK' | 'BROADSHEET' | 'LUXURY') => {
     setActiveTone(tone);
     if (tone === 'HOOK') {
-      setCustomCaption('⚡ Stop exporting 5 versions! Dream Press transforms 16:9 master footage into 9:16 vertical stories with zero quality loss.');
+      setCustomCaption('Stop exporting 5 versions! Dream Press transforms 16:9 master footage into 9:16 vertical stories with zero quality loss.');
     } else if (tone === 'BROADSHEET') {
-      setCustomCaption('📰 SPECIAL EDITION: MULTIPOST introduces simultaneous multi-network dispatch with bank-grade AES-256 GCM token security.');
+      setCustomCaption('SPECIAL EDITION: MULTIPOST introduces simultaneous multi-network dispatch with bank-grade AES-256 GCM token security.');
     } else {
-      setCustomCaption('✨ Studio-grade publishing excellence designed for creators and teams who demand 100% visual fidelity across every feed.');
+      setCustomCaption('Studio-grade publishing excellence designed for creators and teams who demand 100% visual fidelity across every feed.');
     }
 
     if (!completedTasks.caption) {
@@ -882,8 +900,9 @@ export default function LandingPage() {
                       <span className={`w-1 bg-indigo-400 rounded-full ${isPlayingHero ? 'wave-bar-5' : 'h-1'}`} />
                     </div>
 
-                    <div className="text-[9px] font-mono text-emerald-300 font-semibold">
-                      ✓ AI Safe-Zone Clearance: 100% Passed
+                    <div className="text-[9px] font-mono text-emerald-300 font-semibold flex items-center gap-1.5">
+                      <EditorialCheck size={12} />
+                      <span>AI Safe-Zone Clearance: 100% Passed</span>
                     </div>
                   </div>
 
@@ -1377,7 +1396,7 @@ export default function LandingPage() {
                       <ul className="space-y-2 text-xs font-sans text-stone-600">
                         {cur.bottleneckPoints.map((point, idx) => (
                           <li key={idx} className="flex items-start gap-2">
-                            <span className="text-red-600 font-mono font-bold shrink-0">✕</span>
+                            <EditorialCross size={14} className="mt-0.5 shrink-0" />
                             <span>{point}</span>
                           </li>
                         ))}
@@ -1400,7 +1419,7 @@ export default function LandingPage() {
                       <ul className="space-y-2 text-xs font-sans text-stone-700">
                         {cur.solutionPoints.map((point, idx) => (
                           <li key={idx} className="flex items-start gap-2">
-                            <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                            <EditorialCheck size={14} className="mt-0.5 shrink-0" />
                             <span>{point}</span>
                           </li>
                         ))}
@@ -1485,9 +1504,9 @@ export default function LandingPage() {
                                 <span className="text-[7px] text-emerald-300 font-semibold">100% CLEAR FROM BUTTONS</span>
                               </div>
                               <div className="absolute right-1 top-1/2 -translate-y-1/2 flex flex-col gap-1 items-center">
-                                <span className="w-3 h-3 rounded-full bg-white/20 text-[6px] text-white flex items-center justify-center">♥</span>
-                                <span className="w-3 h-3 rounded-full bg-white/20 text-[6px] text-white flex items-center justify-center">💬</span>
-                                <span className="w-3 h-3 rounded-full bg-white/20 text-[6px] text-white flex items-center justify-center">↗</span>
+                                <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center"><EditorialHeart size={9} /></span>
+                                <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center"><EditorialComment size={9} /></span>
+                                <span className="w-4 h-4 rounded-full bg-white/20 flex items-center justify-center"><EditorialShare size={9} /></span>
                               </div>
                               <div className="border-t border-dashed border-red-400/60 pt-1 text-[8px] text-red-300 text-center font-mono">
                                 ▼ BOTTOM 25% UI CEILING
@@ -1541,9 +1560,10 @@ export default function LandingPage() {
                               setCase2Synced(true);
                               playChimeSound(soundEnabled);
                             }}
-                            className="px-3 py-1.5 rounded-lg bg-[#364165] hover:bg-[#2B3452] text-white font-bold text-[11px] cursor-pointer transition-colors shadow-xs"
+                            className="px-3 py-1.5 rounded-lg bg-[#364165] hover:bg-[#2B3452] text-white font-bold text-[11px] cursor-pointer transition-colors shadow-xs inline-flex items-center gap-1.5"
                           >
-                            ⚡ TEST 1-CLICK DISPATCH SYNC
+                            <EditorialZap size={13} />
+                            <span>TEST 1-CLICK DISPATCH SYNC</span>
                           </button>
                         </div>
                       </div>
@@ -1586,9 +1606,16 @@ export default function LandingPage() {
                               setCase3SimulatedRecovered(!case3SimulatedRecovered);
                               playChimeSound(soundEnabled);
                             }}
-                            className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-[11px] cursor-pointer transition-colors shadow-xs"
+                            className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-[11px] cursor-pointer transition-colors shadow-xs inline-flex items-center gap-1.5"
                           >
-                            {case3SimulatedRecovered ? 'รีเซ็ตสถานะ Token' : '⚡ EXECUTE AUTO-RETRY'}
+                            {case3SimulatedRecovered ? (
+                              <span>รีเซ็ตสถานะ Token</span>
+                            ) : (
+                              <>
+                                <EditorialZap size={13} />
+                                <span>EXECUTE AUTO-RETRY</span>
+                              </>
+                            )}
                           </button>
                         </div>
                       </div>
@@ -1637,8 +1664,9 @@ export default function LandingPage() {
                               <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
                                 <div className="bg-amber-400 h-full w-[50.7%]" />
                               </div>
-                              <p className="text-[11px] text-stone-300 pt-1">
-                                ✓ Strip excessive hashtags • URL shortener armed • Concise headline priority
+                              <p className="text-[11px] text-stone-300 pt-1 flex items-center gap-1.5">
+                                <EditorialCheck size={12} />
+                                <span>Strip excessive hashtags • URL shortener armed • Concise headline priority</span>
                               </p>
                             </>
                           )}
@@ -1651,8 +1679,9 @@ export default function LandingPage() {
                               <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
                                 <div className="bg-emerald-400 h-full w-[21.8%]" />
                               </div>
-                              <p className="text-[11px] text-stone-300 pt-1">
-                                ✓ 15 curated hashtags isolated into First Comment • Audio track synchronized
+                              <p className="text-[11px] text-stone-300 pt-1 flex items-center gap-1.5">
+                                <EditorialCheck size={12} />
+                                <span>15 curated hashtags isolated into First Comment • Audio track synchronized</span>
                               </p>
                             </>
                           )}
@@ -1665,8 +1694,9 @@ export default function LandingPage() {
                               <div className="w-full bg-white/10 h-1.5 rounded-full overflow-hidden">
                                 <div className="bg-blue-400 h-full w-[24.8%]" />
                               </div>
-                              <p className="text-[11px] text-stone-300 pt-1">
-                                ✓ Title under 100 characters • Auto Chapters timestamps (00:00, 01:25) generated
+                              <p className="text-[11px] text-stone-300 pt-1 flex items-center gap-1.5">
+                                <EditorialCheck size={12} />
+                                <span>Title under 100 characters • Auto Chapters timestamps (00:00, 01:25) generated</span>
                               </p>
                             </>
                           )}
@@ -1679,11 +1709,12 @@ export default function LandingPage() {
                       <div className="space-y-4">
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                           {[
-                            { id: 'LUNCH' as const, label: '☀️ 12:15 LUNCH SURGE', mult: '+45% Reach', desc: 'Office break timeline' },
-                            { id: 'PEAK' as const, label: '🔥 19:30 PRIME PEAK', mult: '+120% Reach', desc: 'Bangkok golden hour (แนะนำ)' },
-                            { id: 'LATE' as const, label: '🌙 21:45 LATE STREAM', mult: '+65% Reach', desc: 'Bedtime relaxation feeds' },
+                            { id: 'LUNCH' as const, label: '12:15 LUNCH SURGE', icon: EditorialSun, mult: '+45% Reach', desc: 'Office break timeline' },
+                            { id: 'PEAK' as const, label: '19:30 PRIME PEAK', icon: EditorialFlame, mult: '+120% Reach', desc: 'Bangkok golden hour (แนะนำ)' },
+                            { id: 'LATE' as const, label: '21:45 LATE STREAM', icon: EditorialMoon, mult: '+65% Reach', desc: 'Bedtime relaxation feeds' },
                           ].map((slot) => {
                             const isSlotActive = case5ActiveSlot === slot.id;
+                            const SlotIcon = slot.icon;
                             return (
                               <button
                                 key={slot.id}
@@ -1697,7 +1728,10 @@ export default function LandingPage() {
                                     : 'bg-black/60 border-white/10 text-stone-300 hover:border-white/30'
                                 }`}
                               >
-                                <b className="block text-white text-xs">{slot.label}</b>
+                                <b className="text-white text-xs flex items-center gap-1.5">
+                                  <SlotIcon size={13} />
+                                  <span>{slot.label}</span>
+                                </b>
                                 <span className="text-amber-400 font-bold text-[10px] block mt-0.5">{slot.mult}</span>
                                 <span className="text-stone-400 text-[10px] block truncate">{slot.desc}</span>
                               </button>
@@ -1725,8 +1759,9 @@ export default function LandingPage() {
                 <span className="px-3 py-1 rounded-full bg-red-50 text-red-700 font-mono text-xs font-bold uppercase border border-red-200">
                   THE OLD WAY
                 </span>
-                <span className="font-mono text-xs text-red-600 font-bold">
-                  ⚠️ 15+ Hours Wasted Weekly
+                <span className="font-mono text-xs text-red-600 font-bold flex items-center gap-1.5">
+                  <EditorialAlert size={14} />
+                  <span>15+ Hours Wasted Weekly</span>
                 </span>
               </div>
               <h3 className="font-serif font-bold text-2xl text-[#1A1A18]">
@@ -1734,21 +1769,21 @@ export default function LandingPage() {
               </h3>
               <ul className="space-y-4 font-sans text-sm text-stone-600">
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
+                  <EditorialCross size={18} className="shrink-0 mt-0.5" />
                   <div>
                     <b className="text-[#1A1A18] block font-mono text-xs uppercase">Manual Aspect Ratio Re-Encoding</b>
                     Exporting 16:9, 1:1, and 9:16 separately, cluttering local drives with redundant video renders.
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
+                  <EditorialCross size={18} className="shrink-0 mt-0.5" />
                   <div>
                     <b className="text-[#1A1A18] block font-mono text-xs uppercase">Repetitive Copy-Pasting</b>
                     Jumping across 5 to 7 browser tabs, manually copying captions, hashtags, and links over and over.
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
+                  <EditorialCross size={18} className="shrink-0 mt-0.5" />
                   <div>
                     <b className="text-[#1A1A18] block font-mono text-xs uppercase">Silent Publishing Failures</b>
                     One channel fails silently due to an expired OAuth token while the team assumes the campaign went live.
@@ -1772,21 +1807,21 @@ export default function LandingPage() {
               </h3>
               <ul className="space-y-4 font-sans text-sm text-stone-600">
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <EditorialCheck size={18} className="shrink-0 mt-0.5" />
                   <div>
                     <b className="text-[#1A1A18] block font-mono text-xs uppercase">Universal Master Ingestion</b>
                     Upload master 4K footage once. The publishing engine automatically adapts 16:9 to 9:16 vertical reels with AI safe framing.
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <EditorialCheck size={18} className="shrink-0 mt-0.5" />
                   <div>
                     <b className="text-[#1A1A18] block font-mono text-xs uppercase">Synchronized Platform Nuances</b>
                     Single shared story root with per-platform character counts, hashtag rules, and tone overrides customized in one screen.
                   </div>
                 </li>
                 <li className="flex items-start gap-3">
-                  <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
+                  <EditorialCheck size={18} className="shrink-0 mt-0.5" />
                   <div>
                     <b className="text-[#1A1A18] block font-mono text-xs uppercase">Isolated Worker Failure Recovery</b>
                     Concurrent worker queues handle each network separately. Temporary rate limits on one channel never affect other dispatches.
@@ -1872,9 +1907,9 @@ export default function LandingPage() {
                     Drop your full-resolution 4K video or uncompressed image series. The engine automatically inspects the container, probes keyframe intervals, analyzes color profiles, and prepares baseline metadata for multi-aspect conversion.
                   </p>
                   <div className="flex flex-wrap gap-2 text-xs font-mono text-stone-600 pt-2">
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ H.264 / HEVC / ProRes</span>
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Up to 4K 60fps</span>
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Stereo 48kHz Audio</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>H.264 / HEVC / ProRes</span></span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>Up to 4K 60fps</span></span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>Stereo 48kHz Audio</span></span>
                   </div>
                 </div>
                 <div className="lg:col-span-5 p-4 bg-stone-50 rounded-2xl border border-black/5 font-mono text-xs space-y-2">
@@ -1902,27 +1937,27 @@ export default function LandingPage() {
                     Select your active destination endpoints. The engine cross-references the official platform API limits (e.g. YouTube Shorts 60s, TikTok Reels, Instagram Carousel rules) and alerts you immediately if any channel requires dedicated adjustments.
                   </p>
                   <div className="flex flex-wrap gap-2 text-xs font-mono text-stone-600 pt-2">
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Token Vault AES-256</span>
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ No Passwords Required</span>
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Granular Permissions</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>Token Vault AES-256</span></span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>No Passwords Required</span></span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>Granular Permissions</span></span>
                   </div>
                 </div>
                 <div className="lg:col-span-5 grid grid-cols-2 gap-2 font-mono text-xs">
                   <div className="p-3.5 bg-stone-50 rounded-xl border border-black/5 flex items-center gap-2.5 shadow-2xs">
                     <YouTubeLogo size={18} />
-                    <div><b className="block text-[#1A1A18]">YouTube</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
+                    <div><b className="block text-[#1A1A18]">YouTube</b><span className="text-[10px] text-emerald-700 flex items-center gap-1"><EditorialCheck size={10} /><span>Token Active</span></span></div>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-xl border border-black/5 flex items-center gap-2.5 shadow-2xs">
                     <InstagramLogo size={18} />
-                    <div><b className="block text-[#1A1A18]">Instagram</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
+                    <div><b className="block text-[#1A1A18]">Instagram</b><span className="text-[10px] text-emerald-700 flex items-center gap-1"><EditorialCheck size={10} /><span>Token Active</span></span></div>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-xl border border-black/5 flex items-center gap-2.5 shadow-2xs">
                     <TikTokLogo size={18} />
-                    <div><b className="block text-[#1A1A18]">TikTok</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
+                    <div><b className="block text-[#1A1A18]">TikTok</b><span className="text-[10px] text-emerald-700 flex items-center gap-1"><EditorialCheck size={10} /><span>Token Active</span></span></div>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-xl border border-black/5 flex items-center gap-2.5 shadow-2xs">
                     <FacebookLogo size={18} />
-                    <div><b className="block text-[#1A1A18]">Facebook</b><span className="text-[10px] text-emerald-700">✓ Token Active</span></div>
+                    <div><b className="block text-[#1A1A18]">Facebook</b><span className="text-[10px] text-emerald-700 flex items-center gap-1"><EditorialCheck size={10} /><span>Token Active</span></span></div>
                   </div>
                 </div>
               </div>
@@ -1941,9 +1976,9 @@ export default function LandingPage() {
                     Never send the exact same generic caption everywhere. MULTIPOST allows you to keep one core narrative, while customizing hashtags, link placements, and text hooks specifically tailored for the algorithm of each platform.
                   </p>
                   <div className="flex flex-wrap gap-2 text-xs font-mono text-stone-600 pt-2">
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Mobile Safe-Zone Visualizer</span>
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Character Counter</span>
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ AI Tone Modulation</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>Mobile Safe-Zone Visualizer</span></span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>Character Counter</span></span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>AI Tone Modulation</span></span>
                   </div>
                 </div>
                 <div className="lg:col-span-5 p-4 bg-stone-50 rounded-2xl border border-black/5 font-mono text-xs space-y-2">
@@ -1971,9 +2006,9 @@ export default function LandingPage() {
                     Queue publication according to data-driven engagement windows. If any platform encounters a momentary API timeout, our isolated retry queues attempt recovery automatically without disturbing your other live feeds.
                   </p>
                   <div className="flex flex-wrap gap-2 text-xs font-mono text-stone-600 pt-2">
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Bangkok Golden Peak (UTC+7)</span>
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ Millisecond Precision</span>
-                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded">✓ 1-Click Partial Recovery</span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>Bangkok Golden Peak (UTC+7)</span></span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>Millisecond Precision</span></span>
+                    <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>1-Click Partial Recovery</span></span>
                   </div>
                 </div>
                 <div className="lg:col-span-5 p-4 bg-stone-50 rounded-2xl border border-black/5 font-mono text-xs space-y-2">
@@ -2006,7 +2041,7 @@ export default function LandingPage() {
             </h2>
             <p className="text-xs sm:text-sm text-stone-600 max-w-2xl leading-relaxed">
               ทดลองควบคุม 4 แท่นผลิตสื่อดิจิทัล: เลือกช่องทางเผยแพร่, ปรับจูนโทนเฉพาะแพลตฟอร์ม, ล็อกเวลาทองคำกรุงเทพฯ และตรวจเช็ก Safe-Zone เสมือนกำลังส่งสัญญาณจริง
-              <span className="block text-stone-500 mt-0.5">สะสมเครดิตจัดพิมพ์ครบ 100 Coins เพื่อปลดล็อก <b>7-Day Dream Pass</b> ด้านล่าง หรือคลิก <b>&quot;⚡ รับ 100 Coins ทันที&quot;</b> ได้เลย</span>
+              <span className="block text-stone-500 mt-0.5">สะสมเครดิตจัดพิมพ์ครบ 100 Coins เพื่อปลดล็อก <b>7-Day Dream Pass</b> ด้านล่าง หรือคลิก <b>&quot;รับ 100 Coins ทันที&quot;</b> ได้เลย</span>
             </p>
           </div>
 
@@ -2014,10 +2049,10 @@ export default function LandingPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={handleClaimAllCoins}
-              className="py-2.5 px-5 rounded-xl animate-gold-shimmer text-amber-950 font-mono text-xs font-bold flex items-center gap-1.5 shadow-[0_4px_20px_rgba(245,158,11,0.5)] ring-2 ring-amber-300 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+              className="py-2.5 px-5 rounded-xl animate-gold-shimmer text-amber-950 font-mono text-xs font-bold flex items-center gap-2 shadow-[0_4px_20px_rgba(245,158,11,0.5)] ring-2 ring-amber-300 hover:scale-105 active:scale-95 transition-all cursor-pointer"
             >
-              <Zap className="w-3.5 h-3.5 fill-amber-950" />
-              <span>⚡ รับ 100 Coins ทันที</span>
+              <EditorialZap size={16} />
+              <span>รับ 100 Coins ทันที</span>
             </button>
 
             <button
@@ -2073,7 +2108,11 @@ export default function LandingPage() {
                     : 'animate-gold-shimmer text-amber-950 shadow-xs hover:scale-105 active:scale-95'
                 }`}
               >
-                {completedTasks.destinations ? '✓ สำเร็จ (+20 Coins)' : '⚡ รับทันที (+20 Coins)'}
+                {completedTasks.destinations ? (
+                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>สำเร็จ (+20 Coins)</span></span>
+                ) : (
+                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>รับทันที (+20 Coins)</span></span>
+                )}
               </button>
             </div>
 
@@ -2115,7 +2154,14 @@ export default function LandingPage() {
             <div className="text-[11px] font-mono text-stone-500 flex items-center justify-between pt-1">
               <span>Selected: <b className="text-[#1A1A18]">{selectedPlatforms.length}</b> channels</span>
               <span className="text-[10px] text-[#364165] font-semibold">
-                {selectedPlatforms.length >= 2 ? '✓ ตรงตามเงื่อนไข' : 'เลือกอีก 1 ช่องทางเพื่อรับเหรียญ'}
+                {selectedPlatforms.length >= 2 ? (
+                  <span className="inline-flex items-center gap-1 text-emerald-700 font-bold">
+                    <EditorialCheck size={11} />
+                    <span>ตรงตามเงื่อนไข</span>
+                  </span>
+                ) : (
+                  'เลือกอีก 1 ช่องทางเพื่อรับเหรียญ'
+                )}
               </span>
             </div>
           </div>
@@ -2150,7 +2196,11 @@ export default function LandingPage() {
                     : 'animate-gold-shimmer text-amber-950 shadow-xs hover:scale-105 active:scale-95'
                 }`}
               >
-                {completedTasks.caption ? '✓ สำเร็จ (+25 Coins)' : '⚡ รับทันที (+25 Coins)'}
+                {completedTasks.caption ? (
+                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>สำเร็จ (+25 Coins)</span></span>
+                ) : (
+                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>รับทันที (+25 Coins)</span></span>
+                )}
               </button>
             </div>
 
@@ -2161,22 +2211,26 @@ export default function LandingPage() {
             {/* Tone Selector Chips */}
             <div className="flex flex-wrap gap-1.5 text-xs font-mono">
               {[
-                { id: 'HOOK', label: '⚡ High-Hook Viral' },
-                { id: 'BROADSHEET', label: '📰 Gazette Broadsheet' },
-                { id: 'LUXURY', label: '✨ Luxury Studio' },
-              ].map((t) => (
-                <button
-                  key={t.id}
-                  onClick={() => handleSelectTone(t.id as any)}
-                  className={`py-1.5 px-3 rounded-full border transition-all cursor-pointer text-xs active:scale-95 ${
-                    activeTone === t.id
-                      ? 'bg-[#364165] text-white font-bold border-[#364165] shadow-xs scale-105'
-                      : 'bg-stone-50 text-stone-600 hover:text-black border-black/5 hover:bg-stone-100'
-                  }`}
-                >
-                  {t.label}
-                </button>
-              ))}
+                { id: 'HOOK', label: 'High-Hook Viral', icon: EditorialZap },
+                { id: 'BROADSHEET', label: 'Gazette Broadsheet', icon: EditorialNewspaper },
+                { id: 'LUXURY', label: 'Luxury Studio', icon: EditorialSparkles },
+              ].map((t) => {
+                const ToneIcon = t.icon;
+                return (
+                  <button
+                    key={t.id}
+                    onClick={() => handleSelectTone(t.id as any)}
+                    className={`py-1.5 px-3 rounded-full border transition-all cursor-pointer text-xs active:scale-95 flex items-center gap-1.5 ${
+                      activeTone === t.id
+                        ? 'bg-[#364165] text-white font-bold border-[#364165] shadow-xs scale-105'
+                        : 'bg-stone-50 text-stone-600 hover:text-black border-black/5 hover:bg-stone-100'
+                    }`}
+                  >
+                    <ToneIcon size={13} />
+                    <span>{t.label}</span>
+                  </button>
+                );
+              })}
             </div>
 
             {/* Live Typing Preview Caption Box & Character Gauge Bar */}
@@ -2240,7 +2294,11 @@ export default function LandingPage() {
                     : 'animate-gold-shimmer text-amber-950 shadow-xs hover:scale-105 active:scale-95'
                 }`}
               >
-                {completedTasks.schedule ? '✓ สำเร็จ (+25 Coins)' : '⚡ รับทันที (+25 Coins)'}
+                {completedTasks.schedule ? (
+                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>สำเร็จ (+25 Coins)</span></span>
+                ) : (
+                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>รับทันที (+25 Coins)</span></span>
+                )}
               </button>
             </div>
 
@@ -2313,7 +2371,11 @@ export default function LandingPage() {
                     : 'animate-gold-shimmer text-amber-950 shadow-xs hover:scale-105 active:scale-95'
                 }`}
               >
-                {completedTasks.rescue ? '✓ สำเร็จ (+30 Coins)' : '⚡ รับทันที (+30 Coins)'}
+                {completedTasks.rescue ? (
+                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>สำเร็จ (+30 Coins)</span></span>
+                ) : (
+                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>รับทันที (+30 Coins)</span></span>
+                )}
               </button>
             </div>
 
@@ -2360,7 +2422,16 @@ export default function LandingPage() {
                 className="w-full py-3 px-4 rounded-xl bg-[#A24836] text-white font-bold hover:bg-[#8e3f2f] transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md text-xs active:scale-98"
               >
                 <Sparkles className={`w-3.5 h-3.5 text-amber-300 ${isScanningRescue ? 'animate-spin' : ''}`} />
-                <span>{isScanningRescue ? 'Laser Scanning & Re-framing Safe-Zone...' : '⚡ 1-Click AI Safe-Zone Rescue'}</span>
+                <span className="flex items-center gap-1.5">
+                  {isScanningRescue ? (
+                    <span>Laser Scanning & Re-framing Safe-Zone...</span>
+                  ) : (
+                    <>
+                      <EditorialZap size={14} />
+                      <span>1-Click AI Safe-Zone Rescue</span>
+                    </>
+                  )}
+                </span>
               </button>
             ) : (
               <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-300 text-center font-mono text-[11px] text-emerald-800 font-bold flex items-center justify-center gap-1.5">
@@ -3001,7 +3072,10 @@ export default function LandingPage() {
                             <div className="w-full bg-amber-500 rounded-sm h-[100%]" />
                           </div>
                           <span className="text-[9px] text-amber-900 font-bold block">19:30</span>
-                          <span className="text-[9px] font-bold text-amber-900 block">★ 100%</span>
+                          <span className="text-[9px] font-bold text-amber-900 flex items-center justify-center gap-0.5">
+                            <EditorialStar size={9} />
+                            <span>100%</span>
+                          </span>
                         </div>
                         <div className="space-y-1">
                           <div className="h-14 bg-stone-100 rounded-md flex items-end justify-center p-1">
@@ -3012,8 +3086,9 @@ export default function LandingPage() {
                         </div>
                       </div>
 
-                      <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[10px] text-amber-900 font-sans leading-relaxed">
-                        ★ <b>Bangkok Prime Peak (19:30 ICT):</b> ช่วยเพิ่มอัตราการมองเห็นและการเข้าถึง (Reach Multiplier) ขึ้นเฉลี่ย <b>+2.4 เท่า</b> สำหรับคอนเทนต์ภาษาไทย
+                      <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[10px] text-amber-900 font-sans leading-relaxed flex items-start gap-1.5">
+                        <EditorialStar size={12} className="shrink-0 mt-0.5" />
+                        <span><b>Bangkok Prime Peak (19:30 ICT):</b> ช่วยเพิ่มอัตราการมองเห็นและการเข้าถึง (Reach Multiplier) ขึ้นเฉลี่ย <b>+2.4 เท่า</b> สำหรับคอนเทนต์ภาษาไทย</span>
                       </div>
                     </div>
                   </div>
@@ -3143,7 +3218,10 @@ export default function LandingPage() {
                           <span className="font-bold text-[#1A1A18]">Brand Launch Reel 2026.mov</span>
                           <span className="text-stone-500">(1.2 GB • 4K ProRes)</span>
                         </div>
-                        <span className="text-emerald-700 font-bold text-[10px]">VERIFIED ✓</span>
+                        <span className="text-emerald-700 font-bold text-[10px] flex items-center gap-1">
+                          <span>VERIFIED</span>
+                          <EditorialCheck size={11} />
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -3181,9 +3259,9 @@ export default function LandingPage() {
 
                       {/* Right Action Rail Clearance */}
                       <div className="absolute right-2 top-1/2 -translate-y-1/2 space-y-2 text-right">
-                        <div className="w-5 h-5 rounded-full bg-white/20 mx-auto flex items-center justify-center text-[7px]">❤</div>
-                        <div className="w-5 h-5 rounded-full bg-white/20 mx-auto flex items-center justify-center text-[7px]">💬</div>
-                        <div className="w-5 h-5 rounded-full bg-white/20 mx-auto flex items-center justify-center text-[7px]">↗</div>
+                        <div className="w-5 h-5 rounded-full bg-white/20 mx-auto flex items-center justify-center"><EditorialHeart size={11} /></div>
+                        <div className="w-5 h-5 rounded-full bg-white/20 mx-auto flex items-center justify-center"><EditorialComment size={11} /></div>
+                        <div className="w-5 h-5 rounded-full bg-white/20 mx-auto flex items-center justify-center"><EditorialShare size={11} /></div>
                       </div>
 
                       {/* Bottom Safe-Zone Boundary */}
@@ -3283,7 +3361,7 @@ export default function LandingPage() {
                     { date: 22, tag: '19:30 IG Carousel', chan: 'Instagram', peak: true, title: 'Brand Guide' },
                     { date: 23, tag: '15:00 FB Video', chan: 'Facebook', peak: false, title: 'Docu Part 1' },
                     { date: 24, tag: '11:45 YT Shorts', chan: 'YouTube', peak: false, title: 'Product Clip' },
-                    { date: 25, tag: '19:30 All-Network', chan: 'All 5 Channels', peak: true, title: '★ Prime Drop' },
+                    { date: 25, tag: '19:30 All-Network', chan: 'All 5 Channels', peak: true, title: 'Prime Drop' },
                     { date: 26, tag: '21:15 X Thread', chan: 'X API', peak: false, title: 'Night Owl' },
                   ].map((item, idx) => (
                     <div key={idx} className={`p-3 rounded-2xl border text-left space-y-2 min-h-[110px] flex flex-col justify-between transition-colors ${
@@ -3294,8 +3372,9 @@ export default function LandingPage() {
                       <div className="flex justify-between items-center">
                         <span className="text-xs font-bold text-[#1A1A18]">{item.date}</span>
                         {item.peak && (
-                          <span className="text-[9px] font-bold text-amber-800 bg-amber-200/60 px-1.5 py-0.2 rounded font-mono">
-                            PEAK ★
+                          <span className="text-[9px] font-bold text-amber-800 bg-amber-200/60 px-1.5 py-0.2 rounded font-mono inline-flex items-center gap-0.5">
+                            <span>PEAK</span>
+                            <EditorialStar size={9} />
                           </span>
                         )}
                       </div>
@@ -3321,7 +3400,10 @@ export default function LandingPage() {
                     </span>
                     <span className="flex items-center gap-1.5 font-bold text-amber-900">
                       <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
-                      <span>19:30 ICT (Bangkok Prime Peak ★)</span>
+                      <span className="inline-flex items-center gap-1">
+                        <span>19:30 ICT (Bangkok Prime Peak)</span>
+                        <EditorialStar size={10} />
+                      </span>
                     </span>
                     <span className="flex items-center gap-1.5">
                       <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
@@ -3606,7 +3688,10 @@ export default function LandingPage() {
                     <Star className="w-3.5 h-3.5 text-amber-600 fill-amber-600" />
                     <span className="font-bold text-amber-950">19:30 ICT</span>
                   </div>
-                  <span className="text-[10px] font-bold text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded">★ PRIME PEAK (2.4x)</span>
+                  <span className="text-[10px] font-bold text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded inline-flex items-center gap-1">
+                    <EditorialStar size={10} />
+                    <span>PRIME PEAK (2.4x)</span>
+                  </span>
                 </div>
                 <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-black/5">
                   <div className="flex items-center gap-2">
@@ -3685,15 +3770,21 @@ export default function LandingPage() {
               <div className="p-3.5 rounded-2xl bg-[#FCFAF5] border border-black/10 space-y-1.5 font-mono text-[11px]">
                 <div className="flex items-center justify-between p-1.5 rounded bg-white border border-black/5 text-emerald-800 font-bold">
                   <span>YouTube Master:</span>
-                  <span>DONE ✓</span>
+                  <span className="inline-flex items-center gap-1">
+                    <span>DONE</span>
+                    <EditorialCheck size={11} />
+                  </span>
                 </div>
                 <div className="flex items-center justify-between p-1.5 rounded bg-white border border-black/5 text-emerald-800 font-bold">
                   <span>Instagram Reels:</span>
-                  <span>DONE ✓</span>
+                  <span className="inline-flex items-center gap-1">
+                    <span>DONE</span>
+                    <EditorialCheck size={11} />
+                  </span>
                 </div>
                 <div className="flex items-center justify-between p-1.5 rounded bg-amber-50 border border-amber-300 text-amber-900 font-bold">
                   <span>TikTok API:</span>
-                  <span>ISOLATED RETRY (2/3) ⟳</span>
+                  <span>ISOLATED RETRY (2/3)</span>
                 </div>
               </div>
 
@@ -3728,7 +3819,10 @@ export default function LandingPage() {
                 </div>
                 <div className="p-2 bg-white rounded-lg border border-black/5 flex items-center justify-between">
                   <span className="font-bold text-[#1A1A18]">Instagram First Comment</span>
-                  <span className="text-emerald-700 font-bold">Auto-Staged ✓</span>
+                  <span className="text-emerald-700 font-bold inline-flex items-center gap-1">
+                    <span>Auto-Staged</span>
+                    <EditorialCheck size={11} />
+                  </span>
                 </div>
                 <div className="p-2 bg-white rounded-lg border border-black/5 flex items-center justify-between">
                   <span className="font-bold text-[#1A1A18]">YouTube Chapters</span>
@@ -3964,8 +4058,9 @@ export default function LandingPage() {
                       บริหาร 10+ บัญชีลูกค้าพร้อมกัน แยก Workspaces ชัดเจน ป้องกันการโพสต์ผิดเพจ
                     </h3>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 font-mono text-xs font-bold shrink-0 border border-amber-200">
-                    🛡️ Multi-Brand Isolation 100%
+                  <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 font-mono text-xs font-bold shrink-0 border border-amber-200 flex items-center gap-1.5">
+                    <EditorialShield size={13} />
+                    <span>Multi-Brand Isolation 100%</span>
                   </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
@@ -3996,8 +4091,9 @@ export default function LandingPage() {
                       คัดกรองข่าวด่วนด้วยระบบ Review Gate ปล่อยพาดหัวพร้อมกันทุกช่องทางไม่มีดีเลย์
                     </h3>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-mono text-xs font-bold shrink-0 border border-emerald-200">
-                    ⚡ Concurrent Burst Dispatch
+                  <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-mono text-xs font-bold shrink-0 border border-emerald-200 flex items-center gap-1.5">
+                    <EditorialZap size={13} />
+                    <span>Concurrent Burst Dispatch</span>
                   </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
@@ -4028,8 +4124,9 @@ export default function LandingPage() {
                       รักษาบิตเรตและสีสันของไฟล์ 4K Master ดั้งเดิม ไม่ถูกบีบอัดจนเสียคุณภาพ
                     </h3>
                   </div>
-                  <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 font-mono text-xs font-bold shrink-0 border border-amber-200">
-                    💎 Uncompressed Fidelity
+                  <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 font-mono text-xs font-bold shrink-0 border border-amber-200 flex items-center gap-1.5">
+                    <EditorialDiamond size={13} />
+                    <span>Uncompressed Fidelity</span>
                   </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
@@ -4059,8 +4156,9 @@ export default function LandingPage() {
               <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-red-100 text-red-700 uppercase">
                 TRADITIONAL DISPATCH • วิธีแบบเดิม
               </span>
-              <span className="font-mono text-xs text-red-600 font-bold">
-                ⚠️ สูญเสียเวลา 45 นาที/คลิป
+              <span className="font-mono text-xs text-red-600 font-bold flex items-center gap-1.5">
+                <EditorialAlert size={13} />
+                <span>สูญเสียเวลา 45 นาที/คลิป</span>
               </span>
             </div>
             <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
@@ -4068,19 +4166,19 @@ export default function LandingPage() {
             </h3>
             <ul className="space-y-3 font-sans text-xs sm:text-sm text-stone-600">
               <li className="flex items-start gap-2.5">
-                <span className="text-red-500 font-bold shrink-0">✕</span>
+                <EditorialCross size={15} className="shrink-0 mt-0.5" />
                 <span><b>Export แยก 3-4 ไฟล์</b> — ต้องเรนเดอร์ 16:9, 9:16, 1:1 แยกโปรเจกต์ เปลืองพื้นที่ฮาร์ดดิสก์</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="text-red-500 font-bold shrink-0">✕</span>
+                <EditorialCross size={15} className="shrink-0 mt-0.5" />
                 <span><b>ก๊อปวางข้าม 5 บราวเซอร์</b> — นั่งไล่แก้แฮชแท็กทีละแท็บ เสี่ยงพิมพ์ผิดและหลุดบริบท</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="text-red-500 font-bold shrink-0">✕</span>
+                <EditorialCross size={15} className="shrink-0 mt-0.5" />
                 <span><b>Token หมดอายุเงียบ</b> — ไม่มีระบบตรวจสอบอัตโนมัติ มารู้ตัวอีกทีคลิปไม่ขึ้น ยอดวิวจม</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="text-red-500 font-bold shrink-0">✕</span>
+                <EditorialCross size={15} className="shrink-0 mt-0.5" />
                 <span><b>หลุดช่วง Golden Hour</b> — คำนวณเวลา Timezone สับสน หรือลืมโพสต์ช่วงเวลาคนออนไลน์</span>
               </li>
             </ul>
@@ -4101,19 +4199,19 @@ export default function LandingPage() {
             </h3>
             <ul className="space-y-3 font-sans text-xs sm:text-sm text-stone-600">
               <li className="flex items-start gap-2.5">
-                <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                <EditorialCheck size={15} className="shrink-0 mt-0.5" />
                 <span><b>Universal Master 4K Ingestion</b> — อัปโหลดไฟล์เดียว ระบบแปลง 16:9 สู่ 9:16 พร้อม AI Safe-Zone ทันที</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                <EditorialCheck size={15} className="shrink-0 mt-0.5" />
                 <span><b>Synchronized Platform Nuances</b> — แต่งแคปชันจุดเดียว ปรับจูน Character Limit และแท็กรายช่องทางได้สดๆ</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                <EditorialCheck size={15} className="shrink-0 mt-0.5" />
                 <span><b>Isolated Queue Workers</b> — ท่อส่งสัญญาณแยกขาดจากกัน พร้อมระบบ Exponential Backoff Auto-Retry</span>
               </li>
               <li className="flex items-start gap-2.5">
-                <span className="text-emerald-700 font-bold shrink-0">✓</span>
+                <EditorialCheck size={15} className="shrink-0 mt-0.5" />
                 <span><b>Bangkok Peak Precision</b> — ล็อกเวลาทองคำ (เช่น 19:30 น.) ปล่อยสัญญาณพร้อมกันทุกโซเชียลแบบแม่นยำ</span>
               </li>
             </ul>
@@ -4133,8 +4231,9 @@ export default function LandingPage() {
             <p className="text-xs text-stone-600 font-sans leading-relaxed">
               Solo YouTubers, podcasters, and storytellers who want to distribute short-form clips to TikTok and Instagram Reels in minutes without getting trapped in repetitive export-render cycles.
             </p>
-            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-[#364165] font-semibold">
-              ✓ 1 Master Upload → 4 Social Feeds
+            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-[#364165] font-semibold flex items-center gap-1.5">
+              <EditorialCheck size={12} />
+              <span>1 Master Upload → 4 Social Feeds</span>
             </div>
           </div>
 
@@ -4149,8 +4248,9 @@ export default function LandingPage() {
             <p className="text-xs text-stone-600 font-sans leading-relaxed">
               Professionals handling multiple client channels who need reliable scheduled queues, custom platform hashtags, and safe-zone preview accuracy before any post goes live.
             </p>
-            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-[#A24836] font-semibold">
-              ✓ Multi-Brand Channel Isolation
+            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-[#A24836] font-semibold flex items-center gap-1.5">
+              <EditorialCheck size={12} />
+              <span>Multi-Brand Channel Isolation</span>
             </div>
           </div>
 
@@ -4165,8 +4265,9 @@ export default function LandingPage() {
             <p className="text-xs text-stone-600 font-sans leading-relaxed">
               Editorial publication desks that operate with structured draft stages, editorial review gates, and synchronized multi-network announcements with zero room for error.
             </p>
-            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-emerald-800 font-semibold">
-              ✓ Review Gates & Role Permissions
+            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-emerald-800 font-semibold flex items-center gap-1.5">
+              <EditorialCheck size={12} />
+              <span>Review Gates & Role Permissions</span>
             </div>
           </div>
 
@@ -4181,8 +4282,9 @@ export default function LandingPage() {
             <p className="text-xs text-stone-600 font-sans leading-relaxed">
               Video production houses delivering pristine commercial assets for brands, where maintaining full 4K visual fidelity and exact color spaces is non-negotiable.
             </p>
-            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-amber-800 font-semibold">
-              ✓ Uncompressed 4K Master Preservation
+            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-amber-800 font-semibold flex items-center gap-1.5">
+              <EditorialCheck size={12} />
+              <span>Uncompressed 4K Master Preservation</span>
             </div>
           </div>
 
@@ -4197,8 +4299,9 @@ export default function LandingPage() {
             <p className="text-xs text-stone-600 font-sans leading-relaxed">
               Founders and store owners who need a vibrant multi-channel presence on Facebook, Instagram, and TikTok, but can only afford 20 minutes a week to set up their publication calendar.
             </p>
-            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-[#364165] font-semibold">
-              ✓ Automated Bangkok Peak Hour Publishing
+            <div className="pt-2 border-t border-black/10 text-[11px] font-mono text-[#364165] font-semibold flex items-center gap-1.5">
+              <EditorialCheck size={12} />
+              <span>Automated Bangkok Peak Hour Publishing</span>
             </div>
           </div>
         </div>
@@ -4341,7 +4444,8 @@ export default function LandingPage() {
                       className="py-2 px-4 rounded-xl bg-[#A24836] text-white font-mono text-xs font-bold hover:bg-[#8e3f2f] transition-all cursor-pointer flex items-center gap-1.5 shadow-xs"
                     >
                       <RefreshCw className="w-3.5 h-3.5" />
-                      <span>⚡ 1-Click Partial Retry</span>
+                      <EditorialZap size={13} />
+                      <span>1-Click Partial Retry</span>
                     </button>
                   )}
                   {xRetryState === 'RETRYING' && (
@@ -4388,7 +4492,14 @@ export default function LandingPage() {
                 Press Coins Balance: <span className="text-amber-800">{coins}</span> / 100
               </div>
               <p className="text-[11px] text-stone-600">
-                {coins >= 100 ? '✓ สะสมเหรียญครบแล้ว! ตั๋วปลดล็อกพร้อมประทับตราใช้งาน' : 'สะสมให้ครบ 100 Coins เพื่อปลดล็อกตั๋ว หรือกดรับเหรียญได้ทันทีที่นี่'}
+                {coins >= 100 ? (
+                  <span className="inline-flex items-center gap-1 text-emerald-800 font-bold">
+                    <EditorialCheck size={11} />
+                    <span>สะสมเหรียญครบแล้ว! ตั๋วปลดล็อกพร้อมประทับตราใช้งาน</span>
+                  </span>
+                ) : (
+                  'สะสมให้ครบ 100 Coins เพื่อปลดล็อกตั๋ว หรือกดรับเหรียญได้ทันทีที่นี่'
+                )}
               </p>
             </div>
           </div>
@@ -4400,8 +4511,8 @@ export default function LandingPage() {
                 onClick={handleClaimAllCoins}
                 className="py-2.5 px-5 rounded-xl animate-gold-shimmer text-amber-950 font-bold flex items-center gap-2 shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer text-xs"
               >
-                <Zap className="w-4 h-4 fill-amber-950" />
-                <span>⚡ รับ 100 Coins ทันที (ปลดล็อกตั๋ว)</span>
+                <EditorialZap size={16} />
+                <span>รับ 100 Coins ทันที (ปลดล็อกตั๋ว)</span>
               </button>
             ) : (
               <span className="px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1.5">
@@ -4460,7 +4571,17 @@ export default function LandingPage() {
                       ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
                       : 'bg-stone-100 text-stone-500 border border-stone-200'
                   }`}>
-                    {isPassUnlocked ? '✦ UNLOCKED & FORGED' : '🔒 LOCKED (REQUIRES 100 COINS)'}
+                    {isPassUnlocked ? (
+                      <span className="inline-flex items-center gap-1.5">
+                        <EditorialSparkles size={11} />
+                        <span>UNLOCKED & FORGED</span>
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5">
+                        <EditorialLock size={11} />
+                        <span>LOCKED (REQUIRES 100 COINS)</span>
+                      </span>
+                    )}
                   </span>
                 </div>
               </div>
@@ -4521,9 +4642,10 @@ export default function LandingPage() {
                 </p>
                 <button
                   onClick={handleClaimAllCoins}
-                  className="py-2.5 px-6 rounded-xl animate-gold-shimmer text-amber-950 font-bold text-xs shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                  className="py-2.5 px-6 rounded-xl animate-gold-shimmer text-amber-950 font-bold text-xs shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-2 mx-auto"
                 >
-                  ⚡ รับ 100 Coins ทันที และเปิดตั๋ว →
+                  <EditorialZap size={14} />
+                  <span>รับ 100 Coins ทันที และเปิดตั๋ว →</span>
                 </button>
               </div>
             ) : !isPassRedeemed ? (
@@ -4541,8 +4663,8 @@ export default function LandingPage() {
               </div>
             ) : (
               <div className="p-6 rounded-2xl bg-emerald-50 border border-emerald-300 text-center space-y-4 animate-in fade-in duration-300">
-                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 mx-auto flex items-center justify-center font-bold text-xl border border-emerald-300">
-                  ✓
+                <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 mx-auto flex items-center justify-center border border-emerald-300 shadow-xs">
+                  <EditorialCheck size={28} />
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-serif font-bold text-xl sm:text-2xl text-[#1A1A18]">
@@ -4633,8 +4755,8 @@ export default function LandingPage() {
                 <ul className="space-y-2 text-stone-600">
                   <li><Link href="/docs" className="hover:text-black transition-colors">PDPA & Privacy</Link></li>
                   <li><Link href="/docs" className="hover:text-black transition-colors">Terms of Service</Link></li>
-                  <li><span className="text-emerald-700">✓ Meta Policy Safe</span></li>
-                  <li><span className="text-emerald-700">✓ YouTube API Compliant</span></li>
+                  <li><span className="text-emerald-700 inline-flex items-center gap-1.5"><EditorialCheck size={11} /><span>Meta Policy Safe</span></span></li>
+                  <li><span className="text-emerald-700 inline-flex items-center gap-1.5"><EditorialCheck size={11} /><span>YouTube API Compliant</span></span></li>
                   <li><span className="text-[#364165] font-bold">AES-256 GCM Vault</span></li>
                 </ul>
               </div>

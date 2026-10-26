@@ -1,0 +1,517 @@
+'use client';
+
+import React from 'react';
+
+export interface EditorialIconProps {
+  size?: number;
+  className?: string;
+  style?: React.CSSProperties;
+}
+
+// -----------------------------------------------------------------------------
+// 1. EDITORIAL ZAP (Precision High-Voltage Bolt)
+// -----------------------------------------------------------------------------
+export const EditorialZap: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="zapGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FDE047" />
+        <stop offset="50%" stopColor="#F59E0B" />
+        <stop offset="100%" stopColor="#D97706" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M13 2L3 14H12L11 22L21 10H12L13 2Z"
+      fill="url(#zapGrad)"
+      stroke="#78350F"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M13 2L3 14H12L11 16L17 10H12L13 2Z"
+      fill="#FEF08A"
+      opacity="0.6"
+    />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 2. EDITORIAL NEWSPAPER (Broadsheet Editorial Mark)
+// -----------------------------------------------------------------------------
+export const EditorialNewspaper: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="newsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FAF8F5" />
+        <stop offset="100%" stopColor="#E7E5E4" />
+      </linearGradient>
+    </defs>
+    {/* Newspaper Back Pages */}
+    <rect x="4" y="3" width="17" height="18" rx="2" fill="#D6D3D1" stroke="#292524" strokeWidth="1.2" />
+    {/* Main Front Fold */}
+    <rect x="2" y="5" width="16" height="16" rx="1.5" fill="url(#newsGrad)" stroke="#1C1917" strokeWidth="1.4" />
+    {/* Broadsheet Masthead Banner */}
+    <rect x="4" y="7.5" width="12" height="2" rx="0.5" fill="#364165" />
+    {/* Headline & Columns */}
+    <line x1="4" y1="12" x2="10" y2="12" stroke="#1C1917" strokeWidth="1.2" strokeLinecap="round" />
+    <line x1="4" y1="14.5" x2="10" y2="14.5" stroke="#78716C" strokeWidth="1" strokeLinecap="round" />
+    <line x1="4" y1="17" x2="9" y2="17" stroke="#78716C" strokeWidth="1" strokeLinecap="round" />
+    {/* Photo Wire Box */}
+    <rect x="12" y="11.5" width="4" height="6.5" rx="0.5" fill="#A24836" fillOpacity="0.15" stroke="#A24836" strokeWidth="0.8" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 3. EDITORIAL SPARKLE (Cut-Diamond AI Star Cluster)
+// -----------------------------------------------------------------------------
+export const EditorialSparkles: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="sparkleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FEF08A" />
+        <stop offset="50%" stopColor="#F59E0B" />
+        <stop offset="100%" stopColor="#B45309" />
+      </linearGradient>
+    </defs>
+    {/* Large Central Star */}
+    <path
+      d="M12 2C12 7.5 7.5 12 2 12C7.5 12 12 16.5 12 22C12 16.5 16.5 12 22 12C16.5 12 12 7.5 12 2Z"
+      fill="url(#sparkleGrad)"
+      stroke="#78350F"
+      strokeWidth="1.2"
+    />
+    {/* Mini Accent Star Top Right */}
+    <path
+      d="M19 3C19 5 17 7 15 7C17 7 19 9 19 11C19 9 21 7 21 7C19 7 19 5 19 3Z"
+      fill="#FDE047"
+      stroke="#78350F"
+      strokeWidth="0.8"
+    />
+    {/* Center Core Dot */}
+    <circle cx="12" cy="12" r="1.5" fill="#FFFFFF" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 4. EDITORIAL SUN (Astronomical Peak Hour Ray)
+// -----------------------------------------------------------------------------
+export const EditorialSun: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <radialGradient id="sunGrad" cx="40%" cy="35%" r="65%">
+        <stop offset="0%" stopColor="#FEF08A" />
+        <stop offset="60%" stopColor="#F59E0B" />
+        <stop offset="100%" stopColor="#B45309" />
+      </radialGradient>
+    </defs>
+    {/* Rays */}
+    <g stroke="#B45309" strokeWidth="1.5" strokeLinecap="round">
+      <line x1="12" y1="1.5" x2="12" y2="4.5" />
+      <line x1="12" y1="19.5" x2="12" y2="22.5" />
+      <line x1="1.5" y1="12" x2="4.5" y2="12" />
+      <line x1="19.5" y1="12" x2="22.5" y2="12" />
+      <line x1="4.57" y1="4.57" x2="6.69" y2="6.69" />
+      <line x1="17.31" y1="17.31" x2="19.43" y2="19.43" />
+      <line x1="4.57" y1="19.43" x2="6.69" y2="17.31" />
+      <line x1="17.31" y1="6.69" x2="19.43" y2="4.57" />
+    </g>
+    {/* Central Solar Disk */}
+    <circle cx="12" cy="12" r="5.5" fill="url(#sunGrad)" stroke="#78350F" strokeWidth="1.2" />
+    <circle cx="10" cy="10" r="1.5" fill="#FFFFFF" opacity="0.6" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 5. EDITORIAL FLAME (Prime Peak Viral Flame)
+// -----------------------------------------------------------------------------
+export const EditorialFlame: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="flameOuter" x1="0%" y1="100%" x2="0%" y2="0%">
+        <stop offset="0%" stopColor="#A24836" />
+        <stop offset="60%" stopColor="#EA580C" />
+        <stop offset="100%" stopColor="#F59E0B" />
+      </linearGradient>
+      <linearGradient id="flameInner" x1="0%" y1="100%" x2="0%" y2="0%">
+        <stop offset="0%" stopColor="#F59E0B" />
+        <stop offset="100%" stopColor="#FEF08A" />
+      </linearGradient>
+    </defs>
+    {/* Outer Tongue */}
+    <path
+      d="M12 2C10.5 5 7 8 7 13C7 16.866 10.134 20 14 20C17.866 20 21 16.866 21 13C21 8.5 17 5 14 3.5C14 6 12.5 7.5 11 8C11 5 12 2 12 2Z"
+      fill="url(#flameOuter)"
+      stroke="#78350F"
+      strokeWidth="1.2"
+    />
+    {/* Inner Core Flame */}
+    <path
+      d="M13 10C11.5 12 10 13.5 10 16C10 18.2 11.8 20 14 20C16.2 20 18 18.2 18 16C18 13.5 15.5 11.5 14 10.5C14 12 13 11 13 10Z"
+      fill="url(#flameInner)"
+    />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 6. EDITORIAL MOON (Celestial Late Stream Moon)
+// -----------------------------------------------------------------------------
+export const EditorialMoon: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="moonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#E0E7FF" />
+        <stop offset="60%" stopColor="#A5B4FC" />
+        <stop offset="100%" stopColor="#6366F1" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"
+      fill="url(#moonGrad)"
+      stroke="#312E81"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {/* Micro Star Accent */}
+    <path
+      d="M17 5L17.7 6.3L19 7L17.7 7.7L17 9L16.3 7.7L15 7L16.3 6.3L17 5Z"
+      fill="#FDE047"
+    />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 7. EDITORIAL ALERT (Architectural Warning Plaque)
+// -----------------------------------------------------------------------------
+export const EditorialAlert: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="alertGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FEF3C7" />
+        <stop offset="100%" stopColor="#FDE68A" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M10.29 3.86L1.82 18C1.45 18.63 1.9 19.43 2.63 19.43H21.37C22.1 19.43 22.55 18.63 22.18 18L13.71 3.86C13.34 3.23 12.44 3.23 12.07 3.86H10.29Z"
+      fill="url(#alertGrad)"
+      stroke="#A24836"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <line x1="12" y1="9" x2="12" y2="13.5" stroke="#A24836" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="12" cy="16.5" r="1.25" fill="#A24836" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 8. EDITORIAL HEART (Phone Action Rail Heart)
+// -----------------------------------------------------------------------------
+export const EditorialHeart: React.FC<EditorialIconProps> = ({ size = 14, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <path
+      d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z"
+      fill="#EF4444"
+      stroke="#991B1B"
+      strokeWidth="1.2"
+    />
+    <ellipse cx="7.5" cy="6" rx="2" ry="1.2" fill="#FCA5A5" opacity="0.6" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 9. EDITORIAL COMMENT (Phone Action Rail Comment Bubble)
+// -----------------------------------------------------------------------------
+export const EditorialComment: React.FC<EditorialIconProps> = ({ size = 14, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <path
+      d="M21 11.5C21 16.19 16.97 20 12 20C10.5 20 9.08 19.64 7.82 19L3 20.5L4.56 16.27C3.59 14.88 3 13.25 3 11.5C3 6.81 7.03 3 12 3C16.97 3 21 6.81 21 11.5Z"
+      fill="#38BDF8"
+      stroke="#0369A1"
+      strokeWidth="1.2"
+      strokeLinejoin="round"
+    />
+    <circle cx="8" cy="11.5" r="1.2" fill="#FFFFFF" />
+    <circle cx="12" cy="11.5" r="1.2" fill="#FFFFFF" />
+    <circle cx="16" cy="11.5" r="1.2" fill="#FFFFFF" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 10. EDITORIAL SHARE (Phone Action Rail Dynamic Dispatch Arrow)
+// -----------------------------------------------------------------------------
+export const EditorialShare: React.FC<EditorialIconProps> = ({ size = 14, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <path
+      d="M22 2L11 13"
+      stroke="#FFFFFF"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M22 2L15 22L11 13L2 9L22 2Z"
+      fill="#F59E0B"
+      stroke="#78350F"
+      strokeWidth="1.2"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 11. EDITORIAL LOCK (Solid Antique Brass Padlock)
+// -----------------------------------------------------------------------------
+export const EditorialLock: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="lockBody" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#F59E0B" />
+        <stop offset="100%" stopColor="#92400E" />
+      </linearGradient>
+    </defs>
+    {/* Shackle */}
+    <path
+      d="M7 11V7C7 4.24 9.24 2 12 2C14.76 2 17 4.24 17 7V11"
+      stroke="#451A03"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+    />
+    {/* Body */}
+    <rect x="4" y="11" width="16" height="11" rx="2.5" fill="url(#lockBody)" stroke="#451A03" strokeWidth="1.5" />
+    {/* Keyhole */}
+    <circle cx="12" cy="15.5" r="1.5" fill="#451A03" />
+    <path d="M12 16.5V19" stroke="#451A03" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 12. EDITORIAL SHIELD (Multi-Brand Security Token Shield)
+// -----------------------------------------------------------------------------
+export const EditorialShield: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="shieldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#34D399" />
+        <stop offset="100%" stopColor="#059669" />
+      </linearGradient>
+    </defs>
+    <path
+      d="M12 2L4 5V11C4 16.55 7.42 21.74 12 23C16.58 21.74 20 16.55 20 11V5L12 2Z"
+      fill="url(#shieldGrad)"
+      stroke="#064E3B"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+    {/* Internal Embellishment */}
+    <path
+      d="M9 12L11 14L15 10"
+      stroke="#FFFFFF"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 13. EDITORIAL DIAMOND (Fidelity Gem Proof)
+// -----------------------------------------------------------------------------
+export const EditorialDiamond: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="diaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#E0F2FE" />
+        <stop offset="50%" stopColor="#38BDF8" />
+        <stop offset="100%" stopColor="#0284C7" />
+      </linearGradient>
+    </defs>
+    <polygon points="6,3 18,3 22,9 12,22 2,9" fill="url(#diaGrad)" stroke="#0C4A6E" strokeWidth="1.4" />
+    <polygon points="6,3 18,3 15,9 9,9" fill="#F0F9FF" opacity="0.6" />
+    <line x1="9" y1="9" x2="12" y2="22" stroke="#0C4A6E" strokeWidth="1" />
+    <line x1="15" y1="9" x2="12" y2="22" stroke="#0C4A6E" strokeWidth="1" />
+    <line x1="2" y1="9" x2="22" y2="9" stroke="#0C4A6E" strokeWidth="1" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 14. EDITORIAL STAR (Faceted Proof Star)
+// -----------------------------------------------------------------------------
+export const EditorialStar: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FDE047" />
+        <stop offset="60%" stopColor="#F59E0B" />
+        <stop offset="100%" stopColor="#B45309" />
+      </linearGradient>
+    </defs>
+    <polygon
+      points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+      fill="url(#starGrad)"
+      stroke="#78350F"
+      strokeWidth="1.2"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 15. EDITORIAL CHECK (Calligraphic Ink Checkmark)
+// -----------------------------------------------------------------------------
+export const EditorialCheck: React.FC<EditorialIconProps> = ({ size = 14, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <circle cx="10" cy="10" r="9" fill="#ECFDF5" stroke="#10B981" strokeWidth="1.4" />
+    <path
+      d="M6 10.5L8.5 13L14 7.5"
+      stroke="#047857"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 16. EDITORIAL CROSS (Ink Cancellation Mark)
+// -----------------------------------------------------------------------------
+export const EditorialCross: React.FC<EditorialIconProps> = ({ size = 14, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <circle cx="10" cy="10" r="9" fill="#FEF2F2" stroke="#EF4444" strokeWidth="1.4" />
+    <path
+      d="M7 7L13 13M13 7L7 13"
+      stroke="#B91C1C"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);

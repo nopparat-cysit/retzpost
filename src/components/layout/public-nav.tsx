@@ -253,7 +253,10 @@ export const PublicFooter: React.FC = () => {
               </div>
               <div className="flex items-center justify-between text-[11px]">
                 <span className="text-ink-secondary font-mono">Token Vault:</span>
-                <span className="text-brand-indigo font-bold">AES-256 GCM 🔒</span>
+                <span className="text-brand-indigo font-bold flex items-center gap-1">
+                  <span>AES-256 GCM</span>
+                  <Lock className="w-3 h-3 text-brand-indigo" />
+                </span>
               </div>
               <div className="flex items-center justify-between text-[11px]">
                 <span className="text-ink-secondary font-mono">Social Networks:</span>
