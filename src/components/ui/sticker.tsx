@@ -1,6 +1,22 @@
 'use client';
 
 import React from 'react';
+import {
+  EditorialNewspaper,
+  EditorialCameraReel,
+  EditorialCalendarDeadline,
+  EditorialBullseye,
+  EditorialAwardStarBadge,
+  EditorialApprovedSeal,
+  EditorialFountainPen,
+  EditorialLock,
+  EditorialFlame,
+  EditorialSparkles,
+  EditorialHeart,
+  EditorialComment,
+  EditorialShare,
+  EditorialShield,
+} from '@/components/ui/editorial-icons';
 
 export type StickerName =
   // Roles (Sheet 2)
@@ -102,6 +118,61 @@ export const Sticker: React.FC<StickerProps> = ({
   inline = false,
 }) => {
   const spec = SIZE_MAP[size] || SIZE_MAP.md;
+  const commonVectorProps = {
+    size: spec.dimension,
+    className: `shrink-0 transition-transform duration-150 hover:scale-105 ${
+      inline ? 'inline-block align-middle' : 'block'
+    } ${className}`,
+    style: {
+      width: `${spec.dimension}px`,
+      height: `${spec.dimension}px`,
+    },
+  };
+
+  // Bespoke Vector Icon Fallbacks - Razor Sharp at any DPI with 0 clipping artifacts
+  if (name === 'camera-reel') {
+    return <EditorialCameraReel {...commonVectorProps} />;
+  }
+  if (name === 'broadsheet-newspaper') {
+    return <EditorialNewspaper {...commonVectorProps} />;
+  }
+  if (name === 'calendar-deadline') {
+    return <EditorialCalendarDeadline {...commonVectorProps} />;
+  }
+  if (name === 'bullseye') {
+    return <EditorialBullseye {...commonVectorProps} />;
+  }
+  if (name === 'award-star-badge') {
+    return <EditorialAwardStarBadge {...commonVectorProps} />;
+  }
+  if (name === 'approved-seal') {
+    return <EditorialApprovedSeal {...commonVectorProps} />;
+  }
+  if (name === 'vault-keyhole') {
+    return <EditorialLock {...commonVectorProps} />;
+  }
+  if (name === 'fountain-pen') {
+    return <EditorialFountainPen {...commonVectorProps} />;
+  }
+  if (name === 'flame-ember' || name === 'viral-flame') {
+    return <EditorialFlame {...commonVectorProps} />;
+  }
+  if (name === 'sparkle-wand' || name === 'sparkle-ai') {
+    return <EditorialSparkles {...commonVectorProps} />;
+  }
+  if (name === 'heart-like') {
+    return <EditorialHeart {...commonVectorProps} />;
+  }
+  if (name === 'comment-bubble') {
+    return <EditorialComment {...commonVectorProps} />;
+  }
+  if (name === 'share-arrow') {
+    return <EditorialShare {...commonVectorProps} />;
+  }
+  if (name === 'guarded-shield' || name === 'shield-certified') {
+    return <EditorialShield {...commonVectorProps} />;
+  }
+
   const imageSrc = `/icons/stickers/${name}.png`;
 
   return (

@@ -19,7 +19,7 @@ describe('Post Templates Engine (Full CRUD)', () => {
     expect(BUILT_IN_TEMPLATES.length).toBeGreaterThanOrEqual(4);
     const realEstate = BUILT_IN_TEMPLATES.find((t) => t.category === 'REAL_ESTATE');
     expect(realEstate).toBeDefined();
-    expect(realEstate?.name).toContain('พรีเมียมสเปซ');
+    expect(realEstate?.name).toContain('สตูดิโอโปรดักชัน');
     expect(realEstate?.caption).toContain('รายละเอียดพื้นที่');
   });
 
@@ -35,21 +35,21 @@ describe('Post Templates Engine (Full CRUD)', () => {
 
   it('CREATE: can create a new custom template and retrieve it', () => {
     const created = createTemplate({
-      name: '🏢 Luxury Villa Phuket Deal',
+      name: '🏢 Creative Production Studio Deal',
       category: 'REAL_ESTATE',
-      title: 'Exclusive Oceanfront Villa in Phuket',
-      caption: 'Private infinity pool overlooking the Andaman sea. Contact us today!',
-      tags: 'PhuketVilla, LuxuryHome',
-      storyLink: 'https://phuket-villas.com/deal',
+      title: 'Exclusive Oceanfront Studio in Phuket',
+      caption: 'Soundproof editing bay overlooking the Andaman sea. Contact us today!',
+      tags: 'CreativeStudio, MediaSpace',
+      storyLink: 'https://phuket-studios.com/deal',
     });
 
     expect(created.id).toBeDefined();
     expect(created.isBuiltIn).toBe(false);
-    expect(created.categoryLabel).toBe('อสังหาริมทรัพย์');
+    expect(created.categoryLabel).toBe('สตูดิโอ & มีเดียสเปซ');
 
     const all = getInitialTemplates();
     expect(all[0].id).toBe(created.id);
-    expect(all[0].name).toBe('🏢 Luxury Villa Phuket Deal');
+    expect(all[0].name).toBe('🏢 Creative Production Studio Deal');
   });
 
   it('UPDATE: can update an existing template properties', () => {

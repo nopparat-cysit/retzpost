@@ -59,9 +59,9 @@ interface ContentItem {
 const DEFAULT_SAMPLE_ITEMS: ContentItem[] = [
   {
     id: 'sample-prime-skyview',
-    workingTitle: 'Prime Skyview Residence Collection',
+    workingTitle: 'Bangkok Gazette: Studio Suite Showcase',
     status: 'PUBLISHED',
-    assetId: 'C1-89501',
+    assetId: 'BG-89501',
     duration: 'Photo Album',
     aspectRatio: '1:1 / 9:16',
     resolution: '1080x1080 / 1080x1920',
@@ -71,20 +71,20 @@ const DEFAULT_SAMPLE_ITEMS: ContentItem[] = [
         platform: 'FACEBOOK', 
         status: 'PUBLISHED', 
         detail: 'Official Brand Album (6)', 
-        liveUrl: 'https://www.facebook.com/officialbrand/posts/991283' 
+        liveUrl: 'https://www.facebook.com/bangkokgazette/posts/991283' 
       },
       { 
         platform: 'INSTAGRAM', 
         status: 'PUBLISHED', 
         detail: 'IG Carousel & 24h Story', 
-        liveUrl: 'https://www.instagram.com/p/C1RichRama9/' 
+        liveUrl: 'https://www.instagram.com/p/C1StudioDesk/' 
       },
     ],
     dateText: 'Today 08:30 AM',
     actionLabel: 'Edit Adaptations',
-    actionHref: '/create?id=sample-c1-rich-rama9',
-    liveUrl: 'https://www.facebook.com/capitalonethailand/posts/991283',
-    websiteUrl: 'https://capitalone.co.th/the-rich-rama9',
+    actionHref: '/create?id=sample-editorial-desk',
+    liveUrl: 'https://www.facebook.com/bangkokgazette/posts/991283',
+    websiteUrl: 'https://retzpost.io/showcase',
   },
   {
     id: 'sample-1',
@@ -396,7 +396,7 @@ export default function ContentLibraryPage() {
                     className="inline-flex items-center gap-1.5 font-mono text-[11px] bg-emerald-50 text-emerald-900 px-2.5 py-1 rounded border border-emerald-200 hover:underline font-medium cursor-pointer shadow-2xs"
                   >
                     <WebsiteLogo size={14} />
-                    <span>เว็บโครงการ</span>
+                    <span>ลิงก์ปลายทาง (Website)</span>
                     <ExternalLink className="w-2.5 h-2.5 text-emerald-700" />
                   </a>
                 )}

@@ -14,7 +14,7 @@ export interface PostTemplate {
 }
 
 export const CATEGORY_LABELS: Record<string, string> = {
-  REAL_ESTATE: 'อสังหาริมทรัพย์',
+  REAL_ESTATE: 'สตูดิโอ & มีเดียสเปซ',
   PROMOTION: 'โปรโมชั่น',
   PRODUCT_LAUNCH: 'เปิดตัวสินค้า',
   INSIGHTS: 'บทวิเคราะห์',
@@ -24,24 +24,24 @@ export const CATEGORY_LABELS: Record<string, string> = {
 export const BUILT_IN_TEMPLATES: PostTemplate[] = [
   {
     id: 'tpl-c1-luxury-space',
-    name: '🏢 พรีเมียมสเปซ & ทำเลทองใจกลางเมือง (Prime Living)',
+    name: '🏢 สตูดิโอโปรดักชัน & สเปซใจกลางเมือง (Studio Space)',
     category: 'REAL_ESTATE',
-    categoryLabel: 'อสังหาริมทรัพย์',
-    title: '[EXCLUSIVE DEAL] เปิดจองสเปซระดับพรีเมียม ทำเลทองใจกลางเมือง',
-    caption: `✨ สัมผัสประสบการณ์พื้นที่อยู่อาศัยระดับพรีเมียม ดีไซน์โมเดิร์นใจกลางเมือง\n\n🏢 รายละเอียดพื้นที่:\n• ขนาดพื้นที่: 35 ตร.ม. 1 ห้องนอน 1 ห้องน้ำ\n• ชั้นสูง วิวพาโนรามาโปร่งโล่ง ไม่มีอาคารบดบัง\n• เฟอร์นิเจอร์ Built-in สไตล์โมเดิร์น พร้อมฟังก์ชันครบชุด\n\n🚆 การเดินทางสะดวกสบาย:\n• ใกล้ระบบขนส่งหลักเพียง 250 เมตร\n• ใกล้ทางด่วนและสิ่งอำนวยความสะดวกชั้นนำ\n\n💰 สิทธิพิเศษราคาพรีเซล (หรือสิทธิเช่าพิเศษ)\n\n📲 สนใจนัดชมสถานที่จริงหรือสอบถามข้อมูลเพิ่มเติม:\nTel: 02-XXX-XXXX / Line Official: @yourbrand`,
-    tags: 'PrimeLiving, ExclusiveSpace, LuxuryLiving, ModernHome, CityLifestyle',
-    storyLink: 'https://line.me/ti/p/@yourbrand',
+    categoryLabel: 'สตูดิโอ & มีเดียสเปซ',
+    title: '[EXCLUSIVE ACCESS] เปิดจองสตูดิโอระดับพรีเมียม ทำเลใจกลางเมือง',
+    caption: `✨ สัมผัสประสบการณ์พื้นที่ทำงานและสตูดิโอระดับพรีเมียม ดีไซน์โมเดิร์นใจกลางเมือง\n\n🏢 รายละเอียดพื้นที่:\n• สตูดิโอเก็บเสียงมาตรฐานสตูดิโอบรอดแคสต์\n• ระบบไฟ 3-Point Lighting และฉาก Cyc Wall ครบชุด\n• พื้นที่รับรองและ Workstation สะดวกสบาย\n\n🚆 การเดินทางสะดวกสบาย:\n• ใกล้ระบบขนส่งหลักเพียง 250 เมตร\n• ที่จอดรถสะดวกสบาย\n\n📲 สนใจนัดหมายเข้าชมสตูดิโอจริง:\nTel: 02-XXX-XXXX / Line Official: @retzpost`,
+    tags: 'StudioSpace, CreativeStudio, PodcastSetup, MediaProduction',
+    storyLink: 'https://retzpost.io/studio',
     isBuiltIn: true,
   },
   {
-    id: 'tpl-c1-penthouse-luxury',
-    name: '🏰 The Master Penthouse Collection',
+    id: 'tpl-studio-master-suite',
+    name: '🎙️ The Master Studio Suite Collection',
     category: 'REAL_ESTATE',
-    categoryLabel: 'อสังหาริมทรัพย์',
-    title: 'The Ultimate Penthouse Living: Private Pool & Panoramic View',
-    caption: `Experience sheer exclusivity at The Master Penthouse Collection.\n\nKey Highlights:\n- 180 sqm Duplex Penthouse with Private Sky Pool\n- 3 Bedrooms, 4 Bathrooms with Marble Finishes\n- Unobstructed 360-degree skyline views of the metropolis\n\nListed exclusively for private inspection by appointment only.\nDirect inquiry: +66 (0) 2-XXX-XXXX`,
-    tags: 'PenthouseLiving, LuxuryRealEstate, DreamHome, ExclusiveResidence',
-    storyLink: 'https://yourbrand.com/penthouse-collection',
+    categoryLabel: 'สตูดิโอ & มีเดียสเปซ',
+    title: 'The Ultimate Studio Setup: 4K Production Suite & Acoustic Control',
+    caption: `Experience sheer exclusivity at The Master Studio Suite Collection.\n\nKey Highlights:\n- 180 sqm Production Studio with Acoustic Isolation\n- 4K Multi-cam Live Switching Suite\n- Panoramic skyline views for natural light filming\n\nAvailable exclusively by appointment.\nDirect inquiry: +66 (0) 2-XXX-XXXX`,
+    tags: 'StudioSuite, CreativeProduction, PodcastStudio, FilmmakingSpace',
+    storyLink: 'https://retzpost.io/suite-collection',
     isBuiltIn: true,
   },
   {

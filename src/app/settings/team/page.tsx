@@ -667,7 +667,7 @@ export default function TeamSettingsPage() {
 
             <div className="p-4 bg-paper-raised border border-border-rule rounded-card max-w-md mx-auto space-y-3 text-center">
               <p className="text-xs font-serif text-ink-primary font-medium">
-                แคมเปญ Prime Sky Penthouse (3 ปลายทาง: FB Thailand, IG Feed, IG Story)
+                แคมเปญ Masterclass Showcase (3 ปลายทาง: FB Thailand, IG Feed, IG Story)
               </p>
 
               {simulatedRole === 'CONTRIBUTOR' ? (
@@ -755,7 +755,7 @@ export default function TeamSettingsPage() {
                 <input
                   type="email"
                   required
-                  placeholder="name@capitalone.co.th"
+                  placeholder="editor@retzpost.io"
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary font-mono focus:outline-none focus:border-brand-indigo"

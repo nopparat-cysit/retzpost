@@ -100,7 +100,7 @@ const INITIAL_QUEUE_JOBS: QueueJobItem[] = [
     platform: 'FACEBOOK',
     format: 'FEED_POST',
     handle: 'Media Partner Page',
-    storyTitle: 'Prime Skyview Residence Collection',
+    storyTitle: 'Bangkok Gazette: Studio Suite Showcase',
     durationOrFormatText: 'Photo Album (6)',
     status: 'FAILED_FINAL',
     attemptCount: 4,
@@ -114,7 +114,7 @@ const INITIAL_QUEUE_JOBS: QueueJobItem[] = [
     platform: 'INSTAGRAM',
     format: 'STORY',
     handle: 'brand.showcase',
-    storyTitle: 'Prime Skyview Residence Collection',
+    storyTitle: 'Bangkok Gazette: Studio Suite Showcase',
     durationOrFormatText: '24h Story + Link',
     status: 'FAILED_RETRYABLE',
     attemptCount: 1,
@@ -128,7 +128,7 @@ const INITIAL_QUEUE_JOBS: QueueJobItem[] = [
     platform: 'FACEBOOK',
     format: 'FEED_POST',
     handle: 'Official Brand Facebook Page',
-    storyTitle: 'Prime Skyview Residence Collection',
+    storyTitle: 'Bangkok Gazette: Studio Suite Showcase',
     durationOrFormatText: 'Photo Album (6)',
     status: 'PUBLISHED',
     attemptCount: 1,
@@ -141,13 +141,13 @@ const INITIAL_QUEUE_JOBS: QueueJobItem[] = [
     platform: 'INSTAGRAM',
     format: 'FEED_POST',
     handle: 'brand.official',
-    storyTitle: 'Prime Skyview Residence Collection',
+    storyTitle: 'Bangkok Gazette: Studio Suite Showcase',
     durationOrFormatText: 'Carousel (6)',
     status: 'PUBLISHED',
     attemptCount: 1,
     maxAttempts: 4,
     scheduledOrExecutedAt: 'Today 08:30 AM',
-    liveUrl: 'https://instagram.com/p/C1RichRama9',
+    liveUrl: 'https://instagram.com/p/C1StudioDesk',
   },
   {
     id: 'MP-JOB-1053',
@@ -892,7 +892,7 @@ export default function PublishingQueuePage() {
                 rows={3}
                 value={managerNoteInput}
                 onChange={(e) => setManagerNoteInput(e.target.value)}
-                placeholder="พิมพ์ข้อเสนอแนะ เช่น โปรดปรับขนาดตัวหนังสือในรูป หรือเพิ่มแฮชแท็กโครงการ..."
+                placeholder="พิมพ์ข้อเสนอแนะ เช่น โปรดปรับขนาดตัวหนังสือในรูป หรือเพิ่มแฮชแท็กแคมเปญ..."
                 className="w-full p-2.5 bg-white/80 border border-[#FBC02D]/60 rounded font-sans text-xs text-ink-primary placeholder:text-ink-muted/80 focus:outline-none focus:border-[#F57F17] focus:bg-white"
               />
             </div>

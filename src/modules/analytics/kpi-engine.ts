@@ -87,7 +87,7 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
     recentPosts: [
       {
         id: 'p-1',
-        title: 'Prime Sky Penthouse Walkthrough',
+        title: 'Masterclass Behind-the-Scenes Reel',
         views: 142000,
         likes: 8900,
         shares: 2400,

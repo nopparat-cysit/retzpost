@@ -515,3 +515,196 @@ export const EditorialCross: React.FC<EditorialIconProps> = ({ size = 14, classN
     />
   </svg>
 );
+
+// -----------------------------------------------------------------------------
+// 17. EDITORIAL CAMERA REEL (Masterwork Studio Film Camera)
+// -----------------------------------------------------------------------------
+export const EditorialCameraReel: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="reelGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#364165" />
+        <stop offset="100%" stopColor="#1E2538" />
+      </linearGradient>
+    </defs>
+    {/* Dual film reels on top */}
+    <circle cx="7.5" cy="6" r="3.5" fill="#FAF8F5" stroke="#1C1917" strokeWidth="1.2" />
+    <circle cx="7.5" cy="6" r="1.2" fill="#364165" />
+    <circle cx="16.5" cy="6" r="3.5" fill="#FAF8F5" stroke="#1C1917" strokeWidth="1.2" />
+    <circle cx="16.5" cy="6" r="1.2" fill="#364165" />
+    {/* Camera Body */}
+    <rect x="3" y="9" width="18" height="12" rx="2.5" fill="url(#reelGrad)" stroke="#1C1917" strokeWidth="1.3" />
+    {/* Studio Lens / Shutter */}
+    <circle cx="12" cy="15" r="4" fill="#FAF8F5" stroke="#A24836" strokeWidth="1.5" />
+    <circle cx="12" cy="15" r="2.2" fill="#A24836" />
+    <circle cx="11" cy="14" r="0.8" fill="#FFFFFF" opacity="0.8" />
+    {/* Rec Indicator LED */}
+    <circle cx="18" cy="12" r="1" fill="#EF4444" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 18. EDITORIAL CALENDAR DEADLINE (Editorial Planner Board)
+// -----------------------------------------------------------------------------
+export const EditorialCalendarDeadline: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="calGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FAF8F5" />
+        <stop offset="100%" stopColor="#F5F2EB" />
+      </linearGradient>
+    </defs>
+    {/* Calendar Back Page Shadow */}
+    <rect x="4" y="5" width="16" height="16" rx="2" fill="#E7E5E4" stroke="#78716C" strokeWidth="1" />
+    {/* Calendar Main Board */}
+    <rect x="3" y="4" width="18" height="17" rx="2.5" fill="url(#calGrad)" stroke="#1C1917" strokeWidth="1.3" />
+    {/* Header Strip */}
+    <path d="M3 6.5C3 5.12 4.12 4 5.5 4H18.5C19.88 4 21 5.12 21 6.5V8.5H3V6.5Z" fill="#364165" />
+    {/* Spiral Rings */}
+    <rect x="6.5" y="2" width="1.8" height="3.5" rx="0.9" fill="#1C1917" />
+    <rect x="11.1" y="2" width="1.8" height="3.5" rx="0.9" fill="#1C1917" />
+    <rect x="15.7" y="2" width="1.8" height="3.5" rx="0.9" fill="#1C1917" />
+    {/* Grid Marks */}
+    <circle cx="7" cy="12" r="1" fill="#A8A29E" />
+    <circle cx="12" cy="12" r="1" fill="#A8A29E" />
+    <circle cx="17" cy="12" r="1" fill="#A8A29E" />
+    <circle cx="7" cy="16" r="1" fill="#A8A29E" />
+    {/* Deadline Circled Day */}
+    <circle cx="12" cy="16" r="2.8" fill="#FEE2E2" stroke="#A24836" strokeWidth="1.2" />
+    <circle cx="12" cy="16" r="1" fill="#A24836" />
+    <circle cx="17" cy="16" r="1" fill="#A8A29E" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 19. EDITORIAL BULLSEYE (Editorial Target & Objective)
+// -----------------------------------------------------------------------------
+export const EditorialBullseye: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <circle cx="12" cy="12" r="10" fill="#FAF8F5" stroke="#A24836" strokeWidth="1.5" />
+    <circle cx="12" cy="12" r="7" fill="#FEE2E2" stroke="#A24836" strokeWidth="1.3" />
+    <circle cx="12" cy="12" r="4" fill="#FAF8F5" stroke="#A24836" strokeWidth="1.2" />
+    <circle cx="12" cy="12" r="2" fill="#A24836" />
+    {/* Arrow Flight Crosshairs */}
+    <line x1="12" y1="2" x2="12" y2="5" stroke="#364165" strokeWidth="1.5" strokeLinecap="round" />
+    <line x1="12" y1="19" x2="12" y2="22" stroke="#364165" strokeWidth="1.5" strokeLinecap="round" />
+    <line x1="2" y1="12" x2="5" y2="12" stroke="#364165" strokeWidth="1.5" strokeLinecap="round" />
+    <line x1="19" y1="12" x2="22" y2="12" stroke="#364165" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 20. EDITORIAL AWARD STAR BADGE (Golden Ribbon Award)
+// -----------------------------------------------------------------------------
+export const EditorialAwardStarBadge: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    <defs>
+      <linearGradient id="badgeStarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FEF08A" />
+        <stop offset="60%" stopColor="#F59E0B" />
+        <stop offset="100%" stopColor="#B45309" />
+      </linearGradient>
+    </defs>
+    {/* Hanging Ribbons */}
+    <path d="M8.5 13.5L7 22L12 19L17 22L15.5 13.5" fill="#364165" stroke="#1C1917" strokeWidth="1.2" strokeLinejoin="round" />
+    {/* Star Medallion */}
+    <circle cx="12" cy="9.5" r="7.5" fill="url(#badgeStarGrad)" stroke="#78350F" strokeWidth="1.3" />
+    <circle cx="12" cy="9.5" r="5.5" stroke="#FFFFFF" strokeWidth="0.8" strokeDasharray="1.5 1.5" />
+    {/* Central Star */}
+    <path
+      d="M12 5.5L13.1 7.8L15.6 8.1L13.8 9.9L14.2 12.4L12 11.2L9.8 12.4L10.2 9.9L8.4 8.1L10.9 7.8L12 5.5Z"
+      fill="#FFFFFF"
+      stroke="#78350F"
+      strokeWidth="0.6"
+    />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 21. EDITORIAL APPROVED SEAL (Terracotta Wax Stamp)
+// -----------------------------------------------------------------------------
+export const EditorialApprovedSeal: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    {/* Scalloped Wax Edge */}
+    <circle cx="12" cy="12" r="10" fill="#A24836" stroke="#782D20" strokeWidth="1.3" />
+    <circle cx="12" cy="12" r="8" fill="#B84A28" stroke="#FDE047" strokeWidth="0.8" strokeDasharray="1.5 1.5" />
+    {/* Center Checkmark */}
+    <path
+      d="M7.5 12L10.5 15L16.5 9"
+      stroke="#FAF8F5"
+      strokeWidth="2.2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 22. EDITORIAL FOUNTAIN PEN (Press Pen Nib)
+// -----------------------------------------------------------------------------
+export const EditorialFountainPen: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`inline-block align-middle shrink-0 ${className}`}
+    style={style}
+  >
+    {/* Nib Body */}
+    <path
+      d="M12 2L19 9L15 13L13 11L7 17L3 21L7 17L5 15L11 9L9 7L12 2Z"
+      fill="#364165"
+      stroke="#1C1917"
+      strokeWidth="1.2"
+      strokeLinejoin="round"
+    />
+    {/* Golden Nib Point */}
+    <path d="M3 21L8 16L6 14L3 21Z" fill="#F59E0B" stroke="#78350F" strokeWidth="1" />
+    {/* Ink Breathing Hole */}
+    <circle cx="6.5" cy="16.5" r="0.8" fill="#1C1917" />
+    <line x1="3" y1="21" x2="6.5" y2="16.5" stroke="#1C1917" strokeWidth="1" strokeLinecap="round" />
+  </svg>
+);
+

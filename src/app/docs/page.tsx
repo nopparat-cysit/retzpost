@@ -287,7 +287,7 @@ export default function DocsPage() {
                   <span className="font-mono text-[10px] text-ink-secondary">11:30 - 13:30 น.</span>
                 </div>
                 <p className="text-[11px] text-ink-secondary font-sans">
-                  เหมาะกับ: คอนเทนต์รีวิวอาหาร, โปรโมชันด่วน, อสังหาฯ และข่าวสารสาระสั้นที่อ่านจบใน 1 นาที
+                  เหมาะกับ: คอนเทนต์รีวิว, โปรโมชันด่วน, ดีไซน์สตูดิโอ และข่าวสารสาระสั้นที่อ่านจบใน 1 นาที
                 </p>
               </div>
 

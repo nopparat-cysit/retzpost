@@ -53,7 +53,7 @@ describe('Team & RBAC Permissions Engine', () => {
   });
 
   it('invites a new team member and computes initials', () => {
-    const invited = inviteTeamMember('Kittisak Promthep', 'kittisak@capitalone.co.th', 'EDITOR', 'ws_capitalone');
+    const invited = inviteTeamMember('Kittisak Promthep', 'kittisak@retzpost.io', 'EDITOR', 'ws_capitalone');
     expect(invited.id).toBeDefined();
     expect(invited.name).toBe('Kittisak Promthep');
     expect(invited.avatarText).toBe('KP');

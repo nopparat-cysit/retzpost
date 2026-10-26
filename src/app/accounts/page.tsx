@@ -1519,8 +1519,8 @@ export default function ConnectedAccountsPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setNewPageName('The Rich Sathorn-Taksin');
-                        setNewPageHandle('FB Page: The Rich Sathorn');
+                        setNewPageName('Bangkok Gazette Studio');
+                        setNewPageHandle('FB Page: Bangkok Gazette');
                       }}
                       className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
                     >
@@ -1530,12 +1530,12 @@ export default function ConnectedAccountsPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setNewPageName('Regional Brand Page');
-                        setNewPageHandle('FB Page: Regional Brand');
+                        setNewPageName('RetzPost Creator Hub');
+                        setNewPageHandle('FB Page: RetzPost Hub');
                       }}
                       className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
                     >
-                      <p className="font-bold text-ink-primary text-xs truncate">Regional Brand</p>
+                      <p className="font-bold text-ink-primary text-xs truncate">Creator Studio Hub</p>
                       <p className="text-[9px] text-ink-muted">Ready to import</p>
                     </button>
                   </>
@@ -1654,7 +1654,7 @@ export default function ConnectedAccountsPage() {
                 </label>
                 <input
                   type="text"
-                  placeholder="เช่น: @therichrama9_official"
+                  placeholder="เช่น: @bangkok_gazette"
                   value={newPageHandle}
                   onChange={(e) => setNewPageHandle(e.target.value)}
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"

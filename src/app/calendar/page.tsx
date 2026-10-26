@@ -131,7 +131,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     dateStr: '2026-10-24',
     timeStr: '08:30 AM',
     hour: 8.5,
-    title: 'Prime Skyview Residence Collection Launch',
+    title: 'Studio Lighting Masterclass: 4K Documentary Setup Guide',
     platform: 'FACEBOOK',
     format: 'FEED_POST',
     workspace: 'CAPITAL_ONE',
@@ -139,9 +139,9 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     handle: 'Official Brand Page',
     durationOrPhotos: 'Album (6 Photos)',
     status: 'PUBLISHED',
-    caption: '🏙️ ยูนิตพิเศษ Prime Skyview Residence ห้องมุม 2 ห้องนอน วิวเมือง 270 องศา พร้อมข้อเสนอสุดเอ็กซ์คลูซีฟสำหรับผู้ลงทะเบียนสัปดาห์นี้เท่านั้น! #ModernLiving #ExclusiveSpace',
+    caption: 'สรุป 5 เทคนิคจัดแสงสตูดิโอให้ภาพออกมาคมชัดระดับ 4K สำหรับคลิปแนวสารคดีและสัมภาษณ์เชิงลึก พร้อมแผนผัง 3-Point Lighting ให้ดาวน์โหลด! #CreatorStudio #VideoProduction',
     liveUrl: 'https://www.facebook.com/officialbrand/posts/991283',
-    websiteUrl: 'https://yourbrand.com/prime-skyview',
+    websiteUrl: 'https://retzpost.io/masterclass/lighting',
     previewImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
     peakLabel: 'Morning Executive Peak 🔥',
@@ -160,7 +160,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     dateStr: '2026-10-24',
     timeStr: '08:45 AM',
     hour: 8.75,
-    title: 'Walkthrough: Penthouse Suite Flash Tour',
+    title: 'Behind the Scenes: Bangkok Editorial Suite Tour',
     platform: 'INSTAGRAM',
     format: 'STORY',
     workspace: 'CAPITAL_ONE',
@@ -168,11 +168,11 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     handle: '@brand.official',
     durationOrPhotos: '24h Story + Link Sticker',
     status: 'PUBLISHED',
-    caption: '✨ Swipe up to explore the 360° virtual tour of the Master Penthouse Suite. Only 2 units remaining!',
+    caption: 'Swipe up to watch the full 4K behind-the-scenes walkthrough of our Bangkok studio editing suite.',
     liveUrl: 'https://www.instagram.com/stories/brand.official/348910283/',
-    websiteUrl: 'https://yourbrand.com/prime-skyview',
-    storyLinkUrl: 'https://yourbrand.com/prime-skyview-vip',
-    storyLinkText: 'Book VIP Private Viewing',
+    websiteUrl: 'https://retzpost.io/behind-the-scenes',
+    storyLinkUrl: 'https://retzpost.io/behind-the-scenes/studio-tour',
+    storyLinkText: 'Watch Studio Tour 4K',
     previewImage: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
     peakLabel: 'Morning Executive Peak 🔥',
@@ -1090,7 +1090,7 @@ export default function EditorialCalendarPage() {
           selectedId={selectedWorkspace}
           onSelect={(id) => handleSelectWorkspace(id as any)}
           maxVisiblePills={4}
-          moreButtonText="โครงการอื่นๆ"
+          moreButtonText="โปรเจกต์อื่นๆ"
           searchPlaceholder="ค้นหา Workspace..."
         />
       </div>
@@ -2486,7 +2486,7 @@ export default function EditorialCalendarPage() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Prime Sky Penthouse Walkthrough"
+                  placeholder="e.g. Masterclass Behind-the-Scenes Reel"
                   value={quickTitle}
                   onChange={(e) => setQuickTitle(e.target.value)}
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-serif text-sm text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"
@@ -2551,7 +2551,7 @@ export default function EditorialCalendarPage() {
                   </label>
                   <input
                     type="url"
-                    placeholder="https://capitalone.co.th/the-rich-rama9"
+                    placeholder="https://retzpost.io/showcase/ep04"
                     value={quickLinkSticker}
                     onChange={(e) => setQuickLinkSticker(e.target.value)}
                     className="w-full px-2.5 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-accent-terracotta"

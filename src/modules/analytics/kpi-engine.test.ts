@@ -62,7 +62,7 @@ describe('AI Post Performance Diagnosis Engine', () => {
   it('returns comprehensive diagnosis for known post with attribution factors and playbook', () => {
     const diagnosis = getPostDiagnosis('post-c1-1');
     expect(diagnosis).toBeDefined();
-    expect(diagnosis.postTitle).toContain('Prime Sky Penthouse');
+    expect(diagnosis.postTitle).toContain('Masterclass Behind-the-Scenes');
     expect(diagnosis.overallSuccessScore).toBeGreaterThanOrEqual(95);
     expect(diagnosis.attributionDrivers.length).toBeGreaterThanOrEqual(3);
     expect(diagnosis.actionablePlaybook.length).toBeGreaterThanOrEqual(2);
@@ -71,9 +71,9 @@ describe('AI Post Performance Diagnosis Engine', () => {
   });
 
   it('returns valid fallback diagnosis for any arbitrary post ID', () => {
-    const fallback = getPostDiagnosis('random-post-id', 'Test Luxury Penthouse');
+    const fallback = getPostDiagnosis('random-post-id', 'Test Studio Masterclass');
     expect(fallback).toBeDefined();
-    expect(fallback.postTitle).toBe('Test Luxury Penthouse');
+    expect(fallback.postTitle).toBe('Test Studio Masterclass');
     expect(fallback.attributionDrivers.length).toBeGreaterThanOrEqual(2);
     expect(fallback.actionablePlaybook.length).toBeGreaterThanOrEqual(1);
     expect(fallback.isMockData).toBe(true);

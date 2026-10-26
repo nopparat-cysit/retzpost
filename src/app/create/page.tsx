@@ -626,10 +626,10 @@ const AI_MEDIA_LIBRARY_ASSETS = [
   },
   {
     id: 'ai-asset-3',
-    name: 'penthouse_marble_dining_suite.jpg',
+    name: 'studio_master_editing_suite.jpg',
     size: '3.9 MB',
-    category: 'Luxury Suite',
-    description: 'Private duplex penthouse dining room with Italian Calacatta marble table, contemporary chandelier, city lights bokeh.',
+    category: 'Studio Suite',
+    description: 'High-end production suite with multi-monitor color grading desk, acoustic wall paneling, cinematic softbox lighting.',
   },
   {
     id: 'ai-asset-4',
@@ -3557,7 +3557,7 @@ export default function CreatePostPage() {
                     คลังภาพสื่อ AI (AI Media Asset Hub)
                   </h3>
                   <span className="text-[10px] font-mono text-ink-secondary block">
-                    เลือกรูปภาพเรนเดอร์สถาปัตยกรรมและอสังหาริมทรัพย์ระดับ 8K ที่พร้อมใช้งาน
+                    เลือกรูปภาพสตูดิโอและมีเดียกราฟิกระดับ 8K ที่พร้อมใช้งาน
                   </span>
                 </div>
               </div>

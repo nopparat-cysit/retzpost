@@ -163,12 +163,12 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
     id: 'MP-BATCH-895',
     workspaceId: 'ws_main',
     workspaceName: 'Main Studio',
-    title: 'Prime Skyview Residence Collection',
+    title: 'Bangkok Gazette: Studio Suite Showcase',
     timestamp: 'Today 08:30 AM',
     status: 'PARTIALLY_PUBLISHED',
-    websiteUrl: 'https://yourbrand.com/prime-skyview',
-    lineContactUrl: 'https://line.me/ti/p/@yourbrand',
-    liveUrl: 'https://www.facebook.com/officialbrand/posts/991283',
+    websiteUrl: 'https://retzpost.io/showcase',
+    lineContactUrl: 'https://line.me/ti/p/@retzpost',
+    liveUrl: 'https://www.facebook.com/bangkokgazette/posts/991283',
     placements: [
       { 
         platform: 'FACEBOOK', 
@@ -280,7 +280,7 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
         label: 'IG Carousel (4)', 
         badgeBg: 'bg-brand-indigo', 
         status: 'PUBLISHED',
-        liveUrl: 'https://www.instagram.com/p/C1PenthouseKW/'
+        liveUrl: 'https://www.instagram.com/p/C1StudioDesk/'
       },
       { 
         platform: 'INSTAGRAM', 
@@ -385,7 +385,7 @@ const SCHEDULED_TIMELINE = [
   },
   {
     time: 'Today 11:30 AM',
-    title: 'Prime Skyview Residence: Story Link Push',
+    title: 'Bangkok Gazette: Story Link Push',
     project: 'Main Studio',
     format: 'Story + Link Sticker',
     destination: '@brand.official (IG)',
@@ -470,7 +470,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
   {
     id: 'perf-1',
     batchId: 'MP-BATCH-895',
-    title: 'Prime Skyview Residence Collection',
+    title: 'Bangkok Gazette: Studio Suite Showcase',
     workspaceId: 'ws_main',
     workspaceName: 'Main Studio',
     thumbnailUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&fit=crop&q=80',
@@ -939,7 +939,7 @@ export default function HomePage() {
         platform: 'FACEBOOK',
         format: 'FEED_POST',
         handle: 'Media Partner FB',
-        storyTitle: 'Prime Skyview Residence Collection',
+        storyTitle: 'Bangkok Gazette: Studio Suite Showcase',
         status: 'FAILED_FINAL',
         attemptCount: 4,
         maxAttempts: 4,
@@ -951,7 +951,7 @@ export default function HomePage() {
         platform: 'INSTAGRAM',
         format: 'STORY',
         handle: 'brand.showcase',
-        storyTitle: 'Prime Skyview Residence Collection',
+        storyTitle: 'Bangkok Gazette: Studio Suite Showcase',
         status: 'FAILED_RETRYABLE',
         attemptCount: 1,
         maxAttempts: 4,
@@ -986,32 +986,32 @@ export default function HomePage() {
         id: 'MP-JOB-1053',
         platform: 'FACEBOOK',
         format: 'FEED_POST',
-        handle: 'Official Brand Page',
-        storyTitle: 'Prime Skyview Residence Collection',
+        handle: 'Bangkok Gazette Page',
+        storyTitle: 'Bangkok Gazette: Studio Suite Showcase',
         status: 'PUBLISHED',
         attemptCount: 1,
         maxAttempts: 4,
         scheduledOrExecutedAt: 'Today 08:30 AM',
-        liveUrl: 'https://facebook.com/officialbrand/posts/991283',
+        liveUrl: 'https://facebook.com/bangkokgazette/posts/991283',
       },
       {
         id: 'MP-JOB-1054',
         platform: 'INSTAGRAM',
         format: 'FEED_POST',
-        handle: 'brand.official',
-        storyTitle: 'Prime Skyview Residence Collection',
+        handle: 'bangkok.gazette',
+        storyTitle: 'Bangkok Gazette: Studio Suite Showcase',
         status: 'PUBLISHED',
         attemptCount: 1,
         maxAttempts: 4,
         scheduledOrExecutedAt: 'Today 08:30 AM',
-        liveUrl: 'https://instagram.com/p/prime-skyview',
+        liveUrl: 'https://instagram.com/p/bangkok-gazette',
       },
       {
         id: 'MP-JOB-1055',
         platform: 'FACEBOOK',
         format: 'FEED_POST',
         handle: 'Media Partner FB',
-        storyTitle: 'Prime Skyview Residence Collection',
+        storyTitle: 'Bangkok Gazette: Studio Suite Showcase',
         status: 'FAILED_FINAL',
         attemptCount: 4,
         maxAttempts: 4,
@@ -1258,8 +1258,8 @@ export default function HomePage() {
           selectedId={workspaceFilter}
           onSelect={(id) => handleSelectWorkspaceFilter(id)}
           maxVisiblePills={4}
-          moreButtonText="โครงการอื่นๆ"
-          searchPlaceholder="ค้นหาชื่อโครงการ หรือ Workspace..."
+          moreButtonText="โปรเจกต์อื่นๆ"
+          searchPlaceholder="ค้นหาชื่อโปรเจกต์ หรือ Workspace..."
         />
 
         <div className="hidden lg:flex items-center gap-2 text-[11px] font-mono text-ink-secondary shrink-0">
@@ -1557,7 +1557,7 @@ export default function HomePage() {
                             {batch.websiteUrl && (
                               <SocialMediaLiveButton
                                 platform="WEBSITE"
-                                label="หน้าเว็บโครงการ"
+                                label="ลิงก์ปลายทาง (Website)"
                                 url={batch.websiteUrl}
                                 onCopy={handleCopyLink}
                               />
@@ -1862,7 +1862,7 @@ export default function HomePage() {
                           <Sparkles className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
                           <div>
                             <span className="font-semibold block text-xs">คลังภาพสื่อ AI (8K Renders)</span>
-                            <span className="text-[10px] font-mono text-ink-secondary">Rama 9, Sky Pool, Penthouse</span>
+                            <span className="text-[10px] font-mono text-ink-secondary">Studio Lighting, 4K Footage, Covers</span>
                           </div>
                         </div>
                         <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
@@ -1995,7 +1995,7 @@ export default function HomePage() {
               </div>
               <div className="flex items-baseline justify-between">
                 <p className="font-serif font-bold text-lg text-ink-primary truncate max-w-[160px]">
-                  {isMockCleared ? '-' : 'Prime Skyview'}
+                  {isMockCleared ? '-' : 'Studio Showcase'}
                 </p>
                 <span className={`text-[10px] font-mono font-semibold ${isMockCleared ? 'text-ink-secondary' : 'text-semantic-success'}`}>
                   {isMockCleared ? 'No Data' : '890 Clicks'}
@@ -2013,7 +2013,7 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <Trophy className="w-4 h-4 text-amber-500" />
                 <h2 className="font-serif font-bold text-base text-ink-primary">
-                  จัดอันดับ "Top Performing Posts" โพสต์คอนโดและแคมเปญที่ผลตอบรับดีที่สุด
+                  จัดอันดับ "Top Performing Posts" โพสต์และคอนเทนต์ที่ผลตอบรับดีที่สุด
                 </h2>
               </div>
               <p className="text-xs text-ink-secondary mt-0.5 font-sans">
@@ -2096,7 +2096,7 @@ export default function HomePage() {
                           <span>{post.rankBadge.replace(/^[^\w]+/, '')}</span>
                         </span>
                         <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-paper-subtle text-brand-indigo border border-border-rule font-semibold inline-flex items-center gap-1">
-                          <Sticker name={post.workspaceId === 'ws_main' || post.workspaceId === 'ws_capitalone' ? 'ws-realestate' : post.workspaceId === 'ws_creator' || post.workspaceId === 'ws_acme' ? 'ws-creator' : post.workspaceId === 'ws_retzpost' || post.workspaceId === 'ws_software' ? 'ws-software' : 'ws-brand'} size="xs" inline />
+                          <Sticker name={post.workspaceId === 'ws_main' || post.workspaceId === 'ws_capitalone' ? 'ws-brand' : post.workspaceId === 'ws_creator' || post.workspaceId === 'ws_acme' ? 'ws-creator' : post.workspaceId === 'ws_retzpost' || post.workspaceId === 'ws_software' ? 'ws-software' : 'ws-brand'} size="xs" inline />
                           <span>{post.workspaceName}</span>
                         </span>
                         <span className="text-[10px] font-mono text-ink-secondary">
@@ -2198,7 +2198,7 @@ export default function HomePage() {
                     {post.websiteUrl && (
                       <SocialMediaLiveButton
                         platform="WEBSITE"
-                        label={post.websiteLabel || 'หน้าเว็บโครงการ'}
+                        label={post.websiteLabel || 'ลิงก์ปลายทาง (Website)'}
                         url={post.websiteUrl}
                         onCopy={handleCopyLink}
                       />
@@ -2216,11 +2216,11 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-brand-indigo" />
                 <h4 className="font-serif font-bold text-sm text-ink-primary">
-                  กลยุทธ์สร้างยอดขายคอนโด (Conversion Insight): พลังของ 24h Story + Link Sticker
+                  กลยุทธ์สร้างยอดการมีส่วนร่วม (Engagement & Conversion Insight): พลังของ 24h Story + Link Sticker
                 </h4>
               </div>
               <p className="text-xs text-ink-secondary max-w-2xl font-sans leading-relaxed">
-                โพสต์แบบ <strong className="text-ink-primary">Feed Album</strong> สร้างการรับรู้และการแชร์สูงสุด (Reach Leader) ในขณะที่ <strong className="text-accent-terracotta">24h Story พร้อม Interactive Link Sticker</strong> สร้างยอดคนคลิกเข้าหน้าเว็บโครงการสูงกว่าถึง <strong className="text-ink-primary">3.2 เท่า</strong> (890 vs 280 clicks) ทำให้ควรจับคู่โพสต์ Feed และ Story ควบคู่กันเสมอในทุกแคมเปญ
+                โพสต์แบบ <strong className="text-ink-primary">Feed Album</strong> สร้างการรับรู้และการแชร์สูงสุด (Reach Leader) ในขณะที่ <strong className="text-accent-terracotta">24h Story พร้อม Interactive Link Sticker</strong> สร้างยอดคนคลิกเข้าหน้าเว็บเป้าหมายสูงกว่าถึง <strong className="text-ink-primary">3.2 เท่า</strong> (890 vs 280 clicks) ทำให้ควรจับคู่โพสต์ Feed และ Story ควบคู่กันเสมอในทุกแคมเปญ
               </p>
             </div>
 
@@ -2686,7 +2686,7 @@ export default function HomePage() {
                     <SocialPlatformIcon platform="WEBSITE" size={24} className="shrink-0" />
                     <div className="min-w-0">
                       <span className="text-[10px] font-mono uppercase text-brand-indigo font-bold block">
-                        เว็บไซต์โครงการ / Landing Page:
+                        เว็บไซต์เป้าหมาย / Landing Page:
                       </span>
                       <p className="font-mono text-xs text-ink-primary truncate font-semibold mt-0.5">
                         {selectedLiveBatch.websiteUrl}
