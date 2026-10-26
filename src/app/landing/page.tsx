@@ -3417,110 +3417,412 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 07 — FEATURES THAT MATTER (EDITORIAL MAGAZINE LAYOUT)             */}
+      {/* SECTION 07 — FEATURES THAT MATTER (ARCHITECTURAL BENTO BROADSHEET)        */}
       {/* ========================================================================= */}
-      <section id="features" className="py-20 bg-white/70 backdrop-blur-sm border-y border-black/10 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto space-y-12">
-          <div className="text-center max-w-3xl mx-auto space-y-2">
-            <span className="text-xs font-mono font-bold text-[#364165] uppercase tracking-wider">
-              07 / FEATURES THAT MATTER
-            </span>
-            <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
+      <section id="features" className="py-24 bg-[#F8F6F0] border-y border-black/10 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        {/* Subtle Archival Grid Overlay */}
+        <div className="absolute inset-0 bg-[radial-gradient(#1A1A18_1px,transparent_1px)] [background-size:24px_24px] opacity-[0.03] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto space-y-12 relative">
+          {/* Section Masthead */}
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-[#364165]/10 text-[#364165] text-xs font-mono font-bold uppercase tracking-wider border border-[#364165]/20">
+              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <span>07 / ARCHITECTURAL PILLARS</span>
+            </div>
+            <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18] tracking-tight">
               Engineered for Serious Publishing
             </h2>
-            <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
-              Eight architectural pillars designed to streamline complex multi-network delivery into one effortless, dependable routine.
+            <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed max-w-2xl mx-auto">
+              8 เสาหลักทางวิศวกรรมของ MULTIPOST ที่เปลี่ยนความวุ่นวายของการจัดการหลายโซเชียล ให้กลายเป็นเวิร์กโฟลว์ระดับมืออาชีพที่แม่นยำ ไม่ตกหล่น และวางใจได้ในทุกวินาที
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* 1. Upload Once */}
-            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#364165]/10 text-[#364165] flex items-center justify-center font-bold">
-                <Film className="w-5 h-5" />
+          {/* Asymmetric Architectural Bento Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+            
+            {/* =============================================================== */}
+            {/* HERO CARD 01 (7 COLS): UNIVERSAL 4K MASTER INGESTION CORE       */}
+            {/* =============================================================== */}
+            <div className="lg:col-span-7 bg-white rounded-3xl border border-black/15 p-6 sm:p-8 shadow-[0_12px_36px_rgba(26,26,24,0.06)] flex flex-col justify-between space-y-6 relative overflow-hidden group hover:border-[#364165]/40 transition-colors">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between pb-3 border-b border-black/10 font-mono text-xs">
+                  <span className="text-[#364165] font-bold text-[10px] tracking-widest uppercase bg-[#364165]/10 px-2.5 py-1 rounded-full">
+                    PILLAR 01 • MASTER INGESTION
+                  </span>
+                  <span className="text-emerald-700 font-bold text-[10px] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                    LOSSLESS PIPELINE
+                  </span>
+                </div>
+                <h3 className="font-serif font-bold text-2xl sm:text-3xl text-[#1A1A18] tracking-tight">
+                  Upload Once, Stream Everywhere in Full 4K
+                </h3>
+                <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed">
+                  อัปโหลดไฟล์ Master 4K ProRes หรือ H.265 คุณภาพสูงสุดเพียงไฟล์เดียว ระบบจะทรานส์โค้ดแยกบิตเรตและจัดส่งเข้า 5 แพลตฟอร์มอย่างเหมาะสมที่สุด โดยไม่ลดทอนคุณภาพสีหรือความคมชัด
+                </p>
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Upload Once</h3>
-              <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                Universal master ingestion supporting 4K 60fps video and uncompressed photo sets without quality reduction.
-              </p>
+
+              {/* Ingestion Visualizer Graphic */}
+              <div className="bg-[#181614] rounded-2xl p-4 sm:p-5 text-white font-mono text-xs space-y-3 shadow-inner">
+                <div className="flex items-center justify-between text-[10px] text-stone-400 pb-2 border-b border-white/10">
+                  <span className="flex items-center gap-1.5 text-amber-300 font-bold">
+                    <Film className="w-3.5 h-3.5" />
+                    <span>CANONICAL MASTER FILE</span>
+                  </span>
+                  <span>3840×2160 • ProRes 422 HQ • 60fps</span>
+                </div>
+
+                {/* Pipeline Nodes */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[10px]">
+                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                    <div className="flex items-center gap-1 text-white font-bold">
+                      <YouTubeLogo size={12} />
+                      <span>YouTube</span>
+                    </div>
+                    <span className="text-emerald-400 block font-bold">4K 60fps Widescreen</span>
+                    <span className="text-[9px] text-stone-400 block">45.2 Mbps Stream</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                    <div className="flex items-center gap-1 text-white font-bold">
+                      <InstagramLogo size={12} />
+                      <span>IG Reels</span>
+                    </div>
+                    <span className="text-emerald-400 block font-bold">9:16 Vertical Crop</span>
+                    <span className="text-[9px] text-stone-400 block">First Comment Sync</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                    <div className="flex items-center gap-1 text-white font-bold">
+                      <TikTokLogo size={12} />
+                      <span>TikTok</span>
+                    </div>
+                    <span className="text-emerald-400 block font-bold">H.265 Direct Ingest</span>
+                    <span className="text-[9px] text-stone-400 block">Audio Track Mapped</span>
+                  </div>
+                  <div className="p-2.5 rounded-xl bg-white/5 border border-white/10 space-y-1">
+                    <div className="flex items-center gap-1 text-white font-bold">
+                      <FacebookLogo size={12} />
+                      <span>Facebook</span>
+                    </div>
+                    <span className="text-emerald-400 block font-bold">1080p HD Preset</span>
+                    <span className="text-[9px] text-stone-400 block">Subtitles Hard-Baked</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-3 text-[11px] font-mono text-stone-500 pt-1">
+                <span>Color Preservation: Rec.709 DCI-P3</span>
+                <span className="text-stone-700 font-bold">Max Ingestion Size: 10 GB per Master</span>
+              </div>
             </div>
 
-            {/* 2. Shared Story */}
-            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center font-bold">
-                <FileText className="w-5 h-5" />
+            {/* =============================================================== */}
+            {/* HERO CARD 02 (5 COLS): AI MOBILE SAFE-ZONE VISUALIZER HUD       */}
+            {/* =============================================================== */}
+            <div className="lg:col-span-5 bg-white rounded-3xl border border-black/15 p-6 sm:p-8 shadow-[0_12px_36px_rgba(26,26,24,0.06)] flex flex-col justify-between space-y-5 relative overflow-hidden group hover:border-[#A24836]/40 transition-colors">
+              <div className="space-y-3">
+                <div className="flex items-center justify-between pb-3 border-b border-black/10 font-mono text-xs">
+                  <span className="text-[#A24836] font-bold text-[10px] tracking-widest uppercase bg-[#A24836]/10 px-2.5 py-1 rounded-full">
+                    PILLAR 02 • VIEWPORT HUD
+                  </span>
+                  <span className="text-amber-800 font-bold text-[10px] bg-amber-100 px-2 py-0.5 rounded border border-amber-300">
+                    ZERO CLIPPING
+                  </span>
+                </div>
+                <h3 className="font-serif font-bold text-2xl text-[#1A1A18] tracking-tight">
+                  Subtitles & Logos Never Clipped
+                </h3>
+                <p className="text-xs text-stone-600 font-sans leading-relaxed">
+                  ระบบจำลองกรอบอินเทอร์เฟซจริงของ TikTok และ Instagram Reels เตือนตำแหน่งข้อความที่เสี่ยงถูกปุ่ม Like, คอมเมนต์ หรือชื่อช่องบดบังทันที
+                </p>
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Shared Story</h3>
-              <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                A single canonical narrative draft that maintains consistency while serving as the parent root for every channel.
-              </p>
+
+              {/* Viewport Reticle Box */}
+              <div className="bg-[#121214] rounded-2xl p-4 text-white font-mono text-xs relative flex items-center justify-between gap-4 shadow-inner">
+                {/* 9:16 Mini Smartphone Simulation */}
+                <div className="w-28 aspect-[9/14] rounded-xl border-2 border-stone-700 bg-black/60 p-1.5 flex flex-col justify-between text-center relative overflow-hidden shrink-0">
+                  <div className="p-1 rounded bg-indigo-500/25 border border-indigo-400/40 text-[7px] text-indigo-300 font-bold">
+                    TOP 15% CLEAR
+                  </div>
+                  <div className="my-auto">
+                    <span className="text-[8px] font-bold text-emerald-400 block">SAFE ZONE</span>
+                    <span className="text-[6px] text-stone-400">100% Passed</span>
+                  </div>
+                  <div className="p-1 rounded bg-amber-500/25 border border-amber-400/40 text-[7px] text-amber-300 font-bold">
+                    BOTTOM 25% CLEAR
+                  </div>
+                </div>
+
+                {/* Legend & Specifications */}
+                <div className="space-y-2 text-[10px] min-w-0">
+                  <div className="flex items-center gap-1.5 text-emerald-400 font-bold">
+                    <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                    <span>Active Telemetry Verification</span>
+                  </div>
+                  <p className="text-stone-400 text-[10px] font-sans leading-relaxed">
+                    ระบบคำนวณระยะขอบจอ (Safe Margin) ป้องกันผู้ชมเลื่อนผ่านคลิปเพราะอ่านซับไตเติลไม่เห็น
+                  </p>
+                  <span className="inline-block px-2 py-0.5 rounded bg-white/10 text-amber-200 text-[9px] font-mono">
+                    Supported: Reels, Shorts & TikTok
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-[11px] font-mono text-stone-500 flex justify-between items-center pt-1">
+                <span>Boundary Collision Rate: 0.00%</span>
+                <span className="text-emerald-700 font-bold">Audience Retention Protected</span>
+              </div>
             </div>
 
-            {/* 3. Platform Editions */}
-            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center font-bold">
-                <Sliders className="w-5 h-5" />
+            {/* =============================================================== */}
+            {/* ROW 2 - CARD 03 (4 COLS): BANGKOK PRIME PEAK ENGINE (UTC+7)      */}
+            {/* =============================================================== */}
+            <div className="lg:col-span-4 bg-white rounded-3xl border border-black/15 p-6 shadow-[0_12px_36px_rgba(26,26,24,0.06)] flex flex-col justify-between space-y-4 hover:border-amber-500/40 transition-colors">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between pb-2 border-b border-black/10 font-mono text-xs">
+                  <span className="text-amber-800 font-bold text-[10px] tracking-widest uppercase bg-amber-100 px-2.5 py-0.5 rounded-full">
+                    PILLAR 03 • SCHEDULER
+                  </span>
+                  <span className="text-stone-500 text-[10px]">UTC+7 Dedicated</span>
+                </div>
+                <h4 className="font-serif font-bold text-xl text-[#1A1A18] tracking-tight">
+                  Bangkok Prime Peak Engine
+                </h4>
+                <p className="text-xs text-stone-600 font-sans leading-relaxed">
+                  คลิกเดียวล็อกช่วงเวลาทองคำที่คนไทยออนไลน์มากที่สุด ไม่ต้องสับสนกับ Timezone หรือตั้งนาฬิกาปลุกมากดโพสต์เอง
+                </p>
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Platform Editions</h3>
-              <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                Tailored character limits, hashtag placements, and mobile safe-zone guides adapted for YouTube, IG, TikTok, and X.
-              </p>
+
+              {/* 3 Peak Dials */}
+              <div className="p-3.5 rounded-2xl bg-[#FCFAF5] border border-black/10 space-y-2 font-mono text-xs">
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-black/5">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 text-stone-500" />
+                    <span className="font-bold text-[#1A1A18]">11:45 ICT</span>
+                  </div>
+                  <span className="text-[10px] text-stone-600 bg-stone-100 px-2 py-0.5 rounded">Lunch Surge</span>
+                </div>
+                <div className="flex items-center justify-between p-2 rounded-xl bg-amber-50 border border-amber-300 ring-2 ring-amber-400/20">
+                  <div className="flex items-center gap-2">
+                    <Star className="w-3.5 h-3.5 text-amber-600 fill-amber-600" />
+                    <span className="font-bold text-amber-950">19:30 ICT</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-amber-900 bg-amber-200/80 px-2 py-0.5 rounded">★ PRIME PEAK (2.4x)</span>
+                </div>
+                <div className="flex items-center justify-between p-2 rounded-xl bg-white border border-black/5">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 text-stone-500" />
+                    <span className="font-bold text-[#1A1A18]">21:15 ICT</span>
+                  </div>
+                  <span className="text-[10px] text-stone-600 bg-stone-100 px-2 py-0.5 rounded">Night Owl</span>
+                </div>
+              </div>
+
+              <div className="text-[10px] font-mono text-stone-500">
+                Synchronized millisecond delivery across all linked accounts
+              </div>
             </div>
 
-            {/* 4. Smart Scheduling */}
-            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#A24836]/10 text-[#A24836] flex items-center justify-center font-bold">
-                <Clock className="w-5 h-5" />
+            {/* =============================================================== */}
+            {/* ROW 2 - CARD 04 (4 COLS): AES-256 VAULT SECURITY                */}
+            {/* =============================================================== */}
+            <div className="lg:col-span-4 bg-[#141210] rounded-3xl border border-stone-800 p-6 shadow-[0_12px_36px_rgba(0,0,0,0.25)] flex flex-col justify-between space-y-4 text-white hover:border-emerald-500/40 transition-colors">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between pb-2 border-b border-white/10 font-mono text-xs">
+                  <span className="text-emerald-400 font-bold text-[10px] tracking-widest uppercase bg-emerald-500/15 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
+                    PILLAR 04 • SECURITY
+                  </span>
+                  <span className="text-stone-400 text-[10px]">Zero Password Storage</span>
+                </div>
+                <h4 className="font-serif font-bold text-xl text-amber-100 tracking-tight">
+                  AES-256 GCM Token Vault
+                </h4>
+                <p className="text-xs text-stone-300 font-sans leading-relaxed">
+                  ปลอดภัยสูงสุดด้วยการเข้ารหัสโทเค็น OAuth 2.0 แยกอิสระ ไม่มีใครสามารถเห็นรหัสผ่านของคุณ แม้แต่ทีมงานของระบบ
+                </p>
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Smart Scheduling</h3>
-              <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                Bangkok Golden Peak hour recommendations (11:45, 19:30, 21:15 UTC+7) for maximum organic distribution.
-              </p>
+
+              {/* Security Shield Graphic */}
+              <div className="p-4 rounded-2xl bg-black/40 border border-white/10 space-y-2.5 font-mono text-xs">
+                <div className="flex items-center gap-2 text-emerald-400">
+                  <ShieldCheck className="w-4 h-4" />
+                  <span className="font-bold">Cryptographically Sealed Vault</span>
+                </div>
+                <div className="flex flex-wrap gap-1.5 text-[9px]">
+                  <span className="px-2 py-0.5 rounded bg-white/10 text-stone-300">YouTube OAuth Valid</span>
+                  <span className="px-2 py-0.5 rounded bg-white/10 text-stone-300">Instagram Graph Active</span>
+                  <span className="px-2 py-0.5 rounded bg-white/10 text-stone-300">TikTok Direct Signed</span>
+                </div>
+                <div className="text-[9px] text-stone-400 border-t border-white/10 pt-1.5">
+                  Automated Token Refresh: 100% Zero Session Dropouts
+                </div>
+              </div>
+
+              <div className="text-[10px] font-mono text-stone-400">
+                Audited against OWASP Top 10 API Security Standards
+              </div>
             </div>
 
-            {/* 5. Publishing Queue */}
-            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#364165]/10 text-[#364165] flex items-center justify-center font-bold">
-                <RefreshCw className="w-5 h-5" />
+            {/* =============================================================== */}
+            {/* ROW 2 - CARD 05 (4 COLS): ISOLATED FAULT RESCUE ENGINE           */}
+            {/* =============================================================== */}
+            <div className="lg:col-span-4 bg-white rounded-3xl border border-black/15 p-6 shadow-[0_12px_36px_rgba(26,26,24,0.06)] flex flex-col justify-between space-y-4 hover:border-red-500/40 transition-colors">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between pb-2 border-b border-black/10 font-mono text-xs">
+                  <span className="text-[#A24836] font-bold text-[10px] tracking-widest uppercase bg-[#A24836]/10 px-2.5 py-0.5 rounded-full">
+                    PILLAR 05 • FAULT ISOLATION
+                  </span>
+                  <span className="text-emerald-700 font-bold text-[10px]">Zero Duplication</span>
+                </div>
+                <h4 className="font-serif font-bold text-xl text-[#1A1A18] tracking-tight">
+                  Isolated Partial Retry Recovery
+                </h4>
+                <p className="text-xs text-stone-600 font-sans leading-relaxed">
+                  หากโซเชียลช่องทางใดเกิด Rate Limit ระบบจะตัดตอนแยก Retry เฉพาะช่องทางนั้น โดยไม่โพสต์ซ้ำไปยังช่องทางที่สำเร็จแล้ว
+                </p>
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Publishing Queue</h3>
-              <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                Asynchronous job engine with millisecond synchronization across concurrent social network APIs.
-              </p>
+
+              {/* State Machine Graphic */}
+              <div className="p-3.5 rounded-2xl bg-[#FCFAF5] border border-black/10 space-y-1.5 font-mono text-[11px]">
+                <div className="flex items-center justify-between p-1.5 rounded bg-white border border-black/5 text-emerald-800 font-bold">
+                  <span>YouTube Master:</span>
+                  <span>DONE ✓</span>
+                </div>
+                <div className="flex items-center justify-between p-1.5 rounded bg-white border border-black/5 text-emerald-800 font-bold">
+                  <span>Instagram Reels:</span>
+                  <span>DONE ✓</span>
+                </div>
+                <div className="flex items-center justify-between p-1.5 rounded bg-amber-50 border border-amber-300 text-amber-900 font-bold">
+                  <span>TikTok API:</span>
+                  <span>ISOLATED RETRY (2/3) ⟳</span>
+                </div>
+              </div>
+
+              <div className="text-[10px] font-mono text-stone-500">
+                Never spam your followers with duplicate notifications
+              </div>
             </div>
 
-            {/* 6. Retry & Recovery */}
-            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-[#A24836]/10 text-[#A24836] flex items-center justify-center font-bold">
-                <Zap className="w-5 h-5" />
+            {/* =============================================================== */}
+            {/* ROW 3 - CARD 06 (4 COLS): ONE ROOT, FIVE CHANNEL DIALECTS        */}
+            {/* =============================================================== */}
+            <div className="lg:col-span-4 bg-white rounded-3xl border border-black/15 p-6 shadow-[0_12px_36px_rgba(26,26,24,0.06)] flex flex-col justify-between space-y-4 hover:border-[#364165]/40 transition-colors">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between pb-2 border-b border-black/10 font-mono text-xs">
+                  <span className="text-[#364165] font-bold text-[10px] tracking-widest uppercase bg-[#364165]/10 px-2.5 py-0.5 rounded-full">
+                    PILLAR 06 • NUANCED COPY
+                  </span>
+                  <span className="text-stone-500 text-[10px]">Per-Network Rules</span>
+                </div>
+                <h4 className="font-serif font-bold text-xl text-[#1A1A18] tracking-tight">
+                  One Story Root, Five Dialects
+                </h4>
+                <p className="text-xs text-stone-600 font-sans leading-relaxed">
+                  เขียนแกนเรื่องหลักเพียงจุดเดียว แต่ปรับแต่งแคปชันเฉพาะแพลตฟอร์มได้อย่างอิสระ แยก First Comment สำหรับ IG และคุม 280 ตัวใน X
+                </p>
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Retry & Recovery</h3>
-              <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                Isolated partial retry: if one platform rate limits, resolve and retry it without re-posting to successful channels.
-              </p>
+
+              <div className="p-3.5 rounded-2xl bg-[#FCFAF5] border border-black/10 space-y-2 font-mono text-xs">
+                <div className="p-2 bg-white rounded-lg border border-black/5 flex items-center justify-between">
+                  <span className="font-bold text-[#1A1A18]">X Character Ceiling</span>
+                  <span className="text-stone-500 font-bold">142 / 280</span>
+                </div>
+                <div className="p-2 bg-white rounded-lg border border-black/5 flex items-center justify-between">
+                  <span className="font-bold text-[#1A1A18]">Instagram First Comment</span>
+                  <span className="text-emerald-700 font-bold">Auto-Staged ✓</span>
+                </div>
+                <div className="p-2 bg-white rounded-lg border border-black/5 flex items-center justify-between">
+                  <span className="font-bold text-[#1A1A18]">YouTube Chapters</span>
+                  <span className="text-[#364165] font-bold">SEO Formatted</span>
+                </div>
+              </div>
+
+              <div className="text-[10px] font-mono text-stone-500">
+                Maintains tone-of-voice while fitting native app culture
+              </div>
             </div>
 
-            {/* 7. Connected Accounts */}
-            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-700 flex items-center justify-center font-bold">
-                <ShieldCheck className="w-5 h-5" />
+            {/* =============================================================== */}
+            {/* ROW 3 - CARD 07 (4 COLS): ASYNCHRONOUS CONCURRENT QUEUE          */}
+            {/* =============================================================== */}
+            <div className="lg:col-span-4 bg-white rounded-3xl border border-black/15 p-6 shadow-[0_12px_36px_rgba(26,26,24,0.06)] flex flex-col justify-between space-y-4 hover:border-emerald-500/40 transition-colors">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between pb-2 border-b border-black/10 font-mono text-xs">
+                  <span className="text-emerald-800 font-bold text-[10px] tracking-widest uppercase bg-emerald-100 px-2.5 py-0.5 rounded-full">
+                    PILLAR 07 • CONCURRENCY
+                  </span>
+                  <span className="text-emerald-700 font-bold text-[10px]">4 Workers Parallel</span>
+                </div>
+                <h4 className="font-serif font-bold text-xl text-[#1A1A18] tracking-tight">
+                  Millisecond Precision Queue
+                </h4>
+                <p className="text-xs text-stone-600 font-sans leading-relaxed">
+                  คลัสเตอร์เวิร์กเกอร์ทำงานคู่ขนาน ส่งสัญญาณไปยังปลายทางพร้อมกันในระดับมิลลิวินาที ไม่มีการต่อแถวรอคิวนานจนเสียจังหวะ
+                </p>
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Connected Accounts</h3>
-              <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                Bank-grade Token Vault encrypted with AES-256 GCM. No user passwords stored; zero token leakage risks.
-              </p>
+
+              <div className="p-3.5 rounded-2xl bg-[#FCFAF5] border border-black/10 space-y-2 font-mono text-xs">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span>Worker Cluster 01:</span>
+                  <span className="text-emerald-700 font-bold">YouTube (18ms)</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span>Worker Cluster 02:</span>
+                  <span className="text-emerald-700 font-bold">Instagram (24ms)</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span>Worker Cluster 03:</span>
+                  <span className="text-emerald-700 font-bold">TikTok (32ms)</span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span>Worker Cluster 04:</span>
+                  <span className="text-emerald-700 font-bold">Facebook (21ms)</span>
+                </div>
+              </div>
+
+              <div className="text-[10px] font-mono text-stone-500">
+                Near-instantaneous multi-network distribution
+              </div>
             </div>
 
-            {/* 8. Content Performance */}
-            <div className="editorial-paper-card p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-700 flex items-center justify-center font-bold">
-                <BarChart3 className="w-5 h-5" />
+            {/* =============================================================== */}
+            {/* ROW 3 - CARD 08 (4 COLS): OMNI-CHANNEL PERFORMANCE RADAR         */}
+            {/* =============================================================== */}
+            <div className="lg:col-span-4 bg-white rounded-3xl border border-black/15 p-6 shadow-[0_12px_36px_rgba(26,26,24,0.06)] flex flex-col justify-between space-y-4 hover:border-amber-500/40 transition-colors">
+              <div className="space-y-2.5">
+                <div className="flex items-center justify-between pb-2 border-b border-black/10 font-mono text-xs">
+                  <span className="text-amber-800 font-bold text-[10px] tracking-widest uppercase bg-amber-100 px-2.5 py-0.5 rounded-full">
+                    PILLAR 08 • INTELLIGENCE
+                  </span>
+                  <span className="text-emerald-700 font-bold text-[10px]">+24.6% Avg Lift</span>
+                </div>
+                <h4 className="font-serif font-bold text-xl text-[#1A1A18] tracking-tight">
+                  Omni-Channel Creative ROI
+                </h4>
+                <p className="text-xs text-stone-600 font-sans leading-relaxed">
+                  รวมยอดวิว อัตราการดูคลิปจนจบ และ Engagement จากทุกช่องทางไว้ในจอเดียว ชี้ชัดว่าช่องทางไหนสร้างผลกระทบสูงสุด
+                </p>
               </div>
-              <h3 className="font-serif font-bold text-lg text-[#1A1A18]">Content Performance</h3>
-              <p className="text-xs text-stone-600 leading-relaxed font-sans">
-                Unified cross-network metrics tracking aggregated views, engagement velocity, and publication edition ROI.
-              </p>
+
+              <div className="p-3.5 rounded-2xl bg-[#FCFAF5] border border-black/10 space-y-2 font-mono text-xs">
+                <div className="flex items-center justify-between">
+                  <span className="text-stone-500">Total Impressions:</span>
+                  <span className="text-base font-bold text-[#1A1A18]">482,900</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-stone-500">Time Saved / Week:</span>
+                  <span className="text-base font-bold text-[#364165]">14.5 Hours</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <span className="text-stone-500">Audience Velocity:</span>
+                  <span className="text-xs font-bold text-emerald-700">▲ +24.6% Organic</span>
+                </div>
+              </div>
+
+              <div className="text-[10px] font-mono text-stone-500">
+                Actionable creative intelligence for serious creators
+              </div>
             </div>
+
           </div>
         </div>
       </section>
