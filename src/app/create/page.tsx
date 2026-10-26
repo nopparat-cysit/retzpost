@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { 
   UploadCloud, 
@@ -1124,44 +1124,96 @@ export default function CreatePostPage() {
     return fallbacks[previewPlatform] || workspaceChannels[0];
   }, [workspaceChannels, previewPlatform, activeWorkspaceId, activeWorkspace.name]);
 
-  // Available format sub-pills adapted dynamically per platform
+  // Available platforms strictly filtered by current mediaMode (Unmatched platforms are hidden)
+  const availablePreviewPlatforms = useMemo(() => {
+    switch (mediaMode) {
+      case 'VIDEO_LANDSCAPE':
+        // Full Video 16:9: Only YouTube and Facebook Video support 16:9 widescreen
+        return ['YOUTUBE', 'FACEBOOK'] as const;
+      case 'PHOTOS':
+        // Photos Carousel: Instagram, Facebook, TikTok (YouTube Studio API does not support photo posts)
+        return ['INSTAGRAM', 'FACEBOOK', 'TIKTOK'] as const;
+      case 'TEXT_ONLY':
+        // Text Only: Only Facebook supports text status updates without media
+        return ['FACEBOOK'] as const;
+      case 'VIDEO':
+      default:
+        // Shorts 9:16: All 4 platforms support vertical reels/shorts
+        return ['INSTAGRAM', 'FACEBOOK', 'YOUTUBE', 'TIKTOK'] as const;
+    }
+  }, [mediaMode]);
+
+  // Available format sub-pills adapted dynamically per platform AND current mediaMode
   const platformFormats = useMemo(() => {
-    const map: Record<'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK', { id: 'FEED' | 'STORY' | 'REEL'; label: string; icon: React.ComponentType<{ className?: string }> }[]> = {
-      INSTAGRAM: [
-        { id: 'FEED', label: 'Feed Post', icon: LayoutGrid },
-        { id: 'STORY', label: 'Story (24h)', icon: Smartphone },
-        { id: 'REEL', label: 'Reels (9:16)', icon: Film },
-      ],
-      FACEBOOK: [
-        { id: 'FEED', label: 'Page Post', icon: LayoutGrid },
-        { id: 'STORY', label: 'Story (24h)', icon: Smartphone },
-        { id: 'REEL', label: 'Reels (9:16)', icon: Film },
-      ],
-      YOUTUBE: [
-        { id: 'REEL', label: 'Shorts (9:16)', icon: Film },
-        { id: 'FEED', label: 'Video Feed', icon: LayoutGrid },
-      ],
-      TIKTOK: [
-        { id: 'REEL', label: 'Video (9:16)', icon: Film },
-        { id: 'FEED', label: 'Photo Slide', icon: LayoutGrid },
-        { id: 'STORY', label: 'Story', icon: Smartphone },
-      ],
-    };
-    return map[previewPlatform];
-  }, [previewPlatform]);
+    const formats: { id: 'FEED' | 'STORY' | 'REEL'; label: string; icon: React.ComponentType<{ className?: string }> }[] = [];
+
+    if (previewPlatform === 'YOUTUBE') {
+      if (mediaMode === 'VIDEO_LANDSCAPE') {
+        formats.push({ id: 'FEED', label: 'Full Video (16:9)', icon: LayoutGrid });
+      } else if (mediaMode === 'VIDEO') {
+        formats.push({ id: 'REEL', label: 'Shorts (9:16)', icon: Film });
+      }
+    } else if (previewPlatform === 'FACEBOOK') {
+      if (mediaMode === 'VIDEO_LANDSCAPE') {
+        formats.push({ id: 'FEED', label: 'Video Feed (16:9)', icon: LayoutGrid });
+      } else if (mediaMode === 'VIDEO') {
+        formats.push({ id: 'REEL', label: 'Reels (9:16)', icon: Film });
+        formats.push({ id: 'STORY', label: 'Story (24h)', icon: Smartphone });
+      } else if (mediaMode === 'PHOTOS') {
+        formats.push({ id: 'FEED', label: 'Photo Post', icon: LayoutGrid });
+        formats.push({ id: 'STORY', label: 'Story (24h)', icon: Smartphone });
+      } else if (mediaMode === 'TEXT_ONLY') {
+        formats.push({ id: 'FEED', label: 'Page Post', icon: LayoutGrid });
+      }
+    } else if (previewPlatform === 'INSTAGRAM') {
+      if (mediaMode === 'VIDEO') {
+        formats.push({ id: 'REEL', label: 'Reels (9:16)', icon: Film });
+        formats.push({ id: 'STORY', label: 'Story (24h)', icon: Smartphone });
+      } else if (mediaMode === 'PHOTOS') {
+        formats.push({ id: 'FEED', label: 'Feed Carousel', icon: LayoutGrid });
+        formats.push({ id: 'STORY', label: 'Story (24h)', icon: Smartphone });
+      }
+    } else if (previewPlatform === 'TIKTOK') {
+      if (mediaMode === 'VIDEO') {
+        formats.push({ id: 'REEL', label: 'Video (9:16)', icon: Film });
+        formats.push({ id: 'STORY', label: 'Story', icon: Smartphone });
+      } else if (mediaMode === 'PHOTOS') {
+        formats.push({ id: 'FEED', label: 'Photo Slide', icon: LayoutGrid });
+        formats.push({ id: 'STORY', label: 'Story', icon: Smartphone });
+      }
+    }
+
+    return formats;
+  }, [previewPlatform, mediaMode]);
 
   const handleSelectPreviewPlatform = (plat: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK') => {
     setPreviewPlatform(plat);
-    const validFormats = {
-      INSTAGRAM: ['FEED', 'STORY', 'REEL'],
-      FACEBOOK: ['FEED', 'STORY', 'REEL'],
-      YOUTUBE: ['REEL', 'FEED'],
-      TIKTOK: ['REEL', 'FEED', 'STORY'],
-    }[plat];
-    if (!validFormats.includes(previewTab)) {
-      setPreviewTab(validFormats[0] as 'FEED' | 'STORY' | 'REEL');
+    // Find valid format for this platform under current mediaMode
+    let nextTab: 'FEED' | 'STORY' | 'REEL' = 'FEED';
+    if (plat === 'YOUTUBE') {
+      nextTab = mediaMode === 'VIDEO_LANDSCAPE' ? 'FEED' : 'REEL';
+    } else if (mediaMode === 'VIDEO') {
+      nextTab = 'REEL';
+    } else {
+      nextTab = 'FEED';
     }
+    setPreviewTab(nextTab);
   };
+
+  // Keep previewPlatform & previewTab synchronized whenever mediaMode changes
+  useEffect(() => {
+    if (!availablePreviewPlatforms.includes(previewPlatform as any)) {
+      const nextPlat = availablePreviewPlatforms[0] || 'FACEBOOK';
+      setPreviewPlatform(nextPlat);
+    }
+  }, [availablePreviewPlatforms, previewPlatform]);
+
+  useEffect(() => {
+    const validTabIds = platformFormats.map((f) => f.id);
+    if (validTabIds.length > 0 && !validTabIds.includes(previewTab)) {
+      setPreviewTab(validTabIds[0]);
+    }
+  }, [platformFormats, previewTab]);
 
   // Active Custom Presets for this Workspace
   const activePresets = customPresetsMap[activeWorkspaceId] || [];
@@ -1269,6 +1321,78 @@ export default function CreatePostPage() {
     setDraftRestoredNotice(false);
   };
 
+  // Master Media Mode Switcher with Auto-Sync & Incompatible Placements Auto-Cleaning
+  const handleSwitchMediaMode = (newMode: MediaTypeMode) => {
+    setMediaMode(newMode);
+
+    // 1. Determine compatible platform & format for Live Proof preview
+    let targetPlatform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK' = 'INSTAGRAM';
+    let targetTab: 'FEED' | 'STORY' | 'REEL' = 'FEED';
+
+    if (newMode === 'VIDEO_LANDSCAPE') {
+      targetPlatform = 'YOUTUBE';
+      targetTab = 'FEED';
+    } else if (newMode === 'VIDEO') {
+      targetPlatform = previewPlatform === 'YOUTUBE' ? 'YOUTUBE' : (previewPlatform || 'INSTAGRAM');
+      targetTab = 'REEL';
+    } else if (newMode === 'PHOTOS') {
+      targetPlatform = previewPlatform === 'YOUTUBE' ? 'INSTAGRAM' : (previewPlatform || 'INSTAGRAM');
+      targetTab = 'FEED';
+    } else if (newMode === 'TEXT_ONLY') {
+      targetPlatform = 'FACEBOOK';
+      targetTab = 'FEED';
+    }
+
+    setPreviewPlatform(targetPlatform);
+    setPreviewTab(targetTab);
+
+    // 2. Auto-Clean incompatible placements & Auto-select primary for new mode
+    setPlacements((prev) => {
+      const next: Record<string, boolean> = {};
+      let hasValid = false;
+
+      Object.entries(prev).forEach(([key, val]) => {
+        if (!val) return;
+        const [accId, format] = key.split('_') as [string, 'feed' | 'story' | 'reel'];
+        const acc = workspaceChannels.find((a) => a.id === accId);
+        if (acc) {
+          let isEligible = true;
+          if (format === 'reel' && newMode !== 'VIDEO') isEligible = false;
+          if (format === 'story' && (newMode === 'TEXT_ONLY' || newMode === 'VIDEO_LANDSCAPE')) isEligible = false;
+          if (format === 'feed') {
+            if (newMode === 'TEXT_ONLY' && acc.platform !== 'FACEBOOK') isEligible = false;
+            if (newMode === 'VIDEO_LANDSCAPE' && acc.platform !== 'YOUTUBE' && acc.platform !== 'FACEBOOK') isEligible = false;
+            if (acc.platform === 'YOUTUBE' && newMode !== 'VIDEO_LANDSCAPE') isEligible = false;
+            if (acc.platform === 'TIKTOK' && (newMode === 'VIDEO' || newMode === 'VIDEO_LANDSCAPE')) isEligible = false;
+          }
+          if (isEligible) {
+            next[key] = true;
+            hasValid = true;
+          }
+        }
+      });
+
+      // If no valid placements remained, auto-select primary channel for this mode
+      if (!hasValid) {
+        if (newMode === 'VIDEO_LANDSCAPE') {
+          const ytAcc = workspaceChannels.find((c) => c.platform === 'YOUTUBE');
+          if (ytAcc) next[`${ytAcc.id}_feed`] = true;
+        } else if (newMode === 'VIDEO') {
+          const firstReel = workspaceChannels.find((c) => c.capabilities.reel.supported);
+          if (firstReel) next[`${firstReel.id}_reel`] = true;
+        } else if (newMode === 'PHOTOS') {
+          const firstFeed = workspaceChannels.find((c) => c.platform !== 'YOUTUBE' && c.capabilities.feed.supported);
+          if (firstFeed) next[`${firstFeed.id}_feed`] = true;
+        } else if (newMode === 'TEXT_ONLY') {
+          const fbAcc = workspaceChannels.find((c) => c.platform === 'FACEBOOK');
+          if (fbAcc) next[`${fbAcc.id}_feed`] = true;
+        }
+      }
+
+      return next;
+    });
+  };
+
   // Smart Validation Helper
   const getFormatValidation = (format: 'feed' | 'story' | 'reel', account: DestinationAccount) => {
     const capability = account.capabilities[format];
@@ -1278,7 +1402,7 @@ export default function CreatePostPage() {
 
     if (format === 'reel') {
       if (mediaMode === 'VIDEO_LANDSCAPE') {
-        return { eligible: false, reason: 'Shorts/Reels ต้องการวิดีโอแนวตั้ง 9:16 (สลับแท็บเป็น Reel/Shorts)' };
+        return { eligible: false, reason: 'Shorts/Reels ต้องการวิดีโอแนวตั้ง 9:16 (สลับแท็บเป็น Shorts/Reels)' };
       }
       if (mediaMode !== 'VIDEO') {
         return { eligible: false, reason: 'ต้องการไฟล์วิดีโอ MP4/MOV แนวตั้ง 9:16' };
@@ -1298,11 +1422,27 @@ export default function CreatePostPage() {
 
     if (format === 'feed') {
       if (mediaMode === 'TEXT_ONLY' && account.platform === 'INSTAGRAM') {
-        return { eligible: false, reason: 'Instagram feed ต้องการรูปภาพหรือวิดีโอ' };
+        return { eligible: false, reason: 'Instagram Feed ต้องการรูปภาพหรือวิดีโอ' };
+      }
+      if (mediaMode === 'TEXT_ONLY' && (account.platform === 'YOUTUBE' || account.platform === 'TIKTOK')) {
+        return { eligible: false, reason: 'ต้องการรูปภาพหรือวิดีโอ' };
+      }
+      if (mediaMode === 'VIDEO_LANDSCAPE') {
+        if (account.platform === 'INSTAGRAM' || account.platform === 'TIKTOK') {
+          return { eligible: false, reason: 'Full Video 16:9 แนวนอน รองรับเฉพาะ YouTube และ Facebook Video (Instagram และ TikTok รองรับเฉพาะแนวตั้ง 9:16)' };
+        }
+      }
+      if (account.platform === 'TIKTOK') {
+        if (mediaMode === 'VIDEO' || mediaMode === 'VIDEO_LANDSCAPE') {
+          return { eligible: false, reason: 'TikTok Feed ออกแบบสำหรับ Photo Slide (วิดีโอให้ใช้ TikTok Video/Reel 9:16)' };
+        }
       }
       if (account.platform === 'YOUTUBE') {
-        if (mediaMode !== 'VIDEO_LANDSCAPE' && mediaMode !== 'VIDEO') {
-          return { eligible: false, reason: 'YouTube Full Video ต้องการไฟล์วิดีโอ (สลับแท็บ Full Video 16:9)' };
+        if (mediaMode === 'PHOTOS') {
+          return { eligible: false, reason: 'YouTube Studio API ไม่รองรับการโพสต์รูปภาพเดี่ยว/อัลบั้ม' };
+        }
+        if (mediaMode !== 'VIDEO_LANDSCAPE') {
+          return { eligible: false, reason: 'YouTube Video ต้องการ Full Video (16:9)' };
         }
       }
       return { eligible: true };
@@ -1311,16 +1451,37 @@ export default function CreatePostPage() {
     return { eligible: true };
   };
 
-  // Toggle Single Placement
+  // Two-Way Sync to Live Proof Preview
+  const syncPreviewToAccount = (account: DestinationAccount, format: 'feed' | 'story' | 'reel') => {
+    if (availablePreviewPlatforms.includes(account.platform as any)) {
+      setPreviewPlatform(account.platform as any);
+      if (account.platform === 'YOUTUBE') {
+        setPreviewTab(mediaMode === 'VIDEO_LANDSCAPE' ? 'FEED' : 'REEL');
+      } else if (format === 'reel') {
+        setPreviewTab('REEL');
+      } else if (format === 'story') {
+        setPreviewTab('STORY');
+      } else {
+        setPreviewTab('FEED');
+      }
+    }
+  };
+
+  // Toggle Single Placement with Realtime Preview Sync
   const togglePlacement = (accountId: string, format: 'feed' | 'story' | 'reel', account: DestinationAccount) => {
     const val = getFormatValidation(format, account);
     if (!val.eligible) return;
 
     const key = `${accountId}_${format}`;
-    setPlacements((prev) => ({ ...prev, [key]: !prev[key] }));
+    const nextVal = !placements[key];
+    setPlacements((prev) => ({ ...prev, [key]: nextVal }));
+
+    if (nextVal) {
+      syncPreviewToAccount(account, format);
+    }
   };
 
-  // 1-Click Card Row Toggle: Activates primary format
+  // 1-Click Card Row Toggle: Activates primary format with Realtime Preview Sync
   const toggleAccountPrimary = (account: DestinationAccount) => {
     // If account has active placements, turn all off
     const isAnyActive = ['feed', 'story', 'reel'].some(f => placements[`${account.id}_${f}`]);
@@ -1350,6 +1511,7 @@ export default function CreatePostPage() {
     const val = getFormatValidation(preferredFormat, account);
     if (val.eligible) {
       setPlacements(prev => ({ ...prev, [`${account.id}_${preferredFormat}`]: true }));
+      syncPreviewToAccount(account, preferredFormat);
     }
   };
 
@@ -1413,6 +1575,18 @@ export default function CreatePostPage() {
     setIsSavePresetModalOpen(false);
   };
 
+  // Toggle to hide incompatible channels for current mediaMode (Defaults to true for clean matching)
+  const [hideIncompatibleChannels, setHideIncompatibleChannels] = useState<boolean>(true);
+
+  // Helper to check if an account has any eligible format under current mediaMode
+  const isAccountCompatibleWithMedia = useCallback((acc: DestinationAccount) => {
+    return (
+      getFormatValidation('feed', acc).eligible ||
+      getFormatValidation('story', acc).eligible ||
+      getFormatValidation('reel', acc).eligible
+    );
+  }, [mediaMode]);
+
   // Filtered Accounts by search & group
   const filteredAccounts = useMemo(() => {
     return workspaceChannels.filter((acc) => {
@@ -1423,16 +1597,31 @@ export default function CreatePostPage() {
     });
   }, [workspaceChannels, searchQuery, selectedGroupFilter]);
 
-  // Group accounts by platformGroup for presentation
+  // Separate accounts into compatible and incompatible for current mediaMode
+  const { compatibleAccounts, incompatibleAccounts } = useMemo(() => {
+    const comp: DestinationAccount[] = [];
+    const incomp: DestinationAccount[] = [];
+    filteredAccounts.forEach((acc) => {
+      if (isAccountCompatibleWithMedia(acc)) {
+        comp.push(acc);
+      } else {
+        incomp.push(acc);
+      }
+    });
+    return { compatibleAccounts: comp, incompatibleAccounts: incomp };
+  }, [filteredAccounts, isAccountCompatibleWithMedia]);
+
+  // Group accounts by platformGroup for presentation (dynamically hides incompatible channels when toggled)
   const groupedAccounts = useMemo(() => {
     const map = new Map<string, DestinationAccount[]>();
-    filteredAccounts.forEach((acc) => {
+    const accountsToGroup = hideIncompatibleChannels ? compatibleAccounts : filteredAccounts;
+    accountsToGroup.forEach((acc) => {
       const list = map.get(acc.platformGroup) || [];
       list.push(acc);
       map.set(acc.platformGroup, list);
     });
     return map;
-  }, [filteredAccounts]);
+  }, [compatibleAccounts, filteredAccounts, hideIncompatibleChannels]);
 
   // Check if all platform groups are currently collapsed
   const isAllGroupsCollapsed = useMemo(() => {
@@ -1901,17 +2090,30 @@ export default function CreatePostPage() {
 
           {/* Quick Header: Channel Count & Collapse/Expand All Toggle */}
           <div className="flex items-center justify-between text-[10px] font-mono text-ink-secondary px-0.5 pt-0.5">
-            <span>ช่องทางตามแพลตฟอร์ม ({filteredAccounts.length})</span>
-            {groupedAccounts.size > 1 && (
-              <button
-                type="button"
-                onClick={toggleAllGroups}
-                className="text-brand-indigo hover:underline font-semibold cursor-pointer flex items-center gap-0.5 transition-colors"
-                title={isAllGroupsCollapsed ? 'กางทุกแพลตฟอร์ม' : 'พับทุกแพลตฟอร์ม'}
-              >
-                <span>{isAllGroupsCollapsed ? '▾ กางทั้งหมด' : '▴ พับทั้งหมด'}</span>
-              </button>
-            )}
+            <span>
+              ช่องทางพร้อมโพสต์ ({compatibleAccounts.length}/{filteredAccounts.length})
+            </span>
+            <div className="flex items-center gap-2">
+              {incompatibleAccounts.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setHideIncompatibleChannels(!hideIncompatibleChannels)}
+                  className="text-brand-indigo hover:underline font-semibold cursor-pointer transition-colors"
+                >
+                  {hideIncompatibleChannels ? 'แสดงทั้งหมด' : 'ซ่อนที่ไม่รองรับ'}
+                </button>
+              )}
+              {groupedAccounts.size > 1 && (
+                <button
+                  type="button"
+                  onClick={toggleAllGroups}
+                  className="text-brand-indigo hover:underline font-semibold cursor-pointer flex items-center gap-0.5 transition-colors"
+                  title={isAllGroupsCollapsed ? 'กางทุกแพลตฟอร์ม' : 'พับทุกแพลตฟอร์ม'}
+                >
+                  <span>{isAllGroupsCollapsed ? '▾ กางทั้งหมด' : '▴ พับทั้งหมด'}</span>
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Scrollable Channel List Scoped to Active Project with 1-Click Card Activation */}
@@ -2124,6 +2326,46 @@ export default function CreatePostPage() {
               );
             })
             )}
+
+            {/* Incompatible Channels Collapsible Summary Box */}
+            {incompatibleAccounts.length > 0 && (
+              <div className="p-2.5 rounded-editorial bg-paper-canvas border border-dashed border-border-rule/80 space-y-1.5 mt-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-ink-secondary flex items-center gap-1.5 font-semibold">
+                    <Lock className="w-3 h-3 text-ink-secondary" />
+                    <span>
+                      ช่องทางที่ไม่รองรับ{mediaMode === 'VIDEO_LANDSCAPE' ? ' 16:9 แนวนอน' : mediaMode === 'PHOTOS' ? 'ภาพเดี่ยว' : mediaMode === 'TEXT_ONLY' ? 'ข้อความล้วน' : ''} ({incompatibleAccounts.length})
+                    </span>
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setHideIncompatibleChannels(!hideIncompatibleChannels)}
+                    className="text-[9px] font-mono text-brand-indigo hover:underline font-semibold cursor-pointer"
+                  >
+                    {hideIncompatibleChannels ? '▸ แสดงรายการ' : '▾ ซ่อน'}
+                  </button>
+                </div>
+                <p className="text-[9px] text-ink-secondary leading-snug">
+                  {mediaMode === 'VIDEO_LANDSCAPE'
+                    ? 'Instagram และ TikTok ต้องการวิดีโอแนวตั้ง 9:16 (ไม่รองรับ Full Video 16:9 แนวนอน)'
+                    : mediaMode === 'PHOTOS'
+                    ? 'YouTube Studio API ไม่มีระบบโพสต์ภาพเดี่ยว/อัลบั้ม'
+                    : mediaMode === 'TEXT_ONLY'
+                    ? 'Instagram, TikTok และ YouTube ต้องมีไฟล์มีเดียประกอบ'
+                    : 'ช่องทางเหล่านี้ไม่มีรูปแบบที่ตรงกับมีเดียปัจจุบัน'}
+                </p>
+                {!hideIncompatibleChannels && (
+                  <div className="space-y-1 pt-1.5 border-t border-border-rule/60">
+                    {incompatibleAccounts.map((acc) => (
+                      <div key={acc.id} className="p-1.5 rounded bg-paper-subtle/60 text-[10px] text-ink-secondary flex items-center justify-between opacity-60">
+                        <span className="truncate">{acc.name} ({acc.badge})</span>
+                        <span className="font-mono text-[9px] text-accent-terracotta">ล็อก</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </aside>
 
@@ -2153,11 +2395,8 @@ export default function CreatePostPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-1 p-1 bg-paper-subtle border border-border-rule rounded-editorial text-xs">
               <button
                 type="button"
-                onClick={() => {
-                  setMediaMode('PHOTOS');
-                  if (previewTab === 'REEL') setPreviewTab('FEED');
-                }}
-                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
+                onClick={() => handleSwitchMediaMode('PHOTOS')}
+                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium cursor-pointer ${
                   mediaMode === 'PHOTOS'
                     ? 'bg-paper-canvas text-brand-indigo shadow-xs font-semibold'
                     : 'text-ink-secondary hover:text-ink-primary'
@@ -2169,11 +2408,8 @@ export default function CreatePostPage() {
 
               <button
                 type="button"
-                onClick={() => {
-                  setMediaMode('VIDEO');
-                  setPreviewTab('REEL');
-                }}
-                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
+                onClick={() => handleSwitchMediaMode('VIDEO')}
+                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium cursor-pointer ${
                   mediaMode === 'VIDEO'
                     ? 'bg-paper-canvas text-semantic-info shadow-xs font-semibold'
                     : 'text-ink-secondary hover:text-ink-primary'
@@ -2185,16 +2421,8 @@ export default function CreatePostPage() {
 
               <button
                 type="button"
-                onClick={() => {
-                  setMediaMode('VIDEO_LANDSCAPE');
-                  setPreviewPlatform('YOUTUBE');
-                  setPreviewTab('FEED');
-                  const ytAcc = workspaceChannels.find((c) => c.platform === 'YOUTUBE');
-                  if (ytAcc) {
-                    setPlacements((prev) => ({ ...prev, [`${ytAcc.id}_feed`]: true }));
-                  }
-                }}
-                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
+                onClick={() => handleSwitchMediaMode('VIDEO_LANDSCAPE')}
+                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium cursor-pointer ${
                   mediaMode === 'VIDEO_LANDSCAPE'
                     ? 'bg-paper-canvas text-[#FF0000] shadow-xs font-semibold'
                     : 'text-ink-secondary hover:text-ink-primary'
@@ -2206,11 +2434,8 @@ export default function CreatePostPage() {
 
               <button
                 type="button"
-                onClick={() => {
-                  setMediaMode('TEXT_ONLY');
-                  setPreviewTab('FEED');
-                }}
-                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium ${
+                onClick={() => handleSwitchMediaMode('TEXT_ONLY')}
+                className={`flex items-center justify-center gap-1.5 py-1.5 rounded transition-colors text-[11px] font-medium cursor-pointer ${
                   mediaMode === 'TEXT_ONLY'
                     ? 'bg-paper-canvas text-ink-primary shadow-xs font-semibold'
                     : 'text-ink-secondary hover:text-ink-primary'
@@ -2815,29 +3040,38 @@ export default function CreatePostPage() {
                 </button>
               )}
             </div>
-            <span className="text-[10px] font-mono text-semantic-success flex items-center gap-1 font-semibold">
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              <span>Ready</span>
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-brand-indigo/10 text-brand-indigo font-bold border border-brand-indigo/20">
+                {mediaMode === 'VIDEO_LANDSCAPE' ? '16:9 Landscape' : mediaMode === 'VIDEO' ? '9:16 Vertical' : mediaMode === 'PHOTOS' ? 'Photos' : 'Text'}
+              </span>
+              <span className="text-[10px] font-mono text-semantic-success flex items-center gap-1 font-semibold">
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                <span>Ready</span>
+              </span>
+            </div>
           </div>
 
           {/* Clean Multi-Platform & Multi-Format Selector Dock */}
           <div className="bg-paper-subtle border border-border-rule rounded-editorial p-1.5 space-y-1.5 shadow-2xs">
-            {/* Tier 1: Platform Pills (Clean & Compact) */}
-            <div className="grid grid-cols-4 gap-1 p-0.5 bg-paper-canvas/80 border border-border-rule/60 rounded-md">
-              {(['INSTAGRAM', 'FACEBOOK', 'YOUTUBE', 'TIKTOK'] as const).map((plat) => {
+            {/* Tier 1: Platform Pills (Clean & Compact strictly matching mediaMode) */}
+            <div className={`grid gap-1 p-0.5 bg-paper-canvas/80 border border-border-rule/60 rounded-md ${
+              availablePreviewPlatforms.length === 1 ? 'grid-cols-1' :
+              availablePreviewPlatforms.length === 2 ? 'grid-cols-2' :
+              availablePreviewPlatforms.length === 3 ? 'grid-cols-3' : 'grid-cols-4'
+            }`}>
+              {availablePreviewPlatforms.map((plat) => {
                 const isActive = previewPlatform === plat;
                 return (
                   <button
                     key={plat}
                     type="button"
                     onClick={() => handleSelectPreviewPlatform(plat)}
-                    className={`flex items-center justify-center gap-1.5 py-1.5 px-1 rounded text-[11px] font-semibold transition-all ${
+                    className={`flex items-center justify-center gap-1.5 py-1.5 px-1 rounded text-[11px] font-semibold transition-all cursor-pointer ${
                       isActive
                         ? 'bg-paper-raised text-ink-primary shadow-xs ring-1 ring-border-rule font-bold'
                         : 'text-ink-secondary hover:text-ink-primary hover:bg-paper-raised/50'
                     }`}
-                    title={`Switch to ${plat} Preview`}
+                    title={`สลับไปพรีวิว ${plat}`}
                   >
                     {plat === 'INSTAGRAM' && <InstagramLogo size={14} className="shrink-0" />}
                     {plat === 'FACEBOOK' && <FacebookLogo size={14} className="shrink-0" />}
@@ -2861,7 +3095,7 @@ export default function CreatePostPage() {
                     key={fmt.id}
                     type="button"
                     onClick={() => setPreviewTab(fmt.id)}
-                    className={`flex-1 flex items-center justify-center gap-1 py-1 px-1.5 text-[10px] font-medium rounded transition-all ${
+                    className={`flex-1 flex items-center justify-center gap-1 py-1 px-1.5 text-[10px] font-medium rounded transition-all cursor-pointer ${
                       isFormatActive
                         ? 'bg-brand-indigo text-white font-semibold shadow-2xs'
                         : 'bg-paper-canvas text-ink-secondary hover:text-ink-primary border border-border-rule/60'
@@ -3133,14 +3367,19 @@ export default function CreatePostPage() {
                         </div>
                       )}
                     </div>
-                  ) : mediaMode === 'VIDEO' ? (
+                  ) : (mediaMode === 'VIDEO' || mediaMode === 'VIDEO_LANDSCAPE') ? (
                     <div className="aspect-[16/9] bg-ink-primary text-white relative flex items-center justify-center border-y border-border-rule/60">
                       <div className="w-10 h-10 rounded-full bg-[#1877F2] flex items-center justify-center shadow-lg">
                         <Play className="w-5 h-5 fill-white text-white ml-0.5" />
                       </div>
                       <span className="absolute bottom-2 right-2 px-1.5 py-0.2 rounded bg-black/80 font-mono text-[9px]">
-                        {videoAsset?.duration || '00:00'}
+                        {videoAsset?.duration || (mediaMode === 'VIDEO_LANDSCAPE' ? '14:28' : '00:45')}
                       </span>
+                      {mediaMode === 'VIDEO_LANDSCAPE' && (
+                        <span className="absolute top-2 left-2 px-1.5 py-0.2 rounded bg-black/80 font-mono text-[8px] text-white/90">
+                          16:9 Landscape Video
+                        </span>
+                      )}
                     </div>
                   ) : storyLinkUrl ? (
                     <div className="border-y border-border-rule/60 bg-paper-subtle p-2 flex items-center gap-2">
