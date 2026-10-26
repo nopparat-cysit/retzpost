@@ -224,8 +224,11 @@ export default function LandingPage() {
   const [isScanningRescue, setIsScanningRescue] = useState<boolean>(false);
   const [isFailureResolved, setIsFailureResolved] = useState<boolean>(false);
 
-  // Section 02: Comparison View Mode
-  const [problemViewMode, setProblemViewMode] = useState<'ALL' | 'CHAOS' | 'DREAM'>('ALL');
+  // Section 02: Comparison View Mode & 5 Pain Points Active Tab
+  const [problemViewMode, setProblemViewMode] = useState<'CASES' | 'SUMMARY'>('CASES');
+  const [activePainIndex, setActivePainIndex] = useState<number>(0);
+  const [case1PreviewRatio, setCase1PreviewRatio] = useState<'16:9' | '9:16'>('9:16');
+  const [case3SimulatedRecovered, setCase3SimulatedRecovered] = useState<boolean>(false);
 
   // Section 03: Interactive Workflow Step
   const [activeWorkflowStep, setActiveWorkflowStep] = useState<number>(1);
@@ -247,6 +250,15 @@ export default function LandingPage() {
   const [isPlayingHero, setIsPlayingHero] = useState<boolean>(true);
   const [showHeroSafeZones, setShowHeroSafeZones] = useState<boolean>(true);
   const [heroScrubber, setHeroScrubber] = useState<number>(45);
+
+  // Section 08: Retzlo-Style Interactive Fit Check Criteria
+  const [checkedCriteria, setCheckedCriteria] = useState<string[]>(['16:9-to-9:16', 'multi-channel']);
+  const toggleCriterion = (id: string) => {
+    setCheckedCriteria((prev) =>
+      prev.includes(id) ? prev.filter((c) => c !== id) : [...prev, id]
+    );
+    playChimeSound(soundEnabled);
+  };
 
   // Section References for Smooth Navigation
   const pressStudioRef = useRef<HTMLDivElement>(null);
@@ -383,7 +395,7 @@ export default function LandingPage() {
   const isPassUnlocked = coins >= 100;
 
   return (
-    <div className="min-h-screen bg-[#F5F2EB] text-[#1A1A18] font-sans selection:bg-[#364165] selection:text-white flex flex-col antialiased relative overflow-x-hidden">
+    <div className="min-h-screen dream-paper-texture text-[#1A1A18] font-sans selection:bg-[#364165] selection:text-white flex flex-col antialiased relative overflow-x-hidden">
       
       {/* ========================================================================= */}
       {/* MASTER ATMOSPHERIC BACKGROUND (WARM OCHRE + LUXURY INDIGO HALOS + WATERMARK)*/}
@@ -812,7 +824,7 @@ export default function LandingPage() {
       </section>
 
       {/* ========================================================================= */}
-      {/* SECTION 02 — THE PUBLISHING PROBLEM (CLEAN & ELEGANT COMPARISON)          */}
+      {/* SECTION 02 — THE PUBLISHING PROBLEM (5 PAIN POINTS RETZLO-STYLE EXPLORER) */}
       {/* ========================================================================= */}
       <section id="the-problem" className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full space-y-10">
         <div className="text-center max-w-3xl mx-auto space-y-2">
@@ -820,53 +832,465 @@ export default function LandingPage() {
             <span>02 / THE PUBLISHING PROBLEM</span>
           </div>
           <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
-            The Cost of Fragmented Publishing
+            5 อาการปวดหัวของการโพสต์หลายโซเชียล ที่ MULTIPOST ตั้งใจมาแก้ให้จบ
           </h2>
           <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
-            Content creators and marketing teams lose 15+ hours each week wrestling with disconnected platform uploaders, inconsistent aspect ratios, and manual repetitive metadata entry.
+            ลองกดเลือกอาการที่คุณเจอบ่อยที่สุดจากแถบด้านซ้าย แล้วดูว่าเมื่อย้ายเข้ามาอยู่ใน Dream Press Desk ชีวิตจะเบาลงอย่างไร
           </p>
 
-          {/* Clean View Tabs */}
+          {/* Mode Switcher Tabs */}
           <div className="pt-3 inline-flex p-1 bg-white border border-black/10 rounded-xl font-mono text-xs shadow-xs">
             <button
-              onClick={() => setProblemViewMode('ALL')}
+              onClick={() => {
+                setProblemViewMode('CASES');
+                playChimeSound(soundEnabled);
+              }}
               className={`py-1.5 px-3.5 rounded-lg font-bold cursor-pointer transition-colors ${
-                problemViewMode === 'ALL' ? 'bg-[#364165] text-white shadow-xs' : 'text-stone-600 hover:text-black'
+                problemViewMode === 'CASES' ? 'bg-[#364165] text-white shadow-xs' : 'text-stone-600 hover:text-black'
               }`}
             >
-              Side-by-Side Comparison
+              5 เคสเจาะลึก (Interactive Case Explorer)
             </button>
             <button
-              onClick={() => setProblemViewMode('CHAOS')}
+              onClick={() => {
+                setProblemViewMode('SUMMARY');
+                playChimeSound(soundEnabled);
+              }}
               className={`py-1.5 px-3.5 rounded-lg font-bold cursor-pointer transition-colors ${
-                problemViewMode === 'CHAOS' ? 'bg-[#A24836] text-white shadow-xs' : 'text-stone-600 hover:text-black'
+                problemViewMode === 'SUMMARY' ? 'bg-[#A24836] text-white shadow-xs' : 'text-stone-600 hover:text-black'
               }`}
             >
-              The Chaos of 5 Apps
-            </button>
-            <button
-              onClick={() => setProblemViewMode('DREAM')}
-              className={`py-1.5 px-3.5 rounded-lg font-bold cursor-pointer transition-colors ${
-                problemViewMode === 'DREAM' ? 'bg-[#1D6F42] text-white shadow-xs' : 'text-stone-600 hover:text-black'
-              }`}
-            >
-              The Dream Press Desk
+              เปรียบเทียบภาพรวม (Side-by-Side Summary)
             </button>
           </div>
         </div>
 
-        {/* High-Contrast Tactile Comparison Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
-          {/* Left Column: The Old Way */}
-          {(problemViewMode === 'ALL' || problemViewMode === 'CHAOS') && (
-            <div className={`editorial-paper-card p-7 sm:p-9 rounded-3xl border border-red-200/80 space-y-6 relative overflow-hidden ${
-              problemViewMode === 'CHAOS' ? 'md:col-span-2 max-w-2xl mx-auto' : ''
-            }`}>
-              {/* Tactile Washi Tape Strip */}
-              <div className="absolute -top-3 left-10 pointer-events-none drop-shadow-xs rotate-[2deg]">
-                <Sticker name="washi-terracotta" size="md" />
-              </div>
+        {/* Dynamic View: Retzlo-Style 5 Interactive Pain Cases vs Summary */}
+        {problemViewMode === 'CASES' ? (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            {/* Left 5 Tab Buttons */}
+            <div className="lg:col-span-5 flex flex-col gap-2.5">
+              {[
+                {
+                  id: 'asymmetric-ratio',
+                  num: '01',
+                  tabLabel: 'ส่งคลิป 16:9 โดนปุ่ม Reels & Shorts บังข้อความมิด',
+                  badgeText: 'ASYMMETRIC RATIO HELL',
+                  accentColor: '#A24836',
+                  sticker: '✂️',
+                },
+                {
+                  id: 'app-hopping',
+                  num: '02',
+                  tabLabel: 'สลับ 5 แท็บบราวเซอร์ ก๊อปปี้แคปชันซ้ำจนตาลาย',
+                  badgeText: 'APP HOPPING FATIGUE',
+                  accentColor: '#364165',
+                  sticker: '📑',
+                },
+                {
+                  id: 'token-expiration',
+                  num: '03',
+                  tabLabel: 'โพสต์ไม่ผ่านเงียบๆ มารู้ตัวอีกทีผ่านไป 3 วัน',
+                  badgeText: 'TOKEN EXPIRATION SILENCE',
+                  accentColor: '#C98836',
+                  sticker: '⚡',
+                },
+                {
+                  id: 'platform-nuance',
+                  num: '04',
+                  tabLabel: 'แฮชแท็กใน IG ดันหลุดไปโผล่ใน YouTube ผิดบริบท',
+                  badgeText: 'PLATFORM NUANCE DRIFT',
+                  accentColor: '#1D6F42',
+                  sticker: '🏷️',
+                },
+                {
+                  id: 'timezone-blindness',
+                  num: '05',
+                  tabLabel: 'ปล่อยคลิปผิดจังหวะ ยอดวิวตกเพราะไม่ได้ตั้งเวลา Peak Hour',
+                  badgeText: 'PEAK HOUR BLINDNESS',
+                  accentColor: '#6B46C1',
+                  sticker: '⏰',
+                },
+              ].map((item, idx) => {
+                const isActive = idx === activePainIndex;
+                return (
+                  <button
+                    key={item.id}
+                    onClick={() => {
+                      setActivePainIndex(idx);
+                      playChimeSound(soundEnabled);
+                    }}
+                    className={`text-left p-4 rounded-2xl transition-all cursor-pointer flex items-center justify-between gap-3 ${
+                      isActive
+                        ? 'bg-white shadow-[4px_4px_0_rgba(54,65,101,0.14)] scale-[1.01]'
+                        : 'bg-white/70 hover:bg-white border border-black/10'
+                    }`}
+                    style={{
+                      border: isActive ? `2px solid ${item.accentColor}` : undefined,
+                    }}
+                  >
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div
+                        className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0 font-mono text-sm font-bold shadow-2xs"
+                        style={{
+                          backgroundColor: isActive ? item.accentColor : '#F3F0E8',
+                          color: isActive ? '#FFFFFF' : '#52514B',
+                        }}
+                      >
+                        {item.num}
+                      </div>
+                      <div className="min-w-0">
+                        <div
+                          className="font-mono text-[10px] font-bold tracking-wider uppercase truncate"
+                          style={{ color: item.accentColor }}
+                        >
+                          CASE {item.num} • {item.badgeText}
+                        </div>
+                        <div className={`text-xs sm:text-sm font-medium truncate mt-0.5 ${isActive ? 'font-bold text-[#1A1A18]' : 'text-stone-700'}`}>
+                          {item.tabLabel}
+                        </div>
+                      </div>
+                    </div>
+                    <ChevronRight
+                      className="w-4 h-4 shrink-0 transition-transform"
+                      style={{
+                        color: item.accentColor,
+                        transform: isActive ? 'translateX(2px)' : 'none',
+                        opacity: isActive ? 1 : 0.4,
+                      }}
+                    />
+                  </button>
+                );
+              })}
+            </div>
 
+            {/* Right Detail Stage (Tactile Editorial Paper Card) */}
+            <div className="lg:col-span-7 editorial-paper-card p-6 sm:p-8 rounded-3xl space-y-6 relative overflow-hidden border-2 border-[#364165]/30 shadow-[8px_8px_0_rgba(54,65,101,0.12)]">
+              {/* Active Case Details Dynamic Rendering */}
+              {activePainIndex === 0 && (
+                <div className="space-y-6">
+                  {/* BEFORE Block */}
+                  <div className="p-5 rounded-2xl bg-red-50/60 border border-dashed border-red-200 space-y-2.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-red-100 text-red-700 uppercase">
+                        BEFORE • ภาพที่คุ้นเคย
+                      </span>
+                      <span className="font-mono text-xs font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-md rotate-[-1deg]">
+                        “คลิปตั้งใจตัดมาทั้งวัน พอลง Reels โดนปุ่ม Like บังซับไตเติลอ่านไม่รู้เรื่อง...”
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed">
+                      ต้องกลับไปเปิดโปรเจกต์ Premiere Pro หรือ CapCut ใหม่ เลื่อนตำแหน่งซับไตเติล แล้วกดเรนเดอร์แยกอีกรอบ เสียเวลาเพิ่มเป็นชั่วโมง แถมไฟล์วิดีโอก็กองเต็มฮาร์ดดิสก์
+                    </p>
+                  </div>
+
+                  {/* AFTER Block */}
+                  <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 uppercase">
+                        AFTER • ใน MULTIPOST DREAM DESK
+                      </span>
+                      <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> 0 รอยตัดเสียเปล่า
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-serif font-bold text-lg text-[#1A1A18]">
+                        Dynamic Safe-Zone Grid ครอบตัด 9:16 เห็นกรอบจริงก่อนส่ง
+                      </h3>
+                      <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed mt-1">
+                        MULTIPOST ซ้อนกรอบ Safe-Zone ของ Instagram Reels, TikTok และ YouTube Shorts แบบเรียลไทม์ เตือนทันทีเมื่อข้อความตกในจุดเสี่ยง พร้อมปรับตำแหน่งครอปให้อัตโนมัติในคลิกเดียว
+                      </p>
+                    </div>
+
+                    {/* Interactive Live Mini Widget */}
+                    <div className="pt-3 border-t border-emerald-200/60 space-y-3">
+                      <div className="flex items-center justify-between text-xs font-mono">
+                        <span className="font-bold text-[#1A1A18]">ลองสลับดู Aspect Ratio & Safe-Zone:</span>
+                        <div className="inline-flex p-0.5 bg-white border border-black/10 rounded-lg">
+                          <button
+                            onClick={() => {
+                              setCase1PreviewRatio('16:9');
+                              playChimeSound(soundEnabled);
+                            }}
+                            className={`px-2.5 py-1 rounded text-[11px] font-bold cursor-pointer ${
+                              case1PreviewRatio === '16:9' ? 'bg-[#364165] text-white' : 'text-stone-600'
+                            }`}
+                          >
+                            16:9 Master
+                          </button>
+                          <button
+                            onClick={() => {
+                              setCase1PreviewRatio('9:16');
+                              playChimeSound(soundEnabled);
+                            }}
+                            className={`px-2.5 py-1 rounded text-[11px] font-bold cursor-pointer ${
+                              case1PreviewRatio === '9:16' ? 'bg-[#A24836] text-white' : 'text-stone-600'
+                            }`}
+                          >
+                            9:16 Vertical Safe
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="p-3 bg-stone-900 text-white rounded-xl font-mono text-xs flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
+                          <span>{case1PreviewRatio === '16:9' ? 'Master 4K Container (3840x2160)' : 'AI Center-Weighted Safe Probe Active'}</span>
+                        </div>
+                        <span className="text-emerald-400 font-bold">
+                          {case1PreviewRatio === '16:9' ? 'FULL BLEED' : 'SAFE-ZONE: 100% PASS'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activePainIndex === 1 && (
+                <div className="space-y-6">
+                  {/* BEFORE Block */}
+                  <div className="p-5 rounded-2xl bg-red-50/60 border border-dashed border-red-200 space-y-2.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-red-100 text-red-700 uppercase">
+                        BEFORE • ภาพที่คุ้นเคย
+                      </span>
+                      <span className="font-mono text-xs font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-md rotate-[-1deg]">
+                        “โพสต์ Facebook เสร็จ ต้องเปิด IG, TikTok, YouTube... ก๊อปวางแคปชันจนมึน”
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed">
+                      ต้องคอยล็อกอินทีละเว็บ ลากไฟล์คลิปขึ้นทีละหน้าต่าง วางแคปชัน วางแฮชแท็กทีละช่อง เกิดความผิดพลาดง่าย แคปชันเวอร์ชันล่าสุดอาจลืมอัปเดตในบางแพลตฟอร์ม
+                    </p>
+                  </div>
+
+                  {/* AFTER Block */}
+                  <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 uppercase">
+                        AFTER • ใน MULTIPOST DREAM DESK
+                      </span>
+                      <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> ประหยัด 15+ ชม./สัปดาห์
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-serif font-bold text-lg text-[#1A1A18]">
+                        Universal Master Ingestion โพสต์ครั้งเดียว กระจายครบทุกช่อง
+                      </h3>
+                      <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed mt-1">
+                        เขียนแคปชันหลักเพียงครั้งเดียว ระบบจัดวางข้อความไปยังทุกช่องทางที่เลือก พร้อมปรับความยาวและแฮชแท็กให้เข้ากับข้อกำหนดของแต่ละแพลตฟอร์มในหน้าจอเดียว
+                      </p>
+                    </div>
+
+                    {/* Interactive Live Mini Widget */}
+                    <div className="pt-3 border-t border-emerald-200/60 space-y-2">
+                      <span className="font-mono text-xs font-bold text-[#1A1A18] block">
+                        Master Reel Ingestion Sync Stream:
+                      </span>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 font-mono text-[11px]">
+                        {[
+                          { name: 'YouTube', status: '4K Ready' },
+                          { name: 'Instagram', status: 'Reels Crop' },
+                          { name: 'TikTok', status: 'Safe Margin' },
+                          { name: 'Facebook', status: 'HD Stream' },
+                        ].map((plat) => (
+                          <div key={plat.name} className="p-2.5 rounded-xl bg-white border border-emerald-300 text-center shadow-2xs">
+                            <span className="block font-bold text-[#1A1A18]">{plat.name}</span>
+                            <span className="text-emerald-700 font-semibold text-[10px]">✓ {plat.status}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activePainIndex === 2 && (
+                <div className="space-y-6">
+                  {/* BEFORE Block */}
+                  <div className="p-5 rounded-2xl bg-red-50/60 border border-dashed border-red-200 space-y-2.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-red-100 text-red-700 uppercase">
+                        BEFORE • ภาพที่คุ้นเคย
+                      </span>
+                      <span className="font-mono text-xs font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-md rotate-[-1deg]">
+                        “นึกว่าคลิปแคมเปญยิงขึ้นครบแล้ว... ปรากฏว่าติด Token หลุดตั้งแต่วันแรก!”
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed">
+                      หลายแพลตฟอร์มมักหลุดเงียบเมื่อ Session หมดอายุ หากไม่มีระบบคอยมอนิเตอร์ แคมเปญที่คุณวางแผนไว้อาจไม่เคยถูกเผยแพร่สู่สายตาผู้ชมเลย
+                    </p>
+                  </div>
+
+                  {/* AFTER Block */}
+                  <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 uppercase">
+                        AFTER • ใน MULTIPOST DREAM DESK
+                      </span>
+                      <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> 100% Transparency
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-serif font-bold text-lg text-[#1A1A18]">
+                        Isolated Worker Queues & Auto-Retry กู้คืนอัตโนมัติ
+                      </h3>
+                      <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed mt-1">
+                        ระบบ Worker แต่ละช่องทางทำงานแยกขาดจากกัน หากช่องทางใดติดปัญหา ระบบจะพยายาม Retry อัตโนมัติ พร้อมส่งเสียงเตือนและแสดงสถานะโปร่งใสทันที
+                      </p>
+                    </div>
+
+                    {/* Interactive Live Mini Widget */}
+                    <div className="pt-3 border-t border-emerald-200/60 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-mono text-xs font-bold text-[#1A1A18]">
+                          ทดลองจำลองระบบกู้คืน Token:
+                        </span>
+                        <button
+                          onClick={() => {
+                            setCase3SimulatedRecovered(!case3SimulatedRecovered);
+                            playChimeSound(soundEnabled);
+                          }}
+                          className="py-1 px-3 rounded-lg bg-[#364165] hover:bg-[#2B3452] text-white font-mono text-[11px] font-bold cursor-pointer transition-colors shadow-2xs"
+                        >
+                          {case3SimulatedRecovered ? 'รีเซ็ตสถานะ Token' : '⚡ สั่ง Auto-Retry กู้คืน'}
+                        </button>
+                      </div>
+
+                      <div className={`p-3 rounded-xl font-mono text-xs flex items-center justify-between border ${
+                        case3SimulatedRecovered
+                          ? 'bg-emerald-100 border-emerald-300 text-emerald-900'
+                          : 'bg-amber-100 border-amber-300 text-amber-900'
+                      }`}>
+                        <div className="flex items-center gap-2">
+                          <span className={`w-2.5 h-2.5 rounded-full ${case3SimulatedRecovered ? 'bg-emerald-600' : 'bg-amber-600 animate-pulse'}`} />
+                          <span>{case3SimulatedRecovered ? 'OAuth Worker: Token Refreshed (200 OK)' : 'OAuth Worker: Rate Limit Backoff in Queue'}</span>
+                        </div>
+                        <span className="font-bold">
+                          {case3SimulatedRecovered ? 'RESOLVED ✓' : 'WAITING RETRY ⏳'}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activePainIndex === 3 && (
+                <div className="space-y-6">
+                  {/* BEFORE Block */}
+                  <div className="p-5 rounded-2xl bg-red-50/60 border border-dashed border-red-200 space-y-2.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-red-100 text-red-700 uppercase">
+                        BEFORE • ภาพที่คุ้นเคย
+                      </span>
+                      <span className="font-mono text-xs font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-md rotate-[-1deg]">
+                        “ก๊อปปี้แคปชันยาวเหยียดพร้อม 30 แฮชแท็กจาก IG ไปแปะใน X... ข้อความขาดครึ่ง!”
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed">
+                      แต่ละแพลตฟอร์มมีวัฒนธรรมและข้อจำกัดต่างกัน (X จำกัด 280 ตัวอักษร, YouTube ต้องมี Chapters, TikTok ต้องกระชับ) การก๊อปปี้ตรงๆ ทำให้งานดูไม่เป็นมืออาชีพ
+                    </p>
+                  </div>
+
+                  {/* AFTER Block */}
+                  <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 uppercase">
+                        AFTER • ใน MULTIPOST DREAM DESK
+                      </span>
+                      <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> Tailored Per Channel
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-serif font-bold text-lg text-[#1A1A18]">
+                        Per-Platform Nuance Customizer คุมฟอร์แมตเฉพาะช่องในคลิกเดียว
+                      </h3>
+                      <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed mt-1">
+                        ปรับจูน Character Count, ป้ายแท็ก, และคีย์เวิร์ด SEO แยกรายแพลตฟอร์มได้ในบอร์ดเดียว โดยไม่ต้องออกจากหน้าหลัก
+                      </p>
+                    </div>
+
+                    {/* Interactive Live Mini Widget */}
+                    <div className="pt-3 border-t border-emerald-200/60 grid grid-cols-1 sm:grid-cols-3 gap-2 font-mono text-[11px]">
+                      <div className="p-3 bg-white rounded-xl border border-black/10">
+                        <b className="block text-[#364165]">Instagram Reels</b>
+                        <span className="text-stone-500">Max 2,200 chars • 30 hashtags</span>
+                      </div>
+                      <div className="p-3 bg-white rounded-xl border border-black/10">
+                        <b className="block text-[#A24836]">X / Twitter</b>
+                        <span className="text-stone-500">Strict 280 chars • Concise punch</span>
+                      </div>
+                      <div className="p-3 bg-white rounded-xl border border-black/10">
+                        <b className="block text-[#C98836]">YouTube Shorts</b>
+                        <span className="text-stone-500">Title 100 • 5,000 chars description</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activePainIndex === 4 && (
+                <div className="space-y-6">
+                  {/* BEFORE Block */}
+                  <div className="p-5 rounded-2xl bg-red-50/60 border border-dashed border-red-200 space-y-2.5">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-red-100 text-red-700 uppercase">
+                        BEFORE • ภาพที่คุ้นเคย
+                      </span>
+                      <span className="font-mono text-xs font-bold text-amber-900 bg-amber-100 border border-amber-300 px-2.5 py-0.5 rounded-md rotate-[-1deg]">
+                        “ตัดคลิปเสร็จเที่ยงคืน เผลอกด Publish ทันที... ผลคือยอดวิวจมเงียบ”
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed">
+                      ต้องคอยตั้งนาฬิกาปลุกเพื่อมากดโพสต์ตอนหัวค่ำ หรือคำนวณเวลา Timezone สลับไปมาจนเหนื่อยล้า เสียโอกาสในการเข้าถึงผู้ชมกลุ่มเป้าหมาย
+                    </p>
+                  </div>
+
+                  {/* AFTER Block */}
+                  <div className="p-5 rounded-2xl bg-emerald-50/70 border border-emerald-200/80 space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 uppercase">
+                        AFTER • ใน MULTIPOST DREAM DESK
+                      </span>
+                      <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" /> ICT (UTC+7) Optimized
+                      </span>
+                    </div>
+                    <div>
+                      <h3 className="font-serif font-bold text-lg text-[#1A1A18]">
+                        Bangkok Peak Hour Smart Scheduler ล็อกเวลาทองคำอัตโนมัติ
+                      </h3>
+                      <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed mt-1">
+                        คลิกเดียวเพื่อตั้งเวลาปล่อยคลิปในช่วงเวลาที่คนไทยออนไลน์มากที่สุด (เช่น 19:30 น.) หรือตั้งเวลาล่วงหน้าข้ามสัปดาห์ได้อย่างแม่นยำ
+                      </p>
+                    </div>
+
+                    {/* Interactive Live Mini Widget */}
+                    <div className="pt-3 border-t border-emerald-200/60 flex flex-wrap items-center gap-2 font-mono text-xs">
+                      <span className="font-bold text-[#1A1A18]">เวลานิยมในกรุงเทพฯ:</span>
+                      <span className="px-3 py-1.5 rounded-xl bg-amber-400 text-amber-950 font-bold shadow-xs">
+                        🔥 19:30 น. (Bangkok Golden Slot)
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-stone-600">
+                        ☀️ 12:15 น. (Lunch Rush)
+                      </span>
+                      <span className="px-3 py-1.5 rounded-xl bg-white border border-black/10 text-stone-600">
+                        🌙 21:30 น. (Late Night Relax)
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* Side-by-Side Summary View */
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
+            {/* The Old Way */}
+            <div className="editorial-paper-card p-7 sm:p-9 rounded-3xl border border-red-200/80 space-y-6 relative overflow-hidden">
               <div className="flex items-center justify-between pb-4 border-b border-red-100">
                 <span className="px-3 py-1 rounded-full bg-red-50 text-red-700 font-mono text-xs font-bold uppercase border border-red-200">
                   THE OLD WAY
@@ -875,11 +1299,9 @@ export default function LandingPage() {
                   ⚠️ 15+ Hours Wasted Weekly
                 </span>
               </div>
-
               <h3 className="font-serif font-bold text-2xl text-[#1A1A18]">
                 &quot;One post. Too many repetitive steps.&quot;
               </h3>
-
               <ul className="space-y-4 font-sans text-sm text-stone-600">
                 <li className="flex items-start gap-3">
                   <span className="w-5 h-5 rounded-full bg-red-100 text-red-700 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✕</span>
@@ -904,18 +1326,9 @@ export default function LandingPage() {
                 </li>
               </ul>
             </div>
-          )}
 
-          {/* Right Column: The Dream Press Way */}
-          {(problemViewMode === 'ALL' || problemViewMode === 'DREAM') && (
-            <div className={`editorial-paper-card p-7 sm:p-9 rounded-3xl border border-emerald-200/80 space-y-6 relative overflow-hidden ${
-              problemViewMode === 'DREAM' ? 'md:col-span-2 max-w-2xl mx-auto' : ''
-            }`}>
-              {/* Tactile Washi Tape Strip */}
-              <div className="absolute -top-3 right-10 pointer-events-none drop-shadow-xs rotate-[-2deg]">
-                <Sticker name="washi-indigo" size="md" />
-              </div>
-
+            {/* The Dream Press Way */}
+            <div className="editorial-paper-card p-7 sm:p-9 rounded-3xl border border-emerald-200/80 space-y-6 relative overflow-hidden">
               <div className="flex items-center justify-between pb-4 border-b border-emerald-100">
                 <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-mono text-xs font-bold uppercase border border-emerald-200">
                   THE DREAM PRESS WAY
@@ -924,11 +1337,9 @@ export default function LandingPage() {
                   <CheckCircle2 className="w-3.5 h-3.5" /> 100% Synchronized Desk
                 </span>
               </div>
-
               <h3 className="font-serif font-bold text-2xl text-[#1A1A18]">
                 &quot;One workflow. Multiple destinations.&quot;
               </h3>
-
               <ul className="space-y-4 font-sans text-sm text-stone-600">
                 <li className="flex items-start gap-3">
                   <span className="w-5 h-5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-xs flex items-center justify-center shrink-0 mt-0.5">✓</span>
@@ -953,8 +1364,8 @@ export default function LandingPage() {
                 </li>
               </ul>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </section>
 
       {/* ========================================================================= */}
@@ -1158,13 +1569,14 @@ export default function LandingPage() {
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs font-mono text-[#364165] font-bold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
-              <span>04 / INTERACTIVE PRESS STUDIO</span>
+              <span>04 / INTERACTIVE PRESS STUDIO • ลูปความสนุก 3 ขั้นตอน</span>
             </div>
             <h2 className="font-serif font-bold text-2xl sm:text-4xl text-[#1A1A18]">
-              The Hands-On Publishing Playground
+              ทำไมคนใช้ MULTIPOST ถึงสนุกกับการโพสต์? ลองเล่นดูสิ
             </h2>
-            <p className="text-xs sm:text-sm text-stone-600 max-w-2xl">
-              Complete the 4 guided tasks to collect up to <b>100 Press Coins</b>, or click <b>&quot;รับ 100 Coins ทันที&quot;</b> เพื่อปลดล็อกตั๋ว <b>7-Day Dream Pass</b> ได้ทันที!
+            <p className="text-xs sm:text-sm text-stone-600 max-w-2xl leading-relaxed">
+              <b>1. อัปโหลด Master 4K</b> → <b>2. แก้ปัญหา Safe-Zone & ปรับข้อความเพื่อสะสม Coins</b> → <b>3. นำ Coins ไปแลกตั๋ว 7-Day Dream Pass ด้านล่าง!</b>
+              <span className="block text-stone-500 mt-0.5">ไม่ต้องสมัครสมาชิกก็ลองจัดพิมพ์ได้เดี๋ยวนี้! หรือคลิก <b>&quot;⚡ รับ 100 Coins ทันที&quot;</b> เพื่อปลดล็อกตั๋วได้เลย</span>
             </p>
           </div>
 
@@ -2166,11 +2578,166 @@ export default function LandingPage() {
             08 / BUILT FOR YOUR CREATIVE WORKFLOW
           </span>
           <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
-            Tailored for Every Scale of Modern Publishing
+            เช็กดูว่า MULTIPOST เข้ากับสไตล์การทำงานของคุณไหม?
           </h2>
           <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
-            Engineered to remove friction whether you produce solo broadcasts or orchestrate multi-client publishing operations.
+            ออกแบบมาเพื่อครีเอเตอร์และทีมมีเดียที่อยากผลิตงานอย่างมีความสุข ไม่เสียเวลากับความซ้ำซาก
           </p>
+        </div>
+
+        {/* ========================================================================= */}
+        {/* RETZLO-STYLE INTERACTIVE FIT CHECK CARDS (MEETS CREATOR CRITERIA)          */}
+        {/* ========================================================================= */}
+        <div id="check-readiness" className="grid grid-cols-1 md:grid-cols-2 gap-6 scroll-mt-20 sm:scroll-mt-24">
+          {/* Left Card: เหมาะกับคุณมาก ถ้า... (ลองคลิกติ๊กดู) */}
+          <div className="editorial-paper-card p-6 sm:p-8 rounded-3xl border-2 border-[#364165] flex flex-col justify-between gap-6 shadow-[6px_6px_0_rgba(54,65,101,0.16)] bg-white/95">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-7 h-7 rounded-lg bg-[#364165]/10 text-[#364165] flex items-center justify-center font-bold text-sm">
+                    ✓
+                  </span>
+                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
+                    เหมาะกับคุณมาก ถ้า... (ลองคลิกติ๊กดู)
+                  </h3>
+                </div>
+                <span className="font-mono text-xs px-3 py-1 rounded-full bg-[#364165]/10 text-[#364165] font-bold">
+                  ตรง {checkedCriteria.length}/5 ข้อ
+                </span>
+              </div>
+
+              {/* Sub-badge */}
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-[#364165]/5 border border-[#364165]/15">
+                <div className="w-10 h-10 rounded-xl bg-[#364165] text-white flex items-center justify-center font-mono font-bold text-base shrink-0 shadow-2xs">
+                  🎬
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono font-bold tracking-wider text-[#364165] uppercase">
+                    CREATOR & STUDIO EDITION • จังหวะที่พอดี
+                  </span>
+                  <div className="text-xs font-bold text-[#1A1A18] mt-0.5">
+                    ชอบความแม่นยำ อัปโหลดครั้งเดียว ปล่อยได้ทุกช่องทางอย่างมั่นใจ
+                  </div>
+                </div>
+              </div>
+
+              {/* Interactive Checklist Buttons */}
+              <div className="space-y-2.5">
+                {[
+                  {
+                    id: '16:9-to-9:16',
+                    text: 'มีช่องทางโซเชียลหลายแพลตฟอร์ม (YouTube, TikTok, IG, FB) แต่ไม่อยากเสียเวลาเรนเดอร์แยกหลายไฟล์',
+                  },
+                  {
+                    id: 'multi-channel',
+                    text: 'อยากได้ระบบที่อัปโหลด 4K ครั้งเดียว แล้วแปลงสัดส่วน 16:9 สู่ 9:16 พร้อม Safe-Zone อัตโนมัติ',
+                  },
+                  {
+                    id: 'anti-copy-paste',
+                    text: 'เบื่อการสลับแท็บบราวเซอร์ 5 ช่องทางเพื่อพิมพ์แคปชันและติดแฮชแท็กซ้ำๆ',
+                  },
+                  {
+                    id: 'auto-recovery',
+                    text: 'อยากมีระบบ Retry คิวอัตโนมัติเมื่อ Token หลุดหรือเน็ตกระตุก โดยไม่ต้องมานั่งเฝ้าจอ',
+                  },
+                  {
+                    id: 'unified-board',
+                    text: 'อยากเห็นสถานะการเผยแพร่ทุกช่องทางพร้อมกันในบอร์ดเดียว ไม่ต้องเดาว่าช่องไหนผ่านไม่ผ่าน',
+                  },
+                ].map((item) => {
+                  const isChecked = checkedCriteria.includes(item.id);
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => toggleCriterion(item.id)}
+                      className={`w-full text-left flex items-start gap-3 p-3.5 rounded-xl transition-all cursor-pointer ${
+                        isChecked
+                          ? 'bg-[#364165]/8 border-2 border-[#364165] shadow-xs'
+                          : 'bg-white/60 hover:bg-white border border-black/10'
+                      }`}
+                    >
+                      <span
+                        className={`mt-0.5 w-5 h-5 rounded-md flex items-center justify-center shrink-0 text-xs font-bold transition-colors ${
+                          isChecked
+                            ? 'bg-[#364165] text-white'
+                            : 'border-2 border-stone-300 bg-white'
+                        }`}
+                      >
+                        {isChecked && '✓'}
+                      </span>
+                      <span className={`text-xs sm:text-sm leading-relaxed ${isChecked ? 'font-bold text-[#1A1A18]' : 'text-stone-700'}`}>
+                        {item.text}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Dynamic Result Note */}
+            <div className="p-3.5 rounded-xl bg-amber-400/20 border border-amber-500/30 text-amber-950 font-mono text-xs font-bold">
+              {checkedCriteria.length >= 3
+                ? `🎯 ตรงถึง ${checkedCriteria.length} ข้อ! คุณคือสาย Creator Studio ที่เหมาะกับ MULTIPOST สุดๆ`
+                : '💡 ลองคลิกติ๊กข้อที่ตรงกับขั้นตอนการทำงานของคุณเพื่อดูผลลัพธ์'}
+            </div>
+          </div>
+
+          {/* Right Card: อาจยังไม่จำเป็นต้องใช้ ถ้า... */}
+          <div className="editorial-paper-card p-6 sm:p-8 rounded-3xl border border-black/15 flex flex-col justify-between gap-6 bg-white/70">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="w-7 h-7 rounded-lg bg-stone-100 text-stone-600 flex items-center justify-center font-bold text-sm">
+                    —
+                  </span>
+                  <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
+                    อาจยังไม่จำเป็นต้องใช้ ถ้า...
+                  </h3>
+                </div>
+                <span className="font-mono text-xs text-stone-500 font-semibold">
+                  บอกกันตรงไปตรงมา
+                </span>
+              </div>
+
+              {/* Sub-badge */}
+              <div className="flex items-center gap-3 p-3 rounded-2xl bg-stone-100 border border-stone-200">
+                <div className="w-10 h-10 rounded-xl bg-stone-300 text-stone-700 flex items-center justify-center font-mono font-bold text-base shrink-0 shadow-2xs">
+                  📦
+                </div>
+                <div>
+                  <span className="text-[10px] font-mono font-bold tracking-wider text-stone-600 uppercase">
+                    SINGLE-CHANNEL / MANUAL ONLY
+                  </span>
+                  <div className="text-xs font-bold text-[#1A1A18] mt-0.5">
+                    เน้นโพสต์แพลตฟอร์มเดียว หรือชอบกดมือทีละรายการ
+                  </div>
+                </div>
+              </div>
+
+              {/* 3 Honest Unfit Criteria */}
+              <div className="space-y-3">
+                {[
+                  'โพสต์คอนเทนต์ลงแค่แพลตฟอร์มเดียวเป็นประจำ และไม่มีแผนจะขยายไปยังช่องทางอื่น',
+                  'มีทีมงานขนาดใหญ่ที่ถนัดล็อกอินเข้าไปกดปุ่มโพสต์ทีละแพลตฟอร์มด้วยมือ',
+                  'แทบไม่ได้เผยแพร่วิดีโอหรือภาพกราฟิกใดๆ เน้นส่งข้อความสั้นในกลุ่มปิดเท่านั้น',
+                ].map((text, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-start gap-3 p-3.5 rounded-xl border border-black/8 bg-white/60 text-stone-600 text-xs sm:text-sm leading-relaxed"
+                  >
+                    <span className="text-stone-400 font-mono font-bold shrink-0 mt-0.5">—</span>
+                    <span>{text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Note */}
+            <div className="p-3.5 rounded-xl bg-stone-100/90 border border-stone-200 text-stone-600 text-xs font-sans leading-relaxed">
+              เราตั้งใจออกแบบ MULTIPOST ให้เป็นสตูดิโอจัดพิมพ์ที่แม่นยำและคล่องตัวที่สุดสำหรับงาน Multi-Platform ไม่ใช่โปรแกรมเทอะทะที่ยุ่งยากเกินจำเป็น
+            </div>
+          </div>
         </div>
 
         {/* 5 Audience Profiles Grid (STRICTLY NO FAKE STATS / NO FAKE REVIEWS) */}
