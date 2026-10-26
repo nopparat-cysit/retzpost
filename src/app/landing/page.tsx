@@ -112,7 +112,8 @@ const playStampThud = (soundEnabled: boolean) => {
 };
 
 // =============================================================================
-// COLLECTIBLE PRESS COIN SVG WITH 3D FLIP CAPABILITY
+// =============================================================================
+// COLLECTIBLE PRESS COIN SVG WITH TRUE 3D DUAL-FACED FLIP CAPABILITY
 // =============================================================================
 interface PressCoinIconProps {
   size?: number;
@@ -120,73 +121,235 @@ interface PressCoinIconProps {
   isFlipped?: boolean;
 }
 
-const PressCoinIcon: React.FC<PressCoinIconProps> = ({ size = 28, className = '', isFlipped = false }) => (
-  <svg
-    width={size}
-    height={size}
-    viewBox="0 0 100 100"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    className={`inline-block shrink-0 transition-transform duration-500 ${className} ${isFlipped ? 'scale-x-[-1]' : ''}`}
-  >
-    <defs>
-      <linearGradient id="coinGold" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#FFF176" />
-        <stop offset="35%" stopColor="#FBC02D" />
-        <stop offset="70%" stopColor="#E09F00" />
-        <stop offset="100%" stopColor="#A16207" />
-      </linearGradient>
-      <linearGradient id="coinRim" x1="0%" y1="100%" x2="100%" y2="0%">
-        <stop offset="0%" stopColor="#78350F" />
-        <stop offset="50%" stopColor="#FACC15" />
-        <stop offset="100%" stopColor="#78350F" />
-      </linearGradient>
-      <radialGradient id="coinShine" cx="30%" cy="30%" r="70%">
-        <stop offset="0%" stopColor="#FFFBEB" stopOpacity="0.9" />
-        <stop offset="60%" stopColor="#CA8A04" stopOpacity="0" />
-      </radialGradient>
-    </defs>
-    {/* Outer Rim */}
-    <circle cx="50" cy="50" r="47" fill="url(#coinRim)" stroke="#78350F" strokeWidth="2.5" />
-    {/* Coin Inner Face */}
-    <circle cx="50" cy="50" r="42" fill="url(#coinGold)" />
-    <circle cx="50" cy="50" r="42" fill="url(#coinShine)" />
-    {/* Beaded Edge Ring */}
-    <circle cx="50" cy="50" r="37" fill="none" stroke="#713F12" strokeWidth="1.5" strokeDasharray="2 3" opacity="0.65" />
-    
-    {!isFlipped ? (
-      <>
-        {/* Front Emblem: Press Star & Fountain Quill */}
-        <path
-          d="M50 24L53.5 35.5L65.5 35.5L56 42.5L59.5 54L50 47L40.5 54L44 42.5L34.5 35.5L46.5 35.5L50 24Z"
-          fill="#78350F"
-          opacity="0.9"
-        />
-        <path
-          d="M50 46L46 68L50 78L54 68L50 46Z"
-          fill="#78350F"
-          opacity="0.95"
-        />
-        <line x1="50" y1="56" x2="50" y2="72" stroke="#FFF176" strokeWidth="1.5" />
-        <text x="50" y="88" textAnchor="middle" fill="#713F12" fontSize="7" fontFamily="monospace" fontWeight="bold" letterSpacing="1">
-          RETZPOST
-        </text>
-      </>
-    ) : (
-      <>
-        {/* Back Crest: Bangkok Editorial Seal & Crown */}
-        <circle cx="50" cy="50" r="26" fill="none" stroke="#78350F" strokeWidth="1.5" strokeDasharray="3 3" />
-        <path d="M40 42L50 32L60 42L50 52Z" fill="#78350F" opacity="0.9" />
-        <text x="50" y="66" textAnchor="middle" fill="#713F12" fontSize="6.5" fontFamily="monospace" fontWeight="bold">
-          BANGKOK
-        </text>
-        <text x="50" y="74" textAnchor="middle" fill="#78350F" fontSize="5.5" fontFamily="monospace" fontWeight="bold">
-          EST. 2026
-        </text>
-      </>
-    )}
-  </svg>
-);
+const PressCoinIcon: React.FC<PressCoinIconProps> = ({ size = 28, className = '', isFlipped = false }) => {
+  // If small size (e.g. in badges or navbar), render optimized compact coin
+  if (size < 60) {
+    return (
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 100 100"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        className={`inline-block shrink-0 ${className}`}
+      >
+        <defs>
+          <radialGradient id={`miniGoldGrad-${size}`} cx="35%" cy="30%" r="65%">
+            <stop offset="0%" stopColor="#FEF08A" />
+            <stop offset="45%" stopColor="#F59E0B" />
+            <stop offset="85%" stopColor="#B45309" />
+            <stop offset="100%" stopColor="#78350F" />
+          </radialGradient>
+          <linearGradient id={`miniRimGrad-${size}`} x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#FDE047" />
+            <stop offset="50%" stopColor="#B45309" />
+            <stop offset="100%" stopColor="#78350F" />
+          </linearGradient>
+        </defs>
+        <circle cx="50" cy="50" r="47" fill={`url(#miniRimGrad-${size})`} stroke="#78350F" strokeWidth="2" />
+        <circle cx="50" cy="50" r="41" fill={`url(#miniGoldGrad-${size})`} />
+        <circle cx="50" cy="50" r="37" fill="none" stroke="#FEF08A" strokeWidth="1" strokeDasharray="2 2" opacity="0.6" />
+        {/* Faceted Star */}
+        <polygon points="50,23 53.5,35 65,35 56,42 59,54 50,47 41,54 44,42 35,35 46.5,35" fill="#78350F" />
+        <polygon points="50,23 53.5,35 50,47 46.5,35" fill="#92400E" />
+        {/* Pen Nib */}
+        <polygon points="50,45 46,67 50,77 54,67" fill="#78350F" />
+        <line x1="50" y1="52" x2="50" y2="70" stroke="#FEF08A" strokeWidth="1.2" />
+        <circle cx="50" cy="55" r="1.5" fill="#FEF08A" />
+      </svg>
+    );
+  }
+
+  // Large Interactive 3D Coin with Faceted Relief & Engraving
+  return (
+    <div
+      style={{ width: size, height: size }}
+      className={`relative [perspective:1000px] select-none ${className}`}
+    >
+      <div
+        className={`w-full h-full relative transition-transform duration-700 [transform-style:preserve-3d] ${
+          isFlipped ? '[transform:rotateY(180deg)]' : ''
+        }`}
+      >
+        {/* FRONT FACE: FACETED STAR & VINTAGE FOUNTAIN NIB */}
+        <div className="absolute inset-0 [backface-visibility:hidden] flex items-center justify-center">
+          <svg
+            width={size}
+            height={size}
+            viewBox="0 0 200 200"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="filter drop-shadow-[0_12px_24px_rgba(120,53,15,0.4)]"
+          >
+            <defs>
+              <radialGradient id="coinBezel" cx="35%" cy="30%" r="70%">
+                <stop offset="0%" stopColor="#FFFBEB" />
+                <stop offset="25%" stopColor="#FDE047" />
+                <stop offset="55%" stopColor="#D97706" />
+                <stop offset="85%" stopColor="#92400E" />
+                <stop offset="100%" stopColor="#451A03" />
+              </radialGradient>
+              <radialGradient id="coinFacePlate" cx="40%" cy="35%" r="65%">
+                <stop offset="0%" stopColor="#FEF9C3" />
+                <stop offset="30%" stopColor="#FBBF24" />
+                <stop offset="70%" stopColor="#D97706" />
+                <stop offset="95%" stopColor="#92400E" />
+                <stop offset="100%" stopColor="#78350F" />
+              </radialGradient>
+              <radialGradient id="innerCoinShadow" cx="50%" cy="50%" r="50%">
+                <stop offset="75%" stopColor="#78350F" stopOpacity="0" />
+                <stop offset="100%" stopColor="#451A03" stopOpacity="0.8" />
+              </radialGradient>
+              <linearGradient id="specularGlint" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFFFFF" stopOpacity="0.75" />
+                <stop offset="35%" stopColor="#FFFFFF" stopOpacity="0.1" />
+                <stop offset="65%" stopColor="#000000" stopOpacity="0.3" />
+                <stop offset="100%" stopColor="#000000" stopOpacity="0.6" />
+              </linearGradient>
+            </defs>
+
+            {/* Outer Stepped Brass Rim */}
+            <circle cx="100" cy="100" r="97" fill="url(#coinBezel)" stroke="#78350F" strokeWidth="2.5" />
+            <circle cx="100" cy="100" r="93" fill="none" stroke="#78350F" strokeWidth="3" strokeDasharray="1.5 3.3" />
+            <circle cx="100" cy="100" r="88" fill="url(#coinBezel)" stroke="#451A03" strokeWidth="1.5" />
+            
+            {/* Coin Face Plate */}
+            <circle cx="100" cy="100" r="84" fill="url(#coinFacePlate)" />
+            <circle cx="100" cy="100" r="84" fill="url(#innerCoinShadow)" />
+            <circle cx="100" cy="100" r="84" fill="url(#specularGlint)" opacity="0.45" />
+
+            {/* Guilloche Archival Beaded Ring */}
+            <circle cx="100" cy="100" r="78" fill="none" stroke="#FEF08A" strokeWidth="2" strokeDasharray="2.5 4" opacity="0.8" />
+            <circle cx="100" cy="100" r="77" fill="none" stroke="#78350F" strokeWidth="0.8" opacity="0.6" />
+
+            {/* Top Arched Inscription */}
+            <path id="frontTopArch" d="M 40 100 A 60 60 0 0 1 160 100" fill="none" />
+            <text fill="#451A03" fontSize="8.5" fontFamily="serif" fontWeight="900" letterSpacing="2.8">
+              <textPath href="#frontTopArch" startOffset="50%" textAnchor="middle">
+                ★ MULTIPOST PRESS DESK ★
+              </textPath>
+            </text>
+
+            {/* Bottom Arched Inscription */}
+            <path id="frontBottomArch" d="M 160 100 A 60 60 0 0 1 40 100" fill="none" />
+            <text fill="#451A03" fontSize="8" fontFamily="serif" fontWeight="800" letterSpacing="3">
+              <textPath href="#frontBottomArch" startOffset="50%" textAnchor="middle">
+                BANGKOK PROOF • EST. 2026
+              </textPath>
+            </text>
+
+            {/* CENTER HERALDRY: 3D FACETED STAR */}
+            <g filter="drop-shadow(0 3px 5px rgba(69,26,3,0.45))">
+              <polygon points="100,50 107,72 100,95" fill="#FEF08A" />
+              <polygon points="100,50 93,72 100,95" fill="#B45309" />
+              <polygon points="132,73 113,85 100,95" fill="#FDE047" />
+              <polygon points="132,73 118,65 107,72" fill="#B45309" />
+              <polygon points="120,108 108,98 100,95" fill="#F59E0B" />
+              <polygon points="120,108 123,90 113,85" fill="#78350F" />
+              <polygon points="80,108 92,98 100,95" fill="#D97706" />
+              <polygon points="80,108 77,90 87,85" fill="#451A03" />
+              <polygon points="68,73 87,85 100,95" fill="#FEF08A" />
+              <polygon points="68,73 82,65 93,72" fill="#92400E" />
+            </g>
+
+            {/* VINTAGE FOUNTAIN QUILL / PEN NIB EMBLEM */}
+            <g filter="drop-shadow(0 4px 6px rgba(69,26,3,0.5))">
+              <path
+                d="M100 90 L90 134 L94 150 L100 156 L106 150 L110 134 Z"
+                fill="#FDE047"
+                stroke="#451A03"
+                strokeWidth="2"
+              />
+              <path
+                d="M100 90 L106 150 L100 156 Z"
+                fill="#B45309"
+                opacity="0.65"
+              />
+              <line x1="100" y1="105" x2="100" y2="148" stroke="#451A03" strokeWidth="2" />
+              <circle cx="100" cy="112" r="3.5" fill="#451A03" />
+              <circle cx="100" cy="112" r="1.5" fill="#FEF08A" />
+              <path d="M93 130 Q100 136 107 130" fill="none" stroke="#451A03" strokeWidth="1.5" />
+            </g>
+
+            {/* Mint Mark Shield at Center Bottom */}
+            <rect x="91" y="162" width="18" height="12" rx="3" fill="#78350F" stroke="#FDE047" strokeWidth="1" />
+            <text x="100" y="171" textAnchor="middle" fill="#FEF08A" fontSize="7" fontFamily="monospace" fontWeight="bold">
+              № 01
+            </text>
+          </svg>
+        </div>
+
+        {/* BACK FACE: BANGKOK EDITORIAL ARCHIVAL SEAL */}
+        <div className="absolute inset-0 [backface-visibility:hidden] [transform:rotateY(180deg)] flex items-center justify-center">
+          <svg
+            width={size}
+            height={size}
+            viewBox="0 0 200 200"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="filter drop-shadow-[0_12px_24px_rgba(120,53,15,0.4)]"
+          >
+            {/* Outer Stepped Brass Rim */}
+            <circle cx="100" cy="100" r="97" fill="url(#coinBezel)" stroke="#78350F" strokeWidth="2.5" />
+            <circle cx="100" cy="100" r="93" fill="none" stroke="#78350F" strokeWidth="3" strokeDasharray="1.5 3.3" />
+            <circle cx="100" cy="100" r="88" fill="url(#coinBezel)" stroke="#451A03" strokeWidth="1.5" />
+            
+            {/* Coin Face Plate */}
+            <circle cx="100" cy="100" r="84" fill="url(#coinFacePlate)" />
+            <circle cx="100" cy="100" r="84" fill="url(#innerCoinShadow)" />
+            <circle cx="100" cy="100" r="84" fill="url(#specularGlint)" opacity="0.45" />
+
+            {/* Guilloche Archival Beaded Ring */}
+            <circle cx="100" cy="100" r="78" fill="none" stroke="#FEF08A" strokeWidth="2" strokeDasharray="2.5 4" opacity="0.8" />
+            <circle cx="100" cy="100" r="77" fill="none" stroke="#78350F" strokeWidth="0.8" opacity="0.6" />
+
+            {/* Top Arched Inscription */}
+            <path id="backTopArch" d="M 40 100 A 60 60 0 0 1 160 100" fill="none" />
+            <text fill="#451A03" fontSize="8.5" fontFamily="serif" fontWeight="900" letterSpacing="2.8">
+              <textPath href="#backTopArch" startOffset="50%" textAnchor="middle">
+                ✦ BANGKOK GUILD OF EDITORS ✦
+              </textPath>
+            </text>
+
+            {/* Bottom Arched Inscription */}
+            <path id="backBottomArch" d="M 160 100 A 60 60 0 0 1 40 100" fill="none" />
+            <text fill="#451A03" fontSize="8" fontFamily="serif" fontWeight="800" letterSpacing="3">
+              <textPath href="#backBottomArch" startOffset="50%" textAnchor="middle">
+                OFFICIAL 24K PROOF SEAL
+              </textPath>
+            </text>
+
+            {/* Center Heraldic Crest */}
+            <g filter="drop-shadow(0 3px 6px rgba(69,26,3,0.5))">
+              <path
+                d="M75 68 L125 68 L125 105 Q125 136 100 148 Q75 136 75 105 Z"
+                fill="#78350F"
+                stroke="#FEF08A"
+                strokeWidth="2.5"
+              />
+              <path
+                d="M100 68 L125 68 L125 105 Q125 136 100 148 Z"
+                fill="#451A03"
+                opacity="0.4"
+              />
+              <line x1="84" y1="80" x2="116" y2="128" stroke="#FEF08A" strokeWidth="2.5" strokeLinecap="round" />
+              <line x1="116" y1="80" x2="84" y2="128" stroke="#FEF08A" strokeWidth="2.5" strokeLinecap="round" />
+              <circle cx="100" cy="104" r="14" fill="#F59E0B" stroke="#FEF08A" strokeWidth="1.5" />
+              <text x="100" y="109" textAnchor="middle" fill="#451A03" fontSize="12" fontFamily="serif" fontWeight="900">
+                MP
+              </text>
+            </g>
+
+            {/* Year Stamp */}
+            <text x="100" y="165" textAnchor="middle" fill="#451A03" fontSize="8.5" fontFamily="monospace" fontWeight="bold" letterSpacing="2">
+              • 2026 ARCHIVE •
+            </text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default function LandingPage() {
   // ===========================================================================
@@ -2232,20 +2395,19 @@ export default function LandingPage() {
               <p className="text-xs text-stone-600 mt-0.5">
                 {isPassUnlocked
                   ? 'ยินดีด้วย! คุณสะสมครบ 100 Press Coins แล้ว สามารถเลื่อนลงไปดูตั๋ว 7-Day Dream Pass ได้ทันที'
-                  : 'ทดลองสั่งการแท่นพิมพ์ด้านบน หรือกด "รับ 100 Coins ทันที" เพื่อปลดล็อกตั๋ว 7-Day Dream Pass ด้านล่างสุด'}
+                  : 'ทดลองสั่งการ 4 แท่นพิมพ์ด้านบนเพื่อสะสมเหรียญให้ครบ หรือเลื่อนลงไปดูตราเหรียญและตั๋วด้านล่าง'}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
             {coins < 100 ? (
-              <button
-                onClick={handleClaimAllCoins}
-                className="py-3 px-6 rounded-xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-mono text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer active:scale-95"
+              <a
+                href="#press-coins"
+                className="py-3 px-6 rounded-xl bg-stone-900 hover:bg-black text-white font-mono text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer active:scale-95"
               >
-                <Zap className="w-4 h-4 fill-amber-950" />
-                <span>รับ 100 Coins ทันที ✦</span>
-              </button>
+                <span>ตรวจดูสมุดเหรียญ (Press Coins) ↓</span>
+              </a>
             ) : (
               <button
                 onClick={() => {
@@ -2269,55 +2431,80 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto space-y-12">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-xs font-mono font-bold text-[#364165] uppercase tracking-wider">
-              05 / PRESS COINS
+              05 / PRESS COINS & ARCHIVAL TOKEN
             </span>
             <h2 className="font-serif font-bold text-3xl sm:text-4xl text-[#1A1A18]">
               The Currency of Publishing Precision
             </h2>
             <p className="font-sans text-sm text-stone-600 leading-relaxed">
-              Press Coins represent verified milestones in the Dream Press ecosystem. Click the token below to flip and inspect the reverse seal!
+              เหรียญตราเกียรติยศแห่งโต๊ะบรรณาธิการ MULTIPOST หล่อขึ้นเพื่อความแม่นยำในการจัดพิมพ์ ลองคลิกเพื่อพลิกดูเหรียญแบบ 360° ทั้งด้านหน้าและด้านหลัง
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            {/* Left: Collectible 3D Flippable Coin Showcase */}
-            <div className="lg:col-span-5 flex flex-col items-center justify-center p-8 bg-white rounded-3xl border border-black/10 text-center space-y-4 shadow-sm">
-              <button
-                type="button"
-                onClick={() => {
-                  setIsCoinFlipped(!isCoinFlipped);
-                  playChimeSound(soundEnabled);
-                }}
-                className="relative cursor-pointer group"
-                title="Click to flip coin 360°"
-              >
-                <div className="w-40 h-40 rounded-full bg-amber-400/15 flex items-center justify-center p-2 shadow-inner ring-4 ring-amber-400/30 group-hover:scale-105 transition-transform duration-300">
-                  <PressCoinIcon size={135} isFlipped={isCoinFlipped} />
-                </div>
-                <div className="absolute -bottom-2 -right-2 px-3 py-1 rounded-full bg-amber-500 text-white font-mono text-[10px] font-bold shadow-md">
-                  {isCoinFlipped ? 'BANGKOK CREST' : 'PRESS STAR'} ↻
-                </div>
-              </button>
+            {/* Left: Collectible 3D Flippable Coin Showcase (Museum-Grade Presentation Case) */}
+            <div className="lg:col-span-5 relative overflow-hidden rounded-3xl border-2 border-stone-800 bg-gradient-to-b from-[#1E1B18] via-[#141210] to-[#0D0B0A] p-7 sm:p-9 text-center space-y-5 shadow-[0_24px_50px_rgba(0,0,0,0.35),inset_0_1px_1px_rgba(255,255,255,0.1)] text-white">
+              {/* Subtle Ambient Radial Glow behind the Coin Bed */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
 
-              <div>
-                <h4 className="font-serif font-bold text-lg text-[#1A1A18]">
-                  The Press Coin № 01
-                </h4>
-                <p className="text-xs font-mono text-stone-500">
-                  Vintage Editorial Mark • Milled Ochre Rim
-                </p>
+              {/* Museum Specimen Plaque */}
+              <div className="relative inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-300 font-mono text-[10px] uppercase tracking-widest font-bold">
+                <Award className="w-3.5 h-3.5 text-amber-400" />
+                <span>ARCHIVAL PROOF SPECIMEN № 01</span>
               </div>
 
-              <p className="text-xs text-stone-600 max-w-xs font-sans leading-relaxed">
-                Awarded for precision workflows: destination selection, nuanced caption tailoring, optimal time scheduling, and proactive error recovery.
-              </p>
+              {/* Recessed Ebony Velvet Cushion Bed */}
+              <div className="relative mx-auto w-56 h-56 sm:w-60 sm:h-60 rounded-full p-2.5 bg-gradient-to-b from-[#5E4828] via-[#352713] to-[#1E1509] shadow-[0_12px_28px_rgba(0,0,0,0.7),inset_0_1px_2px_rgba(255,220,130,0.3)] border border-[#8C6B38]/40">
+                <div
+                  onClick={() => {
+                    setIsCoinFlipped(!isCoinFlipped);
+                    playChimeSound(soundEnabled);
+                  }}
+                  className="w-full h-full rounded-full bg-[radial-gradient(ellipse_at_center,_#241E18_0%,_#13100D_65%,_#090807_100%)] shadow-[inset_0_6px_20px_rgba(0,0,0,0.95)] flex items-center justify-center p-3 cursor-pointer group hover:scale-[1.02] transition-transform duration-300"
+                  title="คลิกเพื่อพลิกดูเหรียญ 360°"
+                >
+                  <PressCoinIcon size={168} isFlipped={isCoinFlipped} />
+                </div>
+              </div>
+
+              {/* Dedicated Flip Interaction Button (Cleanly Separated Below the Coin Bed) */}
+              <div className="relative pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsCoinFlipped(!isCoinFlipped);
+                    playChimeSound(soundEnabled);
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-amber-200 hover:text-amber-100 font-mono text-xs font-semibold shadow-inner transition-all active:scale-95 cursor-pointer backdrop-blur-sm"
+                >
+                  <RotateCcw className={`w-3.5 h-3.5 text-amber-400 transition-transform duration-500 ${isCoinFlipped ? 'rotate-180' : ''}`} />
+                  <span>
+                    {isCoinFlipped
+                      ? 'กำลังแสดง: ตราประทับกรุงเทพฯ (คลิกเพื่อพลิกกลับ)'
+                      : 'คลิกเพื่อพลิกดูตราสัญลักษณ์ด้านหลัง 360°'}
+                  </span>
+                </button>
+              </div>
+
+              {/* Engraved Plaque Typography */}
+              <div className="relative space-y-1">
+                <h4 className="font-serif font-bold text-xl sm:text-2xl text-amber-100 tracking-tight">
+                  The Official Press Coin № 01
+                </h4>
+                <p className="text-xs font-mono text-amber-400/80 tracking-wider uppercase font-semibold">
+                  24K Solid Gold Relief Proof • 60-Tooth Reeded Milled Rim
+                </p>
+                <p className="text-xs text-stone-300 font-sans leading-relaxed max-w-sm mx-auto pt-2">
+                  เหรียญตราเกียรติยศแห่งโต๊ะบรรณาธิการ MULTIPOST หล่อขึ้นเพื่อยกย่องความแม่นยำในการจัดพิมพ์ สะสมผ่านการทดสอบ 4 สถานีด้านบน เพื่อนำไปประทับตราครั่งปลดล็อกตั๋ว 7-Day Dream Pass
+                </p>
+              </div>
             </div>
 
             {/* Right: Live Coin Ledger & Progress */}
             <div className="lg:col-span-7 p-7 sm:p-9 bg-white rounded-3xl border border-black/10 space-y-6 shadow-sm">
               <div className="flex items-center justify-between pb-4 border-b border-black/10">
                 <div>
-                  <span className="text-[10px] font-mono uppercase text-stone-500 block">
+                  <span className="text-[10px] font-mono uppercase text-stone-500 block font-bold tracking-wider">
                     SESSION LEDGER BALANCE
                   </span>
                   <div className="text-4xl font-serif font-bold text-[#1A1A18] flex items-baseline gap-2">
@@ -2326,11 +2513,23 @@ export default function LandingPage() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <span className="text-[10px] font-mono uppercase text-stone-500 block">STATUS</span>
-                  <span className={`font-mono text-xs font-bold px-3 py-1 rounded-full ${
-                    isPassUnlocked ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-900'
+                  <span className="text-[10px] font-mono uppercase text-stone-500 block font-bold tracking-wider">STATUS</span>
+                  <span className={`font-mono text-xs font-bold px-3 py-1.5 rounded-full inline-flex items-center gap-1.5 border ${
+                    isPassUnlocked
+                      ? 'bg-emerald-100 text-emerald-800 border-emerald-300'
+                      : 'bg-amber-100 text-amber-900 border-amber-300'
                   }`}>
-                    {isPassUnlocked ? '✦ Ready to Unlock Pass' : `${100 - coins} Coins Remaining`}
+                    {isPassUnlocked ? (
+                      <>
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
+                        <span>ตั๋ว Dream Pass ปลดล็อกแล้ว</span>
+                      </>
+                    ) : (
+                      <>
+                        <Lock className="w-3.5 h-3.5 text-amber-700" />
+                        <span>เหลืออีก {100 - coins} Coins เพื่อปลดล็อก</span>
+                      </>
+                    )}
                   </span>
                 </div>
               </div>
@@ -2339,10 +2538,10 @@ export default function LandingPage() {
               <div className="space-y-2">
                 <div className="flex justify-between text-[11px] font-mono text-stone-500">
                   <span>Start (0)</span>
-                  <span>Destinations (20)</span>
-                  <span>Caption (45)</span>
-                  <span>Schedule (70)</span>
-                  <span>Unlocked (100)</span>
+                  <span>Station 01 (+20)</span>
+                  <span>Station 02 (+25)</span>
+                  <span>Station 03 (+25)</span>
+                  <span>Station 04 (+30)</span>
                 </div>
                 <div className="w-full h-3 bg-stone-100 rounded-full overflow-hidden border border-black/5 p-0.5">
                   <div
@@ -2354,30 +2553,71 @@ export default function LandingPage() {
 
               {/* Assignment Checklist */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs font-mono">
-                <div className={`p-3 rounded-xl border flex items-center gap-2 ${
+                <div className={`p-3 rounded-xl border flex items-center justify-between gap-2 ${
                   completedTasks.destinations ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-stone-50 border-black/5 text-stone-600'
                 }`}>
-                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.destinations ? 'text-emerald-700' : 'text-stone-400'}`} />
-                  <span>Choose Destinations (+20)</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className={`w-4 h-4 shrink-0 ${completedTasks.destinations ? 'text-emerald-700' : 'text-stone-400'}`} />
+                    <span>Station 01: Multi-Channel Routing</span>
+                  </div>
+                  <span className="font-bold shrink-0 text-amber-700">+20</span>
                 </div>
-                <div className={`p-3 rounded-xl border flex items-center gap-2 ${
+                <div className={`p-3 rounded-xl border flex items-center justify-between gap-2 ${
                   completedTasks.caption ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-stone-50 border-black/5 text-stone-600'
                 }`}>
-                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.caption ? 'text-emerald-700' : 'text-stone-400'}`} />
-                  <span>Customize Edition (+25)</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className={`w-4 h-4 shrink-0 ${completedTasks.caption ? 'text-emerald-700' : 'text-stone-400'}`} />
+                    <span>Station 02: Tone & Nuance</span>
+                  </div>
+                  <span className="font-bold shrink-0 text-amber-700">+25</span>
                 </div>
-                <div className={`p-3 rounded-xl border flex items-center gap-2 ${
+                <div className={`p-3 rounded-xl border flex items-center justify-between gap-2 ${
                   completedTasks.schedule ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-stone-50 border-black/5 text-stone-600'
                 }`}>
-                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.schedule ? 'text-emerald-700' : 'text-stone-400'}`} />
-                  <span>Bangkok Slot (+25)</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className={`w-4 h-4 shrink-0 ${completedTasks.schedule ? 'text-emerald-700' : 'text-stone-400'}`} />
+                    <span>Station 03: Bangkok Peak</span>
+                  </div>
+                  <span className="font-bold shrink-0 text-amber-700">+25</span>
                 </div>
-                <div className={`p-3 rounded-xl border flex items-center gap-2 ${
+                <div className={`p-3 rounded-xl border flex items-center justify-between gap-2 ${
                   completedTasks.rescue ? 'bg-emerald-50 border-emerald-200 text-emerald-800 font-bold' : 'bg-stone-50 border-black/5 text-stone-600'
                 }`}>
-                  <CheckCircle2 className={`w-4 h-4 ${completedTasks.rescue ? 'text-emerald-700' : 'text-stone-400'}`} />
-                  <span>Rescue Failed Post (+30)</span>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className={`w-4 h-4 shrink-0 ${completedTasks.rescue ? 'text-emerald-700' : 'text-stone-400'}`} />
+                    <span>Station 04: Worker Safe Rescue</span>
+                  </div>
+                  <span className="font-bold shrink-0 text-amber-700">+30</span>
                 </div>
+              </div>
+
+              {/* Station Navigation Action Bar */}
+              <div className="pt-2">
+                {coins < 100 ? (
+                  <a
+                    href="#studio-interactive"
+                    className="p-3.5 rounded-2xl bg-stone-50 hover:bg-stone-100 border border-black/10 flex items-center justify-between text-xs font-mono text-stone-700 transition-colors shadow-2xs group"
+                  >
+                    <span className="flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-amber-600 group-hover:scale-110 transition-transform" />
+                      <span>ทดลองเล่น 4 สตูดิโอด้านบน เพื่อสะสมเหรียญให้ครบ 100 Coins</span>
+                    </span>
+                    <span className="text-[#364165] font-bold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                      ขึ้นไปที่สตูดิโอ ↑
+                    </span>
+                  </a>
+                ) : (
+                  <button
+                    onClick={() => {
+                      dreamPassRef.current?.scrollIntoView({ behavior: 'smooth' });
+                      playChimeSound(soundEnabled);
+                    }}
+                    className="w-full p-4 rounded-2xl bg-[#A24836] hover:bg-[#8e3f2f] text-white flex items-center justify-center gap-2 text-xs font-mono font-bold shadow-md cursor-pointer transition-all hover:scale-[1.01] active:scale-98"
+                  >
+                    <Ticket className="w-4 h-4" />
+                    <span>สะสมเหรียญครบ 100 แล้ว! เลื่อนลงไปประทับตราตั๋ว 7-Day Dream Pass ทันที ↓</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
