@@ -125,24 +125,27 @@ export interface PresetRecipe {
 // WORKSPACES DATASET
 // -------------------------------------------------------------
 const WORKSPACES_DATA: ProjectWorkspace[] = [
-  { id: 'ws_capitalone', name: 'Capital One Real Estate', category: 'Enterprise Portfolio', badgeColor: 'bg-accent-terracotta' },
-  { id: 'ws_acme', name: 'Acme Creator Studio', category: 'Personal Brand', badgeColor: 'bg-brand-indigo' },
-  { id: 'ws_retzpost', name: 'RetzPost Software', category: 'SaaS Product', badgeColor: 'bg-semantic-info' },
-  { id: 'ws_coffee', name: 'Coffee Craft BKK', category: 'Client Cafe SME', badgeColor: 'bg-semantic-success' },
+  { id: 'ws_main', name: 'Main Studio', category: 'Enterprise Portfolio', badgeColor: 'bg-accent-terracotta' },
+  { id: 'ws_creator', name: 'Creator Hub', category: 'Creator Brand', badgeColor: 'bg-brand-indigo' },
+  { id: 'ws_software', name: 'Tech & Product Studio', category: 'SaaS Product', badgeColor: 'bg-semantic-info' },
+  { id: 'ws_brand', name: 'Lifestyle & Brand', category: 'Brand & Retail', badgeColor: 'bg-semantic-success' },
+  // Backward compatibility aliases
+  { id: 'ws_capitalone', name: 'Main Studio', category: 'Enterprise Portfolio', badgeColor: 'bg-accent-terracotta' },
+  { id: 'ws_acme', name: 'Creator Hub', category: 'Creator Brand', badgeColor: 'bg-brand-indigo' },
 ];
 
 // -------------------------------------------------------------
 // CHANNELS SCOPED PER WORKSPACE (Strict Isolation)
 // -------------------------------------------------------------
 const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
-  // 1. Acme Creator Studio Channels (Personal Brand)
+  // 1. Creator Hub Channels
   {
     id: 'acme_ig',
     workspaceId: 'ws_acme',
     platform: 'INSTAGRAM',
     platformGroup: 'Instagram',
-    name: 'Alex Rivera (Personal)',
-    handle: '@alexrivera_official',
+    name: 'Creator Profile (Instagram)',
+    handle: '@creator.official',
     badge: 'Creator IG',
     avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
     avatarText: 'IG',
@@ -157,8 +160,8 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     workspaceId: 'ws_acme',
     platform: 'FACEBOOK',
     platformGroup: 'Facebook',
-    name: 'Alex Rivera Media Studio',
-    handle: 'Alex Rivera Studio Page',
+    name: 'Creator Studio Media Page',
+    handle: 'FB Page: Creator Studio',
     badge: 'Creator FB',
     avatarBg: 'bg-[#1877F2]',
     avatarText: 'FB',
@@ -173,8 +176,8 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     workspaceId: 'ws_acme',
     platform: 'YOUTUBE',
     platformGroup: 'YouTube',
-    name: 'Alex Rivera Studio (Main)',
-    handle: '@AlexRiveraStudio',
+    name: 'Official YouTube Channel',
+    handle: '@CreatorStudioOfficial',
     badge: 'Shorts/Long',
     avatarBg: 'bg-[#FF0000]',
     avatarText: 'YT',
@@ -189,8 +192,8 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     workspaceId: 'ws_acme',
     platform: 'TIKTOK',
     platformGroup: 'TikTok',
-    name: 'Alex Rivera Official',
-    handle: '@alexrivera_official',
+    name: 'Official TikTok Creator',
+    handle: '@creator_official',
     badge: 'TikTok Creator',
     avatarBg: 'bg-ink-primary',
     avatarText: 'TT',
@@ -205,8 +208,8 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     workspaceId: 'ws_acme',
     platform: 'X',
     platformGroup: 'X',
-    name: 'Alex Rivera Studio (@AlexRiveraStudio)',
-    handle: '@AlexRiveraStudio',
+    name: 'Creator X Channel (@CreatorStudio)',
+    handle: '@CreatorStudio',
     badge: 'Creator X',
     avatarBg: 'bg-black',
     avatarText: '𝕏',
@@ -365,14 +368,14 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     },
   },
 
-  // 4. Capital One Real Estate Channels (Enterprise Portfolio)
+  // 4. Main Studio Brand Channels (Enterprise Portfolio)
   {
     id: 'c1_fb_th',
     workspaceId: 'ws_capitalone',
     platform: 'FACEBOOK',
     platformGroup: 'Facebook',
-    name: 'Capital One Thailand',
-    handle: 'Capital One Real Estate Thailand',
+    name: 'Official Brand Page',
+    handle: 'FB Page: Official Brand',
     badge: 'Main Page',
     avatarBg: 'bg-[#1877F2]',
     avatarText: 'FB',
@@ -387,8 +390,8 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     workspaceId: 'ws_capitalone',
     platform: 'FACEBOOK',
     platformGroup: 'Facebook',
-    name: 'Capital One Taiwan',
-    handle: 'Capital One Real Estate - Taiwan',
+    name: 'Regional Brand Channel',
+    handle: 'FB Page: Regional Brand',
     badge: 'Regional FB',
     avatarBg: 'bg-[#1877F2]',
     avatarText: 'FB',
@@ -399,13 +402,13 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     },
   },
   {
-    id: 'c1_fb_kw_lux',
+    id: 'c1_fb_global_lux',
     workspaceId: 'ws_capitalone',
     platform: 'FACEBOOK',
     platformGroup: 'Facebook',
-    name: 'KW Luxury Thailand',
-    handle: 'Keller Williams Luxury Thailand',
-    badge: 'Luxury FB',
+    name: 'Global Media Partner',
+    handle: 'FB Page: Global Partner',
+    badge: 'Partner FB',
     avatarBg: 'bg-[#1877F2]',
     avatarText: 'FB',
     capabilities: {
@@ -415,12 +418,12 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     },
   },
   {
-    id: 'c1_fb_oknus',
+    id: 'c1_fb_partner',
     workspaceId: 'ws_capitalone',
     platform: 'FACEBOOK',
     platformGroup: 'Facebook',
-    name: 'Oknus Real Estate',
-    handle: 'Oknus Real Estate Agency',
+    name: 'Media Partner Channel',
+    handle: 'FB Page: Media Partner',
     badge: 'Partner FB',
     avatarBg: 'bg-[#1877F2]',
     avatarText: 'FB',
@@ -435,8 +438,8 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     workspaceId: 'ws_capitalone',
     platform: 'INSTAGRAM',
     platformGroup: 'Instagram',
-    name: 'Capital One IG',
-    handle: '@capitalonerealestate',
+    name: 'Official Brand IG',
+    handle: '@brand.official',
     badge: 'Official IG',
     avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
     avatarText: 'IG',
@@ -451,9 +454,9 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     workspaceId: 'ws_capitalone',
     platform: 'INSTAGRAM',
     platformGroup: 'Instagram',
-    name: 'Thailand Prop C1',
-    handle: '@thailandprop.c1',
-    badge: 'Property IG',
+    name: 'Brand Showcase IG',
+    handle: '@brand.showcase',
+    badge: 'Showcase IG',
     avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
     avatarText: 'IG',
     capabilities: {
@@ -467,8 +470,8 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     workspaceId: 'ws_capitalone',
     platform: 'X',
     platformGroup: 'X',
-    name: 'Capital One Thailand (@CapitalOneBKK)',
-    handle: '@CapitalOneBKK',
+    name: 'Official Brand X (@BrandOfficial)',
+    handle: '@BrandOfficial',
     badge: 'Official X',
     avatarBg: 'bg-black',
     avatarText: '𝕏',
@@ -483,8 +486,8 @@ const CHANNELS_BY_WORKSPACE: DestinationAccount[] = [
     workspaceId: 'ws_capitalone',
     platform: 'LEMON8',
     platformGroup: 'Lemon8',
-    name: 'Capital One Living (Lemon8)',
-    handle: '@capitalone_living',
+    name: 'Lifestyle & Living (Lemon8)',
+    handle: '@lifestyle_living',
     badge: 'Lemon8 Creator',
     avatarBg: 'bg-[#FFEB00] text-black',
     avatarText: 'L8',
@@ -579,12 +582,12 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
     {
       id: 'pre_c1_luxury_launch',
       workspaceId: 'ws_capitalone',
-      title: 'Bangkok Luxury Condo Launch',
-      description: 'FB Thailand + KW Luxury + capitalonerealestate Feed & Story',
-      icon: 'ws-realestate',
+      title: 'Omni-Brand Campaign Launch',
+      description: 'FB Official + Global Partner + Main IG Feed & Story',
+      icon: 'sparkle-ai',
       targetPlacements: {
         'c1_fb_th_feed': true,
-        'c1_fb_kw_lux_feed': true,
+        'c1_fb_global_lux_feed': true,
         'c1_ig_main_feed': true,
         'c1_ig_main_story': true,
         'c1_ig_prop_story': true,
@@ -593,12 +596,12 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
     {
       id: 'pre_c1_all_stories',
       workspaceId: 'ws_capitalone',
-      title: 'Daily Property 24h Stories',
-      description: 'All Capital One IG & FB Stories with Link Sticker',
+      title: 'Daily Brand 24h Stories',
+      description: 'All Official IG & FB Stories with Link Sticker',
       icon: 'format-story',
       targetPlacements: {
         'c1_fb_th_story': true,
-        'c1_fb_kw_lux_story': true,
+        'c1_fb_global_lux_story': true,
         'c1_ig_main_story': true,
         'c1_ig_prop_story': true,
       },
@@ -606,14 +609,14 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
     {
       id: 'pre_c1_all_feeds',
       workspaceId: 'ws_capitalone',
-      title: 'Universal C1 Feed Push',
-      description: 'Dispatches feed album to all Thai & partner agencies',
+      title: 'Universal Brand Feed Push',
+      description: 'Dispatches feed album to all main and partner channels',
       icon: 'herald-trumpet',
       targetPlacements: {
         'c1_fb_th_feed': true,
         'c1_fb_tw_feed': true,
-        'c1_fb_kw_lux_feed': true,
-        'c1_fb_oknus_feed': true,
+        'c1_fb_global_lux_feed': true,
+        'c1_fb_partner_feed': true,
         'c1_ig_main_feed': true,
       },
     },
@@ -623,7 +626,7 @@ const INITIAL_PRESETS_BY_WORKSPACE: Record<string, PresetRecipe[]> = {
 const AI_MEDIA_LIBRARY_ASSETS = [
   {
     id: 'ai-asset-1',
-    name: 'the_rich_rama9_living_room_concept.jpg',
+    name: 'prime_skyview_living_room_concept.jpg',
     size: '4.2 MB',
     category: 'Real Estate Interior',
     description: 'Ultra-modern Bangkok luxury condo living room, double-height ceiling, floor-to-ceiling glass window with sunset skyline view.',
@@ -2566,7 +2569,7 @@ export default function CreatePostPage() {
                       if (catTemplates.length === 0) return null;
                       const label =
                         cat === 'REAL_ESTATE'
-                          ? 'อสังหาริมทรัพย์ (Capital One Deals)'
+                          ? 'อสังหาริมทรัพย์ & ที่พักอาศัย (Real Estate)'
                           : cat === 'PROMOTION'
                           ? 'โปรโมชั่น (Flash Deals)'
                           : cat === 'PRODUCT_LAUNCH'
@@ -3675,7 +3678,7 @@ export default function CreatePostPage() {
                   type="text"
                   required
                   autoFocus
-                  placeholder="เช่น: คอนโด Rich Rama 9 โพสต์ด่วน..."
+                  placeholder="เช่น: แคมเปญ Prime Sky Penthouse โพสต์ด่วน..."
                   value={newTemplateTitle}
                   onChange={(e) => setNewTemplateTitle(e.target.value)}
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary font-mono text-xs focus:outline-none focus:border-brand-indigo"
@@ -4157,7 +4160,7 @@ export default function CreatePostPage() {
                         type="text"
                         required
                         autoFocus
-                        placeholder="เช่น: คอนโดหรูติด BTS (Capital One Deal)"
+                        placeholder="เช่น: แคมเปญเปิดตัวสินค้าพรีเมียม, Flash Sale ประจำสัปดาห์..."
                         value={formTplName}
                         onChange={(e) => setFormTplName(e.target.value)}
                         className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-serif text-sm text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"

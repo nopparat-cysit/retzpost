@@ -62,8 +62,8 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
     name: 'Narumon K. (นฤมล)',
     role: 'EDITOR',
     roleTh: 'Senior Content Creator & Editor',
-    workspaceId: 'ws_capitalone',
-    workspaceName: 'Capital One Real Estate',
+    workspaceId: 'ws_main',
+    workspaceName: 'Main Studio',
     avatarBg: 'bg-emerald-600',
     avatarText: 'NK',
     targetPosts: 20,
@@ -78,7 +78,7 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
     grade: 'A+',
     status: 'EXCEEDS_TARGET',
     rank: 1,
-    strengthsTh: 'เชี่ยวชาญการเขียนแคปชันอสังหาฯ ไฮเอนด์ และเลือกเวลาปล่อยโพสต์ตรง Peak Hour 100%',
+    strengthsTh: 'เชี่ยวชาญการเขียนแคปชันแบรนด์ และเลือกเวลาปล่อยโพสต์ตรง Peak Hour 100%',
     coachingNotesTh: 'ทำผลงานเกินเป้าหมาย 120% แนะนำให้เป็น Mentor ช่วยเทรนการเขียน Story Link Sticker ให้ทีม',
     focusTags: ['🏆 Top Performer', '⏰ Peak Hour Master', '🎯 High First-Pass'],
     evaluatedBy: 'AI สังเคราะห์ร่วมกับหัวหน้างาน',
@@ -87,7 +87,7 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
     recentPosts: [
       {
         id: 'p-1',
-        title: 'The Rich Rama 9 Penthouse Walkthrough',
+        title: 'Prime Sky Penthouse Walkthrough',
         views: 142000,
         likes: 8900,
         shares: 2400,
@@ -107,7 +107,7 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
       },
       {
         id: 'p-3',
-        title: 'Bangkok Luxury Duplex Weekend Open House',
+        title: 'Premium Brand Campaign Weekend Launch',
         views: 98000,
         likes: 6400,
         shares: 1200,
@@ -119,13 +119,13 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
   },
   {
     memberId: 'mbr-acme-1',
-    name: 'Alex Rivera',
+    name: 'Creative Director',
     role: 'OWNER',
     roleTh: 'Lead Creator & Tech Director',
-    workspaceId: 'ws_acme',
-    workspaceName: 'Acme Creator Studio',
+    workspaceId: 'ws_creator',
+    workspaceName: 'Creator Hub',
     avatarBg: 'bg-brand-indigo',
-    avatarText: 'AR',
+    avatarText: 'CD',
     targetPosts: 15,
     actualPosts: 18,
     postsCompletionRate: 120,
@@ -157,7 +157,7 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
       },
       {
         id: 'p-5',
-        title: 'Aputure vs Godox Lighting Breakdown',
+        title: 'Studio Lighting & Gear Breakdown',
         views: 144000,
         likes: 12900,
         shares: 2800,
@@ -172,8 +172,8 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
     name: 'Anan T. (อนันต์)',
     role: 'CONTRIBUTOR',
     roleTh: 'Junior Copywriter & Content Specialist',
-    workspaceId: 'ws_capitalone',
-    workspaceName: 'Capital One Real Estate',
+    workspaceId: 'ws_main',
+    workspaceName: 'Main Studio',
     avatarBg: 'bg-amber-600',
     avatarText: 'AT',
     targetPosts: 15,
@@ -197,7 +197,7 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
     recentPosts: [
       {
         id: 'p-6',
-        title: 'Flash Sale คอนโดพร้อมอยู่ ลดสูงสุด 500,000.-',
+        title: 'Flash Sale สิทธิพิเศษประจำสัปดาห์ ลดสูงสุด 50%',
         views: 112000,
         likes: 7800,
         shares: 1900,
@@ -207,7 +207,7 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
       },
       {
         id: 'p-7',
-        title: 'Unit 12B Virtual Tour Walkthrough',
+        title: 'Premium Suite Virtual Tour Walkthrough',
         views: 82000,
         likes: 6400,
         shares: 1100,
@@ -219,13 +219,13 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
   },
   {
     memberId: 'mbr-acme-3',
-    name: 'Dave Miller',
+    name: 'Video Production Specialist',
     role: 'EDITOR',
     roleTh: 'Video Production Specialist',
-    workspaceId: 'ws_acme',
-    workspaceName: 'Acme Creator Studio',
+    workspaceId: 'ws_creator',
+    workspaceName: 'Creator Hub',
     avatarBg: 'bg-purple-600',
-    avatarText: 'DM',
+    avatarText: 'VP',
     targetPosts: 12,
     actualPosts: 11,
     postsCompletionRate: 92,
@@ -472,7 +472,14 @@ export function getEmployeeKPIs(workspaceId?: string): EmployeeKPI[] {
   if (!workspaceId || workspaceId === 'ALL') {
     return merged;
   }
-  return merged.filter((e) => e.workspaceId === workspaceId);
+  return merged.filter(
+    (e) =>
+      e.workspaceId === workspaceId ||
+      (workspaceId === 'ws_main' && e.workspaceId === 'ws_capitalone') ||
+      (workspaceId === 'ws_capitalone' && e.workspaceId === 'ws_main') ||
+      (workspaceId === 'ws_creator' && e.workspaceId === 'ws_acme') ||
+      (workspaceId === 'ws_acme' && e.workspaceId === 'ws_creator')
+  );
 }
 
 export function getDepartmentSummary(workspaceId?: string) {

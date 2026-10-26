@@ -133,13 +133,13 @@ export default function TeamSettingsPage() {
 
   const activeWorkspaceName =
     selectedWorkspace === 'ws_capitalone'
-      ? 'Capital One Real Estate'
+      ? 'Main Studio'
       : selectedWorkspace === 'ws_acme'
-      ? 'Acme Creator Studio'
+      ? 'Creator Hub'
       : selectedWorkspace === 'ws_retzpost'
-      ? 'RetzPost Software'
+      ? 'Tech & Product Studio'
       : selectedWorkspace === 'ws_coffee'
-      ? 'Coffee Craft BKK'
+      ? 'Lifestyle & Brand'
       : 'All Projects';
 
   return (
@@ -236,8 +236,8 @@ export default function TeamSettingsPage() {
             ...(isMockCleared ? [
               { id: 'ALL' as const, label: `ภาพรวมทั้งหมด (${filteredMembers.length} คน)`, sticker: null },
             ] : [
-              { id: 'ws_capitalone' as const, label: 'Capital One Real Estate (5 คน)', sticker: 'ws-realestate' },
-              { id: 'ws_acme' as const, label: 'Acme Creator Studio (3 คน)', sticker: 'ws-creator' },
+              { id: 'ws_capitalone' as const, label: 'Main Studio (5 คน)', sticker: 'ws-software' },
+              { id: 'ws_acme' as const, label: 'Creator Hub (3 คน)', sticker: 'ws-creator' },
               { id: 'ALL' as const, label: 'ภาพรวมทั้งหมด (All Members)', sticker: null },
             ]),
           ].map((tab) => (
@@ -667,7 +667,7 @@ export default function TeamSettingsPage() {
 
             <div className="p-4 bg-paper-raised border border-border-rule rounded-card max-w-md mx-auto space-y-3 text-center">
               <p className="text-xs font-serif text-ink-primary font-medium">
-                คอนโด Rich Rama 9-Srinakarin (3 ปลายทาง: FB Thailand, IG Feed, IG Story)
+                แคมเปญ Prime Sky Penthouse (3 ปลายทาง: FB Thailand, IG Feed, IG Story)
               </p>
 
               {simulatedRole === 'CONTRIBUTOR' ? (
@@ -771,10 +771,10 @@ export default function TeamSettingsPage() {
                   onChange={(e) => setInviteWorkspaceId(e.target.value)}
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary font-mono focus:outline-none focus:border-brand-indigo cursor-pointer"
                 >
-                  <option value="ws_capitalone">Capital One Real Estate (Enterprise)</option>
-                  <option value="ws_acme">Acme Creator Studio (Personal Brand)</option>
-                  <option value="ws_retzpost">RetzPost Software (SaaS)</option>
-                  <option value="ws_coffee">Coffee Craft BKK (SME Cafe)</option>
+                  <option value="ws_capitalone">Main Studio (Enterprise)</option>
+                  <option value="ws_acme">Creator Hub (Creator Brand)</option>
+                  <option value="ws_retzpost">Tech & Product Studio (SaaS)</option>
+                  <option value="ws_coffee">Lifestyle & Brand (Retail)</option>
                 </select>
               </div>
 

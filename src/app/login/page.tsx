@@ -162,7 +162,7 @@ export default function LoginPage() {
                 <input
                   type="text"
                   required
-                  placeholder="เช่น nopparat@gmail.com หรือ nopparat"
+                  placeholder="เช่น demo.manager@gmail.com หรือ demo_manager"
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 text-xs bg-paper-canvas border border-border-rule rounded-editorial font-mono text-ink-primary placeholder:text-ink-secondary/50 focus:outline-none focus:border-brand-indigo focus:ring-1 focus:ring-brand-indigo transition-all"
@@ -245,37 +245,37 @@ export default function LoginPage() {
             <div className="grid grid-cols-2 gap-2">
               <button
                 type="button"
-                onClick={() => handleQuickDemoLogin('nopparat@gmail.com', 'Password123!')}
+                onClick={() => handleQuickDemoLogin('demo.manager@gmail.com', 'Password123!')}
                 className="p-2 rounded-editorial bg-paper-subtle/80 hover:bg-paper-canvas border border-border-rule text-left transition-all group cursor-pointer"
               >
                 <div className="flex items-center gap-1.5 mb-1">
                   <div className="w-4 h-4 rounded-full bg-brand-indigo text-white flex items-center justify-center text-[9px] font-bold">
-                    NC
+                    DM
                   </div>
                   <span className="font-semibold text-xs text-ink-primary group-hover:text-brand-indigo transition-colors truncate">
-                    Nopparat C.
+                    Demo Manager
                   </span>
                 </div>
                 <p className="text-[9px] font-mono text-ink-secondary truncate">
-                  Role: Manager (Capital One)
+                  Role: Manager (Main Studio)
                 </p>
               </button>
 
               <button
                 type="button"
-                onClick={() => handleQuickDemoLogin('alex@gmail.com', 'Password123!')}
+                onClick={() => handleQuickDemoLogin('demo.owner@gmail.com', 'Password123!')}
                 className="p-2 rounded-editorial bg-paper-subtle/80 hover:bg-paper-canvas border border-border-rule text-left transition-all group cursor-pointer"
               >
                 <div className="flex items-center gap-1.5 mb-1">
                   <div className="w-4 h-4 rounded-full bg-accent-terracotta text-white flex items-center justify-center text-[9px] font-bold">
-                    AR
+                    DO
                   </div>
                   <span className="font-semibold text-xs text-ink-primary group-hover:text-brand-indigo transition-colors truncate">
-                    Alex Rivera
+                    Demo Owner
                   </span>
                 </div>
                 <p className="text-[9px] font-mono text-ink-secondary truncate">
-                  Role: Owner (Acme Studio)
+                  Role: Owner (Creator Hub)
                 </p>
               </button>
             </div>

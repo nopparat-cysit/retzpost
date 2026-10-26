@@ -48,8 +48,8 @@ export async function GET(req: NextRequest) {
         update: {},
         create: {
           id: workspaceId,
-          name: 'Acme Creator Studio',
-          slug: 'acme-creator-studio',
+          name: 'Main Studio',
+          slug: 'main-studio',
         },
       });
 

@@ -161,22 +161,22 @@ export interface PostPerformanceData {
 const SAMPLE_BATCHES: DispatchBatch[] = [
   {
     id: 'MP-BATCH-895',
-    workspaceId: 'ws_capitalone',
-    workspaceName: 'Capital One Real Estate',
-    title: 'The Rich Rama 9-Srinakarin Luxury 2-Bed Unit',
+    workspaceId: 'ws_main',
+    workspaceName: 'Main Studio',
+    title: 'Prime Skyview Residence Collection',
     timestamp: 'Today 08:30 AM',
     status: 'PARTIALLY_PUBLISHED',
-    websiteUrl: 'https://capitalone.co.th/the-rich-rama9',
-    lineContactUrl: 'https://line.me/ti/p/@capitalone',
-    liveUrl: 'https://www.facebook.com/capitalonethailand/posts/991283',
+    websiteUrl: 'https://yourbrand.com/prime-skyview',
+    lineContactUrl: 'https://line.me/ti/p/@yourbrand',
+    liveUrl: 'https://www.facebook.com/officialbrand/posts/991283',
     placements: [
       { 
         platform: 'FACEBOOK', 
         format: 'FEED', 
-        label: 'FB Thailand Album (6)', 
+        label: 'FB Official Brand Album (6)', 
         badgeBg: 'bg-[#1877F2]', 
         status: 'PUBLISHED',
-        liveUrl: 'https://www.facebook.com/capitalonethailand/posts/991283'
+        liveUrl: 'https://www.facebook.com/officialbrand/posts/991283'
       },
       { 
         platform: 'INSTAGRAM', 
@@ -184,7 +184,7 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
         label: 'IG Carousel (6)', 
         badgeBg: 'bg-brand-indigo', 
         status: 'PUBLISHED',
-        liveUrl: 'https://www.instagram.com/p/C1RichRama9/'
+        liveUrl: 'https://www.instagram.com/p/prime-skyview/'
       },
       { 
         platform: 'INSTAGRAM', 
@@ -192,12 +192,12 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
         label: 'IG Story 24h + Link', 
         badgeBg: 'bg-accent-terracotta', 
         status: 'PUBLISHED',
-        liveUrl: 'https://www.instagram.com/stories/capitalone.th/348910283/'
+        liveUrl: 'https://www.instagram.com/stories/brand.official/348910283/'
       },
       { 
         platform: 'FACEBOOK', 
         format: 'FEED', 
-        label: 'Oknus FB Page', 
+        label: 'Media Partner Page', 
         badgeBg: 'bg-accent-terracotta', 
         status: 'FAILED', 
         error: 'Token Expired (Code: 190)' 
@@ -206,12 +206,12 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
   },
   {
     id: 'MP-BATCH-892',
-    workspaceId: 'ws_acme',
-    workspaceName: 'Acme Creator Studio',
+    workspaceId: 'ws_creator',
+    workspaceName: 'Creator Hub',
     title: 'Behind the Scenes: Studio Redesign Tour',
     timestamp: 'Today 09:15 AM',
     status: 'PARTIALLY_PUBLISHED',
-    websiteUrl: 'https://alexrivera.studio/redesign-tour',
+    websiteUrl: 'https://creatorhub.io/redesign-tour',
     liveUrl: 'https://youtube.com/shorts/dQw4w9WgXcQ',
     placements: [
       { 
@@ -220,7 +220,7 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
         label: 'FB Page Album', 
         badgeBg: 'bg-[#1877F2]', 
         status: 'PUBLISHED',
-        liveUrl: 'https://www.facebook.com/alexriverastudio/posts/89201'
+        liveUrl: 'https://www.facebook.com/creatorstudio/posts/89201'
       },
       { 
         platform: 'INSTAGRAM', 
@@ -236,7 +236,7 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
         label: 'IG Story (24h)', 
         badgeBg: 'bg-accent-terracotta', 
         status: 'PUBLISHED',
-        liveUrl: 'https://www.instagram.com/stories/alexrivera_official/'
+        liveUrl: 'https://www.instagram.com/stories/creator_official/'
       },
       { 
         platform: 'YOUTUBE', 
@@ -258,21 +258,21 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
   },
   {
     id: 'MP-BATCH-890',
-    workspaceId: 'ws_capitalone',
-    workspaceName: 'Capital One Real Estate',
-    title: 'The Penthouse Collection: Private Pool & Panoramic View',
+    workspaceId: 'ws_main',
+    workspaceName: 'Main Studio',
+    title: 'The Master Collection: Panoramic City View',
     timestamp: 'Yesterday 04:30 PM',
     status: 'PUBLISHED',
-    websiteUrl: 'https://capitalone.co.th/penthouse-collection',
-    liveUrl: 'https://www.facebook.com/kwluxurythailand/posts/449102',
+    websiteUrl: 'https://yourbrand.com/master-collection',
+    liveUrl: 'https://www.facebook.com/officialbrand/posts/449102',
     placements: [
       { 
         platform: 'FACEBOOK', 
         format: 'FEED', 
-        label: 'KW Luxury Thailand', 
+        label: 'Global Partner Page', 
         badgeBg: 'bg-[#1877F2]', 
         status: 'PUBLISHED',
-        liveUrl: 'https://www.facebook.com/kwluxurythailand/posts/449102'
+        liveUrl: 'https://www.facebook.com/officialbrand/posts/449102'
       },
       { 
         platform: 'INSTAGRAM', 
@@ -288,15 +288,15 @@ const SAMPLE_BATCHES: DispatchBatch[] = [
         label: 'IG Story 24h + Link', 
         badgeBg: 'bg-accent-terracotta', 
         status: 'PUBLISHED',
-        liveUrl: 'https://www.instagram.com/stories/kwcapitalone/'
+        liveUrl: 'https://www.instagram.com/stories/brand.official/'
       },
       { 
         platform: 'FACEBOOK', 
         format: 'FEED', 
-        label: 'Capital One Taiwan', 
+        label: 'Regional Channel', 
         badgeBg: 'bg-[#1877F2]', 
         status: 'PUBLISHED',
-        liveUrl: 'https://www.facebook.com/capitalonetaiwan/posts/110293'
+        liveUrl: 'https://www.facebook.com/regionalbrand/posts/110293'
       },
     ],
   },
@@ -378,23 +378,23 @@ const SCHEDULED_TIMELINE = [
   {
     time: 'Today 09:15 AM',
     title: 'Behind the Scenes: Studio Redesign Tour (TikTok Retry)',
-    project: 'Acme Creator Studio',
+    project: 'Creator Hub',
     format: 'Reel (00:58)',
-    destination: '@alexrivera_official (TikTok)',
+    destination: '@creator_official (TikTok)',
     badgeColor: 'bg-ink-primary',
   },
   {
     time: 'Today 11:30 AM',
-    title: 'The Rich Rama 9 Luxury 2-Bed Unit: Story Link Push',
-    project: 'Capital One Real Estate',
+    title: 'Prime Skyview Residence: Story Link Push',
+    project: 'Main Studio',
     format: 'Story + Link Sticker',
-    destination: '@thailandprop.c1 (IG)',
+    destination: '@brand.official (IG)',
     badgeColor: 'bg-accent-terracotta',
   },
   {
     time: 'Today 02:00 PM',
     title: 'Weekly Market Brief: Social Platform Algorithm Shifts in 2026',
-    project: 'RetzPost Software',
+    project: 'Tech & Product Studio',
     format: 'Carousel & Feed',
     destination: 'FB Page & IG Feed',
     badgeColor: 'bg-brand-indigo',
@@ -402,63 +402,63 @@ const SCHEDULED_TIMELINE = [
   {
     time: 'Tomorrow 09:00 AM',
     title: '3 Hooks That Stop the Scroll in 2026',
-    project: 'Acme Creator Studio',
+    project: 'Creator Hub',
     format: 'Shorts • 00:45',
-    destination: '@AlexClips (YouTube)',
+    destination: '@CreatorClips (YouTube)',
     badgeColor: 'bg-semantic-info',
   },
 ];
 
 const CHANNEL_HEALTH = [
   {
-    name: 'Capital One Thailand (FB Page)',
+    name: 'Official Brand (FB Page)',
     platform: 'Facebook',
-    handle: 'capitalonethailand',
+    handle: 'officialbrand',
     status: 'HEALTHY',
     tokenExpiry: '38 days remaining',
     avatarBg: 'bg-[#1877F2]',
     avatarText: 'FB',
   },
   {
-    name: 'Alex Rivera Studio (YouTube Shorts)',
+    name: 'Creator Hub (YouTube Shorts)',
     platform: 'YouTube',
-    handle: '@AlexRiveraStudio',
+    handle: '@CreatorStudioOfficial',
     status: 'HEALTHY',
     tokenExpiry: 'Google OAuth Active',
     avatarBg: 'bg-semantic-info',
     avatarText: 'YT',
   },
   {
-    name: 'Alex Rivera (Instagram Pro)',
+    name: 'Creator Hub (Instagram Pro)',
     platform: 'Instagram',
-    handle: '@alexrivera_official',
+    handle: '@creator_official',
     status: 'HEALTHY',
     tokenExpiry: 'Meta Token Valid',
     avatarBg: 'bg-brand-indigo',
     avatarText: 'IG',
   },
   {
-    name: 'Oknus Real Estate (FB Page)',
+    name: 'Media Partner (FB Page)',
     platform: 'Facebook',
-    handle: 'oknus.realestate',
+    handle: 'partner.official',
     status: 'ATTENTION',
     tokenExpiry: 'Token Expired (Code: 190)',
     avatarBg: 'bg-accent-terracotta',
     avatarText: 'FB',
   },
   {
-    name: 'Thailand Prop C1 (Instagram Story)',
+    name: 'Brand Showcase (Instagram Story)',
     platform: 'Instagram',
-    handle: 'thailandprop.c1',
+    handle: 'brand.showcase',
     status: 'WARNING',
     tokenExpiry: 'Aspect ratio mismatch (1:1 vs 9:16)',
     avatarBg: 'bg-accent-terracotta',
     avatarText: 'IG',
   },
   {
-    name: 'Alex Rivera (TikTok Creator)',
+    name: 'Creator Hub (TikTok Creator)',
     platform: 'TikTok',
-    handle: '@alexrivera_official',
+    handle: '@creator_official',
     status: 'HEALTHY',
     tokenExpiry: 'Rate Limit Cooldown Ended',
     avatarBg: 'bg-ink-primary',
@@ -470,9 +470,9 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
   {
     id: 'perf-1',
     batchId: 'MP-BATCH-895',
-    title: 'The Rich Rama 9-Srinakarin Luxury 2-Bed Unit',
-    workspaceId: 'ws_capitalone',
-    workspaceName: 'Capital One Real Estate',
+    title: 'Prime Skyview Residence Collection',
+    workspaceId: 'ws_main',
+    workspaceName: 'Main Studio',
     thumbnailUrl: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&fit=crop&q=80',
     publishedAt: 'Today 08:30 AM',
     views: 68420,
@@ -483,13 +483,13 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ctr: '5.8%',
     engagementRate: '10.0%',
     rank: 1,
-    rankBadge: 'RANK 1 • BEST PERFORMING CONDO',
+    rankBadge: 'RANK 1 • TOP PERFORMING CAMPAIGN',
     liveLinks: [
       {
         platform: 'FACEBOOK',
         format: 'FEED',
-        label: 'FB Thailand',
-        url: 'https://www.facebook.com/capitalonethailand/posts/991283',
+        label: 'FB Official Brand',
+        url: 'https://www.facebook.com/officialbrand/posts/991283',
         emoji: '📘',
         btnColor: 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100',
       },
@@ -497,7 +497,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         platform: 'INSTAGRAM',
         format: 'FEED',
         label: 'IG Carousel',
-        url: 'https://www.instagram.com/p/C1RichRama9/',
+        url: 'https://www.instagram.com/p/prime-skyview/',
         emoji: '📸',
         btnColor: 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100',
       },
@@ -505,20 +505,20 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         platform: 'INSTAGRAM',
         format: 'STORY',
         label: 'IG Story',
-        url: 'https://www.instagram.com/stories/capitalone.th/348910283/',
+        url: 'https://www.instagram.com/stories/brand.official/348910283/',
         emoji: '⚡',
         btnColor: 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100',
       },
     ],
-    websiteUrl: 'https://capitalone.co.th/the-rich-rama9',
-    websiteLabel: 'หน้าเว็บโครงการ',
+    websiteUrl: 'https://yourbrand.com/prime-skyview',
+    websiteLabel: 'หน้าเว็บแคมเปญ',
   },
   {
     id: 'perf-2',
     batchId: 'MP-BATCH-890',
-    title: 'The Penthouse Collection: Private Pool & Panoramic View',
-    workspaceId: 'ws_capitalone',
-    workspaceName: 'Capital One Real Estate',
+    title: 'The Master Collection: Panoramic City View',
+    workspaceId: 'ws_main',
+    workspaceName: 'Main Studio',
     thumbnailUrl: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&fit=crop&q=80',
     publishedAt: 'Yesterday 04:30 PM',
     views: 54200,
@@ -534,8 +534,8 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
       {
         platform: 'FACEBOOK',
         format: 'FEED',
-        label: 'KW Luxury FB',
-        url: 'https://www.facebook.com/kwluxurythailand/posts/449102',
+        label: 'Partner FB',
+        url: 'https://www.facebook.com/partner/posts/449102',
         emoji: '📘',
         btnColor: 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100',
       },
@@ -543,7 +543,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         platform: 'INSTAGRAM',
         format: 'FEED',
         label: 'IG Carousel',
-        url: 'https://www.instagram.com/p/C1PenthouseKW/',
+        url: 'https://www.instagram.com/p/master-collection/',
         emoji: '📸',
         btnColor: 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100',
       },
@@ -551,20 +551,20 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         platform: 'INSTAGRAM',
         format: 'STORY',
         label: 'IG Story',
-        url: 'https://www.instagram.com/stories/kwcapitalone/',
+        url: 'https://www.instagram.com/stories/brand.official/',
         emoji: '⚡',
         btnColor: 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100',
       },
     ],
-    websiteUrl: 'https://capitalone.co.th/penthouse-collection',
-    websiteLabel: 'หน้าเว็บโครงการ',
+    websiteUrl: 'https://yourbrand.com/master-collection',
+    websiteLabel: 'หน้าเว็บแคมเปญ',
   },
   {
     id: 'perf-3',
     batchId: 'MP-BATCH-892',
     title: 'Behind the Scenes: Studio Redesign Tour',
-    workspaceId: 'ws_acme',
-    workspaceName: 'Acme Creator Studio',
+    workspaceId: 'ws_creator',
+    workspaceName: 'Creator Hub',
     thumbnailUrl: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&auto=format&fit=crop&q=80',
     publishedAt: 'Oct 22, 09:15 AM',
     views: 48920,
@@ -597,7 +597,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         platform: 'INSTAGRAM',
         format: 'STORY',
         label: 'IG Story',
-        url: 'https://www.instagram.com/stories/alexrivera_official/',
+        url: 'https://www.instagram.com/stories/creator_official/',
         emoji: '⚡',
         btnColor: 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100',
       },
@@ -605,12 +605,12 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         platform: 'FACEBOOK',
         format: 'FEED',
         label: 'FB Studio',
-        url: 'https://www.facebook.com/alexriverastudio/posts/89201',
+        url: 'https://www.facebook.com/creatorstudio/posts/89201',
         emoji: '📘',
         btnColor: 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100',
       },
     ],
-    websiteUrl: 'https://alexrivera.studio/redesign-tour',
+    websiteUrl: 'https://creatorhub.io/redesign-tour',
     websiteLabel: 'หน้าเว็บ Creator',
   },
   {
@@ -710,7 +710,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
 export default function HomePage() {
   const [dashboardMode, setDashboardMode] = useState<'OPERATIONS' | 'TRACKING' | 'TEAM_KPI'>('OPERATIONS');
   const [workspaceFilter, setWorkspaceFilter] = useState<string>('ALL');
-  const [batchTab, setBatchTab] = useState<'ALL' | 'CAPITAL_ONE' | 'ACME' | 'NEEDS_ATTENTION'>('ALL');
+  const [batchTab, setBatchTab] = useState<'ALL' | 'MAIN_STUDIO' | 'CREATOR_HUB' | 'NEEDS_ATTENTION'>('ALL');
   const [downloadToast, setDownloadToast] = useState<string | null>(null);
   const [selectedLiveBatch, setSelectedLiveBatch] = useState<DispatchBatch | null>(null);
   const [copiedLinkNotice, setCopiedLinkNotice] = useState<string | null>(null);
@@ -891,8 +891,8 @@ export default function HomePage() {
     if (isMockCleared) return [];
     return SAMPLE_BATCHES.filter((b) => {
       if (workspaceFilter !== 'ALL' && b.workspaceId !== workspaceFilter) return false;
-      if (batchTab === 'CAPITAL_ONE') return b.workspaceId === 'ws_capitalone';
-      if (batchTab === 'ACME') return b.workspaceId === 'ws_acme';
+      if (batchTab === 'MAIN_STUDIO') return b.workspaceId === 'ws_main' || b.workspaceId === 'ws_capitalone';
+      if (batchTab === 'CREATOR_HUB') return b.workspaceId === 'ws_creator' || b.workspaceId === 'ws_acme';
       if (batchTab === 'NEEDS_ATTENTION') return ['PARTIALLY_PUBLISHED', 'FAILED_RETRYABLE', 'FAILED_FINAL'].includes(b.status);
       return true;
     });
@@ -938,8 +938,8 @@ export default function HomePage() {
         id: 'MP-JOB-1055',
         platform: 'FACEBOOK',
         format: 'FEED_POST',
-        handle: 'Oknus Real Estate',
-        storyTitle: 'The Rich Rama 9-Srinakarin Luxury 2-Bed Unit',
+        handle: 'Media Partner FB',
+        storyTitle: 'Prime Skyview Residence Collection',
         status: 'FAILED_FINAL',
         attemptCount: 4,
         maxAttempts: 4,
@@ -950,8 +950,8 @@ export default function HomePage() {
         id: 'MP-JOB-1056',
         platform: 'INSTAGRAM',
         format: 'STORY',
-        handle: 'thailandprop.c1',
-        storyTitle: 'The Rich Rama 9-Srinakarin Luxury 2-Bed Unit',
+        handle: 'brand.showcase',
+        storyTitle: 'Prime Skyview Residence Collection',
         status: 'FAILED_RETRYABLE',
         attemptCount: 1,
         maxAttempts: 4,
@@ -962,7 +962,7 @@ export default function HomePage() {
         id: 'MP-JOB-1050',
         platform: 'TIKTOK',
         format: 'VIDEO_REEL',
-        handle: '@alexrivera_official',
+        handle: '@creator_official',
         storyTitle: 'Behind the Scenes: Studio Redesign Tour',
         status: 'FAILED_RETRYABLE',
         attemptCount: 2,
@@ -986,32 +986,32 @@ export default function HomePage() {
         id: 'MP-JOB-1053',
         platform: 'FACEBOOK',
         format: 'FEED_POST',
-        handle: 'Capital One Thailand',
-        storyTitle: 'The Rich Rama 9-Srinakarin Luxury 2-Bed Unit',
+        handle: 'Official Brand Page',
+        storyTitle: 'Prime Skyview Residence Collection',
         status: 'PUBLISHED',
         attemptCount: 1,
         maxAttempts: 4,
         scheduledOrExecutedAt: 'Today 08:30 AM',
-        liveUrl: 'https://facebook.com/capitalonethailand/posts/991283',
+        liveUrl: 'https://facebook.com/officialbrand/posts/991283',
       },
       {
         id: 'MP-JOB-1054',
         platform: 'INSTAGRAM',
         format: 'FEED_POST',
-        handle: 'capitalone.th',
-        storyTitle: 'The Rich Rama 9-Srinakarin Luxury 2-Bed Unit',
+        handle: 'brand.official',
+        storyTitle: 'Prime Skyview Residence Collection',
         status: 'PUBLISHED',
         attemptCount: 1,
         maxAttempts: 4,
         scheduledOrExecutedAt: 'Today 08:30 AM',
-        liveUrl: 'https://instagram.com/p/C1RichRama9',
+        liveUrl: 'https://instagram.com/p/prime-skyview',
       },
       {
         id: 'MP-JOB-1055',
         platform: 'FACEBOOK',
         format: 'FEED_POST',
-        handle: 'Oknus Real Estate',
-        storyTitle: 'The Rich Rama 9-Srinakarin Luxury 2-Bed Unit',
+        handle: 'Media Partner FB',
+        storyTitle: 'Prime Skyview Residence Collection',
         status: 'FAILED_FINAL',
         attemptCount: 4,
         maxAttempts: 4,
@@ -1022,31 +1022,31 @@ export default function HomePage() {
         id: 'MP-JOB-1051',
         platform: 'FACEBOOK',
         format: 'FEED_POST',
-        handle: 'Alex Rivera Studio',
+        handle: 'Creator Studio Media',
         storyTitle: 'Behind the Scenes: Studio Redesign Tour',
         status: 'PUBLISHED',
         attemptCount: 1,
         maxAttempts: 4,
         scheduledOrExecutedAt: 'Today 09:15 AM',
-        liveUrl: 'https://facebook.com/alexriverastudio/posts/89201',
+        liveUrl: 'https://facebook.com/creatorstudio/posts/89201',
       },
       {
         id: 'MP-JOB-1052',
         platform: 'INSTAGRAM',
         format: 'STORY',
-        handle: '@alexrivera_official',
+        handle: '@creator_official',
         storyTitle: 'Omni-Format Publishing: Simultaneous Feed & Story',
         status: 'PUBLISHED',
         attemptCount: 1,
         maxAttempts: 4,
         scheduledOrExecutedAt: 'Today 09:00 AM',
-        liveUrl: 'https://instagram.com/stories/alexrivera_official',
+        liveUrl: 'https://instagram.com/stories/creator_official',
       },
       {
         id: 'MP-JOB-1049',
         platform: 'YOUTUBE',
         format: 'VIDEO_REEL',
-        handle: '@AlexRiveraStudio',
+        handle: '@CreatorStudioOfficial',
         storyTitle: 'Behind the Scenes: Studio Redesign Tour',
         status: 'PUBLISHED',
         attemptCount: 1,
@@ -1237,15 +1237,15 @@ export default function HomePage() {
             { id: 'ALL', label: 'All Projects', count: '0 Channels', icon: <Building2 className="w-3 h-3 text-brand-indigo" /> }
           ] : [
             { id: 'ALL', label: 'All Projects', count: '17 Channels', icon: <Building2 className="w-3 h-3 text-brand-indigo" /> },
-            { id: 'ws_capitalone', label: 'Capital One Real Estate', count: 6, icon: <Sticker name="ws-realestate" size="xs" inline /> },
-            { id: 'ws_acme', label: 'Acme Studio', count: 4, icon: <Sticker name="ws-creator" size="xs" inline /> },
-            { id: 'ws_retzpost', label: 'RetzPost Software', count: 4, icon: <Sticker name="ws-software" size="xs" inline /> },
-            { id: 'ws_coffee', label: 'Coffee Craft', count: 3, icon: <Sticker name="ws-cafe" size="xs" inline /> },
-            { id: 'ws_whizdom', label: 'Whizdom Inspire Sukhumvit', count: 5, icon: <Sticker name="preset-skytrain" size="xs" inline /> },
-            { id: 'ws_ashton', label: 'Ashton Asoke Suites', count: 4, icon: <Sticker name="preset-villa" size="xs" inline /> },
-            { id: 'ws_siam_craft', label: 'Siam Craft Roastery', count: 2, icon: <Sticker name="preset-croissant" size="xs" inline /> },
-            { id: 'ws_bkk_residence', label: 'The Bangkok Residence', count: 6, icon: <Sticker name="ws-realestate" size="xs" inline /> },
-            { id: 'ws_nordic_living', label: 'Nordic Living Thailand', count: 3, icon: <Sticker name="preset-castle" size="xs" inline /> },
+            { id: 'ws_main', label: 'Main Studio', count: 6, icon: <Sticker name="ws-software" size="xs" inline /> },
+            { id: 'ws_creator', label: 'Creator Hub', count: 4, icon: <Sticker name="ws-creator" size="xs" inline /> },
+            { id: 'ws_retzpost', label: 'Tech & Product Studio', count: 4, icon: <Sticker name="ws-software" size="xs" inline /> },
+            { id: 'ws_coffee', label: 'Lifestyle & Brand', count: 3, icon: <Sticker name="ws-cafe" size="xs" inline /> },
+            { id: 'ws_sukhumvit', label: 'Sukhumvit Creative Hub', count: 5, icon: <Sticker name="preset-skytrain" size="xs" inline /> },
+            { id: 'ws_asoke', label: 'Asoke Media Center', count: 4, icon: <Sticker name="preset-villa" size="xs" inline /> },
+            { id: 'ws_artisan', label: 'Artisan Craft Studio', count: 2, icon: <Sticker name="preset-croissant" size="xs" inline /> },
+            { id: 'ws_city', label: 'Bangkok City Studio', count: 6, icon: <Sticker name="ws-software" size="xs" inline /> },
+            { id: 'ws_nordic', label: 'Nordic Design Studio', count: 3, icon: <Sticker name="preset-castle" size="xs" inline /> },
           ]}
           selectedId={workspaceFilter}
           onSelect={(id) => handleSelectWorkspaceFilter(id)}
@@ -1282,7 +1282,7 @@ export default function HomePage() {
                     </span>
                   </div>
                   <p className="text-xs text-ink-secondary mt-0.5 font-sans leading-relaxed">
-                    Facebook Token expired on <span className="font-mono text-ink-primary font-medium">Oknus Real Estate</span> & Instagram Story ratio mismatch on <span className="font-mono text-ink-primary font-medium">thailandprop.c1</span>.
+                    Facebook Token expired on <span className="font-mono text-ink-primary font-medium">Media Partner FB</span> & Instagram Story ratio mismatch on <span className="font-mono text-ink-primary font-medium">brand.showcase</span>.
                   </p>
                 </div>
               </div>
@@ -1410,8 +1410,8 @@ export default function HomePage() {
                   <div className="flex items-center gap-1.5">
                     {[
                       { id: 'ALL', label: 'All' },
-                      { id: 'CAPITAL_ONE', label: 'Capital One' },
-                      { id: 'ACME', label: 'Acme' },
+                      { id: 'MAIN_STUDIO', label: 'Main Studio' },
+                      { id: 'CREATOR_HUB', label: 'Creator Hub' },
                       { id: 'NEEDS_ATTENTION', label: 'Attention' },
                     ].map((t) => (
                       <button
@@ -1839,7 +1839,7 @@ export default function HomePage() {
                         <div className="flex items-center gap-2 text-ink-primary">
                           <Bookmark className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
                           <div>
-                            <span className="font-semibold block text-xs">คอนโดหรูติด BTS (Capital One)</span>
+                            <span className="font-semibold block text-xs">พรีเมียมสเปซ & ทำเลทอง (Prime Living)</span>
                             <span className="text-[10px] font-mono text-ink-secondary">Pre-filled specs & Story link</span>
                           </div>
                         </div>
@@ -1987,14 +1987,14 @@ export default function HomePage() {
               </div>
               <div className="flex items-baseline justify-between">
                 <p className="font-serif font-bold text-lg text-ink-primary truncate max-w-[160px]">
-                  {isMockCleared ? '-' : 'The Rich Rama 9'}
+                  {isMockCleared ? '-' : 'Prime Skyview'}
                 </p>
                 <span className={`text-[10px] font-mono font-semibold ${isMockCleared ? 'text-ink-secondary' : 'text-semantic-success'}`}>
                   {isMockCleared ? 'No Data' : '890 Clicks'}
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono truncate">
-                {isMockCleared ? 'ยังไม่มีชิ้นงานที่ติดอันดับ' : 'Capital One Real Estate Album + Story'}
+                {isMockCleared ? 'ยังไม่มีชิ้นงานที่ติดอันดับ' : 'Main Studio Brand Album + Story'}
               </p>
             </div>
           </section>
@@ -2088,7 +2088,7 @@ export default function HomePage() {
                           <span>{post.rankBadge.replace(/^[^\w]+/, '')}</span>
                         </span>
                         <span className="px-2 py-0.5 rounded font-mono text-[10px] bg-paper-subtle text-brand-indigo border border-border-rule font-semibold inline-flex items-center gap-1">
-                          <Sticker name={post.workspaceId === 'ws_capitalone' ? 'ws-realestate' : post.workspaceId === 'ws_acme' ? 'ws-creator' : post.workspaceId === 'ws_retzpost' ? 'ws-software' : 'ws-cafe'} size="xs" inline />
+                          <Sticker name={post.workspaceId === 'ws_main' || post.workspaceId === 'ws_capitalone' ? 'ws-realestate' : post.workspaceId === 'ws_creator' || post.workspaceId === 'ws_acme' ? 'ws-creator' : post.workspaceId === 'ws_retzpost' || post.workspaceId === 'ws_software' ? 'ws-software' : 'ws-brand'} size="xs" inline />
                           <span>{post.workspaceName}</span>
                         </span>
                         <span className="text-[10px] font-mono text-ink-secondary">

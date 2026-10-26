@@ -21,10 +21,15 @@ export interface WorkspaceMapping {
 
 export const WORKSPACE_MAPPINGS: WorkspaceMapping[] = [
   { standardId: 'ALL', calendarId: 'ALL', name: 'Master Hub (รวมทุกบัญชี)' },
-  { standardId: 'ws_capitalone', calendarId: 'CAPITAL_ONE', name: 'Capital One Real Estate' },
-  { standardId: 'ws_acme', calendarId: 'ACME_CREATOR', name: 'Acme Creator Studio' },
-  { standardId: 'ws_retzpost', calendarId: 'RETZPOST', name: 'RetzPost Software' },
-  { standardId: 'ws_coffee', calendarId: 'COFFEE_CRAFT', name: 'Coffee Craft BKK' },
+  { standardId: 'ws_main', calendarId: 'MAIN_STUDIO', name: 'Main Studio (โปรเจกต์หลัก)' },
+  { standardId: 'ws_creator', calendarId: 'CREATOR_HUB', name: 'Creator Hub' },
+  { standardId: 'ws_software', calendarId: 'SOFTWARE_DEV', name: 'Tech & Product Studio' },
+  { standardId: 'ws_brand', calendarId: 'BRAND_LIFESTYLE', name: 'Lifestyle & Brand' },
+  // Backward compatibility aliases
+  { standardId: 'ws_capitalone', calendarId: 'MAIN_STUDIO', name: 'Main Studio (โปรเจกต์หลัก)' },
+  { standardId: 'ws_acme', calendarId: 'CREATOR_HUB', name: 'Creator Hub' },
+  { standardId: 'ws_retzpost', calendarId: 'SOFTWARE_DEV', name: 'Tech & Product Studio' },
+  { standardId: 'ws_coffee', calendarId: 'BRAND_LIFESTYLE', name: 'Lifestyle & Brand' },
 ];
 
 /**

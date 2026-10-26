@@ -5,7 +5,7 @@
 export interface AuthUser {
   id: string;
   email: string; // e.g. user@gmail.com
-  username: string; // e.g. @nopparat
+  username: string; // e.g. @demo_user
   name: string; // Display name
   role: 'Owner' | 'Manager' | 'Lead Editor' | 'Creator' | 'Contributor';
   avatarBg: string;

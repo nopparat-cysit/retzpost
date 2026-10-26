@@ -80,194 +80,194 @@ const INITIAL_MASTER_ACCOUNTS: MasterChannelAccount[] = [
   {
     id: 'acc-fb-c1-th',
     platform: 'FACEBOOK',
-    displayName: 'Capital One Real Estate Thailand',
-    handle: 'FB Page: Capital One Thailand',
-    channelId: 'fb_c1_main_9921',
-    defaultWorkspaceId: 'ws_capitalone',
-    defaultWorkspaceName: 'Capital One Real Estate',
+    displayName: 'Official Brand Facebook Page',
+    handle: 'FB Page: Official Brand',
+    channelId: 'fb_main_9921',
+    defaultWorkspaceId: 'ws_main',
+    defaultWorkspaceName: 'Main Studio',
     scopes: ['pages_show_list', 'pages_manage_posts'],
     expiresIn: 'Permanent Meta Page Token',
-    capabilities: 'Property Listings • Photo Albums • Page Stories • Lead Forms',
+    capabilities: 'Brand Timeline • Photo Albums • Page Stories • Lead Forms',
     lastSynced: '12 mins ago',
-    url: 'https://www.facebook.com/capitalonethailand',
+    url: 'https://www.facebook.com/officialbrand',
   },
   {
     id: 'acc-fb-c1-kw',
     platform: 'FACEBOOK',
-    displayName: 'KW Luxury Thailand (Partner Agency)',
-    handle: 'FB Page: Keller Williams Luxury TH',
-    channelId: 'fb_kw_lux_4412',
-    defaultWorkspaceId: 'ws_capitalone',
-    defaultWorkspaceName: 'Capital One Real Estate',
+    displayName: 'Global Media Partner Page',
+    handle: 'FB Page: Global Media Partner',
+    channelId: 'fb_partner_4412',
+    defaultWorkspaceId: 'ws_main',
+    defaultWorkspaceName: 'Main Studio',
     scopes: ['pages_show_list', 'pages_manage_posts'],
     expiresIn: 'Permanent Meta Page Token',
-    capabilities: 'Ultra-Luxury Penthouse Albums & Syndication',
+    capabilities: 'Editorial Content & Brand Syndication',
     lastSynced: '25 mins ago',
-    url: 'https://www.facebook.com/kwluxurythailand',
+    url: 'https://www.facebook.com/mediapartner',
   },
   {
     id: 'acc-fb-acme',
     platform: 'FACEBOOK',
-    displayName: 'Alex Rivera Media Studio',
-    handle: 'FB Page: Alex Rivera Media Studio',
+    displayName: 'Creator Studio Media Page',
+    handle: 'FB Page: Creator Studio',
     channelId: 'fb_page_10928374',
-    defaultWorkspaceId: 'ws_acme',
-    defaultWorkspaceName: 'Acme Creator Studio',
+    defaultWorkspaceId: 'ws_creator',
+    defaultWorkspaceName: 'Creator Hub',
     scopes: ['pages_show_list', 'pages_manage_posts'],
     expiresIn: 'Permanent Page Access Token (Encrypted)',
     capabilities: 'Page Timeline • Photo Albums • Text Status • Page Stories',
     lastSynced: '5 mins ago',
-    url: 'https://www.facebook.com/alexriveramedia',
+    url: 'https://www.facebook.com/creatorstudio',
   },
   {
     id: 'acc-fb-retz',
     platform: 'FACEBOOK',
-    displayName: 'RetzPost Software Page',
-    handle: 'FB Page: RetzPost App',
+    displayName: 'Tech & Product Software Page',
+    handle: 'FB Page: Product Software',
     channelId: 'fb_retz_5512',
-    defaultWorkspaceId: 'ws_retzpost',
-    defaultWorkspaceName: 'RetzPost Software',
+    defaultWorkspaceId: 'ws_software',
+    defaultWorkspaceName: 'Tech & Product Studio',
     scopes: ['pages_show_list', 'pages_manage_posts'],
     expiresIn: 'Permanent Token',
     capabilities: 'SaaS Product Changelogs & Tech Announcements',
     lastSynced: '2 hours ago',
-    url: 'https://www.facebook.com/retzpost',
+    url: 'https://www.facebook.com/productsoftware',
   },
 
   // 2. Instagram Accounts (3 Accounts)
   {
     id: 'acc-ig-c1-main',
     platform: 'INSTAGRAM',
-    displayName: 'Capital One Thailand Official',
-    handle: '@capitalone.realestate',
-    channelId: 'ig_c1_7718',
-    defaultWorkspaceId: 'ws_capitalone',
-    defaultWorkspaceName: 'Capital One Real Estate',
+    displayName: 'Official Brand Instagram',
+    handle: '@brand.official',
+    channelId: 'ig_brand_7718',
+    defaultWorkspaceId: 'ws_main',
+    defaultWorkspaceName: 'Main Studio',
     scopes: ['instagram_basic', 'instagram_content_publish'],
     expiresIn: '60-day Auto-Refresh Token Vault',
-    capabilities: 'Condo Carousel (10) • 24h Story Link Stickers • Luxury Reels',
+    capabilities: 'Brand Carousel (10) • 24h Story Link Stickers • Luxury Reels',
     lastSynced: '15 mins ago',
-    url: 'https://www.instagram.com/capitalone.realestate',
+    url: 'https://www.instagram.com/brand.official',
   },
   {
     id: 'acc-ig-acme',
     platform: 'INSTAGRAM',
-    displayName: 'Alex Rivera Studio',
-    handle: '@alexrivera_official',
+    displayName: 'Creator Hub Studio',
+    handle: '@creatorhub_studio',
     channelId: 'ig_user_17841405',
-    defaultWorkspaceId: 'ws_acme',
-    defaultWorkspaceName: 'Acme Creator Studio',
+    defaultWorkspaceId: 'ws_creator',
+    defaultWorkspaceName: 'Creator Hub',
     scopes: ['instagram_basic', 'instagram_content_publish'],
     expiresIn: '60-day Long-Lived Token (Auto-refreshed via Token Vault)',
     capabilities: 'Feed Photos • Carousels (Up to 10) • 24h Stories • Reels',
     lastSynced: '5 mins ago',
-    url: 'https://www.instagram.com/alexrivera_official',
+    url: 'https://www.instagram.com/creatorhub_studio',
   },
   {
     id: 'acc-ig-coffee',
     platform: 'INSTAGRAM',
-    displayName: 'Coffee Craft BKK',
-    handle: '@coffeecraft.bkk',
-    channelId: 'ig_coffee_2219',
-    defaultWorkspaceId: 'ws_coffee',
-    defaultWorkspaceName: 'Coffee Craft BKK',
+    displayName: 'Lifestyle & Brand Channel',
+    handle: '@lifestyle.brand',
+    channelId: 'ig_brand_2219',
+    defaultWorkspaceId: 'ws_brand',
+    defaultWorkspaceName: 'Lifestyle & Brand',
     scopes: ['instagram_basic', 'instagram_content_publish'],
     expiresIn: '60-day Auto-Refresh Token',
-    capabilities: 'Cafe Stories with Location Stickers & Daily Special Reels',
+    capabilities: 'Brand Stories with Location Stickers & Daily Reels',
     lastSynced: '3 hours ago',
-    url: 'https://www.instagram.com/coffeecraft.bkk',
+    url: 'https://www.instagram.com/lifestyle.brand',
   },
 
   // 3. TikTok Accounts (1 Profile)
   {
     id: 'acc-tt-acme',
     platform: 'TIKTOK',
-    displayName: 'Alex Rivera Official',
-    handle: '@alexrivera_official',
+    displayName: 'Official TikTok Creator',
+    handle: '@creator_official',
     channelId: 'open_id_tt_8892',
-    defaultWorkspaceId: 'ws_acme',
-    defaultWorkspaceName: 'Acme Creator Studio',
+    defaultWorkspaceId: 'ws_creator',
+    defaultWorkspaceName: 'Creator Hub',
     scopes: ['video.publish', 'user.info.basic'],
     expiresIn: 'Active TikTok Token',
     capabilities: 'Max Video Duration: 10m (600s) • Direct Post & Inbox',
     lastSynced: '1 hour ago',
-    url: 'https://www.tiktok.com/@alexrivera_official',
+    url: 'https://www.tiktok.com/@creator_official',
   },
 
   // 4. YouTube Channels (1 Channel)
   {
     id: 'acc-yt-acme',
     platform: 'YOUTUBE',
-    displayName: 'Alex Rivera Studio (YouTube)',
-    handle: '@AlexRiveraStudio',
+    displayName: 'Official YouTube Channel',
+    handle: '@OfficialBrandChannel',
     channelId: 'UC_x65aB891F_Live',
-    defaultWorkspaceId: 'ws_acme',
-    defaultWorkspaceName: 'Acme Creator Studio',
+    defaultWorkspaceId: 'ws_creator',
+    defaultWorkspaceName: 'Creator Hub',
     scopes: ['youtube.upload', 'youtube.readonly'],
     expiresIn: 'Active Google OAuth Token',
     capabilities: 'YouTube Shorts (9:16) • Long-form Videos • Resumable',
     lastSynced: '10 mins ago',
-    url: 'https://www.youtube.com/@AlexRiveraStudio',
+    url: 'https://www.youtube.com/@OfficialBrandChannel',
   },
 
   // 5. X (Twitter) Accounts (2 Profiles)
   {
     id: 'acc-x-c1',
     platform: 'X',
-    displayName: 'Capital One Thailand (@CapitalOneBKK)',
-    handle: '@CapitalOneBKK',
-    channelId: 'x_c1_th_992',
-    defaultWorkspaceId: 'ws_capitalone',
-    defaultWorkspaceName: 'Capital One Real Estate',
+    displayName: 'Official Brand X (@BrandOfficial)',
+    handle: '@BrandOfficial',
+    channelId: 'x_brand_992',
+    defaultWorkspaceId: 'ws_main',
+    defaultWorkspaceName: 'Main Studio',
     scopes: ['tweet.read', 'tweet.write', 'users.read'],
     expiresIn: 'OAuth 2.0 User Context (Active)',
     capabilities: 'Short-Form Fast Dispatches • Media Threads • Real-time Quotes',
     lastSynced: '5 mins ago',
-    url: 'https://x.com/CapitalOneBKK',
+    url: 'https://x.com/BrandOfficial',
   },
   {
     id: 'acc-x-acme',
     platform: 'X',
-    displayName: 'Alex Rivera Tech & Studio',
-    handle: '@AlexRiveraStudio',
-    channelId: 'x_acme_883',
-    defaultWorkspaceId: 'ws_acme',
-    defaultWorkspaceName: 'Acme Creator Studio',
+    displayName: 'Tech & Creator X (@CreatorTech)',
+    handle: '@CreatorTech',
+    channelId: 'x_creator_883',
+    defaultWorkspaceId: 'ws_creator',
+    defaultWorkspaceName: 'Creator Hub',
     scopes: ['tweet.read', 'tweet.write', 'users.read'],
     expiresIn: 'OAuth 2.0 User Context (Active)',
     capabilities: 'Tech News Bites • Video Teasers • Community Threads',
     lastSynced: '18 mins ago',
-    url: 'https://x.com/AlexRiveraStudio',
+    url: 'https://x.com/CreatorTech',
   },
 
   // 6. Lemon8 Accounts (2 Profiles)
   {
     id: 'acc-lemon-c1',
     platform: 'LEMON8',
-    displayName: 'Capital One Living (Lemon8)',
-    handle: '@capitalone_living',
+    displayName: 'Lifestyle & Living (Lemon8)',
+    handle: '@lifestyle_living',
     channelId: 'lemon_c1_881',
-    defaultWorkspaceId: 'ws_capitalone',
-    defaultWorkspaceName: 'Capital One Real Estate',
+    defaultWorkspaceId: 'ws_main',
+    defaultWorkspaceName: 'Main Studio',
     scopes: ['content.publish', 'user.profile'],
     expiresIn: 'Lemon8 Creator Token (Active)',
-    capabilities: 'High-aesthetic Home Tours • Interior Decor Guides • Infographic Carousels',
+    capabilities: 'High-aesthetic Living Tours • Interior Decor Guides • Infographic Carousels',
     lastSynced: '30 mins ago',
-    url: 'https://www.lemon8-app.com/@capitalone_living',
+    url: 'https://www.lemon8-app.com/@lifestyle_living',
   },
   {
     id: 'acc-lemon-coffee',
     platform: 'LEMON8',
-    displayName: 'Coffee Craft Cafe Hopping',
-    handle: '@coffeecraft.bkk',
-    channelId: 'lemon_coffee_221',
-    defaultWorkspaceId: 'ws_coffee',
-    defaultWorkspaceName: 'Coffee Craft BKK',
+    displayName: 'Cafe & Lifestyle Guide (Lemon8)',
+    handle: '@lifestyle_guide',
+    channelId: 'lemon_brand_221',
+    defaultWorkspaceId: 'ws_brand',
+    defaultWorkspaceName: 'Lifestyle & Brand',
     scopes: ['content.publish', 'user.profile'],
     expiresIn: 'Lemon8 Creator Token (Active)',
-    capabilities: 'Cafe Aesthetics • Drip Coffee Recipes • Photo Spots Guide',
+    capabilities: 'Lifestyle Aesthetics • Recipe Guides • Photo Spots Guide',
     lastSynced: '1 hour ago',
-    url: 'https://www.lemon8-app.com/@coffeecraft.bkk',
+    url: 'https://www.lemon8-app.com/@lifestyle_guide',
   },
 ];
 
@@ -281,30 +281,30 @@ export interface WorkspaceItem {
 
 const INITIAL_PROJECTS: WorkspaceItem[] = [
   {
-    id: 'ws_capitalone',
-    name: 'Capital One Real Estate',
-    category: 'อสังหาริมทรัพย์',
-    icon: 'ws-realestate',
+    id: 'ws_main',
+    name: 'Main Studio',
+    category: 'โปรเจกต์หลัก',
+    icon: 'ws-software',
     selectedChannelIds: ['acc-fb-c1-th', 'acc-ig-c1-main', 'acc-fb-c1-kw', 'acc-x-c1', 'acc-lemon-c1'],
   },
   {
-    id: 'ws_acme',
-    name: 'Acme Creator Studio',
+    id: 'ws_creator',
+    name: 'Creator Hub',
     category: 'ครีเอเตอร์ / สตูดิโอ',
     icon: 'ws-creator',
     selectedChannelIds: ['acc-ig-acme', 'acc-fb-acme', 'acc-yt-acme', 'acc-tt-acme', 'acc-x-acme'],
   },
   {
-    id: 'ws_retzpost',
-    name: 'RetzPost Software',
+    id: 'ws_software',
+    name: 'Tech & Product Studio',
     category: 'SaaS & ซอฟต์แวร์',
     icon: 'ws-software',
     selectedChannelIds: ['acc-fb-retz'],
   },
   {
-    id: 'ws_coffee',
-    name: 'Coffee Craft BKK',
-    category: 'คาเฟ่ & อาหาร',
+    id: 'ws_brand',
+    name: 'Lifestyle & Brand',
+    category: 'ไลฟ์สไตล์ & แบรนด์',
     icon: 'ws-cafe',
     selectedChannelIds: ['acc-ig-coffee', 'acc-lemon-coffee'],
   },
@@ -744,8 +744,8 @@ export default function ConnectedAccountsPage() {
       displayName: newPageName.trim(),
       handle: newPageHandle.trim() || `@${newPageName.toLowerCase().replace(/\s+/g, '')}`,
       channelId: `${connectPlatform.toLowerCase()}_${Date.now().toString().slice(-6)}`,
-      defaultWorkspaceId: selectedWorkspaceId === 'ALL' ? 'ws_capitalone' : selectedWorkspaceId,
-      defaultWorkspaceName: activeWorkspace ? activeWorkspace.name : 'Capital One Real Estate',
+      defaultWorkspaceId: selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId,
+      defaultWorkspaceName: activeWorkspace ? activeWorkspace.name : 'Main Studio',
       scopes:
         connectPlatform === 'FACEBOOK'
           ? ['pages_show_list', 'pages_manage_posts']
@@ -1524,18 +1524,18 @@ export default function ConnectedAccountsPage() {
                       }}
                       className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
                     >
-                      <p className="font-bold text-ink-primary text-xs truncate">The Rich Sathorn</p>
+                      <p className="font-bold text-ink-primary text-xs truncate">Official Newsroom</p>
                       <p className="text-[9px] text-ink-muted">Ready to import</p>
                     </button>
                     <button
                       type="button"
                       onClick={() => {
-                        setNewPageName('Capital One Phuket Villas');
-                        setNewPageHandle('FB Page: Capital One Phuket');
+                        setNewPageName('Regional Brand Page');
+                        setNewPageHandle('FB Page: Regional Brand');
                       }}
                       className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
                     >
-                      <p className="font-bold text-ink-primary text-xs truncate">Phuket Luxury Villas</p>
+                      <p className="font-bold text-ink-primary text-xs truncate">Regional Brand</p>
                       <p className="text-[9px] text-ink-muted">Ready to import</p>
                     </button>
                   </>
@@ -1544,12 +1544,12 @@ export default function ConnectedAccountsPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setNewPageName('The Penthouse Studio BKK');
-                        setNewPageHandle('@penthouse.bkk');
+                        setNewPageName('Premium Brand Studio');
+                        setNewPageHandle('@premium.brand');
                       }}
                       className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
                     >
-                      <p className="font-bold text-ink-primary text-xs truncate">Penthouse Studio</p>
+                      <p className="font-bold text-ink-primary text-xs truncate">Brand Studio</p>
                       <p className="text-[9px] text-ink-muted">Business IG Account</p>
                     </button>
                     <button
@@ -1569,12 +1569,12 @@ export default function ConnectedAccountsPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setNewPageName('Capital One Investor Updates');
-                        setNewPageHandle('@CapOneInvest');
+                        setNewPageName('Official Media Channel');
+                        setNewPageHandle('@BrandMedia');
                       }}
                       className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
                     >
-                      <p className="font-bold text-ink-primary text-xs truncate">Investor Updates</p>
+                      <p className="font-bold text-ink-primary text-xs truncate">Media Updates</p>
                       <p className="text-[9px] text-ink-muted">X / Twitter Handle</p>
                     </button>
                     <button
@@ -1594,12 +1594,12 @@ export default function ConnectedAccountsPage() {
                     <button
                       type="button"
                       onClick={() => {
-                        setNewPageName('Bangkok Condo Decor (Lemon8)');
-                        setNewPageHandle('@bkk_condodecor');
+                        setNewPageName('Modern Living & Decor (Lemon8)');
+                        setNewPageHandle('@modern_living');
                       }}
                       className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
                     >
-                      <p className="font-bold text-ink-primary text-xs truncate">Condo Decor Guide</p>
+                      <p className="font-bold text-ink-primary text-xs truncate">Living & Decor Guide</p>
                       <p className="text-[9px] text-ink-muted">Lemon8 Creator Profile</p>
                     </button>
                     <button
@@ -1641,7 +1641,7 @@ export default function ConnectedAccountsPage() {
                 <input
                   type="text"
                   required
-                  placeholder="เช่น: The Rich Rama 9 Luxury Club"
+                  placeholder="เช่น: Official Brand Lounge"
                   value={newPageName}
                   onChange={(e) => setNewPageName(e.target.value)}
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
@@ -2170,7 +2170,7 @@ export default function ConnectedAccountsPage() {
                   type="text"
                   required
                   autoFocus
-                  placeholder="เช่น: Whizdom Luxury Suites, Acme Podcast..."
+                  placeholder="เช่น: Main Studio, Marketing Campaign, Brand Channel..."
                   value={newProjectName}
                   onChange={(e) => setNewProjectName(e.target.value)}
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-serif text-sm text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"

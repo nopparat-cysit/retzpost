@@ -71,18 +71,18 @@ describe('Auth & Email OTP Verification System', () => {
   describe('Auth Service (Register, Login, Password Reset)', () => {
     it('should login default seed user successfully with email or username', () => {
       // By email
-      const res1 = loginUser('nopparat@gmail.com', 'Password123!');
+      const res1 = loginUser('demo.manager@gmail.com', 'Password123!');
       expect(res1.success).toBe(true);
-      expect(res1.user?.name).toBe('Nopparat C.');
+      expect(res1.user?.name).toBe('Demo Manager');
 
       // By username
-      const res2 = loginUser('nopparat', 'Password123!');
+      const res2 = loginUser('demomanager', 'Password123!');
       expect(res2.success).toBe(true);
-      expect(res2.user?.name).toBe('Nopparat C.');
+      expect(res2.user?.name).toBe('Demo Manager');
     });
 
     it('should reject invalid password or unknown user', () => {
-      const badPass = loginUser('nopparat@gmail.com', 'WrongPassword!');
+      const badPass = loginUser('demo.manager@gmail.com', 'WrongPassword!');
       expect(badPass.success).toBe(false);
       expect(badPass.message).toContain('รหัสผ่านไม่ถูกต้อง');
 
@@ -117,7 +117,7 @@ describe('Auth & Email OTP Verification System', () => {
     });
 
     it('should reset user password and allow login with new password', () => {
-      const email = 'alex@gmail.com';
+      const email = 'demo.owner@gmail.com';
       expect(isEmailRegistered(email)).toBe(true);
 
       const resetRes = resetUserPassword(email, 'BrandNewPass2026!');
@@ -130,12 +130,12 @@ describe('Auth & Email OTP Verification System', () => {
       // New password succeeds
       const newLogin = loginUser(email, 'BrandNewPass2026!');
       expect(newLogin.success).toBe(true);
-      expect(newLogin.user?.name).toBe('Alex Rivera');
+      expect(newLogin.user?.name).toBe('Demo Owner');
     });
 
     it('should handle session and logout', () => {
-      loginUser('nopparat@gmail.com', 'Password123!');
-      expect(getCurrentUser()?.username).toBe('nopparat');
+      loginUser('demo.manager@gmail.com', 'Password123!');
+      expect(getCurrentUser()?.username).toBe('demomanager');
 
       logoutUser();
       expect(getCurrentUser()).toBeNull();

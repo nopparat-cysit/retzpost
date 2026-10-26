@@ -53,10 +53,10 @@ export const DEFAULT_CLEAN_WORKSPACE: WorkspaceItem = {
 };
 
 export const DEMO_WORKSPACES: WorkspaceItem[] = [
-  { id: 'ws_capitalone', name: 'Capital One Real Estate', category: 'Enterprise Portfolio', dotColor: 'bg-accent-terracotta', channelCount: 6, stickerName: 'ws-realestate' },
-  { id: 'ws_acme', name: 'Acme Creator Studio', category: 'Personal Brand', dotColor: 'bg-brand-indigo', channelCount: 4, stickerName: 'ws-creator' },
-  { id: 'ws_retzpost', name: 'RetzPost Software', category: 'SaaS Product', dotColor: 'bg-semantic-info', channelCount: 4, stickerName: 'ws-software' },
-  { id: 'ws_coffee', name: 'Coffee Craft BKK', category: 'Client Cafe SME', dotColor: 'bg-semantic-success', channelCount: 3, stickerName: 'ws-cafe' },
+  { id: 'ws_main', name: 'Main Studio', category: 'Enterprise Portfolio', dotColor: 'bg-accent-terracotta', channelCount: 6, stickerName: 'ws-software' },
+  { id: 'ws_creator', name: 'Creator Hub', category: 'Creator Brand', dotColor: 'bg-brand-indigo', channelCount: 4, stickerName: 'ws-creator' },
+  { id: 'ws_software', name: 'Tech & Product Studio', category: 'SaaS Product', dotColor: 'bg-semantic-info', channelCount: 4, stickerName: 'ws-software' },
+  { id: 'ws_brand', name: 'Lifestyle & Brand', category: 'Brand & Retail', dotColor: 'bg-semantic-success', channelCount: 3, stickerName: 'ws-cafe' },
 ];
 
 export const WORKSPACES: WorkspaceItem[] = DEMO_WORKSPACES;
@@ -64,7 +64,7 @@ export const WORKSPACES: WorkspaceItem[] = DEMO_WORKSPACES;
 export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [activeWorkspaceId, setActiveWorkspaceId] = useState('ws_acme');
+  const [activeWorkspaceId, setActiveWorkspaceId] = useState('ws_main');
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
 
@@ -276,11 +276,11 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           <div className="flex items-center justify-between gap-1.5">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className={`w-7 h-7 rounded-full ${currentUser?.avatarBg || (isMockCleared ? 'bg-ink-secondary/20 text-ink-primary' : 'bg-brand-indigo text-white')} flex items-center justify-center font-serif text-xs font-bold ring-1 ring-border-rule shrink-0`}>
-                {currentUser?.avatarText || (isMockCleared ? 'GU' : 'NC')}
+                {currentUser?.avatarText || (isMockCleared ? 'GU' : 'DM')}
               </div>
               <div className="min-w-0">
                 <p className="font-semibold text-ink-primary text-xs leading-tight truncate">
-                  {currentUser?.name || (isMockCleared ? 'ผู้ใช้งานทั่วไป (Guest)' : 'Nopparat C.')}
+                  {currentUser?.name || (isMockCleared ? 'ผู้ใช้งานทั่วไป (Guest)' : 'Demo Manager')}
                 </p>
                 <p className="text-[10px] text-ink-secondary font-mono truncate max-w-[105px]">
                   {currentUser?.email || (isMockCleared ? 'คลิกเพื่อเข้าสู่ระบบ' : activeWorkspace.name)}

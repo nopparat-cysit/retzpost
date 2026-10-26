@@ -26,13 +26,13 @@ describe('Staff KPI Telemetry Engine', () => {
   });
 
   it('filters employee KPIs by workspaceId correctly', () => {
-    const c1Employees = getEmployeeKPIs('ws_capitalone');
+    const c1Employees = getEmployeeKPIs('ws_main');
     expect(c1Employees.length).toBe(2);
-    expect(c1Employees.every((e) => e.workspaceId === 'ws_capitalone')).toBe(true);
+    expect(c1Employees.every((e) => e.workspaceId === 'ws_main')).toBe(true);
 
-    const acmeEmployees = getEmployeeKPIs('ws_acme');
+    const acmeEmployees = getEmployeeKPIs('ws_creator');
     expect(acmeEmployees.length).toBe(2);
-    expect(acmeEmployees.every((e) => e.workspaceId === 'ws_acme')).toBe(true);
+    expect(acmeEmployees.every((e) => e.workspaceId === 'ws_creator')).toBe(true);
   });
 
   it('calculates department summary and top performer accurately', () => {
@@ -62,7 +62,7 @@ describe('AI Post Performance Diagnosis Engine', () => {
   it('returns comprehensive diagnosis for known post with attribution factors and playbook', () => {
     const diagnosis = getPostDiagnosis('post-c1-1');
     expect(diagnosis).toBeDefined();
-    expect(diagnosis.postTitle).toContain('The Rich Rama 9');
+    expect(diagnosis.postTitle).toContain('Prime Sky Penthouse');
     expect(diagnosis.overallSuccessScore).toBeGreaterThanOrEqual(95);
     expect(diagnosis.attributionDrivers.length).toBeGreaterThanOrEqual(3);
     expect(diagnosis.actionablePlaybook.length).toBeGreaterThanOrEqual(2);

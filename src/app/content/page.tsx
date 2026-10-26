@@ -58,8 +58,8 @@ interface ContentItem {
 
 const DEFAULT_SAMPLE_ITEMS: ContentItem[] = [
   {
-    id: 'sample-c1-rich-rama9',
-    workingTitle: 'The Rich Rama 9-Srinakarin Luxury 2-Bed Unit',
+    id: 'sample-prime-skyview',
+    workingTitle: 'Prime Skyview Residence Collection',
     status: 'PUBLISHED',
     assetId: 'C1-89501',
     duration: 'Photo Album',
@@ -70,8 +70,8 @@ const DEFAULT_SAMPLE_ITEMS: ContentItem[] = [
       { 
         platform: 'FACEBOOK', 
         status: 'PUBLISHED', 
-        detail: 'Capital One Thailand Album (6)', 
-        liveUrl: 'https://www.facebook.com/capitalonethailand/posts/991283' 
+        detail: 'Official Brand Album (6)', 
+        liveUrl: 'https://www.facebook.com/officialbrand/posts/991283' 
       },
       { 
         platform: 'INSTAGRAM', 
@@ -118,7 +118,7 @@ const DEFAULT_SAMPLE_ITEMS: ContentItem[] = [
     actionLabel: 'Resolve & Retry',
     actionHref: '/create?id=sample-1',
     liveUrl: 'https://youtube.com/shorts/dQw4w9WgXcQ',
-    websiteUrl: 'https://alexrivera.studio/redesign-tour',
+    websiteUrl: 'https://creatorhub.io/redesign-tour',
   },
   {
     id: 'sample-2',

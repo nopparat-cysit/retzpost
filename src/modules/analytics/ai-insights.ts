@@ -50,8 +50,8 @@ export interface PostDiagnosisInsight {
 export const MOCK_POST_DIAGNOSES: Record<string, PostDiagnosisInsight> = {
   'post-c1-1': {
     postId: 'post-c1-1',
-    postTitle: 'The Rich Rama 9 Penthouse Walkthrough',
-    workspaceName: 'Capital One Real Estate',
+    postTitle: 'Prime Sky Penthouse Walkthrough',
+    workspaceName: 'Main Studio',
     platform: 'FACEBOOK',
     views: 142000,
     likes: 8900,
@@ -128,7 +128,7 @@ export const MOCK_POST_DIAGNOSES: Record<string, PostDiagnosisInsight> = {
   'post-acme-1': {
     postId: 'post-acme-1',
     postTitle: 'Studio Redesign Tour Master Cut ($45K Setup)',
-    workspaceName: 'Acme Creator Studio',
+    workspaceName: 'Creator Hub',
     platform: 'YOUTUBE',
     views: 248000,
     likes: 18900,
@@ -189,7 +189,7 @@ export const MOCK_POST_DIAGNOSES: Record<string, PostDiagnosisInsight> = {
   'post-c1-2': {
     postId: 'post-c1-2',
     postTitle: 'Sukhumvit Sky Pool Twilight Highlight',
-    workspaceName: 'Capital One Real Estate',
+    workspaceName: 'Main Studio',
     platform: 'INSTAGRAM',
     views: 185000,
     likes: 14200,
@@ -226,7 +226,7 @@ export const MOCK_POST_DIAGNOSES: Record<string, PostDiagnosisInsight> = {
         step: 1,
         type: 'CADENCE',
         titleTh: 'จัดตารางโพสต์ซีรีส์ "Twilight Architecture" ทุกวันศุกร์',
-        actionTh: 'สร้างแคมเปญประจำสัปดาห์เน้นคอนโดหรูยามเย็น เพื่อสร้างจดจำแบรนด์ให้ Capital One',
+        actionTh: 'สร้างแคมเปญประจำสัปดาห์เน้นคอนเทนต์พรีเมียม เพื่อสร้างการจดจำแบรนด์ให้องค์กร',
         expectedOutcomeTh: 'เพิ่ม Follower ใหม่ออร์แกนิก 450 - 600 บัญชีต่อสัปดาห์',
       },
     ],
@@ -243,7 +243,7 @@ export function getPostDiagnosis(postId: string, fallbackTitle?: string): PostDi
   return {
     postId,
     postTitle: title,
-    workspaceName: 'Capital One Real Estate',
+    workspaceName: 'Main Studio',
     platform: 'FACEBOOK',
     views: 94000,
     likes: 6200,

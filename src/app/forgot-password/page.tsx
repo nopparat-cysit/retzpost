@@ -285,7 +285,7 @@ export default function ForgotPasswordPage() {
                   <input
                     type="email"
                     required
-                    placeholder="เช่น nopparat@gmail.com หรือ alex@gmail.com"
+                    placeholder="เช่น demo.manager@gmail.com หรือ your.email@gmail.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     className="w-full pl-9 pr-3 py-2 text-xs bg-paper-canvas border border-border-rule rounded-editorial font-mono text-ink-primary placeholder:text-ink-secondary/50 focus:outline-none focus:border-brand-indigo focus:ring-1 focus:ring-brand-indigo transition-all"

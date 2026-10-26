@@ -126,7 +126,7 @@ export default function DocsPage() {
                 3. เลือกโปรเจกต์งาน
               </h4>
               <p className="text-[11px] text-ink-secondary leading-snug">
-                ระบบสลับข้อมูลให้อัตโนมัติ เช่น <em>Capital One</em>, <em>Acme Studio</em>, หรือ <em>Coffee Craft</em>
+                ระบบสลับข้อมูลให้อัตโนมัติ เช่น <em>Main Studio</em>, <em>Creator Hub</em>, หรือ <em>Lifestyle & Brand</em>
               </p>
             </div>
           </div>
@@ -138,7 +138,7 @@ export default function DocsPage() {
               <span>Global Workspace Sync Engine คืออะไร?</span>
             </h4>
             <p className="text-[11px] text-ink-primary/90 leading-relaxed font-sans">
-              เมื่อคุณเลือกโปรเจกต์ในหน้าใดหน้าหนึ่ง เช่น <em>Capital One Real Estate</em> ระบบจะซิงค์โปรเจกต์เดียวกันไปยังหน้า <strong>แดชบอร์ด</strong>, <strong>ปฏิทิน</strong>, และ <strong>ห้องเขียนโพสต์</strong> ให้ตรงกันทันทีแบบ Real-time โดยไม่ต้องเลือกใหม่ซ้ำซ้อน
+              เมื่อคุณเลือกโปรเจกต์ในหน้าใดหน้าหนึ่ง เช่น <em>Main Studio</em> ระบบจะซิงค์โปรเจกต์เดียวกันไปยังหน้า <strong>แดชบอร์ด</strong>, <strong>ปฏิทิน</strong>, และ <strong>ห้องเขียนโพสต์</strong> ให้ตรงกันทันทีแบบ Real-time โดยไม่ต้องเลือกใหม่ซ้ำซ้อน
             </p>
           </div>
         </div>
