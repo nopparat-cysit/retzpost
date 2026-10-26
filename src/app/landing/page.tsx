@@ -539,24 +539,25 @@ export default function LandingPage() {
               Create once, customize for every channel, and keep your publishing workflow beautifully organized. Upload master media, tailor platform-specific safe zones and captions, and dispatch with millisecond precision across YouTube, TikTok, Instagram, Facebook, X, and Lemon8.
             </p>
 
-            {/* CTAs with Luxury Shimmering Instant Coin Action */}
+            {/* Primary & Secondary Hero CTAs */}
             <div className="pt-2 flex flex-wrap items-center gap-3 text-xs font-mono">
               <button
                 type="button"
-                onClick={handleClaimAllCoins}
-                className="py-3.5 px-6 rounded-xl animate-gold-shimmer text-amber-950 font-bold flex items-center gap-2 shadow-[0_10px_30px_-5px_rgba(245,158,11,0.5)] ring-2 ring-amber-300/80 transition-all hover:scale-105 active:scale-[0.98] cursor-pointer text-sm"
+                onClick={() => pressStudioRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                className="py-3.5 px-6 rounded-xl bg-[#364165] hover:bg-[#2B3452] text-white font-bold flex items-center gap-2 shadow-md transition-all hover:scale-102 active:scale-98 cursor-pointer text-sm"
               >
-                <Zap className="w-4 h-4 fill-amber-950" />
-                <span>⚡ รับ 100 Coins ทันที (Auto-Complete)</span>
+                <Sparkles className="w-4 h-4 text-amber-400" />
+                <span>Try the Interactive Demo</span>
+                <ArrowRight className="w-4 h-4 text-stone-300" />
               </button>
 
               <button
                 type="button"
-                onClick={() => pressStudioRef.current?.scrollIntoView({ behavior: 'smooth' })}
-                className="py-3.5 px-5 rounded-xl bg-[#364165] hover:bg-[#2B3452] text-white font-semibold flex items-center gap-2 shadow-md transition-all hover:scale-102 active:scale-98 cursor-pointer text-sm"
+                onClick={() => workspaceTourRef.current?.scrollIntoView({ behavior: 'smooth' })}
+                className="py-3.5 px-5 rounded-xl bg-white hover:bg-stone-50 text-[#1A1A18] border border-black/10 font-semibold flex items-center gap-2 shadow-xs transition-all hover:scale-102 active:scale-98 cursor-pointer text-sm"
               >
-                <span>ทดลองทำทีละสเต็ป</span>
-                <ChevronRight className="w-4 h-4 text-stone-300" />
+                <span>Explore MULTIPOST</span>
+                <ChevronRight className="w-4 h-4 text-stone-400" />
               </button>
             </div>
 
@@ -2422,6 +2423,39 @@ export default function LandingPage() {
           <p className="font-sans text-sm sm:text-base text-stone-600">
             A vintage editorial ticket forged through interactive mastery of the Dream Press workspace.
           </p>
+        </div>
+
+        {/* Instant Coin Claim Bar directly above the Ticket */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 sm:p-5 px-6 rounded-2xl bg-amber-400/10 border border-amber-400/30 text-xs font-mono shadow-xs">
+          <div className="flex items-center gap-3">
+            <PressCoinIcon size={32} />
+            <div>
+              <div className="font-bold text-[#1A1A18] text-sm">
+                Press Coins Balance: <span className="text-amber-800">{coins}</span> / 100
+              </div>
+              <p className="text-[11px] text-stone-600">
+                {coins >= 100 ? '✓ สะสมเหรียญครบแล้ว! ตั๋วปลดล็อกพร้อมประทับตราใช้งาน' : 'สะสมให้ครบ 100 Coins เพื่อปลดล็อกตั๋ว หรือกดรับเหรียญได้ทันทีที่นี่'}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            {coins < 100 ? (
+              <button
+                type="button"
+                onClick={handleClaimAllCoins}
+                className="py-2.5 px-5 rounded-xl animate-gold-shimmer text-amber-950 font-bold flex items-center gap-2 shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer text-xs"
+              >
+                <Zap className="w-4 h-4 fill-amber-950" />
+                <span>⚡ รับ 100 Coins ทันที (ปลดล็อกตั๋ว)</span>
+              </button>
+            ) : (
+              <span className="px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-700" />
+                <span>ตั๋วปลดล็อกแล้ว (UNLOCKED)</span>
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Masterwork Ivory & Gold Ticket (Physical Editorial Ticket with Notches) */}
