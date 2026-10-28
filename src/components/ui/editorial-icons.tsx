@@ -708,3 +708,229 @@ export const EditorialFountainPen: React.FC<EditorialIconProps> = ({ size = 16, 
   </svg>
 );
 
+// -----------------------------------------------------------------------------
+// 23. EDITORIAL ROLES (Owner, Manager, Editor, Contributor, Viewer)
+// -----------------------------------------------------------------------------
+export const EditorialRoleOwner: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <defs>
+      <linearGradient id="crownGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#FDE047" />
+        <stop offset="100%" stopColor="#D97706" />
+      </linearGradient>
+    </defs>
+    <path d="M4 18L2 7L7.5 12L12 4L16.5 12L22 7L20 18H4Z" fill="url(#crownGrad)" stroke="#78350F" strokeWidth="1.3" strokeLinejoin="round" />
+    <circle cx="2" cy="7" r="1.3" fill="#B45309" />
+    <circle cx="7.5" cy="12" r="1.1" fill="#B45309" />
+    <circle cx="12" cy="4" r="1.5" fill="#EF4444" />
+    <circle cx="16.5" cy="12" r="1.1" fill="#B45309" />
+    <circle cx="22" cy="7" r="1.3" fill="#B45309" />
+    <rect x="4" y="18" width="16" height="3" rx="1" fill="#78350F" />
+  </svg>
+);
+
+export const EditorialRoleManager: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <rect x="3" y="7" width="18" height="13" rx="2" fill="#364165" stroke="#1C1917" strokeWidth="1.3" />
+    <path d="M8 7V5C8 3.9 8.9 3 10 3H14C15.1 3 16 3.9 16 5V7" stroke="#1C1917" strokeWidth="1.5" />
+    <line x1="3" y1="12" x2="21" y2="12" stroke="#FAF8F5" strokeWidth="1" strokeDasharray="2 2" />
+    <rect x="10.5" y="10.5" width="3" height="3" rx="0.5" fill="#F59E0B" stroke="#78350F" strokeWidth="0.8" />
+  </svg>
+);
+
+export const EditorialRoleEditor: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <path d="M18.5 2.5L21.5 5.5L8 19H5V16L18.5 2.5Z" fill="#A24836" stroke="#5C1D11" strokeWidth="1.3" strokeLinejoin="round" />
+    <path d="M15 6L18 9" stroke="#FAF8F5" strokeWidth="1" />
+    <path d="M5 19L2 22L5 22L5 19Z" fill="#5C1D11" />
+  </svg>
+);
+
+export const EditorialRoleContributor: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <rect x="4" y="3" width="16" height="18" rx="2" fill="#FAF8F5" stroke="#1C1917" strokeWidth="1.3" />
+    <line x1="8" y1="7" x2="16" y2="7" stroke="#364165" strokeWidth="1.3" strokeLinecap="round" />
+    <line x1="8" y1="11" x2="16" y2="11" stroke="#78716C" strokeWidth="1.1" strokeLinecap="round" />
+    <line x1="8" y1="15" x2="13" y2="15" stroke="#78716C" strokeWidth="1.1" strokeLinecap="round" />
+    <circle cx="16" cy="15" r="2" fill="#A24836" />
+  </svg>
+);
+
+export const EditorialRoleViewer: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <circle cx="10" cy="10" r="7" fill="#FAF8F5" stroke="#1C1917" strokeWidth="1.5" />
+    <circle cx="10" cy="10" r="3.5" fill="#E0F2FE" stroke="#0284C7" strokeWidth="1" />
+    <line x1="15.5" y1="15.5" x2="21" y2="21" stroke="#1C1917" strokeWidth="2.2" strokeLinecap="round" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 24. WORKSPACE MARKS (Creator, Software, Cafe, Brand)
+// -----------------------------------------------------------------------------
+export const EditorialWsCreator: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <rect x="3" y="8" width="18" height="13" rx="2" fill="#FAF8F5" stroke="#1C1917" strokeWidth="1.3" />
+    <path d="M3 8L6 3H21L18 8H3Z" fill="#364165" stroke="#1C1917" strokeWidth="1.3" />
+    <polygon points="10,11 16,14.5 10,18" fill="#A24836" />
+  </svg>
+);
+
+export const EditorialWsSoftware: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <rect x="2" y="4" width="20" height="16" rx="2.5" fill="#1E2538" stroke="#1C1917" strokeWidth="1.3" />
+    <path d="M6 10L9 12L6 14" stroke="#34D399" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    <line x1="11" y1="14" x2="15" y2="14" stroke="#FAF8F5" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
+export const EditorialWsCafe: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <path d="M4 8C4 13.5 7 16 11 16C15 16 18 13.5 18 8H4Z" fill="#78350F" stroke="#451A03" strokeWidth="1.3" />
+    <path d="M18 9C19.5 9 21 10 21 11.5C21 13 19.5 14 18 14" stroke="#451A03" strokeWidth="1.3" strokeLinecap="round" />
+    <line x1="2" y1="19" x2="20" y2="19" stroke="#451A03" strokeWidth="1.5" strokeLinecap="round" />
+    <path d="M8 3C8 4.5 9 5.5 9 6" stroke="#D97706" strokeWidth="1" strokeLinecap="round" />
+    <path d="M13 3C13 4.5 14 5.5 14 6" stroke="#D97706" strokeWidth="1" strokeLinecap="round" />
+  </svg>
+);
+
+export const EditorialWsBrand: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <rect x="4" y="4" width="16" height="16" rx="4" fill="#A24836" stroke="#5C1D11" strokeWidth="1.3" />
+    <circle cx="12" cy="12" r="5" stroke="#FAF8F5" strokeWidth="1.3" strokeDasharray="2 2" />
+    <circle cx="12" cy="12" r="2" fill="#FDE047" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 25. PRESETS (Croissant, Villa, Castle, Skytrain)
+// -----------------------------------------------------------------------------
+export const EditorialPresetCroissant: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <path d="M3 15C5 8 19 8 21 15C18 18 14 17 12 15C10 17 6 18 3 15Z" fill="#D97706" stroke="#78350F" strokeWidth="1.3" strokeLinejoin="round" />
+    <path d="M7 11C8 9 10 9 11 11" stroke="#FDE047" strokeWidth="1" strokeLinecap="round" />
+    <path d="M13 11C14 9 16 9 17 11" stroke="#FDE047" strokeWidth="1" strokeLinecap="round" />
+  </svg>
+);
+
+export const EditorialPresetVilla: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <path d="M3 10L12 3L21 10V20C21 20.6 20.6 21 20 21H4C3.4 21 3 20.6 3 20V10Z" fill="#FAF8F5" stroke="#1C1917" strokeWidth="1.3" strokeLinejoin="round" />
+    <rect x="9.5" y="13" width="5" height="8" fill="#364165" />
+    <rect x="6" y="11" width="2.5" height="2.5" rx="0.5" fill="#A24836" />
+    <rect x="15.5" y="11" width="2.5" height="2.5" rx="0.5" fill="#A24836" />
+  </svg>
+);
+
+export const EditorialPresetCastle: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <path d="M4 21V9L6 6L8 9V11H16V9L18 6L20 9V21H4Z" fill="#FAF8F5" stroke="#1C1917" strokeWidth="1.3" />
+    <path d="M10 21V15C10 13.9 10.9 13 12 13C13.1 13 14 13.9 14 15V21" fill="#364165" />
+    <line x1="2" y1="21" x2="22" y2="21" stroke="#1C1917" strokeWidth="1.5" />
+  </svg>
+);
+
+export const EditorialPresetSkytrain: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <rect x="4" y="3" width="16" height="15" rx="3" fill="#364165" stroke="#1C1917" strokeWidth="1.3" />
+    <rect x="6" y="6" width="12" height="5" rx="1" fill="#E0F2FE" />
+    <circle cx="8" cy="14" r="1.5" fill="#FDE047" />
+    <circle cx="16" cy="14" r="1.5" fill="#FDE047" />
+    <line x1="8" y1="20" x2="6" y2="23" stroke="#1C1917" strokeWidth="1.5" strokeLinecap="round" />
+    <line x1="16" y1="20" x2="18" y2="23" stroke="#1C1917" strokeWidth="1.5" strokeLinecap="round" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 26. HONORS (Trophy Gold, Silver, Bronze, Ribbon)
+// -----------------------------------------------------------------------------
+export const EditorialTrophyGold: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <path d="M6 3H18V10C18 13.3 15.3 16 12 16C8.7 16 6 13.3 6 10V3Z" fill="#F59E0B" stroke="#78350F" strokeWidth="1.3" />
+    <path d="M6 5H3C2.4 5 2 5.4 2 6C2 8.5 3.5 10.5 6 11V5Z" fill="#FDE047" stroke="#78350F" strokeWidth="1.1" />
+    <path d="M18 5H21C21.6 5 22 5.4 22 6C22 8.5 20.5 10.5 18 11V5Z" fill="#FDE047" stroke="#78350F" strokeWidth="1.1" />
+    <path d="M12 16V19" stroke="#78350F" strokeWidth="1.5" />
+    <rect x="8" y="19" width="8" height="3" rx="1" fill="#78350F" />
+    <polygon points="12,6 12.8,7.8 14.8,8 13.3,9.4 13.7,11.3 12,10.3 10.3,11.3 10.7,9.4 9.2,8 11.2,7.8" fill="#FFFFFF" />
+  </svg>
+);
+
+export const EditorialTrophySilver: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <path d="M6 3H18V10C18 13.3 15.3 16 12 16C8.7 16 6 13.3 6 10V3Z" fill="#CBD5E1" stroke="#334155" strokeWidth="1.3" />
+    <path d="M6 5H3C2.4 5 2 5.4 2 6C2 8.5 3.5 10.5 6 11V5Z" fill="#F1F5F9" stroke="#334155" strokeWidth="1.1" />
+    <path d="M18 5H21C21.6 5 22 5.4 22 6C22 8.5 20.5 10.5 18 11V5Z" fill="#F1F5F9" stroke="#334155" strokeWidth="1.1" />
+    <path d="M12 16V19" stroke="#334155" strokeWidth="1.5" />
+    <rect x="8" y="19" width="8" height="3" rx="1" fill="#334155" />
+  </svg>
+);
+
+export const EditorialTrophyBronze: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <path d="M6 3H18V10C18 13.3 15.3 16 12 16C8.7 16 6 13.3 6 10V3Z" fill="#CD7F32" stroke="#5C3317" strokeWidth="1.3" />
+    <path d="M6 5H3C2.4 5 2 5.4 2 6C2 8.5 3.5 10.5 6 11V5Z" fill="#E4A066" stroke="#5C3317" strokeWidth="1.1" />
+    <path d="M18 5H21C21.6 5 22 5.4 22 6C22 8.5 20.5 10.5 18 11V5Z" fill="#E4A066" stroke="#5C3317" strokeWidth="1.1" />
+    <path d="M12 16V19" stroke="#5C3317" strokeWidth="1.5" />
+    <rect x="8" y="19" width="8" height="3" rx="1" fill="#5C3317" />
+  </svg>
+);
+
+export const EditorialAwardRibbon: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <circle cx="12" cy="9" r="6" fill="#A24836" stroke="#5C1D11" strokeWidth="1.3" />
+    <circle cx="12" cy="9" r="4" fill="#FAF8F5" />
+    <path d="M9 13.5L7 22L12 19L17 22L15 13.5" fill="#364165" stroke="#1C1917" strokeWidth="1.2" strokeLinejoin="round" />
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
+// 27. EDITORIAL ACCENTS (Brass Keyring, Pushpin, Revision Stamp, Safe Guide, Washi)
+// -----------------------------------------------------------------------------
+export const EditorialBrassKeyring: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <circle cx="9" cy="9" r="6" stroke="#B45309" strokeWidth="2" />
+    <path d="M13.5 13.5L20 20M17 17L19 15M19 19L21 17" stroke="#78350F" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+);
+
+export const EditorialStickyPushpin: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <path d="M9 3H15V6L17 9V11H7V9L9 6V3Z" fill="#A24836" stroke="#5C1D11" strokeWidth="1.3" />
+    <line x1="12" y1="11" x2="12" y2="21" stroke="#1C1917" strokeWidth="1.8" strokeLinecap="round" />
+  </svg>
+);
+
+export const EditorialNeedsRevisionStamp: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <rect x="2" y="5" width="20" height="14" rx="2" fill="#FEF3C7" stroke="#D97706" strokeWidth="1.5" strokeDasharray="3 2" />
+    <path d="M6 12H18" stroke="#D97706" strokeWidth="2" strokeLinecap="round" />
+    <circle cx="12" cy="12" r="2" fill="#D97706" />
+  </svg>
+);
+
+export const EditorialSafeZoneGuide: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <rect x="3" y="3" width="18" height="18" rx="2" stroke="#364165" strokeWidth="1.3" strokeDasharray="3 3" />
+    <path d="M6 3V6H3M18 3V6H21M6 21V18H3M18 21V18H21" stroke="#364165" strokeWidth="1.5" strokeLinecap="round" />
+    <circle cx="12" cy="12" r="1.5" fill="#A24836" />
+  </svg>
+);
+
+export const EditorialWashiTerracotta: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <polygon points="2,6 22,6 20,18 4,18" fill="#A24836" fillOpacity="0.85" stroke="#782D20" strokeWidth="1" />
+    <line x1="6" y1="8" x2="6" y2="16" stroke="#FAF8F5" strokeWidth="0.8" strokeOpacity="0.4" />
+    <line x1="12" y1="8" x2="12" y2="16" stroke="#FAF8F5" strokeWidth="0.8" strokeOpacity="0.4" />
+    <line x1="18" y1="8" x2="18" y2="16" stroke="#FAF8F5" strokeWidth="0.8" strokeOpacity="0.4" />
+  </svg>
+);
+
+export const EditorialWashiIndigo: React.FC<EditorialIconProps> = ({ size = 16, className = '', style }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`inline-block align-middle shrink-0 ${className}`} style={style}>
+    <polygon points="2,6 22,6 20,18 4,18" fill="#364165" fillOpacity="0.85" stroke="#1E2538" strokeWidth="1" />
+    <line x1="6" y1="8" x2="6" y2="16" stroke="#FAF8F5" strokeWidth="0.8" strokeOpacity="0.4" />
+    <line x1="12" y1="8" x2="12" y2="16" stroke="#FAF8F5" strokeWidth="0.8" strokeOpacity="0.4" />
+    <line x1="18" y1="8" x2="18" y2="16" stroke="#FAF8F5" strokeWidth="0.8" strokeOpacity="0.4" />
+  </svg>
+);
+
+

@@ -16,6 +16,29 @@ import {
   EditorialComment,
   EditorialShare,
   EditorialShield,
+  EditorialRoleOwner,
+  EditorialRoleManager,
+  EditorialRoleEditor,
+  EditorialRoleContributor,
+  EditorialRoleViewer,
+  EditorialWsCreator,
+  EditorialWsSoftware,
+  EditorialWsCafe,
+  EditorialWsBrand,
+  EditorialPresetVilla,
+  EditorialPresetCastle,
+  EditorialPresetCroissant,
+  EditorialPresetSkytrain,
+  EditorialTrophyGold,
+  EditorialTrophySilver,
+  EditorialTrophyBronze,
+  EditorialAwardRibbon,
+  EditorialBrassKeyring,
+  EditorialStickyPushpin,
+  EditorialNeedsRevisionStamp,
+  EditorialSafeZoneGuide,
+  EditorialWashiTerracotta,
+  EditorialWashiIndigo,
 } from '@/components/ui/editorial-icons';
 
 export type StickerName =
@@ -171,6 +194,85 @@ export const Sticker: React.FC<StickerProps> = ({
   }
   if (name === 'guarded-shield' || name === 'shield-certified') {
     return <EditorialShield {...commonVectorProps} />;
+  }
+
+  // Roles
+  if (name === 'role-owner') {
+    return <EditorialRoleOwner {...commonVectorProps} />;
+  }
+  if (name === 'role-manager') {
+    return <EditorialRoleManager {...commonVectorProps} />;
+  }
+  if (name === 'role-editor') {
+    return <EditorialRoleEditor {...commonVectorProps} />;
+  }
+  if (name === 'role-contributor') {
+    return <EditorialRoleContributor {...commonVectorProps} />;
+  }
+  if (name === 'role-viewer') {
+    return <EditorialRoleViewer {...commonVectorProps} />;
+  }
+
+  // Workspaces
+  if (name === 'ws-creator') {
+    return <EditorialWsCreator {...commonVectorProps} />;
+  }
+  if (name === 'ws-software') {
+    return <EditorialWsSoftware {...commonVectorProps} />;
+  }
+  if (name === 'ws-cafe') {
+    return <EditorialWsCafe {...commonVectorProps} />;
+  }
+  if (name === 'ws-brand' || name === 'ws-realestate') {
+    return <EditorialWsBrand {...commonVectorProps} />;
+  }
+
+  // Presets
+  if (name === 'preset-villa') {
+    return <EditorialPresetVilla {...commonVectorProps} />;
+  }
+  if (name === 'preset-castle') {
+    return <EditorialPresetCastle {...commonVectorProps} />;
+  }
+  if (name === 'preset-croissant') {
+    return <EditorialPresetCroissant {...commonVectorProps} />;
+  }
+  if (name === 'preset-skytrain') {
+    return <EditorialPresetSkytrain {...commonVectorProps} />;
+  }
+
+  // Trophies & Honors
+  if (name === 'trophy-gold') {
+    return <EditorialTrophyGold {...commonVectorProps} />;
+  }
+  if (name === 'trophy-silver') {
+    return <EditorialTrophySilver {...commonVectorProps} />;
+  }
+  if (name === 'trophy-bronze') {
+    return <EditorialTrophyBronze {...commonVectorProps} />;
+  }
+  if (name === 'award-ribbon') {
+    return <EditorialAwardRibbon {...commonVectorProps} />;
+  }
+
+  // Editorial Accents & Tools
+  if (name === 'brass-keyring') {
+    return <EditorialBrassKeyring {...commonVectorProps} />;
+  }
+  if (name === 'sticky-pushpin') {
+    return <EditorialStickyPushpin {...commonVectorProps} />;
+  }
+  if (name === 'needs-revision-stamp') {
+    return <EditorialNeedsRevisionStamp {...commonVectorProps} />;
+  }
+  if (name === 'safe-zone-guide') {
+    return <EditorialSafeZoneGuide {...commonVectorProps} />;
+  }
+  if (name === 'washi-terracotta') {
+    return <EditorialWashiTerracotta {...commonVectorProps} />;
+  }
+  if (name === 'washi-indigo') {
+    return <EditorialWashiIndigo {...commonVectorProps} />;
   }
 
   const imageSrc = `/icons/stickers/${name}.png`;

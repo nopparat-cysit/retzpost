@@ -372,7 +372,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
 
 
 
-export default function ConnectedAccountsPage() {
+function ConnectedAccountsContent() {
   const searchParams = useSearchParams();
   const successMessage = searchParams.get('success');
   const errorMessage = searchParams.get('error');
@@ -2286,5 +2286,13 @@ export default function ConnectedAccountsPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function ConnectedAccountsPage() {
+  return (
+    <React.Suspense fallback={<div className="min-h-screen bg-paper-canvas p-8 animate-pulse text-xs font-mono text-ink-muted">Loading Workspace Accounts...</div>}>
+      <ConnectedAccountsContent />
+    </React.Suspense>
   );
 }

@@ -12,6 +12,8 @@ const targets = [
   { name: 'preview_calendar.png', url: 'http://localhost:3000/calendar' },
   { name: 'preview_accounts.png', url: 'http://localhost:3000/accounts' },
   { name: 'preview_create.png', url: 'http://localhost:3000/create' },
+  { name: 'preview_queue.png', url: 'http://localhost:3000/publishing/queue' },
+  { name: 'preview_team.png', url: 'http://localhost:3000/settings/team' },
 ];
 
 for (const t of targets) {
