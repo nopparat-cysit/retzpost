@@ -14,12 +14,20 @@ import {
   Globe,
   FileDown,
   Trash2,
-  AlertTriangle
+  AlertTriangle,
+  User,
+  Coins,
+  Building2
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { THEME_CONFIGS, ThemePreset } from '@/modules/billing/pricing-plans';
+import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
+import { getCurrentUser } from '@/modules/auth/auth-service';
+import { AuthUser } from '@/modules/auth/auth-types';
 
 export default function SettingsPage() {
+  const { t, locale, setLocale } = useTranslation();
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [defaultTimezone, setDefaultTimezone] = useState('Asia/Bangkok');
   const [autoFrameStories, setAutoFrameStories] = useState(true);
   const [maxRetryAttempts, setMaxRetryAttempts] = useState('4');
@@ -34,6 +42,7 @@ export default function SettingsPage() {
 
   // Load settings from Neon Postgres API
   useEffect(() => {
+    setCurrentUser(getCurrentUser());
     fetch('/api/workspaces/settings')
       .then(res => res.json())
       .then(data => {
@@ -135,7 +144,115 @@ export default function SettingsPage() {
         </div>
       )}
 
+      {/* USER ACCOUNT PROFILE CARD */}
+      {currentUser && (
+        <div className="bg-paper-raised border-2 border-brand-indigo/60 rounded-card p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="flex items-center gap-3.5 min-w-0">
+            <div
+              className={`w-12 h-12 rounded-full ${
+                currentUser.avatarBg || 'bg-brand-indigo'
+              } text-white flex items-center justify-center font-serif text-base font-bold ring-2 ring-brand-indigo/20 shadow-xs shrink-0`}
+            >
+              {currentUser.avatarText || 'RP'}
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <h3 className="font-serif font-bold text-base text-ink-primary truncate">
+                  {currentUser.name}
+                </h3>
+                <span className="px-2 py-0.5 rounded bg-brand-indigo text-white font-mono font-bold text-[10px] uppercase">
+                  {currentUser.role}
+                </span>
+              </div>
+              <p className="text-xs text-ink-secondary font-mono truncate mt-0.5">
+                {currentUser.email}
+              </p>
+              <div className="flex items-center gap-3 mt-1 text-[11px] font-mono text-ink-secondary">
+                <span className="flex items-center gap-1 text-accent-terracotta font-bold">
+                  <Coins className="w-3.5 h-3.5" />
+                  <span>Master Wallet: 150 🪙</span>
+                </span>
+                <span>•</span>
+                <span className="text-semantic-success font-semibold">
+                  Status: Active
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2 shrink-0">
+            <LanguageToggle />
+          </div>
+        </div>
+      )}
+
       <form onSubmit={handleSave} className="space-y-6 text-xs">
+        {/* SECTION 0: SYSTEM LANGUAGE */}
+        <section className="bg-paper-raised border border-border-rule rounded-card p-5 shadow-xs space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-border-rule">
+            <div className="flex items-center gap-2">
+              <Globe className="w-4 h-4 text-brand-indigo" />
+              <h2 className="font-serif font-medium text-base text-ink-primary">
+                {t('settings.languageSectionTitle')}
+              </h2>
+            </div>
+            <span className="font-mono text-[10px] text-ink-muted">
+              Active: {locale === 'th' ? '🇹🇭 ภาษาไทย' : '🇬🇧 English'}
+            </span>
+          </div>
+
+          <p className="text-xs text-ink-secondary">
+            {t('settings.languageSectionDesc')}
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+            <button
+              type="button"
+              onClick={() => setLocale('th')}
+              className={`p-3 rounded-editorial border text-left transition-all cursor-pointer flex items-center justify-between ${
+                locale === 'th'
+                  ? 'border-2 border-brand-indigo bg-paper-canvas shadow-xs ring-2 ring-brand-indigo/15'
+                  : 'border-border-rule bg-paper-raised hover:border-border-rule/80'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-xl">🇹🇭</span>
+                <div>
+                  <p className="font-bold text-xs text-ink-primary">ภาษาไทย (Thai)</p>
+                  <p className="text-[10px] font-mono text-ink-secondary">ค่าเริ่มต้นสำหรับตลาดไทย</p>
+                </div>
+              </div>
+              {locale === 'th' && (
+                <div className="w-5 h-5 rounded-full bg-brand-indigo text-white flex items-center justify-center text-[10px] font-bold">
+                  ✓
+                </div>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setLocale('en')}
+              className={`p-3 rounded-editorial border text-left transition-all cursor-pointer flex items-center justify-between ${
+                locale === 'en'
+                  ? 'border-2 border-brand-indigo bg-paper-canvas shadow-xs ring-2 ring-brand-indigo/15'
+                  : 'border-border-rule bg-paper-raised hover:border-border-rule/80'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <span className="text-xl">🇬🇧</span>
+                <div>
+                  <p className="font-bold text-xs text-ink-primary">English</p>
+                  <p className="text-[10px] font-mono text-ink-secondary">Global editorial suite</p>
+                </div>
+              </div>
+              {locale === 'en' && (
+                <div className="w-5 h-5 rounded-full bg-brand-indigo text-white flex items-center justify-center text-[10px] font-bold">
+                  ✓
+                </div>
+              )}
+            </button>
+          </div>
+        </section>
         {/* SECTION 1: EDITORIAL CADENCE & TIMEZONE */}
         <section className="bg-paper-raised border border-border-rule rounded-card p-5 shadow-xs space-y-4">
           <div className="flex items-center gap-2 pb-2 border-b border-border-rule">

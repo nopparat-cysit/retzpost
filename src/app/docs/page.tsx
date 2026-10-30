@@ -33,7 +33,7 @@ import {
   Eye,
   CheckCheck
 } from 'lucide-react';
-import { PublicHeader, PublicFooter } from '@/components/layout/public-nav';
+import { PublicHeader, PublicFooter, DocsSubNav } from '@/components/layout/public-nav';
 import { Sticker } from '@/components/ui/sticker';
 import { 
   FacebookLogo, 
@@ -486,6 +486,7 @@ export default function DocsPage() {
     <div className="min-h-screen bg-paper-canvas flex flex-col font-sans selection:bg-brand-indigo selection:text-white">
       {/* Editorial Public Masthead Header */}
       <PublicHeader />
+      <DocsSubNav />
 
       {/* Hero Header Section */}
       <section className="bg-paper-raised border-b-2 border-border-rule py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">

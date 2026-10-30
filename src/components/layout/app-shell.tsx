@@ -28,6 +28,8 @@ import {
 import { Sticker } from '@/components/ui/sticker';
 import { getCurrentUser, logoutUser, subscribeToAuthChange } from '@/modules/auth/auth-service';
 import { AuthUser } from '@/modules/auth/auth-types';
+import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
+import { UserProfileMenu } from '@/components/layout/user-profile-menu';
 import { 
   isMockDataCleared, 
   subscribeToMockDataChange 
@@ -126,35 +128,36 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     }
   }, [currentWorkspaces]);
 
+  const { t } = useTranslation();
   const activeWorkspace = currentWorkspaces.find((w) => w.id === activeWorkspaceId) || currentWorkspaces[0];
 
   const navItems = [
     {
-      group: '01 — DESK / แดชบอร์ด',
+      group: t('nav.deskGroup'),
       items: [
-        { label: 'Overview / ภาพรวม', href: '/', icon: LayoutDashboard },
-        { label: 'Pricing & Plans / ราคาและแผน', href: '/pricing', icon: Sparkles },
+        { label: t('nav.overview'), href: '/desk', icon: LayoutDashboard },
+        { label: t('nav.pricing'), href: '/pricing', icon: Sparkles },
       ],
     },
     {
-      group: '02 — PUBLISH / กองบรรณาธิการ',
+      group: t('nav.publishGroup'),
       items: [
-        { label: 'Content Library / คลังคอนเทนต์', href: '/content', icon: Library },
-        { label: 'Universal Composer / ห้องเขียนข่าว', href: '/create', icon: PenSquare },
+        { label: t('nav.contentLibrary'), href: '/content', icon: Library },
+        { label: t('nav.composer'), href: '/create', icon: PenSquare },
         { 
-          label: 'Publishing Queue / คิวรอเผยแพร่', 
+          label: t('nav.publishingQueue'), 
           href: '/publishing/queue', 
           icon: ListOrdered,
           badge: isMockCleared ? undefined : { text: '2 Issues', bg: 'bg-accent-terracotta text-white' }
         },
-        { label: 'Editorial Calendar / ปฏิทินคอนเทนต์', href: '/calendar', icon: Calendar },
+        { label: t('nav.calendar'), href: '/calendar', icon: Calendar },
       ],
     },
     {
-      group: '03 — WORKSPACE / พื้นที่ทำงาน',
+      group: t('nav.workspaceGroup'),
       items: [
         { 
-          label: 'Connected Channels / บัญชีโซเชียล', 
+          label: t('nav.connectedChannels'), 
           href: '/accounts', 
           icon: Share2,
           badge: isMockCleared 
@@ -162,18 +165,19 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             : { text: `${activeWorkspace.channelCount} Live`, bg: 'bg-brand-indigo/15 text-brand-indigo border border-brand-indigo/20' }
         },
         {
-          label: 'Team & Permissions / สิทธิ์ทีมงาน',
+          label: t('nav.teamPermissions'),
           href: '/settings/team',
           icon: Users,
           badge: { text: 'RBAC', bg: 'bg-semantic-info/15 text-semantic-info border border-semantic-info/20' }
         },
-        { label: 'Settings & Defaults / การตั้งค่า', href: '/settings', icon: Settings },
-        { label: 'คู่มือใช้งาน (Docs)', href: '/docs', icon: BookOpen },
+        { label: t('nav.settings'), href: '/settings', icon: Settings },
+        { label: t('nav.docs'), href: '/docs', icon: BookOpen },
       ],
     },
   ];
 
   const isPublicRoute = 
+    pathname === '/' ||
     pathname === '/landing' ||
     pathname === '/login' || 
     pathname === '/register' || 
@@ -201,13 +205,15 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           </span>
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
+          <LanguageToggle variant="compact" />
+          <UserProfileMenu variant="header-compact" />
           <Link
             href="/create"
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-indigo text-white text-xs font-semibold rounded-editorial shadow-2xs"
+            className="flex items-center gap-1 px-2.5 py-1.5 bg-brand-indigo text-white text-xs font-semibold rounded-editorial shadow-2xs"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>New Post</span>
+            <span>New</span>
           </Link>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -328,44 +334,17 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             <span>🛡️ Super Admin Console</span>
           </Link>
 
-          {/* User Account Row */}
-          <div className="pt-2 flex items-center justify-between gap-1.5">
-            <div className="flex items-center gap-2.5 min-w-0">
-              <div className={`w-7 h-7 rounded-full ${currentUser?.avatarBg || (isMockCleared ? 'bg-ink-secondary/20 text-ink-primary' : 'bg-brand-indigo text-white')} flex items-center justify-center font-serif text-xs font-bold ring-1 ring-border-rule shrink-0`}>
-                {currentUser?.avatarText || (isMockCleared ? 'GU' : 'DM')}
-              </div>
-              <div className="min-w-0">
-                <p className="font-semibold text-ink-primary text-xs leading-tight truncate">
-                  {currentUser?.name || (isMockCleared ? 'ผู้ใช้งานทั่วไป (Guest)' : 'Demo Manager')}
-                </p>
-                <p className="text-[11px] text-ink-secondary font-mono truncate max-w-[105px]">
-                  {currentUser?.email || (isMockCleared ? 'คลิกเพื่อเข้าสู่ระบบ' : activeWorkspace.name)}
-                </p>
-              </div>
-            </div>
+          {/* Language Switcher Bar */}
+          <div className="py-2 border-y border-border-rule/60 flex items-center justify-between">
+            <span className="text-[10px] font-mono text-ink-secondary uppercase tracking-wider font-semibold">
+              {t('common.switchLanguage')}
+            </span>
+            <LanguageToggle />
+          </div>
 
-            <div className="flex items-center gap-1 shrink-0">
-              <Link
-                href={currentUser ? "/settings/team" : "/login"}
-                className="text-[10px] font-mono text-brand-indigo hover:underline px-1.5 py-0.5 bg-brand-indigo/10 border border-brand-indigo/20 rounded font-semibold"
-                title={currentUser ? "View Role & Permissions" : "เข้าสู่ระบบ (Sign In)"}
-              >
-                {currentUser?.role || (isMockCleared ? 'Guest' : 'Role: Owner')}
-              </Link>
-              {currentUser && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    logoutUser();
-                    window.location.href = '/login';
-                  }}
-                  className="p-1 text-ink-secondary hover:text-accent-terracotta rounded hover:bg-paper-canvas transition-colors"
-                  title="ออกจากระบบ (Sign Out)"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
+          {/* Interactive User Profile Menu */}
+          <div className="pt-2">
+            <UserProfileMenu variant="sidebar-row" />
           </div>
         </div>
       </aside>

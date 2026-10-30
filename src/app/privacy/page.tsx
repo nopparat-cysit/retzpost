@@ -22,7 +22,7 @@ import {
   Layers,
   ChevronRight
 } from 'lucide-react';
-import { PublicHeader, PublicFooter } from '@/components/layout/public-nav';
+import { PublicHeader, PublicFooter, DocsSubNav } from '@/components/layout/public-nav';
 import { Sticker } from '@/components/ui/sticker';
 
 export default function PrivacyPolicyPage() {
@@ -49,6 +49,7 @@ export default function PrivacyPolicyPage() {
     <div className="min-h-screen bg-paper-canvas flex flex-col font-sans selection:bg-brand-indigo selection:text-white">
       {/* Public Masthead Header */}
       <PublicHeader />
+      <DocsSubNav />
 
       {/* Editorial Broadsheet Hero */}
       <section className="bg-paper-raised border-b-2 border-border-rule py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">

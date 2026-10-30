@@ -20,9 +20,56 @@ import {
 import { Sticker } from '@/components/ui/sticker';
 import { getCurrentUser } from '@/modules/auth/auth-service';
 import { AuthUser } from '@/modules/auth/auth-types';
+import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
+import { UserProfileMenu } from '@/components/layout/user-profile-menu';
+
+export const DocsSubNav: React.FC = () => {
+  const pathname = usePathname();
+  const { t } = useTranslation();
+
+  const items = [
+    { href: '/docs', label: t('docs.guideTab'), icon: BookOpen },
+    { href: '/privacy', label: t('docs.privacyTab'), icon: ShieldCheck },
+    { href: '/terms', label: t('docs.termsTab'), icon: FileText },
+  ];
+
+  return (
+    <div className="bg-paper-canvas/95 border-b border-border-rule px-4 py-2 text-xs font-mono">
+      <div className="max-w-7xl mx-auto w-full flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <span className="text-[10px] text-ink-secondary font-bold uppercase tracking-wider hidden sm:inline">
+            Docs & Legal:
+          </span>
+          <div className="flex items-center gap-1.5">
+            {items.map((it) => {
+              const isActive = pathname === it.href;
+              const Icon = it.icon;
+              return (
+                <Link
+                  key={it.href}
+                  href={it.href}
+                  className={`px-3 py-1.5 rounded-editorial flex items-center gap-1.5 transition-all ${
+                    isActive
+                      ? 'bg-paper-raised text-brand-indigo font-bold border border-border-rule shadow-xs'
+                      : 'text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle'
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  <span>{it.label}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+        <LanguageToggle variant="compact" />
+      </div>
+    </div>
+  );
+};
 
 export const PublicHeader: React.FC = () => {
   const pathname = usePathname();
+  const { t } = useTranslation();
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
@@ -30,11 +77,9 @@ export const PublicHeader: React.FC = () => {
   }, []);
 
   const navLinks = [
-    { href: '/landing', label: 'Dream Press Desk', icon: Sparkles },
-    { href: '/pricing', label: 'ราคาและแผน (Pricing)', icon: Sparkles },
-    { href: '/docs', label: 'คู่มือใช้งาน (Docs)', icon: BookOpen },
-    { href: '/privacy', label: 'นโยบายความเป็นส่วนตัว (Privacy)', icon: ShieldCheck },
-    { href: '/terms', label: 'ข้อกำหนดการใช้งาน (Terms)', icon: FileText },
+    { href: '/', label: t('nav.landing'), icon: Sparkles },
+    { href: '/pricing', label: t('nav.pricing'), icon: Sparkles },
+    { href: '/docs', label: t('nav.docs'), icon: BookOpen },
   ];
 
   return (
@@ -103,15 +148,19 @@ export const PublicHeader: React.FC = () => {
 
         {/* Right CTA Actions */}
         <div className="flex items-center gap-2 text-xs font-mono">
+          <LanguageToggle variant="compact" />
           {currentUser ? (
-            <Link
-              href="/"
-              className="flex items-center gap-2 px-4 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white font-semibold rounded-editorial shadow-xs transition-all active:scale-98"
-            >
-              <LayoutDashboard className="w-3.5 h-3.5" />
-              <span>แดชบอร์ด ({currentUser.name})</span>
-              <ArrowRight className="w-3.5 h-3.5 text-white/70" />
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/desk"
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white font-semibold rounded-editorial shadow-xs transition-all active:scale-98"
+              >
+                <LayoutDashboard className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{t('common.goToDashboard')}</span>
+                <ArrowRight className="w-3.5 h-3.5 text-white/70" />
+              </Link>
+              <UserProfileMenu variant="header-compact" />
+            </div>
           ) : (
             <>
               <Link
@@ -119,14 +168,14 @@ export const PublicHeader: React.FC = () => {
                 className="flex items-center gap-1 px-3 py-1.5 text-ink-primary hover:text-brand-indigo font-semibold rounded-editorial hover:bg-paper-subtle transition-colors"
               >
                 <LogIn className="w-3.5 h-3.5 text-ink-secondary" />
-                <span>เข้าสู่ระบบ</span>
+                <span>{t('common.signIn')}</span>
               </Link>
               <Link
                 href="/register"
                 className="flex items-center gap-1.5 px-4 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white font-bold rounded-editorial shadow-xs transition-all active:scale-98"
               >
                 <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-                <span>สมัครสมาชิกฟรี</span>
+                <span>{t('common.signUp')}</span>
               </Link>
             </>
           )}

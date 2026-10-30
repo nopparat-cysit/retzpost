@@ -255,7 +255,7 @@ function CheckoutContent() {
 
                 <div className="mt-6 flex flex-wrap gap-3">
                   <Link
-                    href="/"
+                    href="/desk"
                     className="py-2.5 px-6 rounded-btn bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-bold transition-all shadow-xs flex items-center gap-2"
                   >
                     <span>เข้าสู่หน้าควบคุมหลัก (Go to Dashboard)</span>

@@ -13,6 +13,7 @@ export type PromoType = 'STANDARD' | 'POST_TRIAL_MONTHLY_3MO' | 'POST_TRIAL_YEAR
 
 export interface PlanFeature {
   labelTh: string;
+  labelEn?: string;
   included: boolean;
   highlight?: boolean;
 }
@@ -22,6 +23,7 @@ export interface PricingPlan {
   nameTh: string;
   nameEn: string;
   taglineTh: string;
+  taglineEn?: string;
   monthlyPriceThb: number;
   yearlyPriceThb: number; // 25% discount (pay 9 months)
   monthlyEquivalentThb: number; // yearly / 12
@@ -69,6 +71,7 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
     nameTh: 'Starter Press (แผนเริ่มต้น)',
     nameEn: 'Starter Press',
     taglineTh: 'สำหรับมือใหม่ทดลองระบบจริง ฟรีตลอดชีพ',
+    taglineEn: 'For beginners testing the newsroom, free forever',
     monthlyPriceThb: 0,
     yearlyPriceThb: 0,
     monthlyEquivalentThb: 0,
@@ -96,6 +99,7 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
     nameTh: 'Solo Press (ครีเอเตอร์ลุยเดี่ยว)',
     nameEn: 'Solo Press',
     taglineTh: 'สำหรับพ่อค้าแม่ค้าออนไลน์ และครีเอเตอร์เดี่ยว ถูกกว่ากาแฟ 1 แก้ว',
+    taglineEn: 'For solopreneurs and independent creators, cheaper than a cup of coffee',
     monthlyPriceThb: 79,
     yearlyPriceThb: 711, // 79 * 9 = 711 (~25% off)
     monthlyEquivalentThb: 59,
@@ -125,6 +129,7 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
     nameTh: 'Creator Team (ทีมงานขนาดเล็ก & ร้านค้าออนไลน์)',
     nameEn: 'Creator Team',
     taglineTh: 'ตอบโจทย์ร้านค้าออนไลน์ที่มีทีมไม่เกิน 5 คน แบงก์ร้อยสองใบมีทอน',
+    taglineEn: 'For small social teams & online brands up to 5 members',
     monthlyPriceThb: 199,
     yearlyPriceThb: 1791, // 199 * 9 = 1791 (~25% off)
     monthlyEquivalentThb: 149,
@@ -154,6 +159,7 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
     nameTh: 'Studio Pro (สตูดิโอ & แบรนด์หลายสาขา)',
     nameEn: 'Studio Pro',
     taglineTh: 'สำหรับทีมมีเดีย สตูดิโอโปรดักชั่น และร้านค้าที่มีหลายสาขา',
+    taglineEn: 'For media teams, production studios & multi-branch brands',
     monthlyPriceThb: 599,
     yearlyPriceThb: 5391, // 599 * 9 = 5391 (~25% off)
     monthlyEquivalentThb: 449,
@@ -180,6 +186,7 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
     nameTh: 'Agency Syndicate (เอเจนซี่ & องค์กรใหญ่)',
     nameEn: 'Agency Syndicate',
     taglineTh: 'สำหรับดิจิทัลเอเจนซี่ที่ดูแลลูกค้าหลายสิบแบรนด์ และองค์กรขนาดใหญ่',
+    taglineEn: 'For digital agencies managing dozens of brands and enterprises',
     monthlyPriceThb: 1490,
     yearlyPriceThb: 13410, // 1490 * 9 = 13410 (~25% off)
     monthlyEquivalentThb: 1118,

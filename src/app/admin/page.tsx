@@ -27,8 +27,10 @@ import {
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
 import { PlanTier } from '@/modules/billing/pricing-plans';
+import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
 
 export default function SuperAdminPage() {
+  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'OVERVIEW' | 'USERS' | 'BILLING' | 'LEGAL' | 'CIRCUIT' | 'SETTINGS'>('OVERVIEW');
   const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<any>(null);
@@ -158,19 +160,20 @@ export default function SuperAdminPage() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
+            <LanguageToggle variant="compact" />
             <button
               onClick={fetchOverview}
               className="py-1 px-2.5 rounded-md bg-white/10 hover:bg-white/20 text-white text-xs font-mono flex items-center gap-1.5 transition-colors"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-              <span>รีเฟรชข้อมูล</span>
+              <span>{t('admin.refreshData')}</span>
             </button>
             <Link
-              href="/"
+              href="/desk"
               className="py-1 px-3 rounded-md bg-accent-terracotta hover:bg-accent-terracotta/90 text-white text-xs font-bold transition-colors"
             >
-              ← กลับสู่แอป
+              {t('admin.backToDesk')}
             </Link>
           </div>
         </div>

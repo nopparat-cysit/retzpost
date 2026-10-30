@@ -54,7 +54,7 @@ export default function LoginPage() {
       if (res.success && res.user) {
         setSuccessMessage(`ยินดีต้อนรับกลับ, ${res.user.name}! กำลังเข้าสู่ระบบ...`);
         setTimeout(() => {
-          router.push('/');
+          router.push('/desk');
         }, 1200);
       } else {
         setErrorMessage(res.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
@@ -75,7 +75,7 @@ export default function LoginPage() {
     if (res.success && res.user) {
       setSuccessMessage(`เข้าสู่ระบบด้วยบัญชีทดสอบ ${res.user.name} เรียบร้อยแล้ว`);
       setTimeout(() => {
-        router.push('/');
+        router.push('/desk');
       }, 1000);
     }
   };

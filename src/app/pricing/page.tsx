@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { PublicHeader, PublicFooter } from '@/components/layout/public-nav';
 import { Sticker } from '@/components/ui/sticker';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 import { 
   PRICING_PLANS, 
   TOKEN_TOPUP_PACKS, 
@@ -31,6 +32,7 @@ import {
 } from '@/modules/billing/pricing-plans';
 
 export default function PricingPage() {
+  const { t, locale } = useTranslation();
   const [billingCycle, setBillingCycle] = useState<BillingCycle>('MONTHLY');
   const [isPromoMode, setIsPromoMode] = useState<boolean>(false);
   const [selectedTheme, setSelectedTheme] = useState<ThemePreset>('NEWSPRINT');
@@ -49,15 +51,15 @@ export default function PricingPage() {
           <div className="max-w-4xl mx-auto space-y-4">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-indigo/10 border border-brand-indigo/20 text-brand-indigo text-xs font-mono font-bold tracking-wide">
               <Sticker name="retro-stamp" size="xs" />
-              <span>THAILAND COMMERCIAL PRICING • ค่าบริการคิดเป็นเงินบาทไทย (THB)</span>
+              <span>{t('pricing.badge')}</span>
             </div>
 
             <h1 className="font-serif font-black text-3xl sm:text-5xl text-ink-primary tracking-tight leading-tight">
-              แผนแท่นพิมพ์ข่าวสารที่พอดีกับขนาดทีมของคุณ
+              {t('pricing.heading')}
             </h1>
 
             <p className="text-base sm:text-lg text-ink-secondary max-w-2xl mx-auto leading-relaxed">
-              ตั้งแต่ครีเอเตอร์เดี่ยวจนถึงเอเจนซี่ระดับแถวหน้า โพสต์คอนเทนต์ข้ามโซเชียล 5 ช่องทางพร้อมกัน พร้อมระบบ <span className="font-semibold text-brand-indigo">Master Token Wallet</span> กระเป๋าแม่ใบเดียวใช้ร่วมกันได้ทุก Workspace
+              {t('pricing.subtitle')}
             </p>
 
             {/* Toggles Container */}
@@ -73,7 +75,7 @@ export default function PricingPage() {
                       : 'text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
-                  รายเดือน (Monthly)
+                  {t('pricing.billingMonthly')}
                 </button>
                 <button
                   type="button"
@@ -84,9 +86,9 @@ export default function PricingPage() {
                       : 'text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
-                  <span>รายปี (Yearly)</span>
+                  <span>{t('pricing.billingYearly')}</span>
                   <span className="px-1.5 py-0.2 rounded bg-accent-terracotta text-white text-[10px] font-mono">
-                    ลด 25% (จ่าย 9 เดือน)
+                    {t('pricing.yearlyDiscountBadge')}
                   </span>
                 </button>
               </div>
@@ -148,10 +150,10 @@ export default function PricingPage() {
                     {/* Header */}
                     <div className="border-b border-border-rule pb-3 mb-3">
                       <h3 className="font-serif font-bold text-lg text-ink-primary">
-                        {plan.nameEn}
+                        {locale === 'th' ? plan.nameTh : plan.nameEn}
                       </h3>
                       <p className="text-[11px] text-ink-secondary mt-1 font-medium leading-tight">
-                        {plan.taglineTh}
+                        {locale === 'th' ? plan.taglineTh : (plan.taglineEn || plan.taglineTh)}
                       </p>
                     </div>
 
@@ -167,7 +169,7 @@ export default function PricingPage() {
                           {isFree ? '฿0' : `฿${price.toLocaleString()}`}
                         </span>
                         <span className="text-[11px] text-ink-muted font-medium">
-                          {isFree ? 'ตลอดชีพ' : billingCycle === 'YEARLY' ? '/ปี' : '/เดือน'}
+                          {isFree ? (locale === 'th' ? 'ตลอดชีพ' : 'forever') : billingCycle === 'YEARLY' ? t('pricing.perYear') : t('pricing.perMonth')}
                         </span>
                       </div>
                       {!isFree && (

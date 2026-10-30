@@ -95,9 +95,23 @@
 body {
   background-color: var(--bg-canvas);
   color: var(--text-primary);
-  font-family: var(--font-geist), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'IBM Plex Sans Thai', 'Plus Jakarta Sans', var(--font-geist), -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-variant-numeric: tabular-nums lining-nums;
+  -webkit-font-feature-settings: "lnum" 1, "tnum" 1;
+  font-feature-settings: "lnum" 1, "tnum" 1;
+}
+
+/* Universal Numeral Lining & Tabular Figure Enhancements */
+/* Ensures all numbers in prices (฿79, ฿199), tokens (150 🪙), and metrics are crisp, level, and modern */
+*, ::before, ::after {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+h1, h2, h3, h4, h5, h6, p, span, button, input, select, textarea, table, .font-serif, .font-mono, .font-sans, .editorial-masthead-title {
+  -webkit-font-feature-settings: "lnum" 1, "tnum" 1;
+  font-feature-settings: "lnum" 1, "tnum" 1;
 }
 
 /* Custom Editorial Print Grain & Rule Utilities */
