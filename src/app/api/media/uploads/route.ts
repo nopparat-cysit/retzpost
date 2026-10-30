@@ -4,6 +4,8 @@ import { prisma } from '@/lib/prisma';
 import { storageService, MAX_VIDEO_SIZE_BYTES } from '@/modules/media/storage';
 import crypto from 'crypto';
 
+export const dynamic = 'force-dynamic';
+
 const uploadRequestSchema = z.object({
   workspaceId: z.string().uuid('Invalid workspace ID format'),
   filename: z.string().min(1, 'Filename is required').max(255),

@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { storageService } from '@/modules/media/storage';
 import { mediaProbeService } from '@/modules/media/probe';
 
+export const dynamic = 'force-dynamic';
+
 export async function POST(
   req: NextRequest,
   { params }: { params: { id: string } }

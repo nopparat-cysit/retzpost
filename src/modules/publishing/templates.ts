@@ -62,7 +62,7 @@ export const BUILT_IN_TEMPLATES: PostTemplate[] = [
     categoryLabel: 'เปิดตัวสินค้า',
     title: '🚀 Introducing Next-Gen Multi-Placement Publishing Studio',
     caption: `Today we are thrilled to unveil our biggest leap forward in content distribution.\n\nWhat makes this different?\n• Simultaneous Feed, Story (24h), and Reels distribution from one canvas\n• Intelligent phone mockups with vertical 9:16 safe zones\n• Project-scoped automation with 1-click recipes\n\nUpload once. Adapt everywhere.\nRead our launch editorial and documentation at the link below.`,
-    tags: 'ProductLaunch, MultiPost, CreatorEconomy, SaaS, Automation',
+    tags: 'ProductLaunch, RetzPost, CreatorEconomy, SaaS, Automation',
     storyLink: 'https://retzpost.io/whats-new',
     isBuiltIn: true,
   },

@@ -3,7 +3,7 @@ import './globals.css';
 import { AppShell } from '@/components/layout/app-shell';
 
 export const metadata: Metadata = {
-  title: 'MULTIPOST — Dream Press Publishing Desk',
+  title: 'RETZPOST — Dream Press Publishing Desk',
   description: 'Upload once. Adapt and publish everywhere. Multi-platform video publishing engine for creators and teams.',
 };
 

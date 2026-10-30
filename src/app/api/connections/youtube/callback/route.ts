@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { TokenVaultService } from '@/modules/security/token-vault';
 import { youtubeOAuth } from '@/providers/youtube/oauth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const code = searchParams.get('code');

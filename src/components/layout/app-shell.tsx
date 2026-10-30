@@ -20,7 +20,10 @@ import {
   Users,
   Shield,
   LogOut,
-  BookOpen
+  BookOpen,
+  Coins,
+  ShieldAlert,
+  Palette
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
 import { getCurrentUser, logoutUser, subscribeToAuthChange } from '@/modules/auth/auth-service';
@@ -68,6 +71,10 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
 
+  // Dynamic Workspace Billing & Token info
+  const [tokenBalance, setTokenBalance] = useState<number>(50);
+  const [planTier, setPlanTier] = useState<string>('STARTER');
+
   useEffect(() => {
     setCurrentUser(getCurrentUser());
     setIsMockCleared(isMockDataCleared());
@@ -79,6 +86,17 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       setIsMockCleared(cleared);
     });
 
+    // Fetch workspace settings & token balance
+    fetch('/api/workspaces/settings')
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.settings) {
+          setTokenBalance(data.settings.tokenBalance ?? 50);
+          setPlanTier(data.settings.planTier || 'STARTER');
+        }
+      })
+      .catch(() => null);
+
     return () => {
       unsubscribe();
       unsubMock();
@@ -89,6 +107,10 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('retzpost_theme_preset');
+      if (savedTheme) {
+        document.documentElement.setAttribute('data-theme', savedTheme);
+      }
       const saved = localStorage.getItem('retzpost_active_workspace_id');
       if (saved && currentWorkspaces.some((w) => w.id === saved)) {
         setActiveWorkspaceId(saved);
@@ -100,41 +122,39 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
         }
       };
       window.addEventListener('retzpost:workspace-change', handleSync);
-      return () => {
-        window.removeEventListener('retzpost:workspace-change', handleSync);
-      };
+      return () => window.removeEventListener('retzpost:workspace-change', handleSync);
     }
   }, [currentWorkspaces]);
 
-  const activeWorkspace = currentWorkspaces.find(w => w.id === activeWorkspaceId) || currentWorkspaces[0];
+  const activeWorkspace = currentWorkspaces.find((w) => w.id === activeWorkspaceId) || currentWorkspaces[0];
 
   const navItems = [
     {
-      group: '01 — HOME',
+      group: '01 — DESK / แดชบอร์ด',
       items: [
-        { label: 'Dashboard', href: '/', icon: LayoutDashboard },
-        { label: 'Dream Press Landing', href: '/landing', icon: Sparkles },
+        { label: 'Overview / ภาพรวม', href: '/', icon: LayoutDashboard },
+        { label: 'Pricing & Plans / ราคาและแผน', href: '/pricing', icon: Sparkles },
       ],
     },
     {
-      group: '02 — PUBLISH',
+      group: '02 — PUBLISH / กองบรรณาธิการ',
       items: [
-        { label: 'Content Library', href: '/content', icon: Library },
-        { label: 'Universal Composer', href: '/create', icon: PenSquare },
+        { label: 'Content Library / คลังคอนเทนต์', href: '/content', icon: Library },
+        { label: 'Universal Composer / ห้องเขียนข่าว', href: '/create', icon: PenSquare },
         { 
-          label: 'Publishing Queue', 
+          label: 'Publishing Queue / คิวรอเผยแพร่', 
           href: '/publishing/queue', 
           icon: ListOrdered,
           badge: isMockCleared ? undefined : { text: '2 Issues', bg: 'bg-accent-terracotta text-white' }
         },
-        { label: 'Editorial Calendar', href: '/calendar', icon: Calendar },
+        { label: 'Editorial Calendar / ปฏิทินคอนเทนต์', href: '/calendar', icon: Calendar },
       ],
     },
     {
-      group: '03 — WORKSPACE',
+      group: '03 — WORKSPACE / พื้นที่ทำงาน',
       items: [
         { 
-          label: 'Connected Channels', 
+          label: 'Connected Channels / บัญชีโซเชียล', 
           href: '/accounts', 
           icon: Share2,
           badge: isMockCleared 
@@ -142,12 +162,12 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             : { text: `${activeWorkspace.channelCount} Live`, bg: 'bg-brand-indigo/15 text-brand-indigo border border-brand-indigo/20' }
         },
         {
-          label: 'Team & Permissions',
+          label: 'Team & Permissions / สิทธิ์ทีมงาน',
           href: '/settings/team',
           icon: Users,
           badge: { text: 'RBAC', bg: 'bg-semantic-info/15 text-semantic-info border border-semantic-info/20' }
         },
-        { label: 'Settings & Defaults', href: '/settings', icon: Settings },
+        { label: 'Settings & Defaults / การตั้งค่า', href: '/settings', icon: Settings },
         { label: 'คู่มือใช้งาน (Docs)', href: '/docs', icon: BookOpen },
       ],
     },
@@ -158,6 +178,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     pathname === '/login' || 
     pathname === '/register' || 
     pathname === '/forgot-password' ||
+    pathname === '/pricing' ||
+    pathname === '/checkout' ||
+    pathname.startsWith('/admin') ||
     pathname.startsWith('/docs') ||
     pathname.startsWith('/guide') ||
     pathname.startsWith('/privacy') ||
@@ -172,8 +195,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       {/* Mobile Top Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-paper-raised border-b border-border-rule sticky top-0 z-30 shadow-xs">
         <Link href="/" className="flex items-center gap-2">
-          <span className="font-serif font-bold text-lg tracking-tight">MULTIPOST</span>
-          <span className="text-[10px] font-mono text-brand-indigo uppercase px-1.5 py-0.5 bg-brand-indigo/10 rounded font-semibold">
+          <span className="font-serif font-bold text-lg tracking-tight">RETZPOST</span>
+          <span className="text-[11px] font-mono text-brand-indigo uppercase px-1.5 py-0.5 bg-brand-indigo/10 rounded font-semibold">
             Press
           </span>
         </Link>
@@ -207,13 +230,13 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             <Link href="/" className="block">
               <div className="flex items-baseline justify-between">
                 <span className="font-serif font-bold text-xl tracking-tight text-ink-primary">
-                  MULTIPOST
+                  RETZPOST
                 </span>
-                <span className="text-[10px] font-mono text-brand-indigo font-semibold tracking-wider px-1.5 py-0.5 bg-brand-indigo/10 rounded">
+                <span className="text-[11px] font-mono text-brand-indigo font-bold tracking-wider px-1.5 py-0.5 bg-brand-indigo/10 rounded">
                   v2.2 Studio
                 </span>
               </div>
-              <p className="text-[11px] font-sans text-ink-secondary mt-0.5">
+              <p className="text-xs font-sans text-ink-secondary mt-0.5">
                 Universal Publishing Desk
               </p>
             </Link>
@@ -233,7 +256,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           <nav className="p-3 space-y-5">
             {navItems.map((section) => (
               <div key={section.group}>
-                <div className="px-3 mb-1 text-[9px] font-mono uppercase tracking-wider text-ink-secondary/80 font-bold">
+                <div className="px-3 mb-1 text-[11px] font-mono uppercase tracking-wider text-ink-secondary/90 font-bold">
                   {section.group}
                 </div>
                 <div className="space-y-0.5">
@@ -258,7 +281,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                         </div>
 
                         {item.badge ? (
-                          <span className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold leading-none ${item.badge.bg}`}>
+                          <span className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold leading-none ${item.badge.bg}`}>
                             {item.badge.text}
                           </span>
                         ) : isActive ? (
@@ -273,9 +296,40 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           </nav>
         </div>
 
-        {/* Sidebar Footer User Info */}
-        <div className="p-3.5 border-t border-border-rule text-xs bg-paper-subtle/50">
-          <div className="flex items-center justify-between gap-1.5">
+        {/* Bottom Section: Press Token Widget & Super Admin link & User profile */}
+        <div className="space-y-2 border-t border-border-rule bg-paper-subtle/50 p-3 text-xs">
+          {/* Token & Plan Badge */}
+          <div className="p-2.5 bg-paper-card border border-border-rule rounded-md space-y-1.5">
+            <div className="flex items-center justify-between">
+              <span className="flex items-center gap-1.5 text-xs font-mono font-bold text-accent-terracotta">
+                <Coins className="w-3.5 h-3.5" />
+                <span>{tokenBalance} 🪙 Tokens</span>
+              </span>
+              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo">
+                {planTier}
+              </span>
+            </div>
+            <div className="flex items-center justify-between text-[11px] pt-1 border-t border-border-rule/60">
+              <Link href="/pricing" className="text-brand-indigo font-semibold hover:underline">
+                เติมเหรียญ / เปลี่ยนแผน →
+              </Link>
+              <Link href="/settings" className="text-ink-secondary hover:text-ink-primary" title="เปลี่ยนธีม">
+                <Palette className="w-3.5 h-3.5" />
+              </Link>
+            </div>
+          </div>
+
+          {/* Super Admin Quick Link */}
+          <Link
+            href="/admin"
+            className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md bg-purple-100 hover:bg-purple-200 text-purple-900 text-[11px] font-bold font-mono transition-colors"
+          >
+            <ShieldAlert className="w-3.5 h-3.5" />
+            <span>🛡️ Super Admin Console</span>
+          </Link>
+
+          {/* User Account Row */}
+          <div className="pt-2 flex items-center justify-between gap-1.5">
             <div className="flex items-center gap-2.5 min-w-0">
               <div className={`w-7 h-7 rounded-full ${currentUser?.avatarBg || (isMockCleared ? 'bg-ink-secondary/20 text-ink-primary' : 'bg-brand-indigo text-white')} flex items-center justify-center font-serif text-xs font-bold ring-1 ring-border-rule shrink-0`}>
                 {currentUser?.avatarText || (isMockCleared ? 'GU' : 'DM')}
@@ -284,7 +338,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 <p className="font-semibold text-ink-primary text-xs leading-tight truncate">
                   {currentUser?.name || (isMockCleared ? 'ผู้ใช้งานทั่วไป (Guest)' : 'Demo Manager')}
                 </p>
-                <p className="text-[10px] text-ink-secondary font-mono truncate max-w-[105px]">
+                <p className="text-[11px] text-ink-secondary font-mono truncate max-w-[105px]">
                   {currentUser?.email || (isMockCleared ? 'คลิกเพื่อเข้าสู่ระบบ' : activeWorkspace.name)}
                 </p>
               </div>
@@ -293,7 +347,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             <div className="flex items-center gap-1 shrink-0">
               <Link
                 href={currentUser ? "/settings/team" : "/login"}
-                className="text-[9px] font-mono text-brand-indigo hover:underline px-1.5 py-0.5 bg-brand-indigo/10 border border-brand-indigo/20 rounded font-semibold"
+                className="text-[10px] font-mono text-brand-indigo hover:underline px-1.5 py-0.5 bg-brand-indigo/10 border border-brand-indigo/20 rounded font-semibold"
                 title={currentUser ? "View Role & Permissions" : "เข้าสู่ระบบ (Sign In)"}
               >
                 {currentUser?.role || (isMockCleared ? 'Guest' : 'Role: Owner')}

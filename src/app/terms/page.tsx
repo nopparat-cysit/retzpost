@@ -66,7 +66,7 @@ export default function TermsOfServicePage() {
             ข้อกำหนดและเงื่อนไขการให้บริการ (Terms of Service)
           </h1>
           <p className="text-xs sm:text-sm text-ink-secondary max-w-3xl leading-relaxed font-sans">
-            สัญญาผูกพันทางกฎหมายระหว่างท่านและ RetzPost เพื่อกำหนดสิทธิ หน้าที่ และความรับผิดชอบในการใช้งานแพลตฟอร์มกองบรรณาธิการ MULTIPOST
+            สัญญาผูกพันทางกฎหมายระหว่างท่านและ RetzPost เพื่อกำหนดสิทธิ หน้าที่ และความรับผิดชอบในการใช้งานแพลตฟอร์มกองบรรณาธิการ RETZPOST
           </p>
 
           <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-[11px] text-ink-secondary">
@@ -175,7 +175,7 @@ export default function TermsOfServicePage() {
 
               <div className="space-y-3 text-xs leading-relaxed text-ink-secondary font-sans pt-1">
                 <p>
-                  การเข้าถึงและใช้งานบริการ MULTIPOST (RetzPost) ถือว่าท่านตกลงที่จะปฏิบัติตามข้อกำหนดและเงื่อนไขการให้บริการฉบับนี้ รวมถึงนโยบายความเป็นส่วนตัว (Privacy Policy) ซึ่งถือเป็นสัญญาที่มีผลผูกพันตามกฎหมายระหว่างท่านและ RetzPost
+                  การเข้าถึงและใช้งานบริการ RETZPOST ถือว่าท่านตกลงที่จะปฏิบัติตามข้อกำหนดและเงื่อนไขการให้บริการฉบับนี้ รวมถึงนโยบายความเป็นส่วนตัว (Privacy Policy) ซึ่งถือเป็นสัญญาที่มีผลผูกพันตามกฎหมายระหว่างท่านและ RetzPost
                 </p>
               </div>
             </article>

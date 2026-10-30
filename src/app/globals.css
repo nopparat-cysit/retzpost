@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
+:root,
+[data-theme="NEWSPRINT"] {
   /* Surfaces */
   --bg-canvas: #F3F0E8;
   --bg-raised: #FBFAF6;
@@ -29,6 +30,66 @@
   --status-warning: #B54708;
   --status-error: #B42318;
   --status-info: #175CD3;
+}
+
+/* 2. Theme: Midnight Gazette (Dark Mode) */
+[data-theme="MIDNIGHT"] {
+  --bg-canvas: #121214;
+  --bg-raised: #1C1C20;
+  --bg-subtle: #27272D;
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  --border-rule: #2F3138;
+  --border-strong: #4B5563;
+  --brand-indigo: #6366F1;
+  --brand-indigo-hover: #4F46E5;
+  --accent-terracotta: #F87171;
+  --accent-ochre: #FBBF24;
+}
+
+/* 3. Theme: Matcha Botanical (Fresh Organic Green) */
+[data-theme="MATCHA"] {
+  --bg-canvas: #F4F7F4;
+  --bg-raised: #FFFFFF;
+  --bg-subtle: #E5EDE5;
+  --text-primary: #18261B;
+  --text-secondary: #3D5A42;
+  --border-rule: #CCDCCC;
+  --border-strong: #1D6F42;
+  --brand-indigo: #1D6F42;
+  --brand-indigo-hover: #155331;
+  --accent-terracotta: #B9533B;
+  --accent-ochre: #7D8737;
+}
+
+/* 4. Theme: Kyoto Terracotta (Warm Earth & Art) */
+[data-theme="TERRACOTTA"] {
+  --bg-canvas: #FAEDE7;
+  --bg-raised: #FFF8F5;
+  --bg-subtle: #F3DDD3;
+  --text-primary: #2D1A16;
+  --text-secondary: #65463E;
+  --border-rule: #E5C3B7;
+  --border-strong: #A24836;
+  --brand-indigo: #A24836;
+  --brand-indigo-hover: #83392A;
+  --accent-terracotta: #364165;
+  --accent-ochre: #C0742B;
+}
+
+/* 5. Theme: Royal Indigo Executive (Corporate Deep Blue) */
+[data-theme="INDIGO"] {
+  --bg-canvas: #F4F5F9;
+  --bg-raised: #FFFFFF;
+  --bg-subtle: #E3E7F2;
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --border-rule: #CFD7E9;
+  --border-strong: #1E2B58;
+  --brand-indigo: #1E2B58;
+  --brand-indigo-hover: #141D3B;
+  --accent-terracotta: #D9480F;
+  --accent-ochre: #B45309;
 }
 
 body {

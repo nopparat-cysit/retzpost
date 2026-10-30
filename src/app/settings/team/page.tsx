@@ -24,7 +24,8 @@ import {
   ChevronRight,
   ExternalLink,
   Sparkles,
-  RefreshCw
+  RefreshCw,
+  Coins
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { Sticker } from '@/components/ui/sticker';
@@ -53,7 +54,10 @@ import {
 export default function TeamSettingsPage() {
   const [members, setMembers] = useState<TeamMember[]>(() => getInitialTeamMembers());
   const [selectedWorkspace, setSelectedWorkspace] = useState<'ALL' | 'ws_capitalone' | 'ws_acme' | 'ws_retzpost' | 'ws_coffee'>('ALL');
-  const [activeTab, setActiveTab] = useState<'MEMBERS' | 'MATRIX' | 'SIMULATOR'>('MEMBERS');
+  const [activeTab, setActiveTab] = useState<'MEMBERS' | 'MATRIX' | 'SIMULATOR' | 'TOKEN_TRACKER'>('MEMBERS');
+  const [selectedMemberForLogs, setSelectedMemberForLogs] = useState<TeamMember | null>(null);
+  const [editingLimitMemberId, setEditingLimitMemberId] = useState<string | null>(null);
+  const [newLimitValue, setNewLimitValue] = useState<string>('100');
   const [searchQuery, setSearchQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState<'ALL' | WorkspaceRole>('ALL');
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
@@ -343,6 +347,18 @@ export default function TeamSettingsPage() {
           <Eye className="w-3.5 h-3.5" />
           <span>จำลองมุมมองสิทธิ์ (Role Simulator)</span>
         </button>
+
+        <button
+          onClick={() => setActiveTab('TOKEN_TRACKER')}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded transition-colors cursor-pointer ${
+            activeTab === 'TOKEN_TRACKER'
+              ? 'bg-paper-canvas text-accent-terracotta font-bold shadow-xs'
+              : 'text-ink-secondary hover:text-ink-primary'
+          }`}
+        >
+          <Coins className="w-3.5 h-3.5 text-accent-terracotta" />
+          <span>🪙 ติดตามการใช้ Token ลูกทีม (Team Token Tracker)</span>
+        </button>
       </div>
 
       {/* ========================================================================= */}
@@ -475,11 +491,11 @@ export default function TeamSettingsPage() {
                           )}
                         </td>
 
-                        {/* Joined Date */}
+                        {/* Joined Date & Token Consumption */}
                         <td className="py-3.5 px-4 font-mono text-[11px] text-ink-secondary">
                           <span>{mbr.joinedAt}</span>
-                          <span className="text-[9px] block text-ink-secondary/70">
-                            Active: {mbr.lastActiveAt}
+                          <span className="text-[10px] block text-accent-terracotta font-bold mt-0.5">
+                            🪙 {mbr.tokensUsedThisMonth || 0} Tokens ใช้เดือนนี้
                           </span>
                         </td>
 
@@ -708,6 +724,262 @@ export default function TeamSettingsPage() {
                 </div>
               )}
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* TAB 4: TEAM TOKEN USAGE TRACKER                                           */}
+      {/* ========================================================================= */}
+      {activeTab === 'TOKEN_TRACKER' && (
+        <div className="space-y-6">
+          {/* Top Token Governance Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="bg-paper-raised border border-border-rule rounded-card p-4 shadow-2xs">
+              <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold">
+                Master Wallet กองกลาง
+              </span>
+              <p className="font-serif font-black text-2xl text-accent-terracotta mt-1">
+                600 🪙
+              </p>
+              <p className="text-[10px] text-ink-secondary mt-0.5">
+                กระเป๋าแม่ของเจ้าของ ใช้ได้ทุก Workspace
+              </p>
+            </div>
+
+            <div className="bg-paper-raised border border-border-rule rounded-card p-4 shadow-2xs">
+              <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold">
+                ยอดที่ลูกทีมใช้เดือนนี้
+              </span>
+              <p className="font-serif font-black text-2xl text-brand-indigo mt-1">
+                {members.reduce((sum, m) => sum + (m.tokensUsedThisMonth || 0), 0)} 🪙
+              </p>
+              <p className="text-[10px] text-ink-secondary mt-0.5">
+                รวม {members.length} สมาชิกในทุกโปรเจกต์
+              </p>
+            </div>
+
+            <div className="bg-paper-raised border border-border-rule rounded-card p-4 shadow-2xs">
+              <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold">
+                นโยบายคุมงบ (Token Cap)
+              </span>
+              <p className="font-serif font-black text-2xl text-semantic-success mt-1">
+                Active Guard
+              </p>
+              <p className="text-[10px] text-ink-secondary mt-0.5">
+                จำกัดเพดานต่อคน ป้องกันลูกน้องกดผลาญเหรียญ
+              </p>
+            </div>
+          </div>
+
+          {/* Member Usage Table */}
+          <div className="bg-paper-raised border border-border-rule rounded-card p-5 shadow-xs space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-border-rule">
+              <div>
+                <h3 className="font-serif font-medium text-base text-ink-primary">
+                  การบริโภค Token รายบุคคล (Per-Member Token Ledger)
+                </h3>
+                <p className="text-xs text-ink-secondary mt-0.5">
+                  ติดตามแบบเรียลไทม์ว่าใครใช้ Token ทำอะไร พร้อมตั้งเพดานการใช้สูงสุดต่อเดือน
+                </p>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs font-sans">
+                <thead className="bg-paper-subtle/60 border-b border-border-rule text-[10px] font-mono uppercase text-ink-secondary">
+                  <tr>
+                    <th className="py-2.5 px-3">สมาชิก & บทบาท</th>
+                    <th className="py-2.5 px-3">การใช้เหรียญเดือนนี้</th>
+                    <th className="py-2.5 px-3">เพดานต่อเดือน (Token Cap)</th>
+                    <th className="py-2.5 px-3">ประวัติกิจกรรมล่าสุด</th>
+                    <th className="py-2.5 px-3 text-right">การจัดการ</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-border-rule/60">
+                  {members.map((mbr) => {
+                    const used = mbr.tokensUsedThisMonth || 0;
+                    const limit = mbr.monthlyTokenLimit;
+                    const percent = limit ? Math.min(100, Math.round((used / limit) * 100)) : 0;
+
+                    return (
+                      <tr key={mbr.id} className="hover:bg-paper-canvas/50">
+                        {/* Member Info */}
+                        <td className="py-3 px-3">
+                          <div className="flex items-center gap-2.5">
+                            <div className={`w-7 h-7 rounded-full ${mbr.avatarBg} text-white flex items-center justify-center font-serif text-[11px] font-bold shrink-0`}>
+                              {mbr.avatarText}
+                            </div>
+                            <div>
+                              <p className="font-bold text-ink-primary text-xs">{mbr.name}</p>
+                              <p className="text-[10px] font-mono text-ink-secondary">{mbr.email}</p>
+                              <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-brand-indigo/10 text-brand-indigo font-semibold mt-0.5 inline-block">
+                                {mbr.role}
+                              </span>
+                            </div>
+                          </div>
+                        </td>
+
+                        {/* Token Consumption & Progress Bar */}
+                        <td className="py-3 px-3">
+                          <div className="space-y-1 w-36">
+                            <div className="flex justify-between text-[11px] font-mono">
+                              <span className="font-bold text-accent-terracotta">{used} 🪙</span>
+                              <span className="text-ink-secondary text-[10px]">
+                                {limit ? `/ ${limit} 🪙` : '(ไม่จำกัด)'}
+                              </span>
+                            </div>
+                            {limit && (
+                              <div className="w-full h-1.5 rounded-full bg-paper-subtle overflow-hidden">
+                                <div
+                                  className={`h-full rounded-full transition-all ${
+                                    percent > 80 ? 'bg-semantic-error' : percent > 50 ? 'bg-semantic-warning' : 'bg-brand-indigo'
+                                  }`}
+                                  style={{ width: `${percent}%` }}
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Monthly Cap Setting */}
+                        <td className="py-3 px-3">
+                          {editingLimitMemberId === mbr.id ? (
+                            <div className="flex items-center gap-1.5">
+                              <input
+                                type="number"
+                                value={newLimitValue}
+                                onChange={(e) => setNewLimitValue(e.target.value)}
+                                className="w-16 px-1.5 py-1 text-xs font-mono rounded border border-border-rule bg-paper-canvas"
+                                placeholder="100"
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const val = parseInt(newLimitValue, 10);
+                                  const updated = members.map((m) =>
+                                    m.id === mbr.id ? { ...m, monthlyTokenLimit: isNaN(val) ? null : val } : m
+                                  );
+                                  setMembers(updated);
+                                  saveTeamMembers(updated);
+                                  setEditingLimitMemberId(null);
+                                }}
+                                className="px-2 py-1 rounded bg-brand-indigo text-white text-[10px] font-mono font-bold"
+                              >
+                                บันทึก
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => setEditingLimitMemberId(null)}
+                                className="text-[10px] text-ink-secondary hover:text-ink-primary"
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-2">
+                              <span className="font-mono text-xs">
+                                {limit !== null ? `${limit} 🪙/ด.` : 'ไม่จำกัด (Pool)'}
+                              </span>
+                              {mbr.role !== 'OWNER' && (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditingLimitMemberId(mbr.id);
+                                    setNewLimitValue(limit ? String(limit) : '100');
+                                  }}
+                                  className="text-[10px] font-mono text-brand-indigo underline hover:text-brand-indigo-hover"
+                                >
+                                  แก้ไข
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Recent Activity Badges */}
+                        <td className="py-3 px-3">
+                          <div className="flex flex-wrap gap-1">
+                            {mbr.tokenLogs && mbr.tokenLogs.length > 0 ? (
+                              mbr.tokenLogs.slice(0, 2).map((log) => (
+                                <span
+                                  key={log.id}
+                                  className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-paper-subtle border border-border-rule text-ink-secondary"
+                                >
+                                  {log.actionLabelTh}: {log.tokens} 🪙
+                                </span>
+                              ))
+                            ) : (
+                              <span className="text-[10px] text-ink-muted font-mono">- ยังไม่มีการใช้ -</span>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Actions */}
+                        <td className="py-3 px-3 text-right">
+                          <button
+                            type="button"
+                            onClick={() => setSelectedMemberForLogs(mbr)}
+                            className="py-1 px-2.5 rounded bg-brand-indigo/10 text-brand-indigo hover:bg-brand-indigo/20 text-[10px] font-mono font-bold transition-colors"
+                          >
+                            ดูบันทึก Log ({mbr.tokenLogs?.length || 0})
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* MODAL: MEMBER TOKEN LOGS */}
+      {selectedMemberForLogs && (
+        <div className="fixed inset-0 z-50 bg-ink-primary/50 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-paper-raised border border-border-rule rounded-card max-w-lg w-full p-6 shadow-xl space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-border-rule">
+              <div>
+                <h3 className="font-serif font-bold text-base text-ink-primary">
+                  ประวัติการใช้ Token ของ {selectedMemberForLogs.name}
+                </h3>
+                <p className="text-[11px] font-mono text-ink-secondary">
+                  {selectedMemberForLogs.email} • รวม {selectedMemberForLogs.tokensUsedThisMonth} 🪙
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedMemberForLogs(null)}
+                className="p-1 rounded text-ink-secondary hover:text-ink-primary"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="max-h-60 overflow-y-auto space-y-2">
+              {selectedMemberForLogs.tokenLogs && selectedMemberForLogs.tokenLogs.length > 0 ? (
+                selectedMemberForLogs.tokenLogs.map((log) => (
+                  <div key={log.id} className="p-2.5 rounded border border-border-rule bg-paper-canvas flex items-center justify-between text-xs font-mono">
+                    <div>
+                      <p className="font-bold text-ink-primary">{log.actionLabelTh}</p>
+                      <p className="text-[10px] text-ink-secondary">{log.workspaceName} • {log.timestamp}</p>
+                    </div>
+                    <span className="font-bold text-accent-terracotta">-{log.tokens} 🪙</span>
+                  </div>
+                ))
+              ) : (
+                <p className="text-center py-6 text-xs text-ink-muted font-mono">ไม่มีประวัติการใช้ Token ในเดือนนี้</p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setSelectedMemberForLogs(null)}
+              className="w-full py-2 bg-brand-indigo text-white text-xs font-mono font-bold rounded"
+            >
+              ปิดหน้าต่าง
+            </button>
           </div>
         </div>
       )}

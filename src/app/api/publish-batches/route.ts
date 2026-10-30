@@ -3,6 +3,8 @@ import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 import { deriveBatchAggregateStatus } from '@/modules/publishing/state-machine';
 
+export const dynamic = 'force-dynamic';
+
 const createBatchSchema = z.object({
   workspaceId: z.string().uuid(),
   contentId: z.string().uuid(),

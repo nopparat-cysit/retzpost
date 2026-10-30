@@ -20,6 +20,20 @@ interface StoredAccount {
 const DEFAULT_ACCOUNTS: StoredAccount[] = [
   {
     user: {
+      id: 'usr_superadmin',
+      email: 'superadmin@retzpost.io',
+      username: 'superadmin',
+      name: 'Super Admin',
+      role: 'Owner',
+      avatarBg: 'bg-purple-900',
+      avatarText: 'SA',
+      activeWorkspaceId: 'ws_main',
+      createdAt: '2026-01-01T00:00:00Z',
+    },
+    passwordHash: 'SuperAdmin2026!',
+  },
+  {
+    user: {
       id: 'usr_manager',
       email: 'demo.manager@gmail.com',
       username: 'demomanager',

@@ -73,6 +73,7 @@ import {
   getPostDiagnosis, 
   PostDiagnosisInsight 
 } from '@/modules/analytics/ai-insights';
+import { recordTeamTokenConsumption } from '@/modules/workspaces/team-roles';
 import { 
   generateErrorLogCsv, 
   generateAllDispatchesCsv, 
@@ -105,6 +106,9 @@ import {
   subscribeToMockDataChange 
 } from '@/modules/data/mock-data-manager';
 import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
+import { AnimatedCounter } from '@/components/ui/animated-counter';
+import { getCurrentUser, subscribeToAuthChange } from '@/modules/auth/auth-service';
+import { AuthUser } from '@/modules/auth/auth-types';
 
 interface DispatchPlacement {
   platform: 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK' | 'X' | 'LEMON8';
@@ -708,6 +712,14 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
 ];
 
 export default function HomePage() {
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    setCurrentUser(getCurrentUser());
+    const unsub = subscribeToAuthChange((user) => setCurrentUser(user));
+    return () => unsub();
+  }, []);
+
   const [dashboardMode, setDashboardMode] = useState<'OPERATIONS' | 'TRACKING' | 'TEAM_KPI'>('OPERATIONS');
   const [workspaceFilter, setWorkspaceFilter] = useState<string>('ALL');
   const [batchTab, setBatchTab] = useState<'ALL' | 'MAIN_STUDIO' | 'CREATOR_HUB' | 'NEEDS_ATTENTION'>('ALL');
@@ -721,8 +733,103 @@ export default function HomePage() {
   const [isApiDeleting, setIsApiDeleting] = useState<Record<string, boolean>>({});
 
   // Performance Tracking States
+  const [performancePosts, setPerformancePosts] = useState<PostPerformanceData[]>(SAMPLE_PERFORMANCE_POSTS);
   const [trackingSort, setTrackingSort] = useState<'OVERALL' | 'VIEWS' | 'ENGAGEMENT' | 'CLICKS'>('OVERALL');
   const [trackingTimeframe, setTrackingTimeframe] = useState<'30D' | '7D' | 'ALL'>('30D');
+
+  // Live Telemetry Sync States & Rate-Limit Cooldown
+  const [isSyncingTelemetry, setIsSyncingTelemetry] = useState<boolean>(false);
+  const [telemetryLastSynced, setTelemetryLastSynced] = useState<string | null>(null);
+  const [telemetryCooldownRemaining, setTelemetryCooldownRemaining] = useState<number>(0);
+  const [telemetryNotice, setTelemetryNotice] = useState<string | null>(null);
+
+  // Cooldown countdown timer
+  useEffect(() => {
+    if (telemetryCooldownRemaining <= 0) return;
+    const interval = setInterval(() => {
+      setTelemetryCooldownRemaining((prev) => (prev <= 1 ? 0 : prev - 1));
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [telemetryCooldownRemaining]);
+
+  const handleManualTelemetrySync = async () => {
+    if (isSyncingTelemetry || telemetryCooldownRemaining > 0) return;
+    setIsSyncingTelemetry(true);
+    setTelemetryNotice(null);
+
+    try {
+      const res = await fetch('/api/analytics/sync', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workspaceId: workspaceFilter,
+          mockPosts: performancePosts.map((p) => ({
+            id: p.id,
+            title: p.title,
+            views: p.views,
+            likes: p.likes,
+            comments: p.comments,
+            shares: p.shares,
+            linkClicks: p.linkClicks,
+            platform: p.liveLinks[0]?.platform || 'FACEBOOK',
+            publishedAt: new Date().toISOString(),
+          })),
+        }),
+      });
+
+      const data = await res.json();
+
+      if (res.status === 429) {
+        setTelemetryCooldownRemaining(data.cooldownSecondsRemaining || 60);
+        setTelemetryNotice(data.message || 'ระบบป้องกัน Rate Limit: กรุณารอสักครู่');
+      } else if (res.ok && data.status === 'SUCCESS') {
+        if (data.records && data.records.length > 0) {
+          setPerformancePosts((prev) =>
+            prev.map((post) => {
+              const matched = data.records.find((r: any) => r.id === post.id);
+              if (matched && matched.metrics) {
+                return {
+                  ...post,
+                  views: matched.metrics.views,
+                  likes: matched.metrics.likes,
+                  comments: matched.metrics.comments,
+                  shares: matched.metrics.shares,
+                  linkClicks: matched.metrics.linkClicks,
+                  ctr: matched.metrics.ctr || post.ctr,
+                  engagementRate: matched.metrics.engagementRate || post.engagementRate,
+                };
+              }
+              return post;
+            })
+          );
+        }
+
+        const timeStr = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        setTelemetryLastSynced(`อัปเดตล่าสุด ${timeStr}`);
+        setTelemetryCooldownRemaining(data.cooldownSecondsRemaining || 60);
+        setTelemetryNotice('⚡ ซิงค์ตัวเลขสถิติสดเรียบร้อยแล้ว (-2 Master Tokens)');
+
+        // Deduct 2 tokens and record team log
+        fetch('/api/billing/tokens', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            actionKey: 'FORCE_SYNC_NOW',
+            actorName: currentUser?.name || 'Staff Member',
+            description: `ดึงยอดวิวย้อนหลังสด (${workspaceFilter})`,
+          }),
+        }).catch(() => null);
+        recordTeamTokenConsumption(currentUser?.email || 'admin@retzpost.com', 'FORCE_SYNC_NOW', 'ดึงยอดวิวสดทันที', 2);
+      } else {
+        setTelemetryNotice('เกิดข้อผิดพลาดในการดึงข้อมูล กรุณาลองใหม่อีกครั้ง');
+      }
+    } catch {
+      setTelemetryNotice('ไม่สามารถเชื่อมต่อ API ได้ในขณะนี้');
+    } finally {
+      setIsSyncingTelemetry(false);
+      setTimeout(() => setTelemetryNotice(null), 5000);
+    }
+  };
 
   // Employee KPI & AI Post Diagnosis States
   const [selectedEmployeeKpi, setSelectedEmployeeKpi] = useState<EmployeeKPI | null>(null);
@@ -830,8 +937,20 @@ export default function HomePage() {
       setEditFocusTags(result.focusTags);
       setIsEditingKpiNotes(true);
       setIsAiGeneratingCoaching(false);
-      setKpiEvaluationNotice('✨ AI ร่างจุดเด่นและแผนโค้ชชิ่งให้เรียบร้อยแล้ว (สามารถปรับแต่งและกดบันทึก)');
+      setKpiEvaluationNotice('✨ AI ร่างจุดเด่นและแผนโค้ชชิ่งให้เรียบร้อยแล้ว (-10 Master Tokens)');
       setTimeout(() => setKpiEvaluationNotice(null), 4000);
+
+      // Deduct 10 tokens and record team log
+      fetch('/api/billing/tokens', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          actionKey: 'AI_KPI_COACHING',
+          actorName: currentUser?.name || 'Staff Member',
+          description: `AI ร่างแผนโค้ชชิ่ง: ${selectedEmployeeKpi.name}`,
+        }),
+      }).catch(() => null);
+      recordTeamTokenConsumption(currentUser?.email || 'admin@retzpost.com', 'AI_KPI_COACHING', 'AI ร่างแผนโค้ชชิ่งลูกทีม', 10);
     }, 500);
   };
 
@@ -901,7 +1020,7 @@ export default function HomePage() {
   // Filtered & Sorted Performance Posts for Tracking View
   const filteredPerformancePosts = useMemo(() => {
     if (isMockCleared) return [];
-    let posts = SAMPLE_PERFORMANCE_POSTS.filter((p) => {
+    let posts = performancePosts.filter((p) => {
       if (workspaceFilter !== 'ALL' && p.workspaceId !== workspaceFilter) return false;
       return true;
     });
@@ -917,7 +1036,7 @@ export default function HomePage() {
     }
 
     return posts;
-  }, [isMockCleared, workspaceFilter, trackingSort]);
+  }, [isMockCleared, workspaceFilter, trackingSort, performancePosts]);
 
   // Upcoming scheduled timeline items
   const timelineItems = useMemo(() => {
@@ -1932,7 +2051,7 @@ export default function HomePage() {
               </div>
               <div className="flex items-baseline justify-between">
                 <p className="font-serif font-bold text-2xl text-ink-primary">
-                  {totalViews.toLocaleString()}
+                  {isMockCleared ? '0' : <AnimatedCounter value={totalViews} />}
                 </p>
                 <span className="text-[10px] font-mono text-semantic-success font-semibold">
                   {isMockCleared ? '0.0%' : '+18.4% MoM'}
@@ -1953,7 +2072,7 @@ export default function HomePage() {
               </div>
               <div className="flex items-baseline justify-between">
                 <p className="font-serif font-bold text-2xl text-ink-primary">
-                  {(totalLikes + totalComments + totalShares).toLocaleString()}
+                  {isMockCleared ? '0' : <AnimatedCounter value={totalLikes + totalComments + totalShares} />}
                 </p>
                 <span className="text-[10px] font-mono text-brand-indigo font-semibold">
                   {isMockCleared ? '0.0% Avg' : '9.8% Avg Rate'}
@@ -1974,7 +2093,7 @@ export default function HomePage() {
               </div>
               <div className="flex items-baseline justify-between">
                 <p className="font-serif font-bold text-2xl text-accent-terracotta">
-                  {totalLinkClicks.toLocaleString()}
+                  {isMockCleared ? '0' : <AnimatedCounter value={totalLinkClicks} />}
                 </p>
                 <span className="text-[10px] font-mono text-accent-terracotta font-semibold">
                   {isMockCleared ? '0.0% CTR' : '5.4% Avg CTR'}
@@ -2010,11 +2129,16 @@ export default function HomePage() {
           {/* TRACKING CONTROLS & LEADERBOARD HEADER */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 p-4 bg-paper-raised border border-border-rule rounded-card">
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <Trophy className="w-4 h-4 text-amber-500" />
                 <h2 className="font-serif font-bold text-base text-ink-primary">
                   จัดอันดับ "Top Performing Posts" โพสต์และคอนเทนต์ที่ผลตอบรับดีที่สุด
                 </h2>
+                {/* Live Telemetry Pulse Status Indicator */}
+                <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-semantic-success/10 text-semantic-success border border-semantic-success/20">
+                  <span className="w-1.5 h-1.5 rounded-full bg-semantic-success animate-pulse" />
+                  {telemetryLastSynced || 'Telemetry Live Stream'}
+                </span>
               </div>
               <p className="text-xs text-ink-secondary mt-0.5 font-sans">
                 วิเคราะห์ผลตอบรับจริงจากคนดู (Views), ยอดการมีส่วนร่วม (Engagements) และคนคลิกลิงก์ Story (Web Traffic)
@@ -2022,6 +2146,34 @@ export default function HomePage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
+              {/* SMART SYNC NOW BUTTON (Quota protected & animated) */}
+              <button
+                type="button"
+                onClick={handleManualTelemetrySync}
+                disabled={isSyncingTelemetry || telemetryCooldownRemaining > 0}
+                title={
+                  telemetryCooldownRemaining > 0
+                    ? `ระบบป้องกัน Rate Limit / Social API Quota: กรุณารอ ${telemetryCooldownRemaining} วินาที`
+                    : 'ซิงค์ยอดวิว ยอดไลก์ และสถิติล่าสุดจาก Facebook, Instagram, YouTube, TikTok ทันที'
+                }
+                className={`px-3 py-1.5 rounded-editorial flex items-center gap-1.5 transition-all shadow-2xs font-semibold text-xs border ${
+                  telemetryCooldownRemaining > 0
+                    ? 'bg-paper-canvas text-ink-muted border-border-rule cursor-not-allowed opacity-80'
+                    : isSyncingTelemetry
+                    ? 'bg-brand-indigo/10 text-brand-indigo border-brand-indigo/30 cursor-wait'
+                    : 'bg-brand-indigo text-white hover:bg-brand-indigo/90 border-brand-indigo'
+                }`}
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isSyncingTelemetry ? 'animate-spin' : ''}`} />
+                <span>
+                  {isSyncingTelemetry
+                    ? 'กำลังดึงสถิติ...'
+                    : telemetryCooldownRemaining > 0
+                    ? `รอซิงค์ (${telemetryCooldownRemaining}s)`
+                    : 'อัปเดตสถิติตอนนี้ (Sync Now)'}
+                </span>
+              </button>
+
               <div className="flex items-center gap-1 bg-paper-canvas border border-border-rule rounded-editorial p-1">
                 <span className="text-[10px] text-ink-muted pl-1">Sort:</span>
                 {[
@@ -2054,6 +2206,23 @@ export default function HomePage() {
               </button>
             </div>
           </div>
+
+          {/* TELEMETRY FEEDBACK BANNER */}
+          {telemetryNotice && (
+            <div className="p-3 bg-brand-indigo/10 border border-brand-indigo/20 rounded-editorial text-xs text-brand-indigo flex items-center justify-between animate-in fade-in slide-in-from-top-1">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-brand-indigo shrink-0" />
+                <span className="font-sans font-medium">{telemetryNotice}</span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setTelemetryNotice(null)}
+                className="text-ink-secondary hover:text-ink-primary p-0.5"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          )}
 
           {/* TOP PERFORMING POSTS LEADERBOARD LIST */}
           <div className="space-y-4">
@@ -2114,9 +2283,21 @@ export default function HomePage() {
                   <div className="flex flex-wrap items-center gap-2 self-start lg:self-center font-mono text-xs">
                     <button
                       type="button"
-                      onClick={() => setSelectedPostDiagnosis(getPostDiagnosis(post.id, post.title))}
+                      onClick={() => {
+                        setSelectedPostDiagnosis(getPostDiagnosis(post.id, post.title));
+                        fetch('/api/billing/tokens', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({
+                            actionKey: 'AI_POST_DIAGNOSIS',
+                            actorName: currentUser?.name || 'Staff Member',
+                            description: `AI วิเคราะห์โพสต์ปัง: ${post.title.slice(0, 30)}`,
+                          }),
+                        }).catch(() => null);
+                        recordTeamTokenConsumption(currentUser?.email || 'admin@retzpost.com', 'AI_POST_DIAGNOSIS', 'AI วิเคราะห์โพสต์ปัง', 5);
+                      }}
                       className="px-2.5 py-1 rounded bg-brand-indigo/10 hover:bg-brand-indigo hover:text-white border border-brand-indigo/30 text-brand-indigo font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
-                      title="วิเคราะห์ปัจจัยความสำเร็จด้วย AI: ทำไมถึงได้ยอด และแนวทางต่อยอด"
+                      title="วิเคราะห์ปัจจัยความสำเร็จด้วย AI: ทำไมถึงได้ยอด (-5 Master Tokens)"
                     >
                       <Sparkles className="w-3.5 h-3.5 text-accent-terracotta" />
                       <span>ทำไมถึงปัง? (AI Diagnosis)</span>
@@ -2135,7 +2316,9 @@ export default function HomePage() {
                       <Eye className="w-3 h-3 text-ink-secondary" />
                       <span>คนดูทั้งหมด (Views)</span>
                     </span>
-                    <span className="font-bold text-ink-primary text-sm block mt-0.5">{post.views.toLocaleString()}</span>
+                    <span className="font-bold text-ink-primary text-sm block mt-0.5">
+                      <AnimatedCounter value={post.views} />
+                    </span>
                   </div>
 
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
@@ -2143,7 +2326,9 @@ export default function HomePage() {
                       <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />
                       <span>คนกดไลค์ (Likes)</span>
                     </span>
-                    <span className="font-bold text-ink-primary text-sm block mt-0.5">{post.likes.toLocaleString()}</span>
+                    <span className="font-bold text-ink-primary text-sm block mt-0.5">
+                      <AnimatedCounter value={post.likes} />
+                    </span>
                   </div>
 
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
@@ -2151,7 +2336,9 @@ export default function HomePage() {
                       <MessageSquare className="w-3 h-3 text-brand-indigo" />
                       <span>คอมเมนต์ (Comments)</span>
                     </span>
-                    <span className="font-bold text-ink-primary text-sm block mt-0.5">{post.comments}</span>
+                    <span className="font-bold text-ink-primary text-sm block mt-0.5">
+                      <AnimatedCounter value={post.comments} />
+                    </span>
                   </div>
 
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
@@ -2159,7 +2346,9 @@ export default function HomePage() {
                       <Share2 className="w-3 h-3 text-semantic-info" />
                       <span>แชร์ (Shares)</span>
                     </span>
-                    <span className="font-bold text-ink-primary text-sm block mt-0.5">{post.shares}</span>
+                    <span className="font-bold text-ink-primary text-sm block mt-0.5">
+                      <AnimatedCounter value={post.shares} />
+                    </span>
                   </div>
 
                   <div className="p-2.5 bg-accent-terracotta/10 border border-accent-terracotta/30 rounded-editorial text-center col-span-2 sm:col-span-1">
@@ -2167,7 +2356,9 @@ export default function HomePage() {
                       <MousePointerClick className="w-3 h-3 text-accent-terracotta" />
                       <span>คลิกลิงก์ Story (Clicks)</span>
                     </span>
-                    <span className="font-bold text-accent-terracotta text-sm block mt-0.5">{post.linkClicks} Clicks ({post.ctr})</span>
+                    <span className="font-bold text-accent-terracotta text-sm block mt-0.5">
+                      <AnimatedCounter value={post.linkClicks} /> Clicks ({post.ctr})
+                    </span>
                   </div>
                 </div>
 

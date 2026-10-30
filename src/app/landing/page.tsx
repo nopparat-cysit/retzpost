@@ -248,7 +248,7 @@ const PressCoinIcon: React.FC<PressCoinIconProps> = ({ size = 28, className = ''
             <path id="frontTopArch" d="M 40 100 A 60 60 0 0 1 160 100" fill="none" />
             <text fill="#451A03" fontSize="8.5" fontFamily="serif" fontWeight="900" letterSpacing="2.8">
               <textPath href="#frontTopArch" startOffset="50%" textAnchor="middle">
-                ★ MULTIPOST PRESS DESK ★
+                ★ RETZPOST PRESS DESK ★
               </textPath>
             </text>
 
@@ -504,7 +504,7 @@ export default function LandingPage() {
     if (tone === 'HOOK') {
       setCustomCaption('Stop exporting 5 versions! Dream Press transforms 16:9 master footage into 9:16 vertical stories with zero quality loss.');
     } else if (tone === 'BROADSHEET') {
-      setCustomCaption('SPECIAL EDITION: MULTIPOST introduces simultaneous multi-network dispatch with bank-grade AES-256 GCM token security.');
+      setCustomCaption('SPECIAL EDITION: RETZPOST introduces simultaneous multi-network dispatch with bank-grade AES-256 GCM token security.');
     } else {
       setCustomCaption('Studio-grade publishing excellence designed for creators and teams who demand 100% visual fidelity across every feed.');
     }
@@ -703,7 +703,7 @@ export default function LandingPage() {
           <div className="flex items-center gap-2 overflow-hidden">
             <span className="font-bold uppercase tracking-widest text-[#364165] flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              MULTIPOST GAZETTE
+              RETZPOST GAZETTE
             </span>
             <span>•</span>
             <span className="truncate">BANGKOK PUBLISHING DESK (UTC+7)</span>
@@ -750,7 +750,7 @@ export default function LandingPage() {
                 onClick={() => workspaceTourRef.current?.scrollIntoView({ behavior: 'smooth' })}
                 className="py-3.5 px-5 rounded-xl bg-white hover:bg-stone-50 text-[#1A1A18] border border-black/10 font-semibold flex items-center gap-2 shadow-xs transition-all hover:scale-102 active:scale-98 cursor-pointer text-sm"
               >
-                <span>Explore MULTIPOST</span>
+                <span>Explore RETZPOST</span>
                 <ChevronRight className="w-4 h-4 text-stone-400" />
               </button>
             </div>
@@ -784,7 +784,7 @@ export default function LandingPage() {
                   </div>
                   <div>
                     <h3 className="font-serif font-bold text-sm tracking-tight text-white flex items-center gap-1.5">
-                      <span>MULTIPOST CONTROL DESK</span>
+                      <span>RETZPOST CONTROL DESK</span>
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
                     </h3>
                     <p className="text-[9px] font-mono text-stone-400">
@@ -1015,7 +1015,7 @@ export default function LandingPage() {
             <span>02 / THE PUBLISHING PROBLEM</span>
           </div>
           <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
-            5 อาการปวดหัวของการโพสต์หลายโซเชียล ที่ MULTIPOST ตั้งใจมาแก้ให้จบ
+            5 อาการปวดหัวของการโพสต์หลายโซเชียล ที่ RETZPOST ตั้งใจมาแก้ให้จบ
           </h2>
           <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
             ลองกดเลือกอาการที่คุณเจอบ่อยที่สุดจากแถบด้านซ้าย แล้วดูว่าเมื่อย้ายเข้ามาอยู่ใน Dream Press Desk ชีวิตจะเบาลงอย่างไร
@@ -1070,7 +1070,7 @@ export default function LandingPage() {
                     'สูญเสียเวลา 45+ นาทีต่อชิ้นงาน และเปลืองพื้นที่ฮาร์ดดิสก์จากไฟล์ซ้ำซ้อน',
                     'เสี่ยงที่ข้อความสำคัญถูกองค์ประกอบของแอปโซเชียลบดบังโดยไม่รู้ล่วงหน้า',
                   ],
-                  solutionTag: 'MULTIPOST RESOLUTION',
+                  solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Dynamic Safe-Zone Grid & Universal Ingestion',
                   solutionPoints: [
                     'อัปโหลด Master 4K เพียงไฟล์เดียว ระบบคำนวณ Center-Weighted Crop ให้อัตโนมัติ',
@@ -1096,7 +1096,7 @@ export default function LandingPage() {
                     'แคปชันเวอร์ชันล่าสุดอัปเดตไม่ครบทุกช่องทาง ทำให้ข้อมูลแคมเปญไม่ตรงกัน',
                     'สิ้นเปลืองแบนด์วิดท์และเวลาของทีมงานไปกับงานเอกสารและงานกดมือที่ซ้ำซาก',
                   ],
-                  solutionTag: 'MULTIPOST RESOLUTION',
+                  solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Universal Master Ingestion & Synchronized Routing',
                   solutionPoints: [
                     'เขียนแคปชันหลักเพียงจุดเดียว ระบบจัดส่งเนื้อหาไปยังทุกช่องทางที่กำหนดพร้อมกัน',
@@ -1122,7 +1122,7 @@ export default function LandingPage() {
                     'หากไม่มีระบบ Monitoring คอนเทนต์ที่ตั้งเวลาไว้จะไม่ถูกเผยแพร่สู่สายตาผู้ชม',
                     'ทีมงานต้องมาคอยเข้าแอปเช็กยอดวิวทีละช่องเพื่อดูว่าคลิปขึ้นจริงหรือไม่',
                   ],
-                  solutionTag: 'MULTIPOST RESOLUTION',
+                  solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Isolated Worker Queues & Exponential Auto-Retry',
                   solutionPoints: [
                     'ท่อส่งสัญญาณของแต่ละแพลตฟอร์มแยกขาดจากกัน (Fault Isolation Protocol)',
@@ -1148,7 +1148,7 @@ export default function LandingPage() {
                     'การก๊อปปี้ข้อความเดียวกันไปวางทุกช่องทางทำให้คอนเทนต์ดูไม่เป็นมืออาชีพ',
                     'การแก้ไขข้อความให้เข้ากับแต่ละช่องทางด้วยตนเองใช้เวลามากกว่าการตัดต่อคลิป',
                   ],
-                  solutionTag: 'MULTIPOST RESOLUTION',
+                  solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Per-Platform Rules Customizer & Character Ceiling',
                   solutionPoints: [
                     'ตัวควบคุมหน้าเดียวแยกปรับ Character Count, ป้ายแท็ก และคีย์เวิร์ด SEO รายช่องทาง',
@@ -1174,7 +1174,7 @@ export default function LandingPage() {
                     'ต้องคอยตั้งนาฬิกาปลุกมากดโพสต์เองตอนหัวค่ำ หรือสับสนกับการคำนวณ Timezone',
                     'การกระจายคลิปไม่พร้อมกันทำให้ผู้ชมเห็นเนื้อหาซ้ำซ้อนในเวลาที่ไม่เหมาะสม',
                   ],
-                  solutionTag: 'MULTIPOST RESOLUTION',
+                  solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Bangkok Prime Peak Precision Scheduler',
                   solutionPoints: [
                     'คลิกเดียวล็อกช่วงเวลาทองคำที่คนไทยออนไลน์มากที่สุด (19:30 น. ICT / UTC+7)',
@@ -1252,7 +1252,7 @@ export default function LandingPage() {
                     'สูญเสียเวลา 45+ นาทีต่อชิ้นงาน และเปลืองพื้นที่ฮาร์ดดิสก์จากไฟล์ซ้ำซ้อน',
                     'เสี่ยงที่ข้อความสำคัญถูกองค์ประกอบของแอปโซเชียลบดบังโดยไม่รู้ล่วงหน้า',
                   ],
-                  solutionTag: 'MULTIPOST RESOLUTION',
+                  solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Dynamic Safe-Zone Grid & Universal Ingestion',
                   solutionPoints: [
                     'อัปโหลด Master 4K เพียงไฟล์เดียว ระบบคำนวณ Center-Weighted Crop ให้อัตโนมัติ',
@@ -1275,7 +1275,7 @@ export default function LandingPage() {
                     'แคปชันเวอร์ชันล่าสุดอัปเดตไม่ครบทุกช่องทาง ทำให้ข้อมูลแคมเปญไม่ตรงกัน',
                     'สิ้นเปลืองแบนด์วิดท์และเวลาของทีมงานไปกับงานเอกสารและงานกดมือที่ซ้ำซาก',
                   ],
-                  solutionTag: 'MULTIPOST RESOLUTION',
+                  solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Universal Master Ingestion & Synchronized Routing',
                   solutionPoints: [
                     'เขียนแคปชันหลักเพียงจุดเดียว ระบบจัดส่งเนื้อหาไปยังทุกช่องทางที่กำหนดพร้อมกัน',
@@ -1298,7 +1298,7 @@ export default function LandingPage() {
                     'หากไม่มีระบบ Monitoring คอนเทนต์ที่ตั้งเวลาไว้จะไม่ถูกเผยแพร่สู่สายตาผู้ชม',
                     'ทีมงานต้องมาคอยเข้าแอปเช็กยอดวิวทีละช่องเพื่อดูว่าคลิปขึ้นจริงหรือไม่',
                   ],
-                  solutionTag: 'MULTIPOST RESOLUTION',
+                  solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Isolated Worker Queues & Exponential Auto-Retry',
                   solutionPoints: [
                     'ท่อส่งสัญญาณของแต่ละแพลตฟอร์มแยกขาดจากกัน (Fault Isolation Protocol)',
@@ -1321,7 +1321,7 @@ export default function LandingPage() {
                     'การก๊อปปี้ข้อความเดียวกันไปวางทุกช่องทางทำให้คอนเทนต์ดูไม่เป็นมืออาชีพ',
                     'การแก้ไขข้อความให้เข้ากับแต่ละช่องทางด้วยตนเองใช้เวลามากกว่าการตัดต่อคลิป',
                   ],
-                  solutionTag: 'MULTIPOST RESOLUTION',
+                  solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Per-Platform Rules Customizer & Character Ceiling',
                   solutionPoints: [
                     'ตัวควบคุมหน้าเดียวแยกปรับ Character Count, ป้ายแท็ก และคีย์เวิร์ด SEO รายช่องทาง',
@@ -1344,7 +1344,7 @@ export default function LandingPage() {
                     'ต้องคอยตั้งนาฬิกาปลุกมากดโพสต์เองตอนหัวค่ำ หรือสับสนกับการคำนวณ Timezone',
                     'การกระจายคลิปไม่พร้อมกันทำให้ผู้ชมเห็นเนื้อหาซ้ำซ้อนในเวลาที่ไม่เหมาะสม',
                   ],
-                  solutionTag: 'MULTIPOST RESOLUTION',
+                  solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Bangkok Prime Peak Precision Scheduler',
                   solutionPoints: [
                     'คลิกเดียวล็อกช่วงเวลาทองคำที่คนไทยออนไลน์มากที่สุด (19:30 น. ICT / UTC+7)',
@@ -1403,11 +1403,11 @@ export default function LandingPage() {
                       </ul>
                     </div>
 
-                    {/* Right Column: MULTIPOST Editorial Resolution */}
+                    {/* Right Column: RETZPOST Editorial Resolution */}
                     <div className="p-5 rounded-2xl bg-white border-2 border-[#364165] shadow-xs space-y-3">
                       <div className="flex items-center justify-between pb-2 border-b border-[#364165]/10 font-mono text-[10px]">
                         <span className="font-bold text-[#364165] uppercase tracking-wider">
-                          MULTIPOST DESK / วิธีการแก้ไข
+                          RETZPOST DESK / วิธีการแก้ไข
                         </span>
                         <span className="text-emerald-800 font-bold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
                           {cur.solutionTag}
@@ -1973,7 +1973,7 @@ export default function LandingPage() {
                     Tailor Metadata and Safe-Zones for Each Audience
                   </h3>
                   <p className="text-sm text-stone-600 leading-relaxed font-sans">
-                    Never send the exact same generic caption everywhere. MULTIPOST allows you to keep one core narrative, while customizing hashtags, link placements, and text hooks specifically tailored for the algorithm of each platform.
+                    Never send the exact same generic caption everywhere. RETZPOST allows you to keep one core narrative, while customizing hashtags, link placements, and text hooks specifically tailored for the algorithm of each platform.
                   </p>
                   <div className="flex flex-wrap gap-2 text-xs font-mono text-stone-600 pt-2">
                     <span className="px-2.5 py-1 bg-stone-100 border border-black/5 rounded flex items-center gap-1.5"><EditorialCheck size={11} /><span>Mobile Safe-Zone Visualizer</span></span>
@@ -2512,7 +2512,7 @@ export default function LandingPage() {
               The Currency of Publishing Precision
             </h2>
             <p className="font-sans text-sm text-stone-600 leading-relaxed">
-              เหรียญตราเกียรติยศแห่งโต๊ะบรรณาธิการ MULTIPOST หล่อขึ้นเพื่อความแม่นยำในการจัดพิมพ์ ลองคลิกเพื่อพลิกดูเหรียญแบบ 360° ทั้งด้านหน้าและด้านหลัง
+              เหรียญตราเกียรติยศแห่งโต๊ะบรรณาธิการ RETZPOST หล่อขึ้นเพื่อความแม่นยำในการจัดพิมพ์ ลองคลิกเพื่อพลิกดูเหรียญแบบ 360° ทั้งด้านหน้าและด้านหลัง
             </p>
           </div>
 
@@ -2570,7 +2570,7 @@ export default function LandingPage() {
                   24K Solid Gold Relief Proof • 60-Tooth Reeded Milled Rim
                 </p>
                 <p className="text-xs text-stone-300 font-sans leading-relaxed max-w-sm mx-auto pt-2">
-                  เหรียญตราเกียรติยศแห่งโต๊ะบรรณาธิการ MULTIPOST หล่อขึ้นเพื่อยกย่องความแม่นยำในการจัดพิมพ์ สะสมผ่านการทดสอบ 4 สถานีด้านบน เพื่อนำไปประทับตราครั่งปลดล็อกตั๋ว 7-Day Dream Pass
+                  เหรียญตราเกียรติยศแห่งโต๊ะบรรณาธิการ RETZPOST หล่อขึ้นเพื่อยกย่องความแม่นยำในการจัดพิมพ์ สะสมผ่านการทดสอบ 4 สถานีด้านบน เพื่อนำไปประทับตราครั่งปลดล็อกตั๋ว 7-Day Dream Pass
                 </p>
               </div>
             </div>
@@ -2711,7 +2711,7 @@ export default function LandingPage() {
             The Full-Spectrum Publishing Studio
           </h2>
           <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed max-w-2xl mx-auto">
-            สำรวจห้องปฏิบัติการผลิตคอนเทนต์จริงของ MULTIPOST ที่ผสานความแม่นยำระดับห้องข่าว เข้ากับเวิร์กโฟลว์ของครีเอเตอร์ยุคใหม่ ลองคลิกสลับแท็บเพื่อดูหน้าจอระบบจริง
+            สำรวจห้องปฏิบัติการผลิตคอนเทนต์จริงของ RETZPOST ที่ผสานความแม่นยำระดับห้องข่าว เข้ากับเวิร์กโฟลว์ของครีเอเตอร์ยุคใหม่ ลองคลิกสลับแท็บเพื่อดูหน้าจอระบบจริง
           </p>
         </div>
 
@@ -2764,7 +2764,7 @@ export default function LandingPage() {
               </div>
               <div className="h-4 w-px bg-white/10 hidden sm:block mx-1" />
               <div className="font-bold text-white text-[11px] tracking-wide hidden sm:flex items-center gap-2">
-                <span className="text-amber-400">MULTIPOST STUDIO v2.4</span>
+                <span className="text-amber-400">RETZPOST STUDIO v2.4</span>
                 <span className="text-stone-500">•</span>
                 <span className="text-stone-400 font-normal">Workspace:</span>
                 <span className="text-amber-200 font-mono">@bangkok_editorial_press</span>
@@ -3197,7 +3197,7 @@ export default function LandingPage() {
 
                       {/* Main Caption Textarea Mock */}
                       <div className="p-3.5 bg-stone-50 rounded-xl border border-black/10 font-sans text-xs sm:text-sm text-[#1A1A18] leading-relaxed">
-                        ยินดีต้อนรับสู่สตูดิโอ MULTIPOST — วันนี้เราเปิดตัวเอนจินกระจายสัญญาณฉบับสมบูรณ์ โพสต์วิดีโอ 4K และรูปภาพไปยัง YouTube, Instagram, TikTok และ Facebook ได้พร้อมกันในคลิกเดียว พร้อมระบบตรวจจับ Safe-Zone อัตโนมัติ!
+                        ยินดีต้อนรับสู่สตูดิโอ RETZPOST — วันนี้เราเปิดตัวเอนจินกระจายสัญญาณฉบับสมบูรณ์ โพสต์วิดีโอ 4K และรูปภาพไปยัง YouTube, Instagram, TikTok และ Facebook ได้พร้อมกันในคลิกเดียว พร้อมระบบตรวจจับ Safe-Zone อัตโนมัติ!
                       </div>
 
                       {/* First Comment Box for IG */}
@@ -3207,7 +3207,7 @@ export default function LandingPage() {
                           <span className="text-emerald-700 font-bold">Auto-Post Active</span>
                         </div>
                         <div className="p-2.5 bg-white rounded-lg border border-black/10 text-xs font-mono text-stone-600">
-                          #multipost #dreampress #socialmediatools #contentcreator #bangkokstudio
+                          #RETZPOST #dreampress #socialmediatools #contentcreator #bangkokstudio
                         </div>
                       </div>
 
@@ -3516,7 +3516,7 @@ export default function LandingPage() {
               Engineered for Serious Publishing
             </h2>
             <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed max-w-2xl mx-auto">
-              8 เสาหลักทางวิศวกรรมของ MULTIPOST ที่เปลี่ยนความวุ่นวายของการจัดการหลายโซเชียล ให้กลายเป็นเวิร์กโฟลว์ระดับมืออาชีพที่แม่นยำ ไม่ตกหล่น และวางใจได้ในทุกวินาที
+              8 เสาหลักทางวิศวกรรมของ RETZPOST ที่เปลี่ยนความวุ่นวายของการจัดการหลายโซเชียล ให้กลายเป็นเวิร์กโฟลว์ระดับมืออาชีพที่แม่นยำ ไม่ตกหล่น และวางใจได้ในทุกวินาที
             </p>
           </div>
 
@@ -3933,7 +3933,7 @@ export default function LandingPage() {
             สถาปัตยกรรมโต๊ะพิมพ์ที่ออกแบบมาเพื่อทุกสเกลงาน
           </h2>
           <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
-            ไม่ว่าคุณจะผลิตคอนเทนต์คนเดียว หรือบริหารการสื่อสารระดับสตูดิโอหลายแบรนด์พร้อมกัน MULTIPOST ตอบโจทย์ความแม่นยำในทุกมิติ
+            ไม่ว่าคุณจะผลิตคอนเทนต์คนเดียว หรือบริหารการสื่อสารระดับสตูดิโอหลายแบรนด์พร้อมกัน RETZPOST ตอบโจทย์ความแม่นยำในทุกมิติ
           </p>
         </div>
 
@@ -4184,11 +4184,11 @@ export default function LandingPage() {
             </ul>
           </div>
 
-          {/* MULTIPOST Integrated Desk */}
+          {/* RETZPOST Integrated Desk */}
           <div className="editorial-paper-card p-7 sm:p-9 rounded-3xl border border-emerald-200/80 space-y-5 bg-white/95 shadow-[0_8px_30px_rgba(29,111,66,0.06)]">
             <div className="flex items-center justify-between pb-3 border-b border-emerald-100">
               <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 uppercase">
-                MULTIPOST DESK • โต๊ะจัดพิมพ์แบบบูรณาการ
+                RETZPOST DESK • โต๊ะจัดพิมพ์แบบบูรณาการ
               </span>
               <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
                 <CheckCircle2 className="w-3.5 h-3.5" /> จบใน 2 นาที/คลิป
@@ -4320,7 +4320,7 @@ export default function LandingPage() {
               Live Multi-Platform Dispatch Simulation
             </h2>
             <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
-              Observe how MULTIPOST manages concurrent platform dispatches with independent state isolation. A temporary timeout on one network never interrupts other live deliveries.
+              Observe how RETZPOST manages concurrent platform dispatches with independent state isolation. A temporary timeout on one network never interrupts other live deliveries.
             </p>
           </div>
 
@@ -4709,7 +4709,7 @@ export default function LandingPage() {
                   RP
                 </div>
                 <span className="font-serif font-bold text-lg text-[#1A1A18] tracking-tight">
-                  MULTIPOST — DREAM PRESS
+                  RETZPOST — DREAM PRESS
                 </span>
               </div>
               <p className="font-serif italic text-sm text-stone-600 max-w-sm leading-relaxed">
@@ -4765,7 +4765,7 @@ export default function LandingPage() {
 
           <div className="pt-8 border-t border-black/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-stone-500">
             <div>
-              © 2026 MULTIPOST • Dream Press Publishing Desk • All rights reserved.
+              © 2026 RETZPOST • Dream Press Publishing Desk • All rights reserved.
             </div>
             <div className="flex items-center gap-4 text-[11px]">
               <span>Editorial Gazette Edition</span>

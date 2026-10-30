@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 const updateContentSchema = z.object({
   expectedVersion: z.number().int().optional(),
   primaryAssetId: z.string().uuid().optional().nullable(),

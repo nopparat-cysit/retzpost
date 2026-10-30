@@ -123,6 +123,15 @@ export const ALL_PERMISSIONS: Array<{ key: PermissionKey; labelTh: string; label
   { key: 'WORKSPACE_SETTINGS_DELETE', labelTh: 'ตั้งค่าระบบ & ลบโปรเจกต์', labelEn: 'Workspace Root Configuration', category: 'Administration' },
 ];
 
+export interface MemberTokenLog {
+  id: string;
+  action: string;
+  actionLabelTh: string;
+  tokens: number;
+  workspaceName: string;
+  timestamp: string;
+}
+
 export interface TeamMember {
   id: string;
   name: string;
@@ -134,6 +143,9 @@ export interface TeamMember {
   status: 'ACTIVE' | 'INVITED';
   joinedAt: string;
   lastActiveAt: string;
+  tokensUsedThisMonth: number;
+  monthlyTokenLimit: number | null; // null = unlimited (shares Master Pool)
+  tokenLogs?: MemberTokenLog[];
 }
 
 export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
@@ -149,6 +161,12 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     status: 'ACTIVE',
     joinedAt: 'Jan 2026',
     lastActiveAt: 'Just now',
+    tokensUsedThisMonth: 125,
+    monthlyTokenLimit: null,
+    tokenLogs: [
+      { id: 'log-1', action: 'AI_POST_DIAGNOSIS', actionLabelTh: 'AI วิเคราะห์โพสต์ปัง', tokens: 25, workspaceName: 'Main Studio', timestamp: '10 นาทีที่แล้ว' },
+      { id: 'log-2', action: 'FORCE_SYNC_NOW', actionLabelTh: 'ดึงยอดวิวสดทันที', tokens: 10, workspaceName: 'Main Studio', timestamp: '2 ชั่วโมงที่แล้ว' },
+    ],
   },
   {
     id: 'mbr-c1-2',
@@ -161,6 +179,12 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     status: 'ACTIVE',
     joinedAt: 'Feb 2026',
     lastActiveAt: '10 mins ago',
+    tokensUsedThisMonth: 80,
+    monthlyTokenLimit: 200,
+    tokenLogs: [
+      { id: 'log-3', action: 'AI_KPI_COACHING', actionLabelTh: 'AI ร่างแผนโค้ชชิ่งลูกทีม', tokens: 30, workspaceName: 'Main Studio', timestamp: 'เมื่อวานนี้' },
+      { id: 'log-4', action: 'FORCE_SYNC_NOW', actionLabelTh: 'ดึงยอดวิวสดทันที', tokens: 14, workspaceName: 'Main Studio', timestamp: 'เมื่อวานนี้' },
+    ],
   },
   {
     id: 'mbr-c1-3',
@@ -173,6 +197,12 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     status: 'ACTIVE',
     joinedAt: 'Mar 2026',
     lastActiveAt: '1 hour ago',
+    tokensUsedThisMonth: 45,
+    monthlyTokenLimit: 100,
+    tokenLogs: [
+      { id: 'log-5', action: 'SMART_AUTOFRAME', actionLabelTh: 'ปรับขนาด Story 9:16', tokens: 25, workspaceName: 'Main Studio', timestamp: '3 ชั่วโมงที่แล้ว' },
+      { id: 'log-6', action: 'FORCE_SYNC_NOW', actionLabelTh: 'ดึงยอดวิวสดทันที', tokens: 6, workspaceName: 'Main Studio', timestamp: '5 ชั่วโมงที่แล้ว' },
+    ],
   },
   {
     id: 'mbr-c1-4',
@@ -185,6 +215,11 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     status: 'ACTIVE',
     joinedAt: 'Apr 2026',
     lastActiveAt: '3 hours ago',
+    tokensUsedThisMonth: 15,
+    monthlyTokenLimit: 50,
+    tokenLogs: [
+      { id: 'log-7', action: 'AI_POST_DIAGNOSIS', actionLabelTh: 'AI วิเคราะห์โพสต์ปัง', tokens: 15, workspaceName: 'Main Studio', timestamp: 'วานนี้' },
+    ],
   },
   {
     id: 'mbr-c1-5',
@@ -197,6 +232,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     status: 'INVITED',
     joinedAt: 'Yesterday',
     lastActiveAt: 'Pending sign-in',
+    tokensUsedThisMonth: 0,
+    monthlyTokenLimit: 0,
   },
 
   // 2. Creator Hub Team
@@ -211,6 +248,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     status: 'ACTIVE',
     joinedAt: 'Dec 2025',
     lastActiveAt: 'Just now',
+    tokensUsedThisMonth: 60,
+    monthlyTokenLimit: null,
   },
   {
     id: 'mbr-acme-2',
@@ -223,6 +262,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     status: 'ACTIVE',
     joinedAt: 'Jan 2026',
     lastActiveAt: '25 mins ago',
+    tokensUsedThisMonth: 30,
+    monthlyTokenLimit: 150,
   },
   {
     id: 'mbr-acme-3',
@@ -235,6 +276,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     status: 'ACTIVE',
     joinedAt: 'Feb 2026',
     lastActiveAt: 'Yesterday',
+    tokensUsedThisMonth: 20,
+    monthlyTokenLimit: 100,
   },
 ];
 
@@ -299,6 +342,9 @@ export function inviteTeamMember(
     status: 'INVITED',
     joinedAt: 'Just invited',
     lastActiveAt: 'Pending acceptance',
+    tokensUsedThisMonth: 0,
+    monthlyTokenLimit: role === 'VIEWER' ? 0 : 100,
+    tokenLogs: [],
   };
 
   if (typeof window !== 'undefined') {
@@ -308,4 +354,56 @@ export function inviteTeamMember(
   }
 
   return newMember;
+}
+
+/**
+ * Record token consumption for a member from Master Pool
+ */
+export function recordTeamTokenConsumption(
+  emailOrId: string,
+  actionKey: string,
+  actionLabelTh: string,
+  tokens: number,
+  workspaceName = 'Main Studio'
+): boolean {
+  if (typeof window === 'undefined') return true;
+  const members = getInitialTeamMembers();
+  const index = members.findIndex(
+    (m) => m.id === emailOrId || m.email.toLowerCase() === emailOrId.toLowerCase()
+  );
+
+  if (index !== -1) {
+    const member = members[index];
+    // Check limit if set
+    if (member.monthlyTokenLimit !== null && (member.tokensUsedThisMonth + tokens) > member.monthlyTokenLimit) {
+      return false; // Exceeded limit
+    }
+
+    member.tokensUsedThisMonth += tokens;
+    const newLog: MemberTokenLog = {
+      id: `log-${Date.now()}`,
+      action: actionKey,
+      actionLabelTh,
+      tokens,
+      workspaceName,
+      timestamp: 'เพิ่งใช้เมื่อสักครู่',
+    };
+    member.tokenLogs = [newLog, ...(member.tokenLogs || [])].slice(0, 20);
+    saveTeamMembers(members);
+    return true;
+  }
+
+  return true;
+}
+
+/**
+ * Set a member's monthly token limit
+ */
+export function updateMemberTokenLimit(memberId: string, newLimit: number | null): void {
+  const members = getInitialTeamMembers();
+  const index = members.findIndex((m) => m.id === memberId);
+  if (index !== -1) {
+    members[index].monthlyTokenLimit = newLimit;
+    saveTeamMembers(members);
+  }
 }

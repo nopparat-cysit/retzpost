@@ -31,6 +31,7 @@ export const PublicHeader: React.FC = () => {
 
   const navLinks = [
     { href: '/landing', label: 'Dream Press Desk', icon: Sparkles },
+    { href: '/pricing', label: 'ราคาและแผน (Pricing)', icon: Sparkles },
     { href: '/docs', label: 'คู่มือใช้งาน (Docs)', icon: BookOpen },
     { href: '/privacy', label: 'นโยบายความเป็นส่วนตัว (Privacy)', icon: ShieldCheck },
     { href: '/terms', label: 'ข้อกำหนดการใช้งาน (Terms)', icon: FileText },
@@ -66,7 +67,7 @@ export const PublicHeader: React.FC = () => {
           <div className="leading-tight">
             <div className="flex items-baseline gap-1.5">
               <span className="font-serif font-bold text-xl tracking-tight text-ink-primary group-hover:text-brand-indigo transition-colors">
-                MULTIPOST
+                RETZPOST
               </span>
               <span className="text-[9px] font-mono uppercase bg-accent-terracotta/10 text-accent-terracotta px-1.5 py-0.2 rounded font-bold border border-accent-terracotta/20">
                 Press
@@ -148,7 +149,7 @@ export const PublicFooter: React.FC = () => {
                 RP
               </div>
               <span className="font-serif font-bold text-base text-ink-primary tracking-tight">
-                MULTIPOST (RetzPost)
+                RETZPOST
               </span>
             </div>
             <p className="text-[11px] leading-relaxed text-ink-secondary font-sans">

@@ -13,6 +13,7 @@ const config: Config = {
         paper: {
           canvas: 'var(--bg-canvas, #F3F0E8)',
           raised: 'var(--bg-raised, #FBFAF6)',
+          card: 'var(--bg-raised, #FBFAF6)',
           subtle: 'var(--bg-subtle, #EAE5D9)',
         },
         ink: {

@@ -206,7 +206,7 @@ export default function ForgotPasswordPage() {
           </div>
           <div className="leading-none">
             <span className="font-serif font-bold text-xl tracking-tight text-ink-primary">
-              MULTIPOST
+              RETZPOST
             </span>
             <span className="text-[10px] font-mono uppercase text-accent-terracotta ml-1.5 font-bold tracking-wider">
               Dream Press
@@ -502,7 +502,7 @@ export default function ForgotPasswordPage() {
             📜 ข้อกำหนดการใช้งาน (Terms of Service)
           </Link>
         </div>
-        <p>MULTIPOST — Dream Press Publishing Desk &copy; {new Date().getFullYear()} RetzPost SaaS. All rights reserved.</p>
+        <p>RETZPOST — Dream Press Publishing Desk &copy; {new Date().getFullYear()} RetzPost SaaS. All rights reserved.</p>
       </footer>
     </div>
   );

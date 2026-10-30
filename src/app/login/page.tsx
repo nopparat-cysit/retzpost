@@ -90,7 +90,7 @@ export default function LoginPage() {
           </div>
           <div className="leading-none">
             <span className="font-serif font-bold text-xl tracking-tight text-ink-primary">
-              MULTIPOST
+              RETZPOST
             </span>
             <span className="text-[10px] font-mono uppercase text-accent-terracotta ml-1.5 font-bold tracking-wider">
               Dream Press
@@ -242,7 +242,7 @@ export default function LoginPage() {
                 คลิกเลือกบัญชีทดสอบด่วน (1-Click Demo)
               </span>
             </div>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <button
                 type="button"
                 onClick={() => handleQuickDemoLogin('demo.manager@gmail.com', 'Password123!')}
@@ -253,11 +253,11 @@ export default function LoginPage() {
                     DM
                   </div>
                   <span className="font-semibold text-xs text-ink-primary group-hover:text-brand-indigo transition-colors truncate">
-                    Demo Manager
+                    Manager
                   </span>
                 </div>
                 <p className="text-[9px] font-mono text-ink-secondary truncate">
-                  Role: Manager (Main Studio)
+                  Main Studio
                 </p>
               </button>
 
@@ -271,11 +271,29 @@ export default function LoginPage() {
                     DO
                   </div>
                   <span className="font-semibold text-xs text-ink-primary group-hover:text-brand-indigo transition-colors truncate">
-                    Demo Owner
+                    Owner
                   </span>
                 </div>
                 <p className="text-[9px] font-mono text-ink-secondary truncate">
-                  Role: Owner (Creator Hub)
+                  Creator Hub
+                </p>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleQuickDemoLogin('superadmin@retzpost.io', 'SuperAdmin2026!')}
+                className="p-2 rounded-editorial bg-purple-950/10 hover:bg-purple-950/20 border border-purple-900/30 text-left transition-all group cursor-pointer"
+              >
+                <div className="flex items-center gap-1.5 mb-1">
+                  <div className="w-4 h-4 rounded-full bg-purple-900 text-white flex items-center justify-center text-[9px] font-bold">
+                    SA
+                  </div>
+                  <span className="font-semibold text-xs text-purple-900 group-hover:text-purple-700 transition-colors truncate">
+                    Super Admin
+                  </span>
+                </div>
+                <p className="text-[9px] font-mono text-purple-800/80 truncate">
+                  Admin & Tax
                 </p>
               </button>
             </div>
@@ -298,7 +316,7 @@ export default function LoginPage() {
             📜 ข้อกำหนดการใช้งาน (Terms of Service)
           </Link>
         </div>
-        <p>MULTIPOST — Dream Press Publishing Desk &copy; {new Date().getFullYear()} RetzPost SaaS. All rights reserved.</p>
+        <p>RETZPOST — Dream Press Publishing Desk &copy; {new Date().getFullYear()} RetzPost SaaS. All rights reserved.</p>
       </footer>
     </div>
   );
