@@ -73,6 +73,7 @@ export interface MasterChannelAccount {
   capabilities: string;
   lastSynced: string;
   url?: string;
+  isSimulated?: boolean;
 }
 
 const INITIAL_MASTER_ACCOUNTS: MasterChannelAccount[] = [
@@ -446,6 +447,7 @@ function ConnectedAccountsContent() {
   // Modal: Connect New Page / Channel (+)
   const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
   const [connectPlatform, setConnectPlatform] = useState<'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE' | 'X' | 'LEMON8'>('FACEBOOK');
+  const [connectMode, setConnectMode] = useState<'OAUTH' | 'SIMULATION'>('OAUTH');
   const [newPageName, setNewPageName] = useState('');
   const [newPageHandle, setNewPageHandle] = useState('');
 
@@ -769,12 +771,13 @@ function ConnectedAccountsContent() {
           : 'Lifestyle Carousels & Editorial Guides',
       lastSynced: 'Just now',
       url: '#',
+      isSimulated: true,
     };
 
     setAccounts((prev) => [newAccount, ...prev]);
 
     // Enable in current workspace
-    const wsId = selectedWorkspaceId === 'ALL' ? 'ws_capitalone' : selectedWorkspaceId;
+    const wsId = selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
     setChannelSelections((prev) => ({
       ...prev,
       [`${wsId}_${newId}`]: true,
@@ -783,12 +786,13 @@ function ConnectedAccountsContent() {
     setIsConnectModalOpen(false);
     setNewPageName('');
     setNewPageHandle('');
-    showToast(`✓ เชื่อมต่อช่องทางใหม่ "${newAccount.displayName}" เข้าสู่ระบบเรียบร้อยแล้ว`);
+    showToast(`✓ เพิ่มช่องทางจำลอง "${newAccount.displayName}" (Sandbox Demo) เรียบร้อยแล้ว`);
   };
 
   // Open Connect Modal for a specific platform
   const handleOpenConnect = (platform: 'FACEBOOK' | 'INSTAGRAM' | 'TIKTOK' | 'YOUTUBE' | 'X' | 'LEMON8') => {
     setConnectPlatform(platform);
+    setConnectMode('OAUTH');
     setNewPageName('');
     setNewPageHandle('');
     setIsConnectModalOpen(true);
@@ -1311,6 +1315,17 @@ function ConnectedAccountsContent() {
                               <span className="text-[10px] font-mono text-ink-muted">
                                 ID: {acc.channelId}
                               </span>
+                              {acc.isSimulated ? (
+                                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-700 border border-amber-500/30 font-bold flex items-center gap-1">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
+                                  จำลอง (Demo)
+                                </span>
+                              ) : (
+                                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 font-bold flex items-center gap-1">
+                                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                                  OAuth 2.0 Live
+                                </span>
+                              )}
                             </div>
 
                             <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-ink-secondary">
@@ -1482,20 +1497,20 @@ function ConnectedAccountsContent() {
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="bg-paper-raised border border-border-rule rounded-card max-w-md w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 cursor-default"
+            className="bg-paper-raised border border-border-rule rounded-card max-w-lg w-full p-6 shadow-2xl space-y-4 animate-in zoom-in-95 duration-150 cursor-default"
           >
             {/* Header */}
             <div className="flex items-center justify-between pb-3 border-b border-border-rule">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-full bg-paper-canvas border border-border-rule flex items-center justify-center shadow-2xs">
-                  <SocialPlatformIcon platform={connectPlatform} size={18} />
+                <div className="w-9 h-9 rounded-full bg-paper-canvas border border-border-rule flex items-center justify-center shadow-2xs">
+                  <SocialPlatformIcon platform={connectPlatform} size={20} />
                 </div>
                 <div>
                   <h3 className="font-serif font-bold text-base text-ink-primary">
-                    เชื่อมต่อ {connectPlatform === 'FACEBOOK' ? 'Facebook Page' : connectPlatform === 'INSTAGRAM' ? 'Instagram Account' : connectPlatform === 'TIKTOK' ? 'TikTok Account' : 'YouTube Channel'} ใหม่
+                    เชื่อมต่อ {connectPlatform === 'FACEBOOK' ? 'Facebook Page' : connectPlatform === 'INSTAGRAM' ? 'Instagram Professional' : connectPlatform === 'TIKTOK' ? 'TikTok Account' : connectPlatform === 'YOUTUBE' ? 'YouTube Channel' : connectPlatform === 'X' ? 'X (Twitter) Profile' : 'Lemon8 Profile'}
                   </h3>
                   <p className="text-[11px] font-mono text-ink-secondary">
-                    ดึง Endpoint เข้าสู่ Master Hub พร้อมเชื่อมต่อ Token Vault
+                    เลือกวิธีการเชื่อมต่อระหว่างระบบ OAuth 2.0 ทางการ หรือโหมดจำลองเพื่อทดสอบ
                   </p>
                 </div>
               </div>
@@ -1508,179 +1523,315 @@ function ConnectedAccountsContent() {
               </button>
             </div>
 
-            {/* Quick Preset Selector */}
-            <div className="space-y-1.5">
-              <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold block">
-                เลือกเพจตัวอย่างจาก Meta/Google ที่ตรวจพบ:
-              </span>
-              <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
-                {connectPlatform === 'FACEBOOK' ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNewPageName('Bangkok Gazette Studio');
-                        setNewPageHandle('FB Page: Bangkok Gazette');
-                      }}
-                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
-                    >
-                      <p className="font-bold text-ink-primary text-xs truncate">Official Newsroom</p>
-                      <p className="text-[9px] text-ink-muted">Ready to import</p>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNewPageName('RetzPost Creator Hub');
-                        setNewPageHandle('FB Page: RetzPost Hub');
-                      }}
-                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
-                    >
-                      <p className="font-bold text-ink-primary text-xs truncate">Creator Studio Hub</p>
-                      <p className="text-[9px] text-ink-muted">Ready to import</p>
-                    </button>
-                  </>
-                ) : connectPlatform === 'INSTAGRAM' ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNewPageName('Premium Brand Studio');
-                        setNewPageHandle('@premium.brand');
-                      }}
-                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
-                    >
-                      <p className="font-bold text-ink-primary text-xs truncate">Brand Studio</p>
-                      <p className="text-[9px] text-ink-muted">Business IG Account</p>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNewPageName('RetzPost Creators Hub');
-                        setNewPageHandle('@retzpost.creators');
-                      }}
-                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
-                    >
-                      <p className="font-bold text-ink-primary text-xs truncate">Creators Hub</p>
-                      <p className="text-[9px] text-ink-muted">Creator IG Account</p>
-                    </button>
-                  </>
-                ) : connectPlatform === 'X' ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNewPageName('Official Media Channel');
-                        setNewPageHandle('@BrandMedia');
-                      }}
-                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
-                    >
-                      <p className="font-bold text-ink-primary text-xs truncate">Media Updates</p>
-                      <p className="text-[9px] text-ink-muted">X / Twitter Handle</p>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNewPageName('RetzPost Live Dispatch');
-                        setNewPageHandle('@RetzPostLive');
-                      }}
-                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
-                    >
-                      <p className="font-bold text-ink-primary text-xs truncate">RetzPost Live</p>
-                      <p className="text-[9px] text-ink-muted">X Broadcast Handle</p>
-                    </button>
-                  </>
-                ) : connectPlatform === 'LEMON8' ? (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNewPageName('Modern Living & Decor (Lemon8)');
-                        setNewPageHandle('@modern_living');
-                      }}
-                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
-                    >
-                      <p className="font-bold text-ink-primary text-xs truncate">Living & Decor Guide</p>
-                      <p className="text-[9px] text-ink-muted">Lemon8 Creator Profile</p>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNewPageName('Cafe Hopping Vibes');
-                        setNewPageHandle('@cafehopping_vibes');
-                      }}
-                      className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
-                    >
-                      <p className="font-bold text-ink-primary text-xs truncate">Cafe Hopping</p>
-                      <p className="text-[9px] text-ink-muted">Lemon8 Food & Lifestyle</p>
-                    </button>
-                  </>
-                ) : (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setNewPageName('RetzPost Official Media');
-                        setNewPageHandle('@retzpost_media');
-                      }}
-                      className="col-span-2 p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors"
-                    >
-                      <p className="font-bold text-ink-primary text-xs">RetzPost Official Studio</p>
-                      <p className="text-[9px] text-ink-muted">Verified Enterprise Channel</p>
-                    </button>
-                  </>
-                )}
-              </div>
+            {/* Mode Switcher Tabs */}
+            <div className="grid grid-cols-2 p-1 bg-paper-canvas rounded-lg border border-border-rule text-xs font-mono">
+              <button
+                type="button"
+                onClick={() => setConnectMode('OAUTH')}
+                className={`py-2 px-3 rounded-md font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  connectMode === 'OAUTH'
+                    ? 'bg-paper-raised text-brand-indigo shadow-xs border border-border-rule/60'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+              >
+                <Lock className="w-3.5 h-3.5 text-accent-terracotta" />
+                <span>🔗 Official OAuth (เชื่อมต่อจริง)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setConnectMode('SIMULATION')}
+                className={`py-2 px-3 rounded-md font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                  connectMode === 'SIMULATION'
+                    ? 'bg-paper-raised text-amber-700 shadow-xs border border-border-rule/60'
+                    : 'text-ink-secondary hover:text-ink-primary'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <span>🧪 โหมดจำลอง (Demo / Mock)</span>
+              </button>
             </div>
 
-            {/* Custom Input Form */}
-            <form onSubmit={handleConnectSubmit} className="space-y-3.5 text-xs font-mono">
-              <div>
-                <label className="block text-[11px] uppercase text-ink-secondary mb-1">
-                  ชื่อเพจ / ช่องทาง (Display Name) *
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="เช่น: Official Brand Lounge"
-                  value={newPageName}
-                  onChange={(e) => setNewPageName(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
-                />
-              </div>
+            {/* TAB 1: OFFICIAL OAUTH 2.0 */}
+            {connectMode === 'OAUTH' && (
+              <div className="space-y-4 pt-1">
+                <div className="p-3.5 rounded-editorial bg-brand-indigo/5 border border-brand-indigo/20 space-y-2">
+                  <div className="flex items-center gap-2 text-xs font-bold text-brand-indigo font-serif">
+                    <ShieldCheck className="w-4 h-4 text-semantic-success" />
+                    <span>ระบบเชื่อมต่อทางการผ่าน {connectPlatform} API</span>
+                  </div>
+                  <p className="text-xs text-ink-secondary leading-relaxed">
+                    เมื่อกดปุ่มด้านล่าง ระบบจะส่งต่อไปยังหน้าเข้าสู่ระบบทางการของ {connectPlatform} เพื่อให้คุณเข้าสู่ระบบและอนุญาตสิทธิ์การจัดการโพสต์
+                  </p>
+                  <ul className="text-[11px] font-mono text-ink-muted list-disc list-inside space-y-0.5">
+                    <li>เข้าสู่ระบบบัญชีของคุณบน {connectPlatform}</li>
+                    <li>เลือกเพจ / ช่องที่คุณมีสิทธิ์เป็นแอดมิน</li>
+                    <li>ระบบจะดึง Long-Lived Access Token จัดเก็บใน Token Vault อัตโนมัติ</li>
+                  </ul>
+                </div>
 
-              <div>
-                <label className="block text-[11px] uppercase text-ink-secondary mb-1">
-                  แฮนเดิล / Username (Handle)
-                </label>
-                <input
-                  type="text"
-                  placeholder="เช่น: @bangkok_gazette"
-                  value={newPageHandle}
-                  onChange={(e) => setNewPageHandle(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
-                />
-              </div>
+                {/* OAuth Trigger Buttons */}
+                <div className="space-y-2">
+                  {connectPlatform === 'FACEBOOK' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const wsId = selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
+                        window.location.href = `/api/connections/meta/start?workspaceId=${wsId}`;
+                      }}
+                      className="w-full py-2.5 px-4 rounded-editorial bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                    >
+                      <FacebookLogo size={18} />
+                      <span>เข้าสู่ระบบด้วย Facebook (Log in with Facebook)</span>
+                    </button>
+                  )}
 
-              <div className="p-3 bg-brand-indigo/5 border border-brand-indigo/20 rounded-editorial text-[11px] text-ink-secondary leading-relaxed">
-                ระบบจะสร้าง Long-Lived Token และจัดเก็บใน Token Vault พร้อมสิทธิ์ในการโพสต์รูปภาพ, วิดีโอ, และ Story แบบอัตโนมัติ
-              </div>
+                  {connectPlatform === 'INSTAGRAM' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const wsId = selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
+                        window.location.href = `/api/connections/meta/start?workspaceId=${wsId}`;
+                      }}
+                      className="w-full py-2.5 px-4 rounded-editorial bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-opacity cursor-pointer"
+                    >
+                      <InstagramLogo size={18} />
+                      <span>เข้าสู่ระบบ Instagram ผ่าน Meta Business</span>
+                    </button>
+                  )}
 
-              <div className="pt-2 flex items-center justify-end gap-2 border-t border-border-rule">
-                <button
-                  type="button"
-                  onClick={() => setIsConnectModalOpen(false)}
-                  className="px-3.5 py-2 border border-border-rule rounded-editorial text-ink-secondary hover:text-ink-primary cursor-pointer"
-                >
-                  ยกเลิก
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors"
-                >
-                  ยืนยันและเชื่อมต่อ
-                </button>
+                  {connectPlatform === 'YOUTUBE' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const wsId = selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
+                        window.location.href = `/api/connections/youtube/start?workspaceId=${wsId}`;
+                      }}
+                      className="w-full py-2.5 px-4 rounded-editorial bg-[#FF0000] hover:bg-[#e60000] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                    >
+                      <YouTubeLogo size={18} />
+                      <span>เข้าสู่ระบบด้วย Google / YouTube Account</span>
+                    </button>
+                  )}
+
+                  {connectPlatform === 'TIKTOK' && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const wsId = selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
+                        window.location.href = `/api/connections/tiktok/start?workspaceId=${wsId}`;
+                      }}
+                      className="w-full py-2.5 px-4 rounded-editorial bg-black hover:bg-neutral-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                    >
+                      <TikTokLogo size={18} />
+                      <span>เข้าสู่ระบบด้วย TikTok for Business</span>
+                    </button>
+                  )}
+
+                  {(connectPlatform === 'X' || connectPlatform === 'LEMON8') && (
+                    <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-editorial text-xs text-amber-800 dark:text-amber-200">
+                      <p className="font-bold mb-1">ต้องการ Developer API Access</p>
+                      <p className="text-[11px] leading-relaxed">
+                        แพลตฟอร์ม {connectPlatform} ต้องใช้ API Client Key & Secret เพิ่มเติมในระบบ หรือสามารถสลับไปที่แท็บ <strong>&quot;🧪 โหมดจำลอง&quot;</strong> เพื่อทดสอบฟีเจอร์ได้ทันที
+                      </p>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex items-center justify-between pt-2 border-t border-border-rule text-[11px] font-mono text-ink-muted">
+                  <span className="flex items-center gap-1">
+                    <Lock className="w-3 h-3 text-semantic-success" />
+                    <span>Envelope Encryption (AES-256)</span>
+                  </span>
+                  <span>พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)</span>
+                </div>
               </div>
-            </form>
+            )}
+
+            {/* TAB 2: SIMULATION / DEMO MODE */}
+            {connectMode === 'SIMULATION' && (
+              <div className="space-y-3.5">
+                <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-editorial text-xs text-amber-900 dark:text-amber-200 space-y-1">
+                  <div className="flex items-center gap-1.5 font-bold font-serif text-amber-800 dark:text-amber-300">
+                    <AlertTriangle className="w-4 h-4 text-amber-600" />
+                    <span>โหมดจำลองข้อมูล (Sandbox / UI Prototype)</span>
+                  </div>
+                  <p className="text-[11px] leading-relaxed">
+                    โหมดนี้เหมาะสำหรับทดลองจัดเลย์เอาต์หน้าจอ, ลองวางปฏิทิน และทดสอบผูกช่องทางเข้า Workspace โดย<strong>ไม่ต้องใช้บัญชีโซเชียลจริง</strong> (การกรอกชื่อจะสร้างการ์ดจำลองในระบบเท่านั้น)
+                  </p>
+                </div>
+
+                {/* Quick Preset Selector */}
+                <div className="space-y-1.5">
+                  <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold block">
+                    เลือกเพจตัวอย่างสำเร็จรูป:
+                  </span>
+                  <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
+                    {connectPlatform === 'FACEBOOK' ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewPageName('Bangkok Gazette Studio');
+                            setNewPageHandle('FB Page: Bangkok Gazette');
+                          }}
+                          className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors cursor-pointer"
+                        >
+                          <p className="font-bold text-ink-primary text-xs truncate">Official Newsroom</p>
+                          <p className="text-[9px] text-ink-muted">Ready to import (Mock)</p>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewPageName('RetzPost Creator Hub');
+                            setNewPageHandle('FB Page: RetzPost Hub');
+                          }}
+                          className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors cursor-pointer"
+                        >
+                          <p className="font-bold text-ink-primary text-xs truncate">Creator Studio Hub</p>
+                          <p className="text-[9px] text-ink-muted">Ready to import (Mock)</p>
+                        </button>
+                      </>
+                    ) : connectPlatform === 'INSTAGRAM' ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewPageName('Premium Brand Studio');
+                            setNewPageHandle('@premium.brand');
+                          }}
+                          className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors cursor-pointer"
+                        >
+                          <p className="font-bold text-ink-primary text-xs truncate">Brand Studio</p>
+                          <p className="text-[9px] text-ink-muted">Business IG Account (Mock)</p>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewPageName('RetzPost Creators Hub');
+                            setNewPageHandle('@retzpost.creators');
+                          }}
+                          className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors cursor-pointer"
+                        >
+                          <p className="font-bold text-ink-primary text-xs truncate">Creators Hub</p>
+                          <p className="text-[9px] text-ink-muted">Creator IG Account (Mock)</p>
+                        </button>
+                      </>
+                    ) : connectPlatform === 'X' ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewPageName('Official Media Channel');
+                            setNewPageHandle('@BrandMedia');
+                          }}
+                          className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors cursor-pointer"
+                        >
+                          <p className="font-bold text-ink-primary text-xs truncate">Media Updates</p>
+                          <p className="text-[9px] text-ink-muted">X / Twitter Handle (Mock)</p>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewPageName('RetzPost Live Dispatch');
+                            setNewPageHandle('@RetzPostLive');
+                          }}
+                          className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors cursor-pointer"
+                        >
+                          <p className="font-bold text-ink-primary text-xs truncate">RetzPost Live</p>
+                          <p className="text-[9px] text-ink-muted">X Broadcast Handle (Mock)</p>
+                        </button>
+                      </>
+                    ) : connectPlatform === 'LEMON8' ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewPageName('Modern Living & Decor (Lemon8)');
+                            setNewPageHandle('@modern_living');
+                          }}
+                          className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors cursor-pointer"
+                        >
+                          <p className="font-bold text-ink-primary text-xs truncate">Living & Decor Guide</p>
+                          <p className="text-[9px] text-ink-muted">Lemon8 Creator Profile (Mock)</p>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewPageName('Cafe Hopping Vibes');
+                            setNewPageHandle('@cafehopping_vibes');
+                          }}
+                          className="p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors cursor-pointer"
+                        >
+                          <p className="font-bold text-ink-primary text-xs truncate">Cafe Hopping</p>
+                          <p className="text-[9px] text-ink-muted">Lemon8 Food & Lifestyle (Mock)</p>
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setNewPageName('RetzPost Official Media');
+                            setNewPageHandle('@retzpost_media');
+                          }}
+                          className="col-span-2 p-2 text-left rounded bg-paper-canvas border border-border-rule hover:border-brand-indigo/60 transition-colors cursor-pointer"
+                        >
+                          <p className="font-bold text-ink-primary text-xs">RetzPost Official Studio</p>
+                          <p className="text-[9px] text-ink-muted">Verified Enterprise Channel (Mock)</p>
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                {/* Custom Input Form */}
+                <form onSubmit={handleConnectSubmit} className="space-y-3 text-xs font-mono">
+                  <div>
+                    <label className="block text-[11px] uppercase text-ink-secondary mb-1">
+                      ชื่อเพจ / ช่องทางจำลอง (Display Name) *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="เช่น: Official Brand Lounge"
+                      value={newPageName}
+                      onChange={(e) => setNewPageName(e.target.value)}
+                      className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] uppercase text-ink-secondary mb-1">
+                      แฮนเดิล / Username จำลอง (Handle)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="เช่น: @bangkok_gazette"
+                      value={newPageHandle}
+                      onChange={(e) => setNewPageHandle(e.target.value)}
+                      className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
+                    />
+                  </div>
+
+                  <div className="pt-2 flex items-center justify-end gap-2 border-t border-border-rule">
+                    <button
+                      type="button"
+                      onClick={() => setIsConnectModalOpen(false)}
+                      className="px-3.5 py-2 border border-border-rule rounded-editorial text-ink-secondary hover:text-ink-primary cursor-pointer"
+                    >
+                      ยกเลิก
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors flex items-center gap-1.5"
+                    >
+                      <Sparkles className="w-3.5 h-3.5" />
+                      <span>สร้างช่องทางจำลอง (Add Mock)</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            )}
           </div>
         </div>
       )}
