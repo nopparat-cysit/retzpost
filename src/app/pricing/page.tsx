@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { PublicHeader, PublicFooter } from '@/components/layout/public-nav';
 import { Sticker } from '@/components/ui/sticker';
+import { MasterTokenIcon } from '@/components/icons/editorial-icons';
 import { useTranslation } from '@/modules/i18n/i18n-context';
 import { 
   PRICING_PLANS, 
@@ -112,7 +113,7 @@ export default function PricingPage() {
 
             {isPromoMode && (
               <div className="inline-block p-3 rounded-md bg-accent-terracotta/10 border border-accent-terracotta/30 text-accent-terracotta text-xs font-mono font-bold">
-                🔥 สิทธิ์พิเศษเมื่อทดลองครบ 7 วัน: เลือกรายเดือนลด 25% (นาน 3 เดือนแรก) หรือเลือกรายปีลดคุ้ม 35% (ปีแรก)!
+                สิทธิ์พิเศษเมื่อทดลองครบ 7 วัน: เลือกรายเดือนลด 25% (นาน 3 เดือนแรก) หรือเลือกรายปีลดคุ้ม 35% (ปีแรก)!
               </div>
             )}
           </div>
@@ -188,11 +189,18 @@ export default function PricingPage() {
                           <Coins className="w-3 h-3 text-accent-terracotta" />
                           Master Tokens:
                         </span>
-                        <span>{plan.monthlyTokens.toLocaleString()} {locale === 'th' ? '🪙 /ด.' : '🪙 /mo.'}</span>
+                        <span className="inline-flex items-center gap-1">
+                          {plan.monthlyTokens.toLocaleString()}
+                          <MasterTokenIcon size={12} className="text-accent-terracotta inline-block" />
+                          <span>{locale === 'th' ? '/ด.' : '/mo.'}</span>
+                        </span>
                       </div>
                       <div className="flex items-center justify-between text-ink-secondary text-[10px]">
                         <span>{locale === 'th' ? 'สะสมโทเคนสูงสุด:' : 'Rollover Limit:'}</span>
-                        <span>{plan.maxRolloverTokens.toLocaleString()} 🪙</span>
+                        <span className="inline-flex items-center gap-1">
+                          {plan.maxRolloverTokens.toLocaleString()}
+                          <MasterTokenIcon size={12} className="text-accent-terracotta inline-block" />
+                        </span>
                       </div>
                       <div className="flex items-center justify-between text-ink-primary font-bold text-[10px] pt-1 border-t border-border-rule/60">
                         <span className="flex items-center gap-1">
@@ -336,7 +344,10 @@ export default function PricingPage() {
                 <p className="text-[11px] text-ink-secondary font-medium">
                   {locale === 'th' ? 'วินิจฉัยโพสต์' : 'Post Performance Diagnosis'}
                 </p>
-                <p className="font-mono font-black text-lg text-brand-indigo mt-0.5">{TOKEN_RATES.AI_POST_DIAGNOSIS} 🪙</p>
+                <p className="font-mono font-black text-lg text-brand-indigo mt-0.5 inline-flex items-center justify-center gap-1.5">
+                  <span>{TOKEN_RATES.AI_POST_DIAGNOSIS}</span>
+                  <MasterTokenIcon size={14} className="text-accent-terracotta inline-block" />
+                </p>
                 <p className="text-[10px] text-ink-muted">
                   {locale === 'th' ? 'วิเคราะห์โพสต์ปัง' : 'Performance Analysis'}
                 </p>
@@ -345,7 +356,10 @@ export default function PricingPage() {
                 <p className="text-[11px] text-ink-secondary font-medium">
                   {locale === 'th' ? 'โค้ชชิ่งทีมงาน' : 'AI Team Coaching'}
                 </p>
-                <p className="font-mono font-black text-lg text-brand-indigo mt-0.5">{TOKEN_RATES.AI_KPI_COACHING} 🪙</p>
+                <p className="font-mono font-black text-lg text-brand-indigo mt-0.5 inline-flex items-center justify-center gap-1.5">
+                  <span>{TOKEN_RATES.AI_KPI_COACHING}</span>
+                  <MasterTokenIcon size={14} className="text-accent-terracotta inline-block" />
+                </p>
                 <p className="text-[10px] text-ink-muted">
                   {locale === 'th' ? 'ร่างแผนโค้ชชิ่งลูกทีม' : 'KPI Coaching Outline'}
                 </p>
@@ -354,7 +368,10 @@ export default function PricingPage() {
                 <p className="text-[11px] text-ink-secondary font-medium">
                   {locale === 'th' ? 'ดึงสถิติสดทันที' : 'Force Sync Now'}
                 </p>
-                <p className="font-mono font-black text-lg text-brand-indigo mt-0.5">{TOKEN_RATES.FORCE_SYNC_NOW} 🪙</p>
+                <p className="font-mono font-black text-lg text-brand-indigo mt-0.5 inline-flex items-center justify-center gap-1.5">
+                  <span>{TOKEN_RATES.FORCE_SYNC_NOW}</span>
+                  <MasterTokenIcon size={14} className="text-accent-terracotta inline-block" />
+                </p>
                 <p className="text-[10px] text-ink-muted">
                   {locale === 'th' ? 'ดึงยอดวิวย้อนหลังทันที' : 'Instant Metrics Fetch'}
                 </p>
@@ -363,7 +380,10 @@ export default function PricingPage() {
                 <p className="text-[11px] text-ink-secondary font-medium">
                   {locale === 'th' ? 'ปรับสัดส่วนอัตโนมัติ' : 'Smart Auto-Frame'}
                 </p>
-                <p className="font-mono font-black text-lg text-brand-indigo mt-0.5">{TOKEN_RATES.SMART_AUTOFRAME} 🪙</p>
+                <p className="font-mono font-black text-lg text-brand-indigo mt-0.5 inline-flex items-center justify-center gap-1.5">
+                  <span>{TOKEN_RATES.SMART_AUTOFRAME}</span>
+                  <MasterTokenIcon size={14} className="text-accent-terracotta inline-block" />
+                </p>
                 <p className="text-[10px] text-ink-muted">
                   {locale === 'th' ? 'จัดสัดส่วน Story 9:16' : 'Auto 9:16 Story Crop'}
                 </p>
@@ -406,7 +426,7 @@ export default function PricingPage() {
                     >
                       <Coins className="w-3.5 h-3.5" />
                       <span>
-                        {locale === 'th' ? `เติมเหรียญ ${pack.tokens.toLocaleString()} 🪙` : `Top up ${pack.tokens.toLocaleString()} 🪙`}
+                        {locale === 'th' ? `เติมเหรียญ ${pack.tokens.toLocaleString()} Tokens` : `Top up ${pack.tokens.toLocaleString()} Tokens`}
                       </span>
                     </Link>
                   </div>

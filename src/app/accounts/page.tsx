@@ -590,7 +590,7 @@ function ConnectedAccountsContent() {
     if (willEnable) {
       showToast(`✓ เปิดใช้งาน "${targetAccount?.displayName}" ใน ${targetWs?.name} แล้ว (พร้อมรับคิวโพสต์)`);
     } else {
-      showToast(`🛡️ ปิดใช้งาน "${targetAccount?.displayName}" ใน ${targetWs?.name} (ระบบจะข้าม API ไม่เกิด Error 100%)`);
+      showToast(`ปิดใช้งาน "${targetAccount?.displayName}" ใน ${targetWs?.name} (ระบบจะข้าม API ไม่เกิด Error 100%)`);
     }
   };
 
@@ -851,7 +851,7 @@ function ConnectedAccountsContent() {
                 onClick={() => {
                   loadSampleMockData();
                   setAccounts(INITIAL_MASTER_ACCOUNTS);
-                  showToast('🎲 โหลดบัญชีโซเชียลตัวอย่าง (FB, IG, YT, TT, X, Lemon8) เรียบร้อยแล้ว');
+                  showToast('โหลดบัญชีโซเชียลตัวอย่าง (FB, IG, YT, TT, X, Lemon8) เรียบร้อยแล้ว');
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="โหลดบัญชีตัวอย่างเพื่อพรีวิว"
@@ -865,7 +865,7 @@ function ConnectedAccountsContent() {
                 onClick={() => {
                   clearAllMockData();
                   setAccounts([]);
-                  showToast('🗑️ ล้างบัญชีจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate)');
+                  showToast('ล้างบัญชีจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate)');
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="ล้างบัญชีจำลองทั้งหมด"
@@ -1096,7 +1096,7 @@ function ConnectedAccountsContent() {
               { id: 'ALL', label: locale === 'th' ? `ทั้งหมด (${accounts.length})` : `All (${accounts.length})` },
               ...(selectedWorkspaceId !== 'ALL' ? [
                 { id: 'ACTIVE', label: locale === 'th' ? `✓ เปิดใน ${activeWorkspace?.name} (${currentProjectActiveCount})` : `✓ Active (${currentProjectActiveCount})` },
-                { id: 'BYPASSED', label: locale === 'th' ? `⚪ ข้าม API (${currentProjectBypassedCount})` : `⚪ Bypassed (${currentProjectBypassedCount})` },
+                { id: 'BYPASSED', label: locale === 'th' ? `ข้าม API (${currentProjectBypassedCount})` : `Bypassed (${currentProjectBypassedCount})` },
               ] : [])
             ].map((tab) => (
               <button
@@ -1248,7 +1248,7 @@ function ConnectedAccountsContent() {
                   <button
                     type="button"
                     onClick={() => handleOpenConnect(platform.id)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-sans font-medium transition-colors shadow-2xs cursor-pointer shrink-0 active:scale-95"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-brand-indigo border border-border-rule hover:border-brand-indigo/60 rounded-editorial text-xs font-sans font-medium transition-colors shadow-2xs cursor-pointer shrink-0 active:scale-95"
                     title={locale === 'th' ? `เชื่อมต่อ ${platform.name} เพิ่มเติม` : `Connect ${platform.name}`}
                   >
                     <Plus className="w-3.5 h-3.5" />
@@ -1328,7 +1328,7 @@ function ConnectedAccountsContent() {
                               <h3 className="font-sans font-bold text-sm text-ink-primary truncate">
                                 {acc.displayName}
                               </h3>
-                              <span className="text-[10px] font-mono text-ink-muted tabular-nums">
+                              <span className="text-[11px] font-sans text-ink-muted tabular-nums">
                                 ID: {acc.channelId}
                               </span>
                               {acc.isSimulated ? (
@@ -1353,18 +1353,6 @@ function ConnectedAccountsContent() {
                                 {locale === 'th' ? `ซิงค์ ${acc.lastSynced}` : `Synced ${acc.lastSynced}`}
                               </span>
                             </div>
-
-                            {/* Format & Capability Tags */}
-                            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
-                              {acc.capabilities.split('•').slice(0, 3).map((cap, i) => (
-                                <span
-                                  key={i}
-                                  className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-paper-canvas border border-border-rule text-ink-secondary font-medium"
-                                >
-                                  {cap.trim()}
-                                </span>
-                              ))}
-                            </div>
                           </div>
                         </div>
 
@@ -1377,7 +1365,7 @@ function ConnectedAccountsContent() {
                             onClick={() => handleToggleChannelForWorkspace(acc.id, currentWsId)}
                             className={`px-2.5 py-1 rounded-full text-xs font-sans font-medium border transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
                               isEnabledInCurrentWs
-                                ? 'bg-semantic-success/15 text-semantic-success border-semantic-success/30 hover:bg-semantic-success/25'
+                                ? 'bg-semantic-success/10 text-semantic-success border-semantic-success/30 hover:bg-semantic-success/20'
                                 : 'bg-paper-subtle text-ink-muted border-border-rule hover:bg-paper-canvas'
                             }`}
                             title={
@@ -1387,12 +1375,12 @@ function ConnectedAccountsContent() {
                             }
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${
-                              isEnabledInCurrentWs ? 'bg-semantic-success animate-pulse' : 'bg-ink-muted'
+                              isEnabledInCurrentWs ? 'bg-semantic-success' : 'bg-ink-muted'
                             }`} />
                             <span>
-                              {selectedWorkspaceId !== 'ALL'
-                                ? (isEnabledInCurrentWs ? t('accounts.statusActive') : t('accounts.statusBypassed'))
-                                : (isEnabledInCurrentWs ? t('accounts.statusActive') : t('accounts.statusBypassed'))}
+                              {isEnabledInCurrentWs
+                                ? (locale === 'th' ? 'พร้อมใช้งาน' : 'Active')
+                                : (locale === 'th' ? 'ข้ามการทำงาน' : 'Bypassed')}
                             </span>
                           </button>
 
@@ -1472,7 +1460,7 @@ function ConnectedAccountsContent() {
                                     className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
                                   >
                                     <ExternalLink className="w-3.5 h-3.5 text-ink-secondary shrink-0" />
-                                    <span>เปิดดูหน้าเพจจริง ↗</span>
+                                    <span>เปิดดูหน้าเพจจริง</span>
                                   </a>
                                 )}
 
@@ -1552,8 +1540,8 @@ function ConnectedAccountsContent() {
                     : 'text-ink-secondary hover:text-ink-primary'
                 }`}
               >
-                <Lock className="w-3.5 h-3.5 text-accent-terracotta" />
-                <span>🔗 Official OAuth (เชื่อมต่อจริง)</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-brand-indigo inline" />
+                <span>Official Meta OAuth</span>
               </button>
               <button
                 type="button"
@@ -1564,8 +1552,8 @@ function ConnectedAccountsContent() {
                     : 'text-ink-secondary hover:text-ink-primary'
                 }`}
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-                <span>🧪 โหมดจำลอง (Demo / Mock)</span>
+                <Sparkles className="w-3.5 h-3.5 text-amber-600 inline" />
+                <span>Sandbox Mode</span>
               </button>
             </div>
 
@@ -1649,7 +1637,7 @@ function ConnectedAccountsContent() {
                     <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-editorial text-xs text-amber-800 dark:text-amber-200">
                       <p className="font-bold mb-1">ต้องการ Developer API Access</p>
                       <p className="text-[11px] leading-relaxed">
-                        แพลตฟอร์ม {connectPlatform} ต้องใช้ API Client Key & Secret เพิ่มเติมในระบบ หรือสามารถสลับไปที่แท็บ <strong>&quot;🧪 โหมดจำลอง&quot;</strong> เพื่อทดสอบฟีเจอร์ได้ทันที
+                        แพลตฟอร์ม {connectPlatform} ต้องใช้ API Client Key & Secret เพิ่มเติมในระบบ หรือสามารถสลับไปที่แท็บ <strong>&quot;Sandbox Mode&quot;</strong> เพื่อทดสอบฟีเจอร์ได้ทันที
                       </p>
                     </div>
                   )}

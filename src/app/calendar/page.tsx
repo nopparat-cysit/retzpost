@@ -145,7 +145,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     websiteUrl: 'https://retzpost.io/masterclass/lighting',
     previewImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
-    peakLabel: 'Morning Executive Peak 🔥',
+    peakLabel: 'Morning Executive Peak',
     metrics: {
       views: 14820,
       likes: 1240,
@@ -176,7 +176,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     storyLinkText: 'Watch Studio Tour 4K',
     previewImage: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
-    peakLabel: 'Morning Executive Peak 🔥',
+    peakLabel: 'Morning Executive Peak',
     metrics: {
       views: 9420,
       likes: 830,
@@ -203,7 +203,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     caption: 'Stop losing 80% of your audience in the first 2 seconds. Here are 3 counter-intuitive retention hooks we tested across 4M views this month: 1) Negative curiosity 2) The contrast frame 3) The instant proof. Save this post! #CreatorEconomy #VideoHooks #Retention',
     previewImage: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
-    peakLabel: 'Weekend Morning Creator Peak 🔥',
+    peakLabel: 'Weekend Morning Creator Peak',
     aiForecast: {
       predictedReach: '32,000 - 45,000',
       peakMatchScore: 98,
@@ -227,7 +227,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     caption: 'How to hook viewers in 1.8 seconds flat. Full breakdown on Creator Studio! #Shorts #CreatorTips',
     previewImage: 'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
-    peakLabel: 'Weekend Morning Creator Peak 🔥',
+    peakLabel: 'Weekend Morning Creator Peak',
     aiForecast: {
       predictedReach: '60,000 - 90,000',
       peakMatchScore: 96,
@@ -248,7 +248,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     handle: '@creator_official',
     durationOrPhotos: '24h Story + Link Sticker',
     status: 'SCHEDULED',
-    caption: 'Pre-show soundcheck for the Masterclass! Tap the sticker to claim one of the 15 remaining live workshop passes 🎙️👇',
+    caption: 'Pre-show soundcheck for the Masterclass! Tap the sticker to claim one of the 15 remaining live workshop passes.',
     storyLinkUrl: 'https://creatorhub.io/masterclass-live',
     storyLinkText: 'Get Workshop Pass',
     previewImage: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&auto=format&fit=crop&q=80',
@@ -276,7 +276,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     websiteUrl: 'https://yourbrand.com/events/weekend-showcase',
     previewImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
-    peakLabel: 'Evening Prime Window 🔥',
+    peakLabel: 'Evening Prime Window',
     aiForecast: {
       predictedReach: '18,500 - 26,000',
       peakMatchScore: 97,
@@ -297,12 +297,12 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     handle: '@coffeecraft.bkk',
     durationOrPhotos: '24h Story + Link Sticker',
     status: 'SCHEDULED',
-    caption: 'เมล็ดกาแฟล็อตใหม่จากแม่จันใต้ คั่วระดับ Light Roast พร้อมเสิร์ฟแล้ววันนี้ที่หน้าร้านทองหล่อ! กดลิงก์เพื่อสั่ง Delivery ได้เลย ☕',
+    caption: 'เมล็ดกาแฟล็อตใหม่จากแม่จันใต้ คั่วระดับ Light Roast พร้อมเสิร์ฟแล้ววันนี้ที่หน้าร้านทองหล่อ! กดลิงก์เพื่อสั่ง Delivery ได้เลย',
     storyLinkUrl: 'https://lineman.line.me/coffeecraft',
     storyLinkText: 'Order via LINE MAN',
     previewImage: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
-    peakLabel: 'Sunday Brunch Wave 🔥',
+    peakLabel: 'Sunday Brunch Wave',
     aiForecast: {
       predictedReach: '8,500 - 12,000',
       peakMatchScore: 94,
@@ -367,11 +367,11 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     handle: 'RetzPost Official',
     durationOrPhotos: 'Album (3 Photos)',
     status: 'SCHEDULED',
-    caption: '🚀 Announcing 5-Tier RBAC & Workspace Collaboration for RetzPost! Seamlessly invite Editors, Contributors, and Managers with granular channel credentials. Try it now! #RetzPost #SaaS #ProductUpdate',
+    caption: 'Announcing 5-Tier RBAC & Workspace Collaboration for RetzPost! Seamlessly invite Editors, Contributors, and Managers with granular channel credentials. Try it now! #RetzPost #SaaS #ProductUpdate',
     websiteUrl: 'https://retzpost.com/changelog/team-collaboration',
     previewImage: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
-    peakLabel: 'Morning Tech News Peak 🔥',
+    peakLabel: 'Morning Tech News Peak',
     aiForecast: {
       predictedReach: '40,000 - 65,000',
       peakMatchScore: 99,
@@ -392,12 +392,12 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     handle: '@retzpost.app',
     durationOrPhotos: '24h Story + Link Sticker',
     status: 'SCHEDULED',
-    caption: 'See how your feed, story, and reel look before publishing in real-time. Link below! 👇',
+    caption: 'See how your feed, story, and reel look before publishing in real-time. Link below!',
     storyLinkUrl: 'https://retzpost.com/demo',
     storyLinkText: 'Try Interactive Demo',
     previewImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
-    peakLabel: 'Lunch Rush Window 🔥',
+    peakLabel: 'Lunch Rush Window',
     aiForecast: {
       predictedReach: '14,000 - 20,000',
       peakMatchScore: 95,
@@ -444,7 +444,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     liveUrl: 'https://youtube.com/shorts/dQw4w9WgXcQ',
     previewImage: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
-    peakLabel: 'Morning Peak 🔥',
+    peakLabel: 'Morning Peak',
     metrics: {
       views: 48920,
       likes: 3820,
@@ -467,7 +467,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     handle: '@coffeecraft.bkk',
     durationOrPhotos: 'Photo Album (5)',
     status: 'PUBLISHED',
-    caption: 'บรรยากาศเวิร์กชอปดริปกาแฟเมื่อวันเสาร์ที่ผ่านมา สนุกสนานและได้ชิมกาแฟจาก 6 แหล่งปลูกทั่วโลก ขอบคุณทุกท่านที่มาร่วมสนุกกันครับ ☕ #CoffeeCraftBKK #SpecialtyCoffee',
+    caption: 'บรรยากาศเวิร์กชอปดริปกาแฟเมื่อวันเสาร์ที่ผ่านมา สนุกสนานและได้ชิมกาแฟจาก 6 แหล่งปลูกทั่วโลก ขอบคุณทุกท่านที่มาร่วมสนุกกันครับ #CoffeeCraftBKK #SpecialtyCoffee',
     liveUrl: 'https://www.instagram.com/p/C1CoffeeCraftSingle/',
     previewImage: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&auto=format&fit=crop&q=80',
     metrics: {
@@ -563,7 +563,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     handle: '@coffeecraft.bkk',
     durationOrPhotos: 'Album (4)',
     status: 'SCHEDULED',
-    caption: '🎃 สเปเชียลเบลนด์เฉพาะค่ำคืนฮาโลวีน กลิ่น Dark Chocolate, Roasted Almond และ Spiced Plum มีจำนวนจำกัดเพียง 50 ถุงเท่านั้น! #HalloweenSpecial #CoffeeCraftBKK',
+    caption: 'สเปเชียลเบลนด์เฉพาะค่ำคืนฮาโลวีน กลิ่น Dark Chocolate, Roasted Almond และ Spiced Plum มีจำนวนจำกัดเพียง 50 ถุงเท่านั้น! #HalloweenSpecial #CoffeeCraftBKK',
     previewImage: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80',
     aiForecast: {
       predictedReach: '11,000 - 16,000',
@@ -635,7 +635,7 @@ export default function EditorialCalendarPage() {
     if (todayRef.current) {
       todayRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-    showToast('📍 โฟกัสไปยังวันนี้ (24 ต.ค. 2026)');
+    showToast('โฟกัสไปยังวันนี้ (24 ต.ค. 2026)');
   };
   
   // Slide-Over Event Inspector State
@@ -824,7 +824,7 @@ export default function EditorialCalendarPage() {
       storyLinkUrl: quickFormat === 'STORY' && quickLinkSticker.trim() ? quickLinkSticker : undefined,
       storyLinkText: quickFormat === 'STORY' ? 'Learn More' : undefined,
       isPeakHour: true,
-      peakLabel: 'Optimized Dispatch 🔥',
+      peakLabel: 'Optimized Dispatch',
       aiForecast: {
         predictedReach: '15,000 - 25,000',
         peakMatchScore: 95,
@@ -891,7 +891,7 @@ export default function EditorialCalendarPage() {
                 onClick={() => {
                   loadSampleMockData();
                   setEvents(SAMPLE_EVENTS);
-                  showToast('🎲 โหลดตารางงานปฏิทินตัวอย่างเรียบร้อยแล้ว');
+                  showToast('โหลดตารางงานปฏิทินตัวอย่างเรียบร้อยแล้ว');
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="โหลดกำหนดการจำลองสำหรับทดสอบระบบ"
@@ -905,7 +905,7 @@ export default function EditorialCalendarPage() {
                 onClick={() => {
                   clearAllMockData();
                   setEvents([]);
-                  showToast('🗑️ ล้างกำหนดการจำลองในปฏิทินเรียบร้อยแล้ว (Clean Slate)');
+                  showToast('ล้างกำหนดการจำลองในปฏิทินเรียบร้อยแล้ว (Clean Slate)');
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="ล้างปฏิทินให้ว่างเปล่า"
@@ -1140,7 +1140,7 @@ export default function EditorialCalendarPage() {
             className="px-2.5 py-1.5 border border-brand-indigo/30 bg-brand-indigo/10 text-brand-indigo rounded-editorial font-mono text-[11px] font-bold hover:bg-brand-indigo hover:text-white transition-all shadow-2xs cursor-pointer flex items-center gap-1 active:scale-[0.98]"
             title="คลิกเพื่อเลื่อนดูวันนี้และโพสต์สดทันที"
           >
-            <span>🎯 Today (24 ต.ค.)</span>
+            <span>Today (24 ต.ค.)</span>
           </button>
 
           <div className="flex items-center gap-1.5 font-mono text-[11px] text-ink-secondary border-l border-border-rule pl-3">
@@ -1565,7 +1565,7 @@ export default function EditorialCalendarPage() {
                               <div className="flex items-center justify-between text-[8px] font-mono text-ink-secondary mt-0.5">
                                 <Sticker name={WORKSPACE_CONFIG[ev.workspace]?.sticker || 'ws-software'} size="xs" inline />
                                 {ev.status === 'PUBLISHED' ? (
-                                  <span className="text-semantic-success font-bold">LIVE ↗</span>
+                                  <span className="text-semantic-success font-bold">LIVE</span>
                                 ) : (
                                   <span className="inline-flex items-center gap-0.5">
                                     {ev.aiForecast?.peakMatchScore ? (
@@ -1602,7 +1602,10 @@ export default function EditorialCalendarPage() {
             <div className="flex items-center gap-2 font-mono text-[11px]">
               <span className="text-semantic-success">● {publishedCount} Published</span>
               <span className="text-ink-secondary">•</span>
-              <span className="text-brand-indigo">⏳ {scheduledCount} Scheduled</span>
+              <span className="text-brand-indigo flex items-center gap-1">
+                <Clock className="w-3.5 h-3.5" />
+                <span>{scheduledCount} Scheduled</span>
+              </span>
             </div>
           </div>
 
@@ -1647,8 +1650,8 @@ export default function EditorialCalendarPage() {
                           <span>{plat.name}</span>
                         </span>
                         {ev.isPeakHour && (
-                          <span className="px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 text-[9px] font-bold flex items-center gap-1">
-                            <Flame className="w-3 h-3 fill-amber-600 text-amber-600" />
+                          <span className="px-1.5 py-0.2 rounded bg-brand-indigo/10 text-brand-indigo text-[9px] font-bold flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3 text-brand-indigo" />
                             <span>{ev.peakLabel || 'Peak Window'}</span>
                           </span>
                         )}
@@ -1703,8 +1706,9 @@ export default function EditorialCalendarPage() {
                         <div className="text-ink-primary font-bold">
                           {ev.aiForecast?.predictedReach || '15K - 25K'} Reach
                         </div>
-                        <div className="text-[10px] text-accent-terracotta font-bold">
-                          🔥 {ev.aiForecast?.peakMatchScore || 95}% Peak Match
+                        <div className="text-[10px] text-accent-terracotta font-bold flex items-center gap-1 justify-end">
+                          <TrendingUp className="w-3 h-3 text-brand-indigo" />
+                          <span>{ev.aiForecast?.peakMatchScore || 95}% Peak Match</span>
                         </div>
                       </div>
                     )}
@@ -1719,7 +1723,7 @@ export default function EditorialCalendarPage() {
                           title="Open live post on social web"
                           className="px-3 py-1.5 bg-paper-canvas border border-border-rule hover:border-brand-indigo text-brand-indigo rounded-editorial text-xs font-mono font-bold flex items-center gap-1.5 transition-colors shadow-2xs"
                         >
-                          <span>Live ↗</span>
+                          <span>Live</span>
                         </a>
                       ) : (
                         <button
@@ -2076,7 +2080,10 @@ export default function EditorialCalendarPage() {
                         </div>
                         <div className="flex items-center justify-between p-2 rounded bg-paper-canvas border border-border-rule">
                           <span className="text-ink-secondary">Peak Hour Window Match:</span>
-                          <span className="font-bold text-accent-terracotta">🔥 {selectedEvent.aiForecast?.peakMatchScore || 95}% Match</span>
+                          <span className="font-bold text-accent-terracotta flex items-center gap-1">
+                            <TrendingUp className="w-3 h-3 text-accent-terracotta" />
+                            <span>{selectedEvent.aiForecast?.peakMatchScore || 95}% Match</span>
+                          </span>
                         </div>
                         <div className="flex items-center justify-between p-2 rounded bg-paper-canvas border border-border-rule">
                           <span className="text-ink-secondary">Cross-Format Synergy:</span>
@@ -2100,7 +2107,7 @@ export default function EditorialCalendarPage() {
                           <SocialPlatformIcon platform={selectedEvent.platform} format={selectedEvent.format} size={18} />
                           <span className="truncate">{selectedEvent.liveUrl}</span>
                         </span>
-                        <span className="text-[10px] shrink-0 font-mono">Open Live ↗</span>
+                        <span className="text-[10px] shrink-0 font-mono">Open Live</span>
                       </a>
                     ) : (
                       <div className="text-[11px] text-ink-muted italic">
@@ -2119,7 +2126,7 @@ export default function EditorialCalendarPage() {
                           <WebsiteLogo size={18} />
                           <span className="truncate">{selectedEvent.websiteUrl}</span>
                         </span>
-                        <span className="text-[10px] text-emerald-700 shrink-0 font-mono">Landing Page ↗</span>
+                        <span className="text-[10px] text-emerald-700 shrink-0 font-mono">Landing Page</span>
                       </a>
                     )}
 
@@ -2134,7 +2141,7 @@ export default function EditorialCalendarPage() {
                           <InstagramStoryLogo size={18} />
                           <span className="truncate">Sticker: {selectedEvent.storyLinkUrl}</span>
                         </span>
-                        <span className="text-[10px] shrink-0">Test Sticker ↗</span>
+                        <span className="text-[10px] shrink-0">Test Sticker</span>
                       </a>
                     )}
                   </div>
@@ -2475,10 +2482,10 @@ export default function EditorialCalendarPage() {
                   }
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
                 >
-                  <option value="CAPITAL_ONE">🏢 Main Studio</option>
-                  <option value="ACME_CREATOR">🎙️ Creator Hub</option>
-                  <option value="RETZPOST">⚡ RetzPost Software</option>
-                  <option value="COFFEE_CRAFT">☕ Coffee Craft BKK</option>
+                  <option value="CAPITAL_ONE">Main Studio</option>
+                  <option value="ACME_CREATOR">Creator Hub</option>
+                  <option value="RETZPOST">RetzPost Software</option>
+                  <option value="COFFEE_CRAFT">Coffee Craft BKK</option>
                 </select>
               </div>
 

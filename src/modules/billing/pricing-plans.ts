@@ -120,7 +120,7 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
       { labelTh: '1 Workspace สำหรับลุยเดี่ยวคนเดียว', labelEn: '1 Independent Creator Workspace', included: true },
       { labelTh: 'เชื่อมต่อได้ 5 ช่องทางโซเชียล', labelEn: '5 Connected Social Channels', included: true },
       { labelTh: 'โพสต์และตั้งเวลาล่วงหน้าได้ไม่จำกัด', labelEn: 'Unlimited Dispatches & Advance Scheduling', included: true, highlight: true },
-      { labelTh: '150 Master Tokens ต่อเดือน (ทบได้สูงสุด 300 🪙)', labelEn: '150 Master Tokens / Month (Rollover up to 300 🪙)', included: true },
+      { labelTh: '150 Master Tokens ต่อเดือน (ทบได้สูงสุด 300 Tokens)', labelEn: '150 Master Tokens / Month (Rollover up to 300 Tokens)', included: true },
       { labelTh: 'แปะลิงก์ IG & Facebook Story 24h', labelEn: 'IG & Facebook 24h Story Link Stamping', included: true },
       { labelTh: 'ปลดล็อกธีมโหมดมืด Midnight Gazette (Dark Mode)', labelEn: 'Midnight Gazette Dark Mode Theme', included: true },
       { labelTh: 'ระบบตรวจอนุมัติงานและสิทธิ์ทีมงาน', labelEn: 'Editorial Approval & Role Permissions', included: false },
@@ -149,7 +149,7 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
       { labelTh: '3 Workspaces แยกโปรเจกต์หรือหลายแบรนด์', labelEn: '3 Workspaces for Multiple Brands/Projects', included: true },
       { labelTh: 'เชื่อมต่อโซเชียลได้สูงสุด 15 ช่องทาง', labelEn: 'Up to 15 Connected Social Channels', included: true },
       { labelTh: 'โพสต์และตั้งเวลาได้ไม่จำกัดตลอดทั้งเดือน', labelEn: 'Unlimited Dispatches & Scheduling All Month', included: true },
-      { labelTh: '600 Master Tokens ต่อเดือน (ทบได้สูงสุด 1,200 🪙)', labelEn: '600 Master Tokens / Month (Rollover up to 1,200 🪙)', included: true, highlight: true },
+      { labelTh: '600 Master Tokens ต่อเดือน (ทบได้สูงสุด 1,200 Tokens)', labelEn: '600 Master Tokens / Month (Rollover up to 1,200 Tokens)', included: true, highlight: true },
       { labelTh: 'กระเป๋าแม่ Master Wallet ใช้ได้ทุก Workspace', labelEn: 'Unified Master Wallet Across Workspaces', included: true, highlight: true },
       { labelTh: 'ระบบตรวจอนุมัติโพสต์และสิทธิ์ทีมงาน (RBAC 4 ระดับ)', labelEn: '4-Tier Editorial Approval & Team RBAC', included: true },
       { labelTh: 'ระบบติดตามการใช้ Token ของลูกทีมรายบุคคล', labelEn: 'Per-Member Token Usage Auditing', included: true, highlight: true },
@@ -176,7 +176,7 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
       { labelTh: '10 Workspaces แยกตามแบรนด์หรือสาขา', labelEn: '10 Workspaces for Multi-Brand Branches', included: true },
       { labelTh: 'เชื่อมต่อได้สูงสุด 40 ช่องทางโซเชียล', labelEn: 'Up to 40 Connected Social Channels', included: true },
       { labelTh: 'ทีมงานสูงสุด 15 คน แยกสิทธิ์ตามพื้นที่ทำงาน', labelEn: 'Up to 15 Members with Workspace Scoping', included: true, highlight: true },
-      { labelTh: '2,500 Master Tokens ต่อเดือน (ทบได้สูงสุด 5,000 🪙)', labelEn: '2,500 Master Tokens / Month (Rollover up to 5,000 🪙)', included: true },
+      { labelTh: '2,500 Master Tokens ต่อเดือน (ทบได้สูงสุด 5,000 Tokens)', labelEn: '2,500 Master Tokens / Month (Rollover up to 5,000 Tokens)', included: true },
       { labelTh: 'ระบบวิเคราะห์สถิติคนดู 5 ชั้น + AI Diagnosis ละเอียด', labelEn: '5-Layer Audience Analytics & Deep AI Diagnosis', included: true },
       { labelTh: 'ประเมินเกรด KPI ทีมงานรายบุคคล + พิมพ์ Evaluation Slip', labelEn: 'Individual Staff KPI Grading & Slip Printing', included: true },
       { labelTh: 'ดึงโพสต์กลับฉุกเฉิน (Emergency API Revoke & Delete)', labelEn: 'Emergency API Post Revocation & Deletion', included: true, highlight: true },
@@ -226,7 +226,7 @@ export const TOKEN_RATES = {
 export const TOKEN_TOPUP_PACKS: TokenTopupPack[] = [
   {
     id: 'PACK_S',
-    nameTh: 'Press Token Pack S (300 🪙)',
+    nameTh: 'Press Token Pack S (300 Tokens)',
     nameEn: 'Starter Spark Pack',
     tokens: 300,
     priceThb: 99,
@@ -234,7 +234,7 @@ export const TOKEN_TOPUP_PACKS: TokenTopupPack[] = [
   },
   {
     id: 'PACK_M',
-    nameTh: 'Press Token Pack M (1,000 🪙)',
+    nameTh: 'Press Token Pack M (1,000 Tokens)',
     nameEn: 'Growth Pulse Pack',
     tokens: 1000,
     priceThb: 259,
@@ -243,7 +243,7 @@ export const TOKEN_TOPUP_PACKS: TokenTopupPack[] = [
   },
   {
     id: 'PACK_L',
-    nameTh: 'Press Token Pack L (3,500 🪙)',
+    nameTh: 'Press Token Pack L (3,500 Tokens)',
     nameEn: 'Agency Flood Pack',
     tokens: 3500,
     priceThb: 690,

@@ -50,7 +50,8 @@ import {
   ThumbsDown,
   Play,
   Music,
-  Disc
+  Disc,
+  Shuffle
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { useTranslation } from '@/modules/i18n/i18n-context';
@@ -1321,7 +1322,7 @@ export default function CreatePostPage() {
       workspaceId: activeWorkspaceId,
       title: newPresetName.trim(),
       description: `${Object.values(placements).filter(Boolean).length} destinations selected`,
-      icon: '⭐',
+      icon: 'award-star',
       targetPlacements: { ...placements },
     };
 
@@ -1421,13 +1422,13 @@ export default function CreatePostPage() {
       {/* Top Safe Margin (15%) */}
       <div className="absolute top-0 left-0 right-0 h-[15%] bg-semantic-warning/15 border-b border-dashed border-semantic-warning/70 flex items-center justify-center">
         <span className="text-[7px] font-mono text-semantic-warning font-bold bg-black/85 px-1.5 py-0.5 rounded shadow">
-          ⚠️ Profile & Status Bar (15%)
+          Profile & Status Bar (15%)
         </span>
       </div>
       {/* Bottom Safe Margin (25%) */}
       <div className="absolute bottom-0 left-0 right-0 h-[25%] bg-semantic-warning/15 border-t border-dashed border-semantic-warning/70 flex items-center justify-center">
         <span className="text-[7px] font-mono text-semantic-warning font-bold bg-black/85 px-1.5 py-0.5 rounded shadow">
-          ⚠️ Caption & Sound Marquee (25%)
+          Caption & Sound Marquee (25%)
         </span>
       </div>
       {/* Right Safe Margin (18%) */}
@@ -2441,7 +2442,7 @@ export default function CreatePostPage() {
                                 : 'bg-paper-canvas text-ink-secondary border-border-rule hover:text-ink-primary'
                             }`}
                           >
-                            {vis === 'PUBLIC' ? '🌐 Public' : vis === 'UNLISTED' ? '🔗 Unlisted' : '🔒 Private'}
+                            {vis === 'PUBLIC' ? 'Public' : vis === 'UNLISTED' ? 'Unlisted' : 'Private'}
                           </button>
                         ))}
                       </div>
@@ -2691,7 +2692,8 @@ export default function CreatePostPage() {
                   }`}
                   title="Toggle 9:16 Safe Zone Guidelines (ขอบบน 15%, ขอบล่าง 25%, เสาขวา 18% และ IG Grid 1:1)"
                 >
-                  <span>⛶ Safe Zone</span>
+                  <ShieldCheck className="w-3 h-3 text-semantic-warning" />
+                  <span>Safe Zone</span>
                   <span className={`w-1.5 h-1.5 rounded-full ${showSafeZone ? 'bg-semantic-warning animate-pulse' : 'bg-ink-muted'}`} />
                 </button>
               )}
@@ -2990,7 +2992,7 @@ export default function CreatePostPage() {
                           <CheckCircle2 className="w-3 h-3 text-[#1877F2] shrink-0" />
                         </div>
                         <p className="text-[8px] font-mono text-ink-secondary mt-0.5">
-                          Just now • 🌐 Public
+                          Just now • Public
                         </p>
                       </div>
                     </div>
@@ -3056,8 +3058,12 @@ export default function CreatePostPage() {
                   <div className="px-2.5 py-1.5 flex items-center justify-between text-[10px] text-ink-secondary border-b border-border-rule/40">
                     <div className="flex items-center gap-1">
                       <span className="flex -space-x-1">
-                        <span className="w-3.5 h-3.5 rounded-full bg-[#1877F2] text-white flex items-center justify-center text-[7px]">👍</span>
-                        <span className="w-3.5 h-3.5 rounded-full bg-red-500 text-white flex items-center justify-center text-[7px]">❤️</span>
+                        <span className="w-3.5 h-3.5 rounded-full bg-[#1877F2] text-white flex items-center justify-center">
+                          <ThumbsUp className="w-2 h-2 fill-white text-white" />
+                        </span>
+                        <span className="w-3.5 h-3.5 rounded-full bg-red-500 text-white flex items-center justify-center">
+                          <Heart className="w-2 h-2 fill-white text-white" />
+                        </span>
                       </span>
                       <span className="font-mono text-[9px] ml-1">142</span>
                     </div>
@@ -3117,9 +3123,9 @@ export default function CreatePostPage() {
                   <div className="space-y-1.5">
                     <div className="h-6 rounded-full border border-white/20 px-2 flex items-center justify-between text-[9px] text-white/40 bg-black/20">
                       <span>Reply to {previewAccount.name}...</span>
-                      <div className="flex items-center gap-1 text-[10px]">
-                        <span>👍</span>
-                        <span>❤️</span>
+                      <div className="flex items-center gap-1.5 text-white/70">
+                        <ThumbsUp className="w-2.5 h-2.5" />
+                        <Heart className="w-2.5 h-2.5" />
                       </div>
                     </div>
                   </div>
@@ -3226,7 +3232,7 @@ export default function CreatePostPage() {
                       </div>
                       <Share2 className="w-3.5 h-3.5" />
                       <div className="w-4 h-4 rounded bg-paper-canvas/20 border border-white/30 flex items-center justify-center">
-                        <span className="text-[6px] font-bold">🔀</span>
+                        <Shuffle className="w-2.5 h-2.5 text-white" />
                       </div>
                     </div>
                   </div>
@@ -3240,8 +3246,9 @@ export default function CreatePostPage() {
                     {/* Thumbnail preview tag if present */}
                     {customThumbnail ? (
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30 flex items-center justify-center">
-                        <span className="text-[10px] font-mono text-white/90 absolute top-2 left-2 bg-black/70 px-1.5 py-0.5 rounded border border-white/20">
-                          🖼️ ปก: {customThumbnail.name}
+                        <span className="text-[10px] font-mono text-white/90 absolute top-2 left-2 bg-black/70 px-1.5 py-0.5 rounded border border-white/20 flex items-center gap-1">
+                          <ImageIcon className="w-3 h-3 text-white/80" />
+                          <span>ปก: {customThumbnail.name}</span>
                         </span>
                       </div>
                     ) : null}
@@ -3436,10 +3443,10 @@ export default function CreatePostPage() {
 
                   <div className="h-6 rounded-full border border-white/20 px-2 flex items-center justify-between text-[9px] text-white/40 bg-black/30">
                     <span>Quick reaction...</span>
-                    <div className="flex items-center gap-1 text-[9px]">
-                      <span>🔥</span>
-                      <span>😂</span>
-                      <span>🥰</span>
+                    <div className="flex items-center gap-1.5 text-white/70">
+                      <ThumbsUp className="w-2.5 h-2.5 hover:text-white transition-colors" />
+                      <Heart className="w-2.5 h-2.5 hover:text-white transition-colors" />
+                      <Sparkles className="w-2.5 h-2.5 hover:text-white transition-colors" />
                     </div>
                   </div>
                 </div>

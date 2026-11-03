@@ -156,7 +156,6 @@ export interface PostPerformanceData {
     format: 'FEED' | 'STORY' | 'REEL';
     label: string;
     url: string;
-    emoji: string;
     btnColor: string;
   }[];
   websiteUrl?: string;
@@ -495,7 +494,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'FEED',
         label: 'FB Official Brand',
         url: 'https://www.facebook.com/officialbrand/posts/991283',
-        emoji: '📘',
         btnColor: 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100',
       },
       {
@@ -503,7 +501,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'FEED',
         label: 'IG Carousel',
         url: 'https://www.instagram.com/p/prime-skyview/',
-        emoji: '📸',
         btnColor: 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100',
       },
       {
@@ -511,7 +508,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'STORY',
         label: 'IG Story',
         url: 'https://www.instagram.com/stories/brand.official/348910283/',
-        emoji: '⚡',
         btnColor: 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100',
       },
     ],
@@ -541,7 +537,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'FEED',
         label: 'Partner FB',
         url: 'https://www.facebook.com/partner/posts/449102',
-        emoji: '📘',
         btnColor: 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100',
       },
       {
@@ -549,7 +544,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'FEED',
         label: 'IG Carousel',
         url: 'https://www.instagram.com/p/master-collection/',
-        emoji: '📸',
         btnColor: 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100',
       },
       {
@@ -557,7 +551,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'STORY',
         label: 'IG Story',
         url: 'https://www.instagram.com/stories/brand.official/',
-        emoji: '⚡',
         btnColor: 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100',
       },
     ],
@@ -587,7 +580,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'REEL',
         label: 'YT Shorts',
         url: 'https://youtube.com/shorts/dQw4w9WgXcQ',
-        emoji: '🔴',
         btnColor: 'bg-red-50 text-red-800 border-red-200 hover:bg-red-100',
       },
       {
@@ -595,7 +587,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'FEED',
         label: 'IG Feed',
         url: 'https://www.instagram.com/p/example-carousel',
-        emoji: '📸',
         btnColor: 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100',
       },
       {
@@ -603,7 +594,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'STORY',
         label: 'IG Story',
         url: 'https://www.instagram.com/stories/creator_official/',
-        emoji: '⚡',
         btnColor: 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100',
       },
       {
@@ -611,7 +601,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'FEED',
         label: 'FB Studio',
         url: 'https://www.facebook.com/creatorstudio/posts/89201',
-        emoji: '📘',
         btnColor: 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100',
       },
     ],
@@ -641,7 +630,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'FEED',
         label: 'FB RetzPost',
         url: 'https://www.facebook.com/retzpost/posts/202610',
-        emoji: '📘',
         btnColor: 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100',
       },
       {
@@ -649,7 +637,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'STORY',
         label: 'IG Story',
         url: 'https://www.instagram.com/stories/retzpost_app/',
-        emoji: '⚡',
         btnColor: 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100',
       },
       {
@@ -657,7 +644,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'REEL',
         label: 'YT Shorts',
         url: 'https://youtube.com/shorts/dQw4w9WgXcQ',
-        emoji: '🔴',
         btnColor: 'bg-red-50 text-red-800 border-red-200 hover:bg-red-100',
       },
     ],
@@ -687,7 +673,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'FEED',
         label: 'FB Cafe',
         url: 'https://www.facebook.com/coffeecraftbkk/posts/33109',
-        emoji: '📘',
         btnColor: 'bg-blue-50 text-blue-800 border-blue-200 hover:bg-blue-100',
       },
       {
@@ -695,7 +680,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'FEED',
         label: 'IG Feed',
         url: 'https://www.instagram.com/p/coffeecraft/',
-        emoji: '📸',
         btnColor: 'bg-purple-50 text-purple-800 border-purple-200 hover:bg-purple-100',
       },
       {
@@ -703,7 +687,6 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
         format: 'STORY',
         label: 'IG Story',
         url: 'https://www.instagram.com/stories/coffeecraft.bkk/',
-        emoji: '⚡',
         btnColor: 'bg-amber-50 text-amber-900 border-amber-200 hover:bg-amber-100',
       },
     ],
@@ -809,7 +792,7 @@ export default function HomePage() {
         const timeStr = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         setTelemetryLastSynced(`อัปเดตล่าสุด ${timeStr}`);
         setTelemetryCooldownRemaining(data.cooldownSecondsRemaining || 60);
-        setTelemetryNotice('⚡ ซิงค์ตัวเลขสถิติสดเรียบร้อยแล้ว (-2 Master Tokens)');
+        setTelemetryNotice('ซิงค์ตัวเลขสถิติสดเรียบร้อยแล้ว (-2 Master Tokens)');
 
         // Deduct 2 tokens and record team log
         fetch('/api/billing/tokens', {
@@ -939,7 +922,7 @@ export default function HomePage() {
       setEditFocusTags(result.focusTags);
       setIsEditingKpiNotes(true);
       setIsAiGeneratingCoaching(false);
-      setKpiEvaluationNotice('✨ AI ร่างจุดเด่นและแผนโค้ชชิ่งให้เรียบร้อยแล้ว (-10 Master Tokens)');
+      setKpiEvaluationNotice('AI ร่างจุดเด่นและแผนโค้ชชิ่งให้เรียบร้อยแล้ว (-10 Master Tokens)');
       setTimeout(() => setKpiEvaluationNotice(null), 4000);
 
       // Deduct 10 tokens and record team log
@@ -979,7 +962,7 @@ export default function HomePage() {
     setSelectedEmployeeKpi(updatedEmp);
     setKpiUpdateVersion((v) => v + 1);
     setIsEditingKpiNotes(false);
-    setKpiEvaluationNotice(`💾 บันทึกการประเมินและแผนโค้ชชิ่งของ "${selectedEmployeeKpi.name}" เรียบร้อยแล้ว`);
+    setKpiEvaluationNotice(`บันทึกการประเมินและแผนโค้ชชิ่งของ "${selectedEmployeeKpi.name}" เรียบร้อยแล้ว`);
     setTimeout(() => setKpiEvaluationNotice(null), 3500);
   };
 
@@ -997,7 +980,7 @@ export default function HomePage() {
         setEditFocusTags(refreshed.focusTags || []);
       }
     }
-    setKpiEvaluationNotice('🔄 คืนค่าการประเมินกลับสู่ค่ามาตรฐานเรียบร้อยแล้ว');
+    setKpiEvaluationNotice('คืนค่าการประเมินกลับสู่ค่ามาตรฐานเรียบร้อยแล้ว');
     setTimeout(() => setKpiEvaluationNotice(null), 3000);
   };
 
@@ -1221,10 +1204,10 @@ export default function HomePage() {
                 type="button"
                 onClick={() => {
                   loadSampleMockData();
-                  setDownloadToast('🎲 โหลดข้อมูลตัวอย่างสำหรับการพรีวิวและทดสอบระบบเรียบร้อยแล้ว');
+                  setDownloadToast('โหลดข้อมูลตัวอย่างสำหรับการพรีวิวและทดสอบระบบเรียบร้อยแล้ว');
                   setTimeout(() => setDownloadToast(null), 3500);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre hover:text-accent-ochre/90 border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="โหลดชุดข้อมูลตัวอย่าง (Dispatches, Telemetry, KPIs) เพื่อพรีวิวการแสดงผล"
               >
                 <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
@@ -1235,7 +1218,7 @@ export default function HomePage() {
                 type="button"
                 onClick={() => {
                   clearAllMockData();
-                  setDownloadToast('🗑️ เคลียร์ข้อมูลจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate / Zero Data)');
+                  setDownloadToast('เคลียร์ข้อมูลจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate / Zero Data)');
                   setTimeout(() => setDownloadToast(null), 3500);
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
@@ -1249,26 +1232,26 @@ export default function HomePage() {
             {!isMockCleared && (
               <button
                 onClick={handleExportErrorLog}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-terracotta/10 hover:bg-accent-terracotta/20 text-accent-terracotta border border-accent-terracotta/30 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
               >
-                <Download className="w-3.5 h-3.5" />
+                <Download className="w-3.5 h-3.5 text-accent-terracotta" />
                 <span>Export Error Log</span>
-                <span className="w-4 h-4 rounded-full bg-accent-terracotta text-white flex items-center justify-center text-[9px] font-bold">
+                <span className="px-1.5 py-0.2 rounded-full bg-accent-terracotta/15 text-accent-terracotta text-[9px] font-bold">
                   2
                 </span>
               </button>
             )}
             <Link
               href="/landing"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-brand-indigo border border-brand-indigo/30 text-xs font-sans font-semibold rounded-editorial transition-colors shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs"
               title="เปิดดูหน้า Dream Press Landing Page สาธารณะ"
             >
-              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <Sparkles className="w-3.5 h-3.5 text-brand-indigo" />
               <span>Dream Press Landing</span>
             </Link>
             <button
               onClick={handleExportAllJobs}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
             >
               <FileSpreadsheet className="w-3.5 h-3.5 text-brand-indigo" />
               <span>Export Dispatches</span>
@@ -1322,9 +1305,6 @@ export default function HomePage() {
           >
             <BarChart3 className="w-3.5 h-3.5 text-accent-terracotta" />
             <span>{t('desk.trackingTab')}</span>
-            <span className="px-1.5 py-0.2 rounded bg-accent-terracotta text-white text-[9px] font-bold">
-              LIVE
-            </span>
           </button>
 
           <button
@@ -1337,9 +1317,6 @@ export default function HomePage() {
           >
             <Users className="w-3.5 h-3.5 text-emerald-700" />
             <span>{t('desk.teamKpiTab')}</span>
-            <span className="px-1.5 py-0.2 rounded bg-emerald-700 text-white text-[9px] font-bold">
-              KPI
-            </span>
           </button>
         </div>
 
@@ -1657,7 +1634,7 @@ export default function HomePage() {
                               <span>แถบเปิดดูโพสต์จริงบนเว็บ (Live Web Destinations):</span>
                             </span>
                             <span className="text-ink-secondary text-[9px]">
-                              คลิกเพื่อเปิดหน้าจริงทันที ↗
+                              คลิกเพื่อเปิดหน้าจริงทันที
                             </span>
                           </div>
 
@@ -1828,7 +1805,7 @@ export default function HomePage() {
                 </div>
 
                 <p className="text-[10px] text-ink-secondary font-mono pt-2 border-t border-border-rule leading-relaxed">
-                  {isMockCleared ? '💡 ยังไม่มีการส่งกระจายโพสต์ สถิติการจัดสรรรูปแบบสื่อจะแสดงเมื่อเริ่มส่งงาน' : '💡 Omni-Format Synergy: 78% of image assets published simultaneously to both Feed and 24h Story.'}
+                  {isMockCleared ? 'ยังไม่มีการส่งกระจายโพสต์ สถิติการจัดสรรรูปแบบสื่อจะแสดงเมื่อเริ่มส่งงาน' : 'Omni-Format Synergy: 78% of image assets published simultaneously to both Feed and 24h Story.'}
                 </p>
               </div>
 
@@ -2372,7 +2349,7 @@ export default function HomePage() {
                       <span>แถบเปิดดูโพสต์จริงบนเว็บ (Live Social & Web Links):</span>
                     </span>
                     <span className="text-ink-secondary text-[9px]">
-                      คลิกเพื่อเปิดหน้าจริงทันที ↗
+                      คลิกเพื่อเปิดหน้าจริงทันที
                     </span>
                   </div>
 
@@ -2445,7 +2422,7 @@ export default function HomePage() {
                     ระบบวัดผล KPI ประสิทธิภาพทีมงานและครีเอเตอร์ (Staff & Creator KPI Telemetry)
                   </h3>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold flex items-center gap-1">
-                    <span>🧪 MOCK DATA / SIMULATION</span>
+                    <span>MOCK DATA / SIMULATION</span>
                   </span>
                 </div>
                 <p className="text-xs font-mono text-ink-secondary">
@@ -2781,7 +2758,7 @@ export default function HomePage() {
                             }}
                             className="px-2.5 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary text-xs font-semibold hover:text-brand-indigo transition-colors shadow-2xs cursor-pointer"
                           >
-                            <span>ดู Scorecard ↗</span>
+                            <span>ดู Scorecard</span>
                           </button>
                         </td>
                       </tr>
@@ -2949,7 +2926,7 @@ export default function HomePage() {
                       เกรด {selectedEmployeeKpi.grade} ({selectedEmployeeKpi.overallKpiScore}/100)
                     </span>
                     <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-paper-subtle border border-border-rule text-ink-secondary">
-                      🧪 MOCK KPI SCORECARD
+                      MOCK KPI SCORECARD
                     </span>
                   </div>
                   <p className="text-xs font-mono text-ink-secondary mt-0.5">
@@ -3039,7 +3016,7 @@ export default function HomePage() {
                       title="วิเคราะห์ On-Time, Approval Rate, และ Volume เพื่อสังเคราะห์ข้อความใหม่"
                     >
                       <Sparkles className={`w-3.5 h-3.5 text-brand-indigo ${isAiGeneratingCoaching ? 'animate-spin' : ''}`} />
-                      <span>{isAiGeneratingCoaching ? 'AI กำลังประมวลผล...' : '✨ สังเคราะห์ด้วย AI'}</span>
+                      <span>{isAiGeneratingCoaching ? 'AI กำลังประมวลผล...' : 'สังเคราะห์ด้วย AI'}</span>
                     </button>
 
                     {!isEditingKpiNotes ? (
@@ -3049,7 +3026,7 @@ export default function HomePage() {
                         className="px-2.5 py-1 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary hover:text-brand-indigo text-xs font-mono font-semibold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
-                        <span>✏️ แก้ไขโน้ต</span>
+                        <span>แก้ไขโน้ต</span>
                       </button>
                     ) : (
                       <button
@@ -3118,7 +3095,7 @@ export default function HomePage() {
 
                     <div className="flex items-center justify-between pt-2 border-t border-border-rule">
                       <span className="text-[10px] text-ink-muted font-mono">
-                        💡 กด &quot;✨ สังเคราะห์ด้วย AI&quot; เพื่อให้ AI ช่วยร่างข้อความใหม่ได้ตลอดเวลา
+                        กด &quot;สังเคราะห์ด้วย AI&quot; เพื่อให้ AI ช่วยร่างข้อความใหม่ได้ตลอดเวลา
                       </span>
                       <div className="flex items-center gap-2">
                         <button
@@ -3139,7 +3116,7 @@ export default function HomePage() {
                           className="px-4 py-1.5 rounded-editorial bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs font-bold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
                         >
                           <Save className="w-3.5 h-3.5" />
-                          <span>💾 บันทึกการประเมิน</span>
+                          <span>บันทึกการประเมิน</span>
                         </button>
                       </div>
                     </div>
@@ -3168,7 +3145,7 @@ export default function HomePage() {
 
                     {selectedEmployeeKpi.lastEvaluatedAt && (
                       <p className="text-[10px] text-ink-muted font-mono pt-1">
-                        🕒 บันทึกล่าสุด: {new Date(selectedEmployeeKpi.lastEvaluatedAt).toLocaleString('th-TH')}
+                        บันทึกล่าสุด: {new Date(selectedEmployeeKpi.lastEvaluatedAt).toLocaleString('th-TH')}
                       </p>
                     )}
                   </div>
@@ -3203,14 +3180,17 @@ export default function HomePage() {
                       </div>
 
                       <div className="flex items-center gap-3 shrink-0 text-[11px] font-mono">
-                        <span className="text-ink-primary font-bold">
-                          👁️ {post.views.toLocaleString()}
+                        <span className="text-ink-primary font-bold flex items-center gap-1">
+                          <Eye className="w-3.5 h-3.5 text-ink-secondary" />
+                          <span>{post.views.toLocaleString()}</span>
                         </span>
-                        <span className="text-semantic-success font-bold">
-                          ❤️ {post.likes.toLocaleString()}
+                        <span className="text-semantic-success font-bold flex items-center gap-1">
+                          <Heart className="w-3.5 h-3.5 text-semantic-success" />
+                          <span>{post.likes.toLocaleString()}</span>
                         </span>
-                        <span className="text-brand-indigo font-bold">
-                          🔁 {post.shares.toLocaleString()}
+                        <span className="text-brand-indigo font-bold flex items-center gap-1">
+                          <Share2 className="w-3.5 h-3.5 text-brand-indigo" />
+                          <span>{post.shares.toLocaleString()}</span>
                         </span>
                       </div>
                     </div>
@@ -3232,7 +3212,7 @@ export default function HomePage() {
                   title="พิมพ์ใบคะแนนและแผนโค้ชชิ่งสำหรับ HR"
                 >
                   <Printer className="w-3.5 h-3.5 text-brand-indigo" />
-                  <span>📄 พิมพ์ใบประเมิน (Slip)</span>
+                  <span>พิมพ์ใบประเมิน (Slip)</span>
                 </button>
                 <button
                   type="button"
@@ -3460,7 +3440,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
             {/* Body */}
             <div className="p-4 space-y-3.5">
               <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-editorial text-[11px] leading-relaxed">
-                💡 <strong>ข้อกำหนดการลบแยกตาม API:</strong> แพลตฟอร์ม Facebook, YouTube, และ X รองรับการสั่งลบผ่าน API ได้ 100% ส่วน Instagram, TikTok, และ Lemon8 เป็นข้อกำหนดความปลอดภัยของแพลตฟอร์มที่ต้องกดเปิดเข้าไปลบในแอปโดยตรง
+                <strong>ข้อกำหนดการลบแยกตาม API:</strong> แพลตฟอร์ม Facebook, YouTube, และ X รองรับการสั่งลบผ่าน API ได้ 100% ส่วน Instagram, TikTok, และ Lemon8 เป็นข้อกำหนดความปลอดภัยของแพลตฟอร์มที่ต้องกดเปิดเข้าไปลบในแอปโดยตรง
               </div>
 
               {/* Channels List Breakdown */}
@@ -3487,7 +3467,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
                               ? 'bg-blue-50 text-blue-800 border-blue-200'
                               : 'bg-amber-50 text-amber-800 border-amber-200'
                           }`}>
-                            {canApiDelete ? '⚡ API DELETE SUPPORTED' : '🛡️ MANUAL APP DELETION'}
+                            {canApiDelete ? 'API DELETE SUPPORTED' : 'MANUAL APP DELETION'}
                           </span>
                         </div>
                       </div>
@@ -3518,7 +3498,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
                               rel="noreferrer"
                               className="px-2.5 py-1 rounded bg-paper-raised hover:bg-paper-subtle border border-border-rule text-brand-indigo hover:underline text-[11px] font-semibold transition-colors inline-flex items-center gap-1"
                             >
-                              <span>เปิดโพสต์เพื่อลบ ↗</span>
+                              <span>เปิดโพสต์เพื่อลบ</span>
                             </a>
                           ) : (
                             <span className="text-[10px] text-ink-muted">ไม่มีลิงก์</span>
@@ -3583,7 +3563,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
                     AI Content Performance Diagnosis & Playbook
                   </h3>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-100 text-amber-900 border border-amber-300">
-                    🧪 AI MOCK ENGINE
+                    AI MOCK ENGINE
                   </span>
                 </div>
                 <p className="text-xs font-mono text-ink-secondary">
@@ -3622,7 +3602,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
                   </div>
                   <div className="text-right pl-3 border-l border-border-rule">
                     <span className="text-[10px] text-ink-secondary block">คะแนนความสำเร็จ</span>
-                    <span className="font-bold text-semantic-success">{selectedPostDiagnosis.overallSuccessScore}/100 🔥</span>
+                    <span className="font-bold text-semantic-success">{selectedPostDiagnosis.overallSuccessScore}/100</span>
                   </div>
                 </div>
               </div>
@@ -3642,7 +3622,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between border-b border-border-rule pb-1.5">
                   <h4 className="font-mono text-xs font-bold text-ink-primary flex items-center gap-1.5 uppercase">
-                    <span>💡 ปัจจัยความสำเร็จ: ทำไมโพสต์นี้ถึงได้ยอด? (Attribution Drivers)</span>
+                    <span>ปัจจัยความสำเร็จ: ทำไมโพสต์นี้ถึงได้ยอด? (Attribution Drivers)</span>
                   </h4>
                   <span className="text-[10px] font-mono text-semantic-success font-semibold">
                     {selectedPostDiagnosis.attributionDrivers.length} ปัจจัยหลัก
@@ -3673,8 +3653,9 @@ ${selectedEmployeeKpi.coachingNotesTh}
                         {driver.descriptionTh}
                       </p>
 
-                      <div className="pt-1 border-t border-border-rule/60 text-[10px] font-mono text-brand-indigo font-bold">
-                        ★ {driver.metricHighlight}
+                      <div className="pt-1 border-t border-border-rule/60 text-[10px] font-mono text-brand-indigo font-bold flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-accent-terracotta shrink-0" />
+                        <span>{driver.metricHighlight}</span>
                       </div>
                     </div>
                   ))}
@@ -3685,7 +3666,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between border-b border-border-rule pb-1.5">
                   <h4 className="font-mono text-xs font-bold text-ink-primary flex items-center gap-1.5 uppercase">
-                    <span>🎯 แนวทางต่อยอดและแผนการดำเนินการถัดไป (Actionable Playbook)</span>
+                    <span>แนวทางต่อยอดและแผนการดำเนินการถัดไป (Actionable Playbook)</span>
                   </h4>
                   <span className="text-[10px] font-mono text-accent-terracotta font-semibold">
                     AI Recommended Playbook

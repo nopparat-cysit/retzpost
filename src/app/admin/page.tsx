@@ -22,6 +22,9 @@ import {
   Eye, 
   SlidersHorizontal,
   Flame,
+  Zap,
+  Settings,
+  AlertOctagon,
   Check,
   X,
   Menu,
@@ -33,6 +36,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
+import { MasterTokenIcon } from '@/components/icons/editorial-icons';
 import { PlanTier } from '@/modules/billing/pricing-plans';
 import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
 
@@ -209,7 +213,7 @@ export default function SuperAdminPage() {
       labelEn: 'Circuit Breakers',
       subtextTh: 'ตัดไฟฉุกเฉินและระงับ API',
       subtextEn: 'API Kill Switches & Freeze',
-      icon: Flame,
+      icon: Zap,
       section: 'SYSTEM',
       badge: globalFreeze ? 'FREEZE' : undefined,
       badgeAlert: globalFreeze,
@@ -220,7 +224,7 @@ export default function SuperAdminPage() {
       labelEn: 'Platform Settings & Pricing',
       subtextTh: 'ทดลองฟรี 7 วันและบันไดส่วนลด',
       subtextEn: '7-Day Trial & Promos',
-      icon: SlidersHorizontal,
+      icon: Settings,
       section: 'SYSTEM',
     },
   ];
@@ -529,8 +533,8 @@ export default function SuperAdminPage() {
           </div>
           <div className="flex items-center justify-between text-[11px] font-mono">
             <span className="text-white/60">Token Circulation:</span>
-            <span className="font-bold text-white tabular-nums lining-nums">
-              {data?.metrics?.totalTokensInCirculation?.toLocaleString() || '0'} 🪙
+            <span className="font-bold text-white tabular-nums lining-nums inline-flex items-center gap-1">
+              {data?.metrics?.totalTokensInCirculation?.toLocaleString() || '0'} <MasterTokenIcon size={12} className="text-accent-terracotta inline" />
             </span>
           </div>
         </div>
@@ -635,8 +639,9 @@ export default function SuperAdminPage() {
                   <span className="text-xs font-mono font-bold text-ink-secondary uppercase">
                     Press Token in Circulation
                   </span>
-                  <p className="font-serif font-black text-3xl text-accent-terracotta mt-1 tabular-nums lining-nums">
-                    {data?.metrics?.totalTokensInCirculation?.toLocaleString() || '0'} 🪙
+                  <p className="font-serif font-black text-3xl text-accent-terracotta mt-1 tabular-nums lining-nums inline-flex items-center gap-1.5">
+                    <span>{data?.metrics?.totalTokensInCirculation?.toLocaleString() || '0'}</span>
+                    <MasterTokenIcon size={22} className="text-accent-terracotta inline" />
                   </p>
                   <p className="text-[11px] text-ink-muted mt-1 font-mono">
                     เหรียญคงค้างในกระเป๋าผู้ใช้ทั้งหมด
@@ -749,8 +754,9 @@ export default function SuperAdminPage() {
                             <p className="font-bold text-ink-primary">{user.name || 'No Name'}</p>
                             <p className="text-[11px] text-ink-secondary font-mono">{user.email}</p>
                             {user.workspace && (
-                              <p className="text-[10px] text-brand-indigo font-medium mt-0.5">
-                                🏢 {user.workspace.name}
+                              <p className="text-[10px] text-brand-indigo font-medium mt-0.5 flex items-center gap-1">
+                                <Building2 className="w-3 h-3 text-brand-indigo shrink-0" />
+                                <span>{user.workspace.name}</span>
                               </p>
                             )}
                           </td>
@@ -788,8 +794,9 @@ export default function SuperAdminPage() {
                             </select>
                           </td>
                           <td className="py-3 px-4 font-mono">
-                            <span className="font-bold text-accent-terracotta tabular-nums lining-nums">
-                              {user.masterTokenBalance ?? user.workspace?.tokenBalance ?? 50} 🪙
+                            <span className="font-bold text-accent-terracotta tabular-nums lining-nums inline-flex items-center gap-1">
+                              <span>{user.masterTokenBalance ?? user.workspace?.tokenBalance ?? 50}</span>
+                              <MasterTokenIcon size={12} className="text-accent-terracotta inline" />
                             </span>
                             <span className="block text-[10px] text-ink-muted">
                               {user.masterTokenBalance != null ? 'Master Wallet' : 'Workspace Pool'}
@@ -1071,7 +1078,7 @@ export default function SuperAdminPage() {
                 <div className="p-4 mb-6 rounded-editorial border-2 border-red-500/40 bg-red-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <span className="font-serif font-bold text-sm text-red-900 block">
-                      ❄️ สวิตช์แช่แข็งการเผยแพร่ทั้งแพลตฟอร์ม (Global Publishing Freeze)
+                      สวิตช์แช่แข็งการเผยแพร่ทั้งแพลตฟอร์ม (Global Publishing Freeze)
                     </span>
                     <span className="text-xs text-red-700">
                       หยุดคิวเผยแพร่ทุกช่องทางทั่วทั้งระบบทันที เหมาะสำหรับกรณีฉุกเฉินระดับวิกฤต
@@ -1080,13 +1087,14 @@ export default function SuperAdminPage() {
                   <button
                     type="button"
                     onClick={() => setGlobalFreeze(!globalFreeze)}
-                    className={`py-2 px-4 rounded font-mono text-xs font-bold shrink-0 transition-colors ${
+                    className={`py-2 px-4 rounded font-mono text-xs font-bold shrink-0 transition-colors flex items-center gap-1.5 ${
                       globalFreeze 
                         ? 'bg-red-700 text-white hover:bg-red-800' 
                         : 'bg-paper-card border border-red-300 text-red-700 hover:bg-red-100'
                     }`}
                   >
-                    {globalFreeze ? '🚨 ปลดล็อกการแช่แข็ง' : '⛔ แช่แข็งระบบทันที'}
+                    <AlertOctagon className="w-4 h-4 inline mr-1" />
+                    <span>{globalFreeze ? 'ปลดล็อกการแช่แข็ง' : 'Freeze All Dispatches'}</span>
                   </button>
                 </div>
 
@@ -1107,7 +1115,7 @@ export default function SuperAdminPage() {
                         metaActive ? 'bg-red-100 text-red-800 hover:bg-red-200' : 'bg-green-600 text-white hover:bg-green-700'
                       }`}
                     >
-                      {metaActive ? '⛔ พักการยิง Meta ชั่วคราว' : '✓ เปิดใช้งาน Meta ตามปกติ'}
+                      {metaActive ? 'พักการยิง Meta ชั่วคราว' : 'เปิดใช้งาน Meta ตามปกติ'}
                     </button>
                   </div>
 
@@ -1127,7 +1135,7 @@ export default function SuperAdminPage() {
                         youtubeActive ? 'bg-red-100 text-red-800 hover:bg-red-200' : 'bg-green-600 text-white hover:bg-green-700'
                       }`}
                     >
-                      {youtubeActive ? '⛔ พักการยิง YouTube' : '✓ เปิดใช้งาน YouTube'}
+                      {youtubeActive ? 'พักการยิง YouTube' : 'เปิดใช้งาน YouTube'}
                     </button>
                   </div>
 
@@ -1147,7 +1155,7 @@ export default function SuperAdminPage() {
                         tiktokActive ? 'bg-red-100 text-red-800 hover:bg-red-200' : 'bg-green-600 text-white hover:bg-green-700'
                       }`}
                     >
-                      {tiktokActive ? '⛔ พักการยิง TikTok' : '✓ เปิดใช้งาน TikTok'}
+                      {tiktokActive ? 'พักการยิง TikTok' : 'เปิดใช้งาน TikTok'}
                     </button>
                   </div>
                 </div>
@@ -1195,7 +1203,7 @@ export default function SuperAdminPage() {
                 <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs space-y-4">
                   <div className="flex items-center justify-between border-b border-border-rule pb-3">
                     <h4 className="font-serif font-bold text-base text-ink-primary flex items-center gap-2">
-                      <span>🎁 ระบบทดลองใช้งานฟรี (Free Trial)</span>
+                      <span>ระบบทดลองใช้งานฟรี (Free Trial)</span>
                     </h4>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -1227,7 +1235,7 @@ export default function SuperAdminPage() {
                     </div>
 
                     <p className="text-[11px] text-ink-secondary bg-paper-raised p-3 rounded border border-border-rule/80 leading-relaxed">
-                      💡 <strong>เงื่อนไข:</strong> ผู้ใช้ทดลองฟรีไม่ต้องจ่ายเงินล่วงหน้า (฿0.00) ในวันแรก ได้สิทธิ์ 1 Workspace, 5 ช่องทาง, 150 Press Tokens เมื่อครบกำหนด 7 วัน ระบบจะแสดงข้อเสนอโปรโมชั่นส่วนลดพิเศษ
+                      <strong>เงื่อนไข:</strong> ผู้ใช้ทดลองฟรีไม่ต้องจ่ายเงินล่วงหน้า (฿0.00) ในวันแรก ได้สิทธิ์ 1 Workspace, 5 ช่องทาง, 150 Press Tokens เมื่อครบกำหนด 7 วัน ระบบจะแสดงข้อเสนอโปรโมชั่นส่วนลดพิเศษ
                     </p>
                   </div>
                 </div>
@@ -1236,7 +1244,7 @@ export default function SuperAdminPage() {
                 <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs space-y-4">
                   <div className="border-b border-border-rule pb-3">
                     <h4 className="font-serif font-bold text-base text-ink-primary flex items-center gap-2">
-                      <span>🏷️ บันไดส่วนลดหลังหมดทดลอง (Promo Ladder)</span>
+                      <span>บันไดส่วนลดหลังหมดทดลอง (Promo Ladder)</span>
                     </h4>
                   </div>
 
@@ -1301,7 +1309,7 @@ export default function SuperAdminPage() {
                 <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs space-y-4">
                   <div className="border-b border-border-rule pb-3">
                     <h4 className="font-serif font-bold text-base text-ink-primary flex items-center gap-2">
-                      <span>🪙 อัตราหักเหรียญ Press Token กลาง</span>
+                      <span>อัตราหักเหรียญ Master Token กลาง</span>
                     </h4>
                   </div>
 
@@ -1315,28 +1323,28 @@ export default function SuperAdminPage() {
                           onChange={(e) => setWelcomeTokens(Number(e.target.value))}
                           className="w-16 px-2 py-0.5 text-xs font-mono rounded border border-border-rule bg-paper-canvas text-right font-bold text-accent-terracotta tabular-nums lining-nums"
                         />
-                        <span className="font-mono text-ink-muted">🪙</span>
+                        <span className="font-mono text-ink-muted">Tokens</span>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between py-1 border-b border-border-rule/40">
                       <span className="text-ink-secondary">AI Post Diagnosis (วิเคราะห์จุดอ่อนโพสต์)</span>
-                      <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">5 🪙</span>
+                      <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">5 Tokens</span>
                     </div>
 
                     <div className="flex items-center justify-between py-1 border-b border-border-rule/40">
                       <span className="text-ink-secondary">AI KPI Strategy Coaching (โค้ชกลยุทธ์ AI)</span>
-                      <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">10 🪙</span>
+                      <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">10 Tokens</span>
                     </div>
 
                     <div className="flex items-center justify-between py-1 border-b border-border-rule/40">
                       <span className="text-ink-secondary">Force Sync Telemetry (ดึงสถิติด่วน)</span>
-                      <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">2 🪙</span>
+                      <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">2 Tokens</span>
                     </div>
 
                     <div className="flex items-center justify-between py-1">
                       <span className="text-ink-secondary">Auto-Frame Aspect Ratio (ปรับสัดส่วนภาพ)</span>
-                      <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">5 🪙</span>
+                      <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">5 Tokens</span>
                     </div>
                   </div>
                 </div>
@@ -1345,7 +1353,7 @@ export default function SuperAdminPage() {
                 <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs space-y-4">
                   <div className="border-b border-border-rule pb-3">
                     <h4 className="font-serif font-bold text-base text-ink-primary flex items-center gap-2">
-                      <span>🇹🇭 ภาษีมูลค่าเพิ่มและข้อมูลนิติบุคคล</span>
+                      <span>ภาษีมูลค่าเพิ่มและข้อมูลนิติบุคคล</span>
                     </h4>
                   </div>
 
@@ -1398,7 +1406,7 @@ export default function SuperAdminPage() {
               ปรับเหรียญ Press Token สำหรับ {tokenModalUser.name}
             </h3>
             <p className="text-xs text-ink-secondary">
-              ยอดคงเหลือปัจจุบัน: <span className="font-bold font-mono text-accent-terracotta tabular-nums lining-nums">{tokenModalUser.workspace?.tokenBalance ?? 50} 🪙</span>
+              ยอดคงเหลือปัจจุบัน: <span className="font-bold font-mono text-accent-terracotta tabular-nums lining-nums inline-flex items-center gap-1">{tokenModalUser.workspace?.tokenBalance ?? 50} <MasterTokenIcon size={12} className="inline text-accent-terracotta" /></span>
             </p>
 
             <div>
