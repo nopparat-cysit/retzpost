@@ -124,16 +124,16 @@ export default function SettingsPage() {
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <Masthead
-        folio="WORKSPACE PREFERENCES / การตั้งค่าพื้นที่ทำงาน"
-        editionDate="SYSTEM DEFAULTS"
-        title="Workspace Settings (การตั้งค่า)"
-        subtitle="จัดการเขตเวลาเผยแพร่ นโยบายลองใหม่เมื่อเครือข่ายขัดข้อง ธีมแท่นพิมพ์ และสิทธิ์คุ้มครองข้อมูลส่วนบุคคล (PDPA)"
+        folio={locale === 'th' ? 'การตั้งค่าระบบและสเปซ' : 'WORKSPACE PREFERENCES'}
+        editionDate={locale === 'th' ? 'ค่าเริ่มต้นระบบ' : 'SYSTEM DEFAULTS'}
+        title={t('settings.pageTitle')}
+        subtitle={t('settings.pageSubtitle')}
       />
 
       {saveSuccess && (
         <div className="mb-6 p-3.5 bg-semantic-success-bg border border-semantic-success/20 rounded-card flex items-center gap-2.5 text-xs text-semantic-success font-medium">
           <CheckCircle2 className="w-4 h-4 shrink-0" />
-          <span>บันทึกการตั้งค่าลงฐานข้อมูล Neon Postgres สำเร็จเรียบร้อยแล้ว</span>
+          <span>{locale === 'th' ? 'บันทึกการตั้งค่าลงฐานข้อมูลสำเร็จ' : 'Settings saved to database successfully'}</span>
         </div>
       )}
 
@@ -258,14 +258,14 @@ export default function SettingsPage() {
           <div className="flex items-center gap-2 pb-2 border-b border-border-rule">
             <Clock className="w-4 h-4 text-brand-indigo" />
             <h2 className="font-serif font-medium text-base text-ink-primary">
-              เขตเวลาและนโยบายลองใหม่ (Timezone & Retry Engine)
+              {locale === 'th' ? 'เขตเวลาและนโยบายลองใหม่' : 'Timezone & Retry Engine'}
             </h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-mono uppercase text-ink-secondary mb-1 font-bold">
-                เขตเวลาหลักของแท่นพิมพ์ (Primary Timezone)
+                {locale === 'th' ? 'เขตเวลาหลักของแท่นพิมพ์' : 'Primary Timezone'}
               </label>
               <select
                 value={defaultTimezone}
@@ -280,13 +280,13 @@ export default function SettingsPage() {
                 <option value="America/Los_Angeles">America/Los_Angeles (PST / PDT, ลอสแอนเจลิส)</option>
               </select>
               <p className="text-[11px] text-ink-secondary mt-1">
-                การตั้งเวลาโพสต์คอนเทนต์ทั้งหมดจะอ้างอิงตามเขตเวลานี้
+                {locale === 'th' ? 'การตั้งเวลาโพสต์คอนเทนต์ทั้งหมดจะอ้างอิงตามเขตเวลานี้' : 'All scheduled dispatches reference this timezone'}
               </p>
             </div>
 
             <div>
               <label className="block text-xs font-mono uppercase text-ink-secondary mb-1 font-bold">
-                นโยบายลองส่งใหม่เมื่อเครือข่ายขัดข้อง (Retry Policy)
+                {locale === 'th' ? 'นโยบายลองส่งใหม่เมื่อเครือข่ายขัดข้อง' : 'Retry Policy'}
               </label>
               <select
                 value={maxRetryAttempts}
@@ -298,7 +298,7 @@ export default function SettingsPage() {
                 <option value="5">5 ครั้ง (Aggressive Resiliency สำหรับช่องทางสำคัญ)</option>
               </select>
               <p className="text-[11px] text-ink-secondary mt-1">
-                ใช้เมื่อ TikTok หรือ Meta ส่งรหัส 429 Rate Limit หรือเครือข่ายขัดข้องชั่วคราว
+                {locale === 'th' ? 'ใช้เมื่อ TikTok หรือ Meta ส่งรหัส 429 Rate Limit หรือเครือข่ายขัดข้องชั่วคราว' : 'Triggered on 429 Rate Limit responses or transient network failures'}
               </p>
             </div>
           </div>
@@ -309,7 +309,7 @@ export default function SettingsPage() {
           <div className="flex items-center gap-2 pb-2 border-b border-border-rule">
             <Palette className="w-4 h-4 text-accent-terracotta" />
             <h2 className="font-serif font-medium text-base text-ink-primary">
-              ธีมบรรยากาศแท่นพิมพ์ (Editorial Theme Preset)
+              {t('settings.themeSectionTitle')}
             </h2>
           </div>
 
@@ -346,7 +346,9 @@ export default function SettingsPage() {
                       ✓
                     </div>
                   </div>
-                  <p className="font-serif font-bold text-xs text-ink-primary truncate">{theme.nameEn}</p>
+                  <p className="font-serif font-bold text-xs text-ink-primary truncate">
+                    {locale === 'th' ? theme.nameTh : theme.nameEn}
+                  </p>
                   <p className="text-[10px] font-mono text-ink-secondary">{theme.badge}</p>
                 </button>
               );
@@ -359,7 +361,7 @@ export default function SettingsPage() {
           <div className="flex items-center gap-2 pb-2 border-b border-border-rule">
             <Sliders className="w-4 h-4 text-accent-terracotta" />
             <h2 className="font-serif font-medium text-base text-ink-primary">
-              การปรับขนาดสื่ออัตโนมัติ (Media Adaptation & Automation)
+              {t('settings.mediaAutomationTitle')}
             </h2>
           </div>
 
@@ -373,10 +375,10 @@ export default function SettingsPage() {
               />
               <div>
                 <span className="font-semibold text-xs text-ink-primary block">
-                  ปรับขยายสัดส่วน 9:16 Canvas Padding สำหรับ 24h Stories อัตโนมัติ
+                  {locale === 'th' ? 'ปรับขยายสัดส่วน 9:16 Canvas Padding สำหรับ 24h Stories อัตโนมัติ' : 'Auto-expand 9:16 canvas padding for 24h Stories'}
                 </span>
                 <span className="text-[11px] text-ink-secondary block mt-0.5">
-                  เมื่อยิงภาพแนวนอน (16:9) หรือสี่เหลี่ยม (1:1) ไปยัง Instagram / Facebook Stories ระบบจะเติมขอบสีสไตล์นิตยสารให้อัตโนมัติเพื่อไม่ให้ภาพถูกตัดตกขอบ
+                  {locale === 'th' ? 'เมื่อยิงภาพแนวนอน (16:9) หรือสี่เหลี่ยม (1:1) ไปยัง Instagram / Facebook Stories ระบบจะเติมขอบสีสไตล์นิตยสารให้อัตโนมัติเพื่อไม่ให้ภาพถูกตัดตกขอบ' : 'When publishing horizontal (16:9) or square (1:1) media to Stories, auto-fill broadsheet margins to prevent cropping'}
                 </span>
               </div>
             </label>
@@ -390,10 +392,10 @@ export default function SettingsPage() {
               />
               <div>
                 <span className="font-semibold text-xs text-ink-primary block">
-                  แจ้งเตือนทางอีเมลเมื่อโพสต์ล้มเหลว (Failure Incident Alerts)
+                  {locale === 'th' ? 'แจ้งเตือนทางอีเมลเมื่อโพสต์ล้มเหลว' : 'Email Alerts on Failure'}
                 </span>
                 <span className="text-[11px] text-ink-secondary block mt-0.5">
-                  ส่งข้อความแจ้งเตือนกองบรรณาธิการทันทีเมื่อโพสต์ติดขัดเกินจำนวนครั้งที่ลองใหม่
+                  {locale === 'th' ? 'ส่งข้อความแจ้งเตือนกองบรรณาธิการทันทีเมื่อโพสต์ติดขัดเกินจำนวนครั้งที่ลองใหม่' : 'Immediately notify the newsroom when a dispatch exceeds retry limits'}
                 </span>
               </div>
             </label>
@@ -405,19 +407,19 @@ export default function SettingsPage() {
           <div className="flex items-center gap-2 pb-2 border-b border-border-rule">
             <ShieldCheck className="w-4 h-4 text-semantic-success" />
             <h2 className="font-serif font-medium text-base text-ink-primary">
-              ความคุ้มครองข้อมูลส่วนบุคคลและกฎหมายไทย (PDPA & Legal Rights)
+              {locale === 'th' ? 'ความคุ้มครองข้อมูลส่วนบุคคลและกฎหมายไทย' : 'PDPA Compliance & Legal Rights'}
             </h2>
           </div>
 
           <p className="text-[11px] text-ink-secondary leading-relaxed">
-            ท่านมีสิทธิ์ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) ในการเข้าถึง ขอรับสำเนา หรือขอลบทำลายข้อมูลบัญชีของท่านได้ตลอดเวลา
+            {locale === 'th' ? 'ท่านมีสิทธิ์ตามพระราชบัญญัติคุ้มครองข้อมูลส่วนบุคคล พ.ศ. 2562 (PDPA) ในการเข้าถึง ขอรับสำเนา หรือขอลบทำลายข้อมูลบัญชีของท่านได้ตลอดเวลา' : 'Under the Personal Data Protection Act (PDPA), you reserve the right to access, export, or permanently erase your account data at any time.'}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between">
               <div>
-                <p className="font-bold text-xs text-ink-primary">ขอรับสำเนาข้อมูล (Data Export)</p>
-                <p className="text-[11px] text-ink-secondary">ดาวน์โหลดไฟล์ประวัติการใช้งานและคอนเทนต์</p>
+                <p className="font-bold text-xs text-ink-primary">{locale === 'th' ? 'ขอรับสำเนาข้อมูล' : 'Data Export'}</p>
+                <p className="text-[11px] text-ink-secondary">{locale === 'th' ? 'ดาวน์โหลดไฟล์ประวัติการใช้งานและคอนเทนต์' : 'Download history logs and media metadata'}</p>
               </div>
               <button
                 type="button"
@@ -425,14 +427,14 @@ export default function SettingsPage() {
                 className="py-1.5 px-3 rounded-btn border border-brand-indigo text-brand-indigo hover:bg-brand-indigo/10 text-[11px] font-bold flex items-center gap-1"
               >
                 <FileDown className="w-3.5 h-3.5" />
-                <span>ยื่นคำร้อง</span>
+                <span>{locale === 'th' ? 'ยื่นคำร้อง' : 'Submit Request'}</span>
               </button>
             </div>
 
             <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between">
               <div>
-                <p className="font-bold text-xs text-semantic-error">ขอลบทำลายบัญชี (Right to Erasure)</p>
-                <p className="text-[11px] text-ink-secondary">ลบข้อมูลส่วนบุคคลถาวรออกจากระบบ</p>
+                <p className="font-bold text-xs text-semantic-error">{locale === 'th' ? 'ขอลบทำลายบัญชี' : 'Right to Erasure'}</p>
+                <p className="text-[11px] text-ink-secondary">{locale === 'th' ? 'ลบข้อมูลส่วนบุคคลถาวรออกจากระบบ' : 'Permanently remove all personal data from the system'}</p>
               </div>
               <button
                 type="button"
@@ -440,7 +442,7 @@ export default function SettingsPage() {
                 className="py-1.5 px-3 rounded-btn border border-semantic-error text-semantic-error hover:bg-semantic-error/10 text-[11px] font-bold flex items-center gap-1"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>ขอลบบัญชี</span>
+                <span>{locale === 'th' ? 'ขอลบบัญชี' : 'Request Deletion'}</span>
               </button>
             </div>
           </div>
@@ -454,7 +456,7 @@ export default function SettingsPage() {
             className="inline-flex items-center gap-2 px-6 py-2.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white font-bold text-xs rounded-editorial shadow-xs transition-colors disabled:opacity-50 cursor-pointer"
           >
             <Save className="w-4 h-4" />
-            <span>{isSaving ? 'กำลังบันทึก...' : 'บันทึกการตั้งค่า (Save Settings)'}</span>
+            <span>{isSaving ? (locale === 'th' ? 'กำลังบันทึก...' : 'Saving...') : (locale === 'th' ? 'บันทึกการตั้งค่า' : 'Save Settings')}</span>
           </button>
         </div>
       </form>

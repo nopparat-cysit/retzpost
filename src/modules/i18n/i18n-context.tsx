@@ -29,7 +29,19 @@ const LanguageContext = createContext<LanguageContextType>({
 });
 
 export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [locale, setLocaleState] = useState<Locale>('th');
+  const [locale, setLocaleState] = useState<Locale>(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem(LANGUAGE_STORAGE_KEY) as Locale | null;
+        if (saved === 'th' || saved === 'en') {
+          return saved;
+        }
+      } catch {
+        // Safe fallback in restricted environments
+      }
+    }
+    return 'th';
+  });
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {

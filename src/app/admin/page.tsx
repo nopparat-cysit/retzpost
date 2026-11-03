@@ -165,9 +165,9 @@ export default function SuperAdminPage() {
   const navItems: AdminNavItem[] = [
     {
       id: 'OVERVIEW',
-      labelTh: 'Executive Overview',
+      labelTh: 'ภาพรวมผู้บริหาร',
       labelEn: 'Executive Overview',
-      subtextTh: 'MRR & โทเคนในระบบ',
+      subtextTh: 'รายได้ประจำและโทเคนในระบบ',
       subtextEn: 'MRR & Token Economy',
       icon: LayoutDashboard,
       section: 'INTELLIGENCE',
@@ -176,7 +176,7 @@ export default function SuperAdminPage() {
       id: 'USERS',
       labelTh: 'ผู้ใช้งานและบัญชีกลาง',
       labelEn: 'Users & Master Ledger',
-      subtextTh: 'สิทธิ์ระบบ & จัดสรรโควตา',
+      subtextTh: 'สิทธิ์ระบบและจัดสรรโควตา',
       subtextEn: 'User Accounts & Roles',
       icon: Users,
       section: 'GOVERNANCE',
@@ -184,9 +184,9 @@ export default function SuperAdminPage() {
     },
     {
       id: 'BILLING',
-      labelTh: 'ใบแจ้งหนี้ & ตรวจสลิป',
+      labelTh: 'ใบแจ้งหนี้และตรวจสลิป',
       labelEn: 'Invoices & PromptPay Slips',
-      subtextTh: 'ตรวจสอบสลิป & ภาษี e-Tax',
+      subtextTh: 'ตรวจสอบสลิปและภาษี e-Tax',
       subtextEn: 'Verify Slips & VAT 7%',
       icon: Receipt,
       section: 'GOVERNANCE',
@@ -195,9 +195,9 @@ export default function SuperAdminPage() {
     },
     {
       id: 'LEGAL',
-      labelTh: 'พ.ร.บ. คอมฯ & PDPA',
+      labelTh: 'พ.ร.บ. คอมพิวเตอร์ และ PDPA',
       labelEn: 'Legal Compliance & Audit',
-      subtextTh: 'Log 90 วันตาม ม.26',
+      subtextTh: 'บันทึกจราจร 90 วันตาม ม.26',
       subtextEn: 'CCA Sec 26 & DSAR Queue',
       icon: Scale,
       section: 'GOVERNANCE',
@@ -205,9 +205,9 @@ export default function SuperAdminPage() {
     },
     {
       id: 'CIRCUIT',
-      labelTh: 'Circuit Breakers',
+      labelTh: 'สวิตช์ตัดวงจรฉุกเฉิน',
       labelEn: 'Circuit Breakers',
-      subtextTh: 'ตัดไฟฉุกเฉิน & Kill Switches',
+      subtextTh: 'ตัดไฟฉุกเฉินและระงับ API',
       subtextEn: 'API Kill Switches & Freeze',
       icon: Flame,
       section: 'SYSTEM',
@@ -216,9 +216,9 @@ export default function SuperAdminPage() {
     },
     {
       id: 'SETTINGS',
-      labelTh: 'ตั้งค่าแพลตฟอร์ม & ราคา',
+      labelTh: 'ตั้งค่าแพลตฟอร์มและราคา',
       labelEn: 'Platform Settings & Pricing',
-      subtextTh: 'ทดลองฟรี 7 วัน & บันไดส่วนลด',
+      subtextTh: 'ทดลองฟรี 7 วันและบันไดส่วนลด',
       subtextEn: '7-Day Trial & Promos',
       icon: SlidersHorizontal,
       section: 'SYSTEM',
@@ -332,7 +332,7 @@ export default function SuperAdminPage() {
                 className="w-full py-2 px-3 rounded-md bg-accent-terracotta hover:bg-accent-terracotta/90 text-white text-xs font-bold font-mono flex items-center justify-center gap-2 transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span>{locale === 'th' ? 'กลับโต๊ะปฏิบัติการ (Desk)' : 'Back to Desk'}</span>
+                <span>{locale === 'th' ? 'กลับโต๊ะปฏิบัติการ' : 'Back to Desk'}</span>
               </Link>
             </div>
           </div>
@@ -651,7 +651,7 @@ export default function SuperAdminPage() {
                     {data?.metrics?.totalUsers || 0} / {data?.metrics?.totalWorkspaces || 0}
                   </p>
                   <p className="text-[11px] text-ink-muted mt-1 font-mono">
-                    บัญชีผู้ใช้งาน / พื้นที่ทำงานทั้งหมด
+                    {locale === 'th' ? 'บัญชีผู้ใช้งานและพื้นที่ทำงานทั้งหมด' : 'Total User Accounts & Workspaces'}
                   </p>
                 </div>
 
@@ -734,12 +734,12 @@ export default function SuperAdminPage() {
                   <table className="w-full text-left text-xs">
                     <thead className="bg-paper-raised border-b border-border-rule font-mono uppercase text-ink-secondary">
                       <tr>
-                        <th className="py-3 px-4">ผู้ใช้งาน / Workspace</th>
-                        <th className="py-3 px-4">สิทธิ์ / สถานะ</th>
-                        <th className="py-3 px-4">แพ็กเกจ (Tier)</th>
-                        <th className="py-3 px-4">Token Balance</th>
-                        <th className="py-3 px-4">Last Login IP</th>
-                        <th className="py-3 px-4 text-right">การจัดการ</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'ผู้ใช้งานและสเปซ' : 'User & Workspace'}</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'สิทธิ์และสถานะ' : 'Role & Status'}</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'แพ็กเกจ' : 'Plan Tier'}</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'ยอดโทเคนคงเหลือ' : 'Token Balance'}</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'ไอพีเข้าสู่ระบบล่าสุด' : 'Last Login IP'}</th>
+                        <th className="py-3 px-4 text-right">{locale === 'th' ? 'การจัดการ' : 'Actions'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border-rule/60">
@@ -838,13 +838,13 @@ export default function SuperAdminPage() {
                   <table className="w-full text-left text-xs">
                     <thead className="bg-paper-raised border-b border-border-rule font-mono uppercase text-ink-secondary">
                       <tr>
-                        <th className="py-3 px-4">Invoice ID / วันที่</th>
-                        <th className="py-3 px-4">Workspace / แผน</th>
-                        <th className="py-3 px-4">ยอดรวม (รวม VAT 7%)</th>
-                        <th className="py-3 px-4">ช่องทาง</th>
-                        <th className="py-3 px-4">สถานะการชำระ</th>
-                        <th className="py-3 px-4">e-Tax Invoice (13 หลัก)</th>
-                        <th className="py-3 px-4 text-right">การจัดการสลิป</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'รหัสใบแจ้งหนี้และวันที่' : 'Invoice ID & Date'}</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'สเปซและแผน' : 'Workspace & Plan'}</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'ยอดรวม (รวม VAT 7%)' : 'Total (VAT 7% included)'}</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'ช่องทางชำระเงิน' : 'Payment Method'}</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'สถานะการชำระ' : 'Payment Status'}</th>
+                        <th className="py-3 px-4">{locale === 'th' ? 'ใบกำกับภาษี e-Tax (13 หลัก)' : 'e-Tax Invoice (13 digits)'}</th>
+                        <th className="py-3 px-4 text-right">{locale === 'th' ? 'การจัดการสลิป' : 'Slip Management'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border-rule/60">
@@ -956,12 +956,12 @@ export default function SuperAdminPage() {
                   <table className="w-full text-left text-xs">
                     <thead className="bg-paper-raised border-b border-border-rule font-mono uppercase text-ink-secondary">
                       <tr>
-                        <th className="py-2.5 px-3">ผู้ยื่นคำร้อง</th>
-                        <th className="py-2.5 px-3">ประเภทสิทธิ์ (DSAR Type)</th>
-                        <th className="py-2.5 px-3">เหตุผล / ความประสงค์</th>
-                        <th className="py-2.5 px-3">วันที่ยื่นคำร้อง</th>
-                        <th className="py-2.5 px-3">สถานะ</th>
-                        <th className="py-2.5 px-3 text-right">ดำเนินการ</th>
+                        <th className="py-2.5 px-3">{locale === 'th' ? 'ผู้ยื่นคำร้อง' : 'Requester'}</th>
+                        <th className="py-2.5 px-3">{locale === 'th' ? 'ประเภทสิทธิ์คำร้อง' : 'DSAR Request Type'}</th>
+                        <th className="py-2.5 px-3">{locale === 'th' ? 'เหตุผลและความประสงค์' : 'Reason & Purpose'}</th>
+                        <th className="py-2.5 px-3">{locale === 'th' ? 'วันที่ยื่นคำร้อง' : 'Submission Date'}</th>
+                        <th className="py-2.5 px-3">{locale === 'th' ? 'สถานะ' : 'Status'}</th>
+                        <th className="py-2.5 px-3 text-right">{locale === 'th' ? 'ดำเนินการ' : 'Actions'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border-rule/60">
@@ -1023,10 +1023,10 @@ export default function SuperAdminPage() {
                   <table className="w-full text-left text-xs font-mono">
                     <thead className="bg-paper-raised sticky top-0 border-b border-border-rule uppercase text-ink-secondary">
                       <tr>
-                        <th className="py-2 px-3">เวลา (UTC/Bangkok)</th>
-                        <th className="py-2 px-3">ผู้ดำเนินการ</th>
-                        <th className="py-2 px-3">การกระทำ (Action)</th>
-                        <th className="py-2 px-3">หมวดหมู่</th>
+                        <th className="py-2 px-3">{locale === 'th' ? 'เวลาตามระบบ' : 'Timestamp'}</th>
+                        <th className="py-2 px-3">{locale === 'th' ? 'ผู้ดำเนินการ' : 'Actor'}</th>
+                        <th className="py-2 px-3">{locale === 'th' ? 'การกระทำ' : 'Action'}</th>
+                        <th className="py-2 px-3">{locale === 'th' ? 'หมวดหมู่' : 'Resource'}</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border-rule/60">

@@ -2,9 +2,9 @@ import { TranslationSchema } from '../i18n-types';
 
 export const en: TranslationSchema = {
   nav: {
-    deskGroup: '01 — DESK / DASHBOARD',
-    publishGroup: '02 — PUBLISH / EDITORIAL',
-    workspaceGroup: '03 — WORKSPACE / SETTINGS',
+    deskGroup: '01 — Desk',
+    publishGroup: '02 — Publish',
+    workspaceGroup: '03 — Workspace',
     overview: 'Overview',
     pricing: 'Pricing & Plans',
     contentLibrary: 'Content Library',
@@ -14,7 +14,7 @@ export const en: TranslationSchema = {
     connectedChannels: 'Connected Channels',
     teamPermissions: 'Team & Permissions',
     settings: 'Settings & Defaults',
-    docs: 'Documentation (Docs)',
+    docs: 'Documentation',
     admin: 'Super Admin Desk',
     landing: 'Dream Press Desk',
     privacy: 'Privacy Policy',

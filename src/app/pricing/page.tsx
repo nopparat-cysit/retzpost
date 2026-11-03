@@ -175,8 +175,8 @@ export default function PricingPage() {
                       {!isFree && (
                         <p className="text-[10px] text-accent-terracotta font-mono font-medium mt-0.5">
                           {billingCycle === 'YEARLY' 
-                            ? `เฉลี่ย ฿${Math.round(price / 12).toLocaleString()}/เดือน` 
-                            : 'รวมภาษี VAT 7% ในขั้นตอนชำระ'}
+                            ? (locale === 'th' ? `เฉลี่ย ฿${Math.round(price / 12).toLocaleString()}/เดือน` : `Avg ฿${Math.round(price / 12).toLocaleString()}/mo`) 
+                            : (locale === 'th' ? 'รวมภาษีมูลค่าเพิ่ม VAT 7% ในขั้นตอนชำระเงิน' : 'VAT 7% included at checkout')}
                         </p>
                       )}
                     </div>
@@ -188,25 +188,29 @@ export default function PricingPage() {
                           <Coins className="w-3 h-3 text-accent-terracotta" />
                           Master Tokens:
                         </span>
-                        <span>{plan.monthlyTokens.toLocaleString()} 🪙 /ด.</span>
+                        <span>{plan.monthlyTokens.toLocaleString()} {locale === 'th' ? '🪙 /ด.' : '🪙 /mo.'}</span>
                       </div>
                       <div className="flex items-center justify-between text-ink-secondary text-[10px]">
-                        <span>สะสมทบยอดได้:</span>
+                        <span>{locale === 'th' ? 'สะสมโทเคนสูงสุด:' : 'Rollover Limit:'}</span>
                         <span>{plan.maxRolloverTokens.toLocaleString()} 🪙</span>
                       </div>
                       <div className="flex items-center justify-between text-ink-primary font-bold text-[10px] pt-1 border-t border-border-rule/60">
                         <span className="flex items-center gap-1">
                           <Users className="w-3 h-3 text-brand-indigo" />
-                          ทีมงาน & พท.:
+                          {locale === 'th' ? 'ทีม & สเปซ:' : 'Team & Spaces:'}
                         </span>
-                        <span>{plan.teamMembersLimit} คน / {plan.workspacesLimit} พท.</span>
+                        <span>
+                          {locale === 'th' 
+                            ? `${plan.teamMembersLimit} คน / ${plan.workspacesLimit} สเปซ` 
+                            : `${plan.teamMembersLimit} members / ${plan.workspacesLimit} spaces`}
+                        </span>
                       </div>
                     </div>
 
                     {/* Feature Checklist */}
                     <div className="space-y-2 mb-6">
                       <p className="text-[10px] font-bold uppercase tracking-wider text-ink-secondary font-mono">
-                        สิทธิประโยชน์:
+                        {locale === 'th' ? 'ฟีเจอร์เด่นในแพ็กนี้:' : 'Plan Features:'}
                       </p>
                       {plan.features.map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-2 text-[11px]">
@@ -218,7 +222,7 @@ export default function PricingPage() {
                             </span>
                           )}
                           <span className={`${feature.included ? (feature.highlight ? 'font-bold text-ink-primary' : 'text-ink-primary') : 'text-ink-muted line-through'}`}>
-                            {feature.labelTh}
+                            {locale === 'th' ? feature.labelTh : (feature.labelEn || feature.labelTh)}
                           </span>
                         </div>
                       ))}
@@ -233,7 +237,7 @@ export default function PricingPage() {
                         className="w-full py-2.5 px-3 rounded-btn text-center text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-xs bg-accent-terracotta hover:bg-accent-terracotta/90 text-white cursor-pointer"
                       >
                         <Gift className="w-3.5 h-3.5" />
-                        <span>ทดลองใช้ฟรี 7 วัน (฿0 วันนี้)</span>
+                        <span>{locale === 'th' ? 'ทดลองใช้งานฟรี 7 วัน (฿0 วันนี้)' : 'Start 7-Day Free Trial (฿0 today)'}</span>
                       </Link>
                     ) : (
                       <Link
@@ -246,7 +250,11 @@ export default function PricingPage() {
                             : 'bg-paper-canvas hover:bg-paper-raised border-2 border-brand-indigo text-brand-indigo'
                         }`}
                       >
-                        <span>{isFree ? 'เริ่มต้นใช้งานฟรี' : `เลือก ${plan.nameEn}`}</span>
+                        <span>
+                          {isFree 
+                            ? (locale === 'th' ? 'เริ่มต้นใช้งานฟรี' : 'Get Started Free') 
+                            : (locale === 'th' ? `เลือก ${plan.nameTh}` : `Select ${plan.nameEn}`)}
+                        </span>
                         <ArrowRight className="w-3.5 h-3.5" />
                       </Link>
                     )}
@@ -263,20 +271,37 @@ export default function PricingPage() {
             <div className="space-y-2 max-w-3xl">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-indigo/10 text-brand-indigo text-xs font-mono font-bold">
                 <Wallet className="w-4 h-4" />
-                <span>MASTER TOKEN WALLET • กระเป๋าตังค์แม่ใบเดียวใช้ได้ทุก Workspace</span>
+                <span>
+                  {locale === 'th' 
+                    ? 'MASTER TOKEN WALLET • กระเป๋าตังค์แม่ใบเดียวใช้ได้ทุกสเปซ' 
+                    : 'MASTER TOKEN WALLET • Unified Multi-Workspace Balance'}
+                </span>
               </div>
               <h3 className="font-serif font-black text-xl sm:text-2xl text-ink-primary">
-                เหรียญ Press Token ก้อนเดียว ไม่ต้องโอนย้ายไปมาระหว่าง Workspace
+                {locale === 'th'
+                  ? 'เหรียญ Press Token ก้อนเดียว ไม่ต้องโอนย้ายไปมาระหว่าง Workspace'
+                  : 'Unified Master Tokens — No Transfers Needed Between Workspaces'}
               </h3>
               <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed">
-                เหรียญทั้งหมดจะถูกผูกไว้ที่บัญชีหลักของคุณ (Owner Master Pool) ไม่ว่าคุณจะสร้างกี่ร้านค้า (เช่น ร้านเสื้อผ้า, ร้านกาแฟ, เพจส่วนตัว) ทั้งหมดสามารถดึงเหรียญจากกระเป๋าเดียวกันไปใช้รัน AI หรือ Force Sync ได้ทันที พร้อมระบบติดตามการใช้เหรียญของลูกทีมรายบุคคลในหน้า <Link href="/settings/team" className="text-brand-indigo font-bold underline">Team Settings</Link>
+                {locale === 'th'
+                  ? 'เหรียญทั้งหมดจะถูกผูกไว้ที่บัญชีหลักของคุณ (Owner Master Pool) ไม่ว่าคุณจะสร้างกี่ร้านค้า (เช่น ร้านเสื้อผ้า, ร้านกาแฟ, เพจส่วนตัว) ทั้งหมดสามารถดึงเหรียญจากกระเป๋าเดียวกันไปใช้รัน AI หรือ Force Sync ได้ทันที พร้อมระบบติดตามการใช้เหรียญของลูกทีมรายบุคคลในหน้า '
+                  : 'All tokens are tied to your primary account (Owner Master Pool). No matter how many workspaces you manage, all can pull tokens from the same wallet for AI runs or force syncs, with per-member usage auditing in '}
+                <Link href="/settings/team" className="text-brand-indigo font-bold underline">
+                  {locale === 'th' ? 'การตั้งค่าทีมงาน' : 'Team Settings'}
+                </Link>
               </p>
             </div>
 
             <div className="p-4 bg-paper-card border border-border-rule rounded-md text-center min-w-[200px] shrink-0 font-mono">
-              <span className="text-xs text-ink-secondary">อัตราความคุ้มค่าทีม 5 คน</span>
-              <p className="font-serif font-black text-2xl text-accent-terracotta mt-1">฿40 / คน</p>
-              <span className="text-[10px] text-ink-muted">ในแผน Creator ฿199</span>
+              <span className="text-xs text-ink-secondary">
+                {locale === 'th' ? 'อัตราความคุ้มค่าทีม 5 คน' : '5-Member Value Rate'}
+              </span>
+              <p className="font-serif font-black text-2xl text-accent-terracotta mt-1">
+                {locale === 'th' ? '฿40 / คน' : '฿40 / member'}
+              </p>
+              <span className="text-[10px] text-ink-muted">
+                {locale === 'th' ? 'ในแผน Creator ฿199' : 'On Creator plan (฿199)'}
+              </span>
             </div>
           </div>
         </section>
@@ -287,37 +312,61 @@ export default function PricingPage() {
             <div className="max-w-3xl mb-8">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-terracotta/10 text-accent-terracotta text-xs font-mono font-bold mb-3">
                 <Coins className="w-4 h-4" />
-                <span>TOKEN TOP-UP • เติมเหรียญเพิ่มแบบไม่มีวันหมดอายุ</span>
+                <span>
+                  {locale === 'th' 
+                    ? 'TOKEN TOP-UP • เติมเหรียญไม่หมดอายุ' 
+                    : 'TOKEN TOP-UP • Non-Expiring Master Tokens'}
+                </span>
               </div>
               <h2 className="font-serif font-black text-2xl sm:text-3xl text-ink-primary">
-                ซื้อ Press Token เพิ่มเมื่อต้องการรัน AI หรือบังคับดึงสถิติสด
+                {locale === 'th'
+                  ? 'ซื้อ Press Token เพิ่มเมื่อต้องการรัน AI หรือบังคับดึงสถิติสด'
+                  : 'Top up Press Tokens for AI operations and on-demand sync'}
               </h2>
               <p className="text-sm text-ink-secondary mt-2">
-                Token ไม่มีวันหมดอายุตราบใดที่บัญชีของคุณยังคงสถานะ Active ใช้งานได้กับระบบวิเคราะห์โพสต์ปัง ดึงยอดวิวย้อนหลังนอกรอบ และปรับขนาดภาพอัตโนมัติ
+                {locale === 'th'
+                  ? 'Token ไม่มีวันหมดอายุตราบใดที่บัญชีของคุณยังคงสถานะ Active ใช้งานได้กับระบบวิเคราะห์โพสต์ปัง ดึงยอดวิวย้อนหลังนอกรอบ และปรับขนาดภาพอัตโนมัติ'
+                  : 'Tokens never expire while your account is active. Use them for post diagnostics, retroactive metrics fetch, and automated video reframing.'}
               </p>
             </div>
 
             {/* Token Consumption Rates Table */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
               <div className="bg-paper-raised border border-border-rule rounded-md p-3 text-center">
-                <p className="text-[11px] text-ink-secondary font-medium">AI Post Diagnosis</p>
+                <p className="text-[11px] text-ink-secondary font-medium">
+                  {locale === 'th' ? 'วินิจฉัยโพสต์' : 'Post Performance Diagnosis'}
+                </p>
                 <p className="font-mono font-black text-lg text-brand-indigo mt-0.5">{TOKEN_RATES.AI_POST_DIAGNOSIS} 🪙</p>
-                <p className="text-[10px] text-ink-muted">วิเคราะห์โพสต์ปัง</p>
+                <p className="text-[10px] text-ink-muted">
+                  {locale === 'th' ? 'วิเคราะห์โพสต์ปัง' : 'Performance Analysis'}
+                </p>
               </div>
               <div className="bg-paper-raised border border-border-rule rounded-md p-3 text-center">
-                <p className="text-[11px] text-ink-secondary font-medium">AI Team Coaching</p>
+                <p className="text-[11px] text-ink-secondary font-medium">
+                  {locale === 'th' ? 'โค้ชชิ่งทีมงาน' : 'AI Team Coaching'}
+                </p>
                 <p className="font-mono font-black text-lg text-brand-indigo mt-0.5">{TOKEN_RATES.AI_KPI_COACHING} 🪙</p>
-                <p className="text-[10px] text-ink-muted">ร่างแผนโค้ชชิ่งลูกทีม</p>
+                <p className="text-[10px] text-ink-muted">
+                  {locale === 'th' ? 'ร่างแผนโค้ชชิ่งลูกทีม' : 'KPI Coaching Outline'}
+                </p>
               </div>
               <div className="bg-paper-raised border border-border-rule rounded-md p-3 text-center">
-                <p className="text-[11px] text-ink-secondary font-medium">Force Sync Now</p>
+                <p className="text-[11px] text-ink-secondary font-medium">
+                  {locale === 'th' ? 'ดึงสถิติสดทันที' : 'Force Sync Now'}
+                </p>
                 <p className="font-mono font-black text-lg text-brand-indigo mt-0.5">{TOKEN_RATES.FORCE_SYNC_NOW} 🪙</p>
-                <p className="text-[10px] text-ink-muted">ดึงยอดวิวย้อนหลังทันที</p>
+                <p className="text-[10px] text-ink-muted">
+                  {locale === 'th' ? 'ดึงยอดวิวย้อนหลังทันที' : 'Instant Metrics Fetch'}
+                </p>
               </div>
               <div className="bg-paper-raised border border-border-rule rounded-md p-3 text-center">
-                <p className="text-[11px] text-ink-secondary font-medium">Smart Auto-Frame</p>
+                <p className="text-[11px] text-ink-secondary font-medium">
+                  {locale === 'th' ? 'ปรับสัดส่วนอัตโนมัติ' : 'Smart Auto-Frame'}
+                </p>
                 <p className="font-mono font-black text-lg text-brand-indigo mt-0.5">{TOKEN_RATES.SMART_AUTOFRAME} 🪙</p>
-                <p className="text-[10px] text-ink-muted">จัดสัดส่วน Story 9:16</p>
+                <p className="text-[10px] text-ink-muted">
+                  {locale === 'th' ? 'จัดสัดส่วน Story 9:16' : 'Auto 9:16 Story Crop'}
+                </p>
               </div>
             </div>
 
@@ -340,13 +389,13 @@ export default function PricingPage() {
                       )}
                     </div>
                     <h4 className="font-serif font-bold text-lg text-ink-primary">
-                      {pack.nameTh}
+                      {locale === 'th' ? pack.nameTh : (pack.nameEn || pack.nameTh)}
                     </h4>
                     <p className="text-2xl font-black text-ink-primary font-serif mt-2">
                       ฿{pack.priceThb}
                     </p>
                     <p className="text-[11px] text-ink-secondary font-mono mt-0.5">
-                      เพียง ฿{pack.pricePerToken.toFixed(2)} / Token
+                      {locale === 'th' ? `เพียง ฿${pack.pricePerToken.toFixed(2)} / Token` : `Only ฿${pack.pricePerToken.toFixed(2)} / Token`}
                     </p>
                   </div>
 
@@ -356,7 +405,9 @@ export default function PricingPage() {
                       className="w-full py-2 px-3 rounded-btn bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-bold transition-colors flex items-center justify-center gap-1.5"
                     >
                       <Coins className="w-3.5 h-3.5" />
-                      <span>เติมเหรียญ {pack.tokens.toLocaleString()} 🪙</span>
+                      <span>
+                        {locale === 'th' ? `เติมเหรียญ ${pack.tokens.toLocaleString()} 🪙` : `Top up ${pack.tokens.toLocaleString()} 🪙`}
+                      </span>
                     </Link>
                   </div>
                 </div>
@@ -370,10 +421,16 @@ export default function PricingPage() {
           <div className="text-center max-w-2xl mx-auto mb-8">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-indigo/10 text-brand-indigo text-xs font-mono font-bold mb-2">
               <Palette className="w-4 h-4" />
-              <span>EDITORIAL THEME PRESETS • 5 สไตล์แท่นพิมพ์</span>
+              <span>
+                {locale === 'th' 
+                  ? 'EDITORIAL THEME PRESETS • 5 สไตล์การพิมพ์' 
+                  : 'EDITORIAL THEME PRESETS • 5 Printing Styles'}
+              </span>
             </div>
             <h2 className="font-serif font-black text-2xl sm:text-3xl text-ink-primary">
-              บรรยากาศแท่นพิมพ์ที่สะท้อนคาแรกเตอร์ของแบรนด์คุณ
+              {locale === 'th'
+                ? 'บรรยากาศแท่นพิมพ์ที่สะท้อนคาแรกเตอร์ของแบรนด์คุณ'
+                : 'Newsroom aesthetics tailored to your brand personality'}
             </h2>
           </div>
 
@@ -407,7 +464,7 @@ export default function PricingPage() {
 
                   <div className="flex items-center justify-between gap-1 mb-1">
                     <span className="font-serif font-bold text-sm text-ink-primary">
-                      {theme.nameEn}
+                      {locale === 'th' ? theme.nameTh : theme.nameEn}
                     </span>
                     <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-paper-canvas text-ink-secondary font-bold">
                       {theme.badge}
@@ -415,7 +472,7 @@ export default function PricingPage() {
                   </div>
 
                   <p className="text-[11px] text-ink-secondary line-clamp-2 leading-relaxed">
-                    {theme.descriptionTh}
+                    {locale === 'th' ? theme.descriptionTh : (theme.descriptionEn || theme.descriptionTh)}
                   </p>
                 </button>
               );

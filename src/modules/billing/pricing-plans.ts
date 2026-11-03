@@ -45,6 +45,7 @@ export interface PricingPlan {
 export interface TokenTopupPack {
   id: 'PACK_S' | 'PACK_M' | 'PACK_L';
   nameTh: string;
+  nameEn?: string;
   tokens: number;
   priceThb: number;
   pricePerToken: number;
@@ -56,6 +57,7 @@ export interface ThemeConfig {
   nameTh: string;
   nameEn: string;
   descriptionTh: string;
+  descriptionEn?: string;
   primaryColor: string;
   bgPreview: string;
   badge: string;
@@ -84,14 +86,14 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
     monthlyPostsLimit: 10,
     supportedThemes: ['NEWSPRINT'],
     features: [
-      { labelTh: '1 Workspace พื้นที่ทำงานหลัก', included: true },
-      { labelTh: 'เชื่อมต่อโซเชียล 2 ช่องทาง', included: true },
-      { labelTh: 'โควต้าโพสต์ 10 ครั้งต่อเดือน', included: true },
-      { labelTh: '30 Master Tokens / เดือน (รีเซ็ตทุกเดือน)', included: true },
-      { labelTh: 'ธีมคลาสสิก Classic Newsprint (กระดาษครีม)', included: true },
-      { labelTh: 'แปะลิงก์ Story 24h & ตั้งเวลาล่วงหน้า', included: false },
-      { labelTh: 'ระบบตรวจอนุมัติงานและสิทธิ์ทีมงาน (RBAC)', included: false },
-      { labelTh: 'ดึงโพสต์กลับฉุกเฉิน (Emergency API Revoke)', included: false },
+      { labelTh: '1 Workspace พื้นที่ทำงานหลัก', labelEn: '1 Primary Workspace', included: true },
+      { labelTh: 'เชื่อมต่อโซเชียล 2 ช่องทาง', labelEn: '2 Connected Social Channels', included: true },
+      { labelTh: 'โควต้าโพสต์ 10 ครั้งต่อเดือน', labelEn: '10 Scheduled Dispatches / Month', included: true },
+      { labelTh: '30 Master Tokens / เดือน (รีเซ็ตทุกเดือน)', labelEn: '30 Master Tokens / Month (Monthly Reset)', included: true },
+      { labelTh: 'ธีมคลาสสิก Classic Newsprint (กระดาษครีม)', labelEn: 'Classic Newsprint Theme', included: true },
+      { labelTh: 'แปะลิงก์ Story 24h & ตั้งเวลาล่วงหน้า', labelEn: '24h Story Link & Advance Scheduling', included: false },
+      { labelTh: 'ระบบตรวจอนุมัติงานและสิทธิ์ทีมงาน (RBAC)', labelEn: 'Editorial Approval & Role Permissions (RBAC)', included: false },
+      { labelTh: 'ดึงโพสต์กลับฉุกเฉิน (Emergency API Revoke)', labelEn: 'Emergency API Post Revocation', included: false },
     ],
   },
   SOLO: {
@@ -114,14 +116,14 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
     trialDays: 7,
     badge: 'ทดลองฟรี 7 วันแรก!',
     features: [
-      { labelTh: 'ทดลองใช้ฟรี 7 วันเต็ม (ไม่มีค่าใช้จ่ายวันนี้)', included: true, highlight: true },
-      { labelTh: '1 Workspace สำหรับลุยเดี่ยวคนเดียว', included: true },
-      { labelTh: 'เชื่อมต่อได้ 5 ช่องทางโซเชียล', included: true },
-      { labelTh: 'โพสต์และตั้งเวลาล่วงหน้าได้ไม่จำกัด', included: true, highlight: true },
-      { labelTh: '150 Master Tokens ต่อเดือน (ทบได้สูงสุด 300 🪙)', included: true },
-      { labelTh: 'แปะลิงก์ IG & Facebook Story 24h', included: true },
-      { labelTh: 'ปลดล็อกธีมโหมดมืด Midnight Gazette (Dark Mode)', included: true },
-      { labelTh: 'ระบบตรวจอนุมัติงานและสิทธิ์ทีมงาน', included: false },
+      { labelTh: 'ทดลองใช้ฟรี 7 วันเต็ม (ไม่มีค่าใช้จ่ายวันนี้)', labelEn: '7-Day Full Free Trial (฿0 Charged Today)', included: true, highlight: true },
+      { labelTh: '1 Workspace สำหรับลุยเดี่ยวคนเดียว', labelEn: '1 Independent Creator Workspace', included: true },
+      { labelTh: 'เชื่อมต่อได้ 5 ช่องทางโซเชียล', labelEn: '5 Connected Social Channels', included: true },
+      { labelTh: 'โพสต์และตั้งเวลาล่วงหน้าได้ไม่จำกัด', labelEn: 'Unlimited Dispatches & Advance Scheduling', included: true, highlight: true },
+      { labelTh: '150 Master Tokens ต่อเดือน (ทบได้สูงสุด 300 🪙)', labelEn: '150 Master Tokens / Month (Rollover up to 300 🪙)', included: true },
+      { labelTh: 'แปะลิงก์ IG & Facebook Story 24h', labelEn: 'IG & Facebook 24h Story Link Stamping', included: true },
+      { labelTh: 'ปลดล็อกธีมโหมดมืด Midnight Gazette (Dark Mode)', labelEn: 'Midnight Gazette Dark Mode Theme', included: true },
+      { labelTh: 'ระบบตรวจอนุมัติงานและสิทธิ์ทีมงาน', labelEn: 'Editorial Approval & Role Permissions', included: false },
     ],
   },
   CREATOR: {
@@ -143,15 +145,15 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
     badge: 'คุ้มค่าที่สุด • ทีม 2-5 คน',
     isPopular: true,
     features: [
-      { labelTh: 'ทีมงานสูงสุด 5 คน (Owner 1 + แอดมิน/คนตัดต่อ 4)', included: true, highlight: true },
-      { labelTh: '3 Workspaces แยกโปรเจกต์หรือหลายแบรนด์', included: true },
-      { labelTh: 'เชื่อมต่อโซเชียลได้สูงสุด 15 ช่องทาง', included: true },
-      { labelTh: 'โพสต์และตั้งเวลาได้ไม่จำกัดตลอดทั้งเดือน', included: true },
-      { labelTh: '600 Master Tokens ต่อเดือน (ทบได้สูงสุด 1,200 🪙)', included: true, highlight: true },
-      { labelTh: 'กระเป๋าแม่ Master Wallet ใช้ได้ทุก Workspace', included: true, highlight: true },
-      { labelTh: 'ระบบตรวจอนุมัติโพสต์และสิทธิ์ทีมงาน (RBAC 4 ระดับ)', included: true },
-      { labelTh: 'ระบบติดตามการใช้ Token ของลูกทีมรายบุคคล', included: true, highlight: true },
-      { labelTh: 'ปลดล็อก 4 ธีม (Newsprint, Midnight, Matcha, Terracotta)', included: true },
+      { labelTh: 'ทีมงานสูงสุด 5 คน (Owner 1 + แอดมิน/คนตัดต่อ 4)', labelEn: 'Up to 5 Team Members (1 Owner + 4 Staff)', included: true, highlight: true },
+      { labelTh: '3 Workspaces แยกโปรเจกต์หรือหลายแบรนด์', labelEn: '3 Workspaces for Multiple Brands/Projects', included: true },
+      { labelTh: 'เชื่อมต่อโซเชียลได้สูงสุด 15 ช่องทาง', labelEn: 'Up to 15 Connected Social Channels', included: true },
+      { labelTh: 'โพสต์และตั้งเวลาได้ไม่จำกัดตลอดทั้งเดือน', labelEn: 'Unlimited Dispatches & Scheduling All Month', included: true },
+      { labelTh: '600 Master Tokens ต่อเดือน (ทบได้สูงสุด 1,200 🪙)', labelEn: '600 Master Tokens / Month (Rollover up to 1,200 🪙)', included: true, highlight: true },
+      { labelTh: 'กระเป๋าแม่ Master Wallet ใช้ได้ทุก Workspace', labelEn: 'Unified Master Wallet Across Workspaces', included: true, highlight: true },
+      { labelTh: 'ระบบตรวจอนุมัติโพสต์และสิทธิ์ทีมงาน (RBAC 4 ระดับ)', labelEn: '4-Tier Editorial Approval & Team RBAC', included: true },
+      { labelTh: 'ระบบติดตามการใช้ Token ของลูกทีมรายบุคคล', labelEn: 'Per-Member Token Usage Auditing', included: true, highlight: true },
+      { labelTh: 'ปลดล็อก 4 ธีม (Newsprint, Midnight, Matcha, Terracotta)', labelEn: '4 Unlocked Themes (Newsprint, Midnight, Matcha, Terracotta)', included: true },
     ],
   },
   STUDIO_PRO: {
@@ -171,14 +173,14 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
     unlimitedPosts: true,
     supportedThemes: ['NEWSPRINT', 'MIDNIGHT', 'MATCHA', 'TERRACOTTA', 'INDIGO'],
     features: [
-      { labelTh: '10 Workspaces แยกตามแบรนด์หรือสาขา', included: true },
-      { labelTh: 'เชื่อมต่อได้สูงสุด 40 ช่องทางโซเชียล', included: true },
-      { labelTh: 'ทีมงานสูงสุด 15 คน แยกสิทธิ์ตามพื้นที่ทำงาน', included: true, highlight: true },
-      { labelTh: '2,500 Master Tokens ต่อเดือน (ทบได้สูงสุด 5,000 🪙)', included: true },
-      { labelTh: 'ระบบวิเคราะห์สถิติคนดู 5 ชั้น + AI Diagnosis ละเอียด', included: true },
-      { labelTh: 'ประเมินเกรด KPI ทีมงานรายบุคคล + พิมพ์ Evaluation Slip', included: true },
-      { labelTh: 'ดึงโพสต์กลับฉุกเฉิน (Emergency API Revoke & Delete)', included: true, highlight: true },
-      { labelTh: 'ปลดล็อกครบ 5 ธีมพรีเมียม (รวม Royal Indigo Executive)', included: true },
+      { labelTh: '10 Workspaces แยกตามแบรนด์หรือสาขา', labelEn: '10 Workspaces for Multi-Brand Branches', included: true },
+      { labelTh: 'เชื่อมต่อได้สูงสุด 40 ช่องทางโซเชียล', labelEn: 'Up to 40 Connected Social Channels', included: true },
+      { labelTh: 'ทีมงานสูงสุด 15 คน แยกสิทธิ์ตามพื้นที่ทำงาน', labelEn: 'Up to 15 Members with Workspace Scoping', included: true, highlight: true },
+      { labelTh: '2,500 Master Tokens ต่อเดือน (ทบได้สูงสุด 5,000 🪙)', labelEn: '2,500 Master Tokens / Month (Rollover up to 5,000 🪙)', included: true },
+      { labelTh: 'ระบบวิเคราะห์สถิติคนดู 5 ชั้น + AI Diagnosis ละเอียด', labelEn: '5-Layer Audience Analytics & Deep AI Diagnosis', included: true },
+      { labelTh: 'ประเมินเกรด KPI ทีมงานรายบุคคล + พิมพ์ Evaluation Slip', labelEn: 'Individual Staff KPI Grading & Slip Printing', included: true },
+      { labelTh: 'ดึงโพสต์กลับฉุกเฉิน (Emergency API Revoke & Delete)', labelEn: 'Emergency API Post Revocation & Deletion', included: true, highlight: true },
+      { labelTh: 'ปลดล็อกครบ 5 ธีมพรีเมียม (รวม Royal Indigo Executive)', labelEn: 'All 5 Themes Unlocked (incl. Royal Indigo)', included: true },
     ],
   },
   AGENCY: {
@@ -199,14 +201,14 @@ export const PRICING_PLANS: Record<PlanTier, PricingPlan> = {
     supportedThemes: ['NEWSPRINT', 'MIDNIGHT', 'MATCHA', 'TERRACOTTA', 'INDIGO'],
     badge: 'สำหรับมืออาชีพ & เอเจนซี่',
     features: [
-      { labelTh: '30 Workspaces แยกพื้นที่ตามแบรนด์ลูกค้าเด็ดขาด', included: true, highlight: true },
-      { labelTh: 'เชื่อมต่อได้สูงสุด 100 ช่องทางโซเชียล', included: true },
-      { labelTh: 'ทีมงานสูงสุด 50 คน แยกสิทธิ์ตามโปรเจกต์', included: true },
-      { labelTh: '8,000 Master Tokens ต่อเดือน + ส่วนลดซื้อ Token เพิ่ม 30%', included: true, highlight: true },
-      { labelTh: 'White-Label Report Header (ใส่โลโก้เอเจนซี่บนรายงาน PDF/CSV)', included: true, highlight: true },
-      { labelTh: 'Priority Queue Serverless Execution ยิงโพสต์ด่วนพิเศษ', included: true },
-      { labelTh: 'ระบบเก็บประวัติจราจรคอมพิวเตอร์และ Audit Trail 90 วันตาม พ.ร.บ.', included: true },
-      { labelTh: 'Dedicated Onboarding & Account Manager ประจำตัว', included: true },
+      { labelTh: '30 Workspaces แยกพื้นที่ตามแบรนด์ลูกค้าเด็ดขาด', labelEn: '30 Isolated Workspaces for Client Brands', included: true, highlight: true },
+      { labelTh: 'เชื่อมต่อได้สูงสุด 100 ช่องทางโซเชียล', labelEn: 'Up to 100 Connected Social Channels', included: true },
+      { labelTh: 'ทีมงานสูงสุด 50 คน แยกสิทธิ์ตามโปรเจกต์', labelEn: 'Up to 50 Team Members with Scoped Roles', included: true },
+      { labelTh: '8,000 Master Tokens ต่อเดือน + ส่วนลดซื้อ Token เพิ่ม 30%', labelEn: '8,000 Master Tokens / Mo + 30% Off Token Top-ups', included: true, highlight: true },
+      { labelTh: 'White-Label Report Header (ใส่โลโก้เอเจนซี่บนรายงาน PDF/CSV)', labelEn: 'White-Label Reports (Custom Agency Branding)', included: true, highlight: true },
+      { labelTh: 'Priority Queue Serverless Execution ยิงโพสต์ด่วนพิเศษ', labelEn: 'Priority Serverless Publishing Queue', included: true },
+      { labelTh: 'ระบบเก็บประวัติจราจรคอมพิวเตอร์และ Audit Trail 90 วันตาม พ.ร.บ.', labelEn: '90-Day Computer Traffic & Compliance Audit Trail', included: true },
+      { labelTh: 'Dedicated Onboarding & Account Manager ประจำตัว', labelEn: 'Dedicated Onboarding & Account Manager', included: true },
     ],
   },
 };
@@ -225,6 +227,7 @@ export const TOKEN_TOPUP_PACKS: TokenTopupPack[] = [
   {
     id: 'PACK_S',
     nameTh: 'Press Token Pack S (300 🪙)',
+    nameEn: 'Starter Spark Pack',
     tokens: 300,
     priceThb: 99,
     pricePerToken: 0.33,
@@ -232,6 +235,7 @@ export const TOKEN_TOPUP_PACKS: TokenTopupPack[] = [
   {
     id: 'PACK_M',
     nameTh: 'Press Token Pack M (1,000 🪙)',
+    nameEn: 'Growth Pulse Pack',
     tokens: 1000,
     priceThb: 259,
     pricePerToken: 0.259,
@@ -240,6 +244,7 @@ export const TOKEN_TOPUP_PACKS: TokenTopupPack[] = [
   {
     id: 'PACK_L',
     nameTh: 'Press Token Pack L (3,500 🪙)',
+    nameEn: 'Agency Flood Pack',
     tokens: 3500,
     priceThb: 690,
     pricePerToken: 0.197,
@@ -256,6 +261,7 @@ export const THEME_CONFIGS: Record<ThemePreset, ThemeConfig> = {
     nameTh: 'Classic Newsprint (ครีมหนังสือพิมพ์)',
     nameEn: 'Classic Newsprint',
     descriptionTh: 'ธีมมาตรฐาน กลิ่นอายกระดาษหนังสือพิมพ์คลาสสิก อบอุ่น สบายตา',
+    descriptionEn: 'Standard theme with a classic newsprint aesthetic, warm and easy on the eyes.',
     primaryColor: '#364165', // Indigo
     bgPreview: '#F3F0E8',
     badge: 'ฟรีทุกแพ็กเกจ',
@@ -266,6 +272,7 @@ export const THEME_CONFIGS: Record<ThemePreset, ThemeConfig> = {
     nameTh: 'Midnight Gazette (โหมดมืดถนอมสายตา)',
     nameEn: 'Midnight Gazette',
     descriptionTh: 'ธีมมืดตัดเส้นขอบสีเงินเข้ม เหมาะสำหรับทำงานกลางคืนและครีเอเตอร์สายเทค',
+    descriptionEn: 'Dark theme with high-contrast silver borders, ideal for night work and tech creators.',
     primaryColor: '#8898AA',
     bgPreview: '#121214',
     badge: 'Solo ขึ้นไป',
@@ -276,6 +283,7 @@ export const THEME_CONFIGS: Record<ThemePreset, ThemeConfig> = {
     nameTh: 'Matcha Botanical (เขียวชาเขียว)',
     nameEn: 'Matcha Botanical',
     descriptionTh: 'สีเขียวธรรมชาติ ผ่อนคลาย เหมาะสำหรับแบรนด์สุขภาพ คาเฟ่ และไลฟ์สไตล์',
+    descriptionEn: 'Relaxing botanical green, perfect for health brands, cafes, and lifestyle publishers.',
     primaryColor: '#1D6F42',
     bgPreview: '#F4F7F4',
     badge: 'Creator ขึ้นไป',
@@ -286,6 +294,7 @@ export const THEME_CONFIGS: Record<ThemePreset, ThemeConfig> = {
     nameTh: 'Kyoto Terracotta (ส้มอิฐเผา)',
     nameEn: 'Kyoto Terracotta',
     descriptionTh: 'โทนสีดินเผาศิลปะร่วมสมัย เพิ่มพลังความกระตือรือร้นและคาแรกเตอร์พรีเมียม',
+    descriptionEn: 'Contemporary ceramic tones that bring vibrant enthusiasm and premium editorial character.',
     primaryColor: '#A24836',
     bgPreview: '#FAEDE7',
     badge: 'Creator ขึ้นไป',
@@ -296,6 +305,7 @@ export const THEME_CONFIGS: Record<ThemePreset, ThemeConfig> = {
     nameTh: 'Royal Indigo Executive (น้ำเงินครามองค์กร)',
     nameEn: 'Royal Indigo Executive',
     descriptionTh: 'โทนสีน้ำเงินกรมท่าระดับผู้บริหาร มั่นคง น่าเชื่อถือ สูงส่ง',
+    descriptionEn: 'Executive deep navy palette offering distinguished trust, stability, and authority.',
     primaryColor: '#1E2B58',
     bgPreview: '#F4F5F9',
     badge: 'Studio Pro ขึ้นไป',

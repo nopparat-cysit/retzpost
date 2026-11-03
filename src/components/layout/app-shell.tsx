@@ -128,7 +128,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
     }
   }, [currentWorkspaces]);
 
-  const { t } = useTranslation();
+  const { t, locale } = useTranslation();
   const activeWorkspace = currentWorkspaces.find((w) => w.id === activeWorkspaceId) || currentWorkspaces[0];
 
   const navItems = [
@@ -213,7 +213,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             className="flex items-center gap-1 px-2.5 py-1.5 bg-brand-indigo text-white text-xs font-semibold rounded-editorial shadow-2xs"
           >
             <Plus className="w-3.5 h-3.5" />
-            <span>New</span>
+            <span>{locale === 'th' ? 'สร้าง' : 'New'}</span>
           </Link>
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -243,7 +243,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
                 </span>
               </div>
               <p className="text-xs font-sans text-ink-secondary mt-0.5">
-                Universal Publishing Desk
+                {locale === 'th' ? 'แท่นพิมพ์ข่าวสารอเนกประสงค์' : 'Universal Publishing Desk'}
               </p>
             </Link>
 
@@ -254,7 +254,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
               className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 px-3 bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-semibold rounded-editorial shadow-xs transition-all active:scale-[0.98]"
             >
               <Plus className="w-4 h-4" />
-              <span>Compose New Dispatch</span>
+              <span>{locale === 'th' ? 'สร้างโพสต์ใหม่' : 'Compose Dispatch'}</span>
             </Link>
           </div>
 
@@ -317,7 +317,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             </div>
             <div className="flex items-center justify-between text-[11px] pt-1 border-t border-border-rule/60">
               <Link href="/pricing" className="text-brand-indigo font-semibold hover:underline">
-                เติมเหรียญ / เปลี่ยนแผน →
+                {locale === 'th' ? 'เติมเหรียญ / เปลี่ยนแผน →' : 'Top up / Upgrade plan →'}
               </Link>
               <Link href="/settings" className="text-ink-secondary hover:text-ink-primary" title="เปลี่ยนธีม">
                 <Palette className="w-3.5 h-3.5" />
