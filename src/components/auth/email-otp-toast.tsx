@@ -4,12 +4,14 @@ import React, { useState, useEffect } from 'react';
 import { Mail, Check, Copy, X, ArrowRight, ShieldCheck, Clock } from 'lucide-react';
 import { EMAIL_NOTIFICATION_EVENT } from '@/modules/auth/otp-service';
 import { EmailNotificationPayload } from '@/modules/auth/auth-types';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 
 interface EmailOtpToastProps {
   onAutofill?: (code: string) => void;
 }
 
 export const EmailOtpToast: React.FC<EmailOtpToastProps> = ({ onAutofill }) => {
+  const { locale } = useTranslation();
   const [notification, setNotification] = useState<EmailNotificationPayload | null>(null);
   const [copied, setCopied] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -88,7 +90,7 @@ export const EmailOtpToast: React.FC<EmailOtpToastProps> = ({ onAutofill }) => {
                 </span>
               </div>
               <p className="text-[10px] font-mono text-ink-secondary truncate">
-                จาก: <span className="text-ink-primary font-medium">security@retzpost.com</span>
+                {locale === 'en' ? 'From:' : 'จาก:'} <span className="text-ink-primary font-medium">security@retzpost.com</span>
               </p>
             </div>
           </div>
@@ -97,7 +99,7 @@ export const EmailOtpToast: React.FC<EmailOtpToastProps> = ({ onAutofill }) => {
             type="button"
             onClick={() => setIsVisible(false)}
             className="text-ink-secondary hover:text-ink-primary p-1 rounded hover:bg-paper-subtle transition-colors"
-            title="ปิดการแจ้งเตือน"
+            title={locale === 'en' ? 'Dismiss' : 'ปิดการแจ้งเตือน'}
           >
             <X className="w-4 h-4" />
           </button>
@@ -106,7 +108,7 @@ export const EmailOtpToast: React.FC<EmailOtpToastProps> = ({ onAutofill }) => {
         {/* Email Body Summary */}
         <div className="bg-paper-subtle/70 rounded-editorial p-2.5 mb-3 border border-border-rule text-xs space-y-1.5">
           <p className="text-[11px] font-medium text-ink-primary">
-            ถึง: <span className="font-mono text-brand-indigo">{notification.to}</span>
+            {locale === 'en' ? 'To:' : 'ถึง:'} <span className="font-mono text-brand-indigo">{notification.to}</span>
           </p>
           <p className="text-[11px] text-ink-secondary leading-snug">
             {notification.subject}
@@ -115,10 +117,10 @@ export const EmailOtpToast: React.FC<EmailOtpToastProps> = ({ onAutofill }) => {
           <div className="pt-1.5 flex items-center justify-between border-t border-border-rule/60">
             <span className="text-[10px] font-mono text-ink-secondary flex items-center gap-1">
               <Clock className="w-3 h-3 text-accent-terracotta" />
-              หมดอายุใน 5 นาที
+              {locale === 'en' ? 'Expires in 5 minutes' : 'หมดอายุใน 5 นาที'}
             </span>
             <div className="flex items-center gap-1.5">
-              <span className="text-[10px] text-ink-secondary font-mono">รหัส OTP:</span>
+              <span className="text-[10px] text-ink-secondary font-mono">{locale === 'en' ? 'OTP Code:' : 'รหัส OTP:'}</span>
               <span className="font-mono font-bold text-sm text-brand-indigo tracking-widest bg-paper-canvas px-2 py-0.5 rounded border border-brand-indigo/30 shadow-2xs">
                 {notification.code}
               </span>
@@ -134,23 +136,23 @@ export const EmailOtpToast: React.FC<EmailOtpToastProps> = ({ onAutofill }) => {
             className="flex-1 py-1.5 px-3 bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-semibold rounded-editorial flex items-center justify-center gap-1.5 shadow-2xs transition-all cursor-pointer active:scale-98"
           >
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>กรอกรหัส {notification.code} อัตโนมัติ</span>
+            <span>{locale === 'en' ? `Autofill ${notification.code}` : `กรอกรหัส ${notification.code} อัตโนมัติ`}</span>
           </button>
           <button
             type="button"
             onClick={handleCopy}
             className="py-1.5 px-2.5 bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule text-xs font-medium rounded-editorial flex items-center justify-center gap-1 transition-colors cursor-pointer"
-            title="คัดลอกรหัส"
+            title={locale === 'en' ? 'Copy code' : 'คัดลอกรหัส'}
           >
             {copied ? (
               <>
                 <Check className="w-3.5 h-3.5 text-semantic-success" />
-                <span className="text-[10px] font-semibold text-semantic-success">คัดลอกแล้ว</span>
+                <span className="text-[10px] font-semibold text-semantic-success">{locale === 'en' ? 'Copied' : 'คัดลอกแล้ว'}</span>
               </>
             ) : (
               <>
                 <Copy className="w-3.5 h-3.5 text-ink-secondary" />
-                <span className="text-[10px]">คัดลอก</span>
+                <span className="text-[10px]">{locale === 'en' ? 'Copy' : 'คัดลอก'}</span>
               </>
             )}
           </button>

@@ -693,7 +693,7 @@ export default function LandingPage() {
               title="Instant Unlock: Get all 100 coins immediately"
             >
               <Zap className="w-3 h-3 fill-amber-950" />
-              <span>รับ 100 Coins ทันที</span>
+              <span>{locale === 'en' ? 'Claim 100 Coins Instantly' : 'รับ 100 Coins ทันที'}</span>
             </button>
           ) : (
             <button
@@ -701,7 +701,7 @@ export default function LandingPage() {
               className="py-1.5 px-3.5 rounded-full text-[11px] font-mono font-bold bg-[#A24836] text-white hover:bg-[#8e3f2f] shadow-md animate-bounce flex items-center gap-1.5 cursor-pointer"
             >
               <Ticket className="w-3.5 h-3.5" />
-              <span>เปิดดูตั๋ว Dream Pass!</span>
+              <span>{locale === 'en' ? 'View Dream Pass Ticket!' : 'เปิดดูตั๋ว Dream Pass!'}</span>
             </button>
           )}
         </div>
@@ -1030,10 +1030,10 @@ export default function LandingPage() {
             <span>02 / THE PUBLISHING PROBLEM</span>
           </div>
           <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
-            5 อาการปวดหัวของการโพสต์หลายโซเชียล ที่ RETZPOST ตั้งใจมาแก้ให้จบ
+            {locale === 'en' ? '5 Publishing Headaches That RETZPOST Solves For Good' : '5 อาการปวดหัวของการโพสต์หลายโซเชียล ที่ RETZPOST ตั้งใจมาแก้ให้จบ'}
           </h2>
           <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
-            ลองกดเลือกอาการที่คุณเจอบ่อยที่สุดจากแถบด้านซ้าย แล้วดูว่าเมื่อย้ายเข้ามาอยู่ใน Dream Press Desk ชีวิตจะเบาลงอย่างไร
+            {locale === 'en' ? 'Select the bottleneck you face most often and see how Dream Press Desk streamlines your publishing workflow.' : 'ลองกดเลือกอาการที่คุณเจอบ่อยที่สุดจากแถบด้านซ้าย แล้วดูว่าเมื่อย้ายเข้ามาอยู่ใน Dream Press Desk ชีวิตจะเบาลงอย่างไร'}
           </p>
 
           {/* Mode Switcher Tabs */}
@@ -1047,7 +1047,7 @@ export default function LandingPage() {
                 problemViewMode === 'CASES' ? 'bg-[#364165] text-white shadow-xs' : 'text-stone-600 hover:text-black'
               }`}
             >
-              5 เคสเจาะลึก (Interactive Case Explorer)
+              {locale === 'en' ? '5 Deep Cases (Interactive Case Explorer)' : '5 เคสเจาะลึก (Interactive Case Explorer)'}
             </button>
             <button
               onClick={() => {
@@ -1058,7 +1058,7 @@ export default function LandingPage() {
                 problemViewMode === 'SUMMARY' ? 'bg-[#A24836] text-white shadow-xs' : 'text-stone-600 hover:text-black'
               }`}
             >
-              เปรียบเทียบภาพรวม (Side-by-Side Summary)
+              {locale === 'en' ? 'Side-by-Side Summary' : 'เปรียบเทียบภาพรวม (Side-by-Side Summary)'}
             </button>
           </div>
         </div>
@@ -1399,7 +1399,7 @@ export default function LandingPage() {
                     <div className="p-5 rounded-2xl bg-white border border-black/10 shadow-2xs space-y-3">
                       <div className="flex items-center justify-between pb-2 border-b border-black/5 font-mono text-[10px]">
                         <span className="font-bold text-stone-500 uppercase tracking-wider">
-                          THE BOTTLENECK / ข้อจำกัดเดิม
+                          {locale === 'en' ? 'THE BOTTLENECK / CONVENTIONAL LOSS' : 'THE BOTTLENECK / ข้อจำกัดเดิม'}
                         </span>
                         <span className="text-red-700 font-bold bg-red-50 border border-red-200 px-2 py-0.5 rounded">
                           {cur.bottleneckTag}
@@ -1422,7 +1422,7 @@ export default function LandingPage() {
                     <div className="p-5 rounded-2xl bg-white border-2 border-[#364165] shadow-xs space-y-3">
                       <div className="flex items-center justify-between pb-2 border-b border-[#364165]/10 font-mono text-[10px]">
                         <span className="font-bold text-[#364165] uppercase tracking-wider">
-                          RETZPOST DESK / วิธีการแก้ไข
+                          {locale === 'en' ? 'RETZPOST DESK / THE RESOLUTION' : 'RETZPOST DESK / วิธีการแก้ไข'}
                         </span>
                         <span className="text-emerald-800 font-bold bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded">
                           {cur.solutionTag}
@@ -1624,7 +1624,7 @@ export default function LandingPage() {
                             className="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-stone-950 font-bold text-[11px] cursor-pointer transition-colors shadow-xs inline-flex items-center gap-1.5"
                           >
                             {case3SimulatedRecovered ? (
-                              <span>รีเซ็ตสถานะ Token</span>
+                              <span>{locale === 'en' ? 'Reset Token State' : 'รีเซ็ตสถานะ Token'}</span>
                             ) : (
                               <>
                                 <EditorialZap size={13} />
@@ -1725,7 +1725,7 @@ export default function LandingPage() {
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                           {[
                             { id: 'LUNCH' as const, label: '12:15 LUNCH SURGE', icon: EditorialSun, mult: '+45% Reach', desc: 'Office break timeline' },
-                            { id: 'PEAK' as const, label: '19:30 PRIME PEAK', icon: EditorialFlame, mult: '+120% Reach', desc: 'Bangkok golden hour (แนะนำ)' },
+                            { id: 'PEAK' as const, label: '19:30 PRIME PEAK', icon: EditorialFlame, mult: '+120% Reach', desc: locale === 'en' ? 'Bangkok golden hour (Recommended)' : 'Bangkok golden hour (แนะนำ)' },
                             { id: 'LATE' as const, label: '21:45 LATE STREAM', icon: EditorialMoon, mult: '+65% Reach', desc: 'Bedtime relaxation feeds' },
                           ].map((slot) => {
                             const isSlotActive = case5ActiveSlot === slot.id;
@@ -2049,14 +2049,14 @@ export default function LandingPage() {
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs font-mono text-[#364165] font-bold uppercase tracking-wider">
               <Sparkles className="w-3.5 h-3.5 text-amber-500 animate-bounce" />
-              <span>04 / LIVE BROADCAST CONSOLE • แท่นควบคุมการจัดพิมพ์และกระจายสื่อ</span>
+              <span>{locale === 'en' ? '04 / LIVE BROADCAST CONSOLE • DISPATCH & INGESTION STAGE' : '04 / LIVE BROADCAST CONSOLE • แท่นควบคุมการจัดพิมพ์และกระจายสื่อ'}</span>
             </div>
             <h2 className="font-serif font-bold text-2xl sm:text-4xl text-[#1A1A18]">
               The Hands-On Publishing Studio Console
             </h2>
             <p className="text-xs sm:text-sm text-stone-600 max-w-2xl leading-relaxed">
-              ทดลองควบคุม 4 แท่นผลิตสื่อดิจิทัล: เลือกช่องทางเผยแพร่, ปรับจูนโทนเฉพาะแพลตฟอร์ม, ล็อกเวลาทองคำกรุงเทพฯ และตรวจเช็ก Safe-Zone เสมือนกำลังส่งสัญญาณจริง
-              <span className="block text-stone-500 mt-0.5">สะสมเครดิตจัดพิมพ์ครบ 100 Coins เพื่อปลดล็อก <b>7-Day Dream Pass</b> ด้านล่าง หรือคลิก <b>&quot;รับ 100 Coins ทันที&quot;</b> ได้เลย</span>
+              {locale === 'en' ? 'Experience hands-on control across 4 digital broadcasting stages: select channels, adapt platform tones, lock Bangkok golden hours, and test safe-zones.' : 'ทดลองควบคุม 4 แท่นผลิตสื่อดิจิทัล: เลือกช่องทางเผยแพร่, ปรับจูนโทนเฉพาะแพลตฟอร์ม, ล็อกเวลาทองคำกรุงเทพฯ และตรวจเช็ก Safe-Zone เสมือนกำลังส่งสัญญาณจริง'}
+              <span className="block text-stone-500 mt-0.5">{locale === 'en' ? <>Earn 100 Coins to unlock your <b>7-Day Dream Pass</b> below, or click <b>&quot;Claim 100 Coins Instantly&quot;</b> now.</> : <>สะสมเครดิตจัดพิมพ์ครบ 100 Coins เพื่อปลดล็อก <b>7-Day Dream Pass</b> ด้านล่าง หรือคลิก <b>&quot;รับ 100 Coins ทันที&quot;</b> ได้เลย</>}</span>
             </p>
           </div>
 
@@ -2067,7 +2067,7 @@ export default function LandingPage() {
               className="py-2.5 px-5 rounded-xl animate-gold-shimmer text-amber-950 font-mono text-xs font-bold flex items-center gap-2 shadow-[0_4px_20px_rgba(245,158,11,0.5)] ring-2 ring-amber-300 hover:scale-105 active:scale-95 transition-all cursor-pointer"
             >
               <EditorialZap size={16} />
-              <span>รับ 100 Coins ทันที</span>
+              <span>{locale === 'en' ? 'Claim 100 Coins Instantly' : 'รับ 100 Coins ทันที'}</span>
             </button>
 
             <button
@@ -2076,7 +2076,7 @@ export default function LandingPage() {
               title="Reset playground back to 0"
             >
               <RotateCcw className="w-3 h-3" />
-              <span>รีเซ็ต</span>
+              <span>{locale === 'en' ? 'Reset' : 'รีเซ็ต'}</span>
             </button>
 
             <div className="p-2 px-3 bg-white border border-black/10 rounded-xl shadow-xs flex items-center gap-2">
@@ -2124,9 +2124,9 @@ export default function LandingPage() {
                 }`}
               >
                 {completedTasks.destinations ? (
-                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>สำเร็จ (+20 Coins)</span></span>
+                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>{locale === 'en' ? 'Claimed (+20 Coins)' : 'สำเร็จ (+20 Coins)'}</span></span>
                 ) : (
-                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>รับทันที (+20 Coins)</span></span>
+                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>{locale === 'en' ? 'Instant Claim (+20 Coins)' : 'รับทันที (+20 Coins)'}</span></span>
                 )}
               </button>
             </div>
@@ -2172,10 +2172,10 @@ export default function LandingPage() {
                 {selectedPlatforms.length >= 2 ? (
                   <span className="inline-flex items-center gap-1 text-emerald-700 font-bold">
                     <EditorialCheck size={11} />
-                    <span>ตรงตามเงื่อนไข</span>
+                    <span>{locale === 'en' ? 'Condition Met' : 'ตรงตามเงื่อนไข'}</span>
                   </span>
                 ) : (
-                  'เลือกอีก 1 ช่องทางเพื่อรับเหรียญ'
+                  locale === 'en' ? 'Select 1 more channel to claim' : 'เลือกอีก 1 ช่องทางเพื่อรับเหรียญ'
                 )}
               </span>
             </div>
@@ -2212,9 +2212,9 @@ export default function LandingPage() {
                 }`}
               >
                 {completedTasks.caption ? (
-                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>สำเร็จ (+25 Coins)</span></span>
+                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>{locale === 'en' ? 'Claimed (+25 Coins)' : 'สำเร็จ (+25 Coins)'}</span></span>
                 ) : (
-                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>รับทันที (+25 Coins)</span></span>
+                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>{locale === 'en' ? 'Instant Claim (+25 Coins)' : 'รับทันที (+25 Coins)'}</span></span>
                 )}
               </button>
             </div>
@@ -2310,9 +2310,9 @@ export default function LandingPage() {
                 }`}
               >
                 {completedTasks.schedule ? (
-                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>สำเร็จ (+25 Coins)</span></span>
+                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>{locale === 'en' ? 'Claimed (+25 Coins)' : 'สำเร็จ (+25 Coins)'}</span></span>
                 ) : (
-                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>รับทันที (+25 Coins)</span></span>
+                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>{locale === 'en' ? 'Instant Claim (+25 Coins)' : 'รับทันที (+25 Coins)'}</span></span>
                 )}
               </button>
             </div>
@@ -2387,9 +2387,9 @@ export default function LandingPage() {
                 }`}
               >
                 {completedTasks.rescue ? (
-                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>สำเร็จ (+30 Coins)</span></span>
+                  <span className="flex items-center gap-1"><EditorialCheck size={12} /><span>{locale === 'en' ? 'Claimed (+30 Coins)' : 'สำเร็จ (+30 Coins)'}</span></span>
                 ) : (
-                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>รับทันที (+30 Coins)</span></span>
+                  <span className="flex items-center gap-1"><EditorialZap size={12} /><span>{locale === 'en' ? 'Instant Claim (+30 Coins)' : 'รับทันที (+30 Coins)'}</span></span>
                 )}
               </button>
             </div>
@@ -2484,8 +2484,8 @@ export default function LandingPage() {
               </div>
               <p className="text-xs text-stone-600 mt-0.5">
                 {isPassUnlocked
-                  ? 'ยินดีด้วย! คุณสะสมครบ 100 Press Coins แล้ว สามารถเลื่อนลงไปดูตั๋ว 7-Day Dream Pass ได้ทันที'
-                  : 'ทดลองสั่งการ 4 แท่นพิมพ์ด้านบนเพื่อสะสมเหรียญให้ครบ หรือเลื่อนลงไปดูตราเหรียญและตั๋วด้านล่าง'}
+                  ? (locale === 'en' ? 'Congratulations! You collected 100 Press Coins. Scroll down to claim your 7-Day Dream Pass.' : 'ยินดีด้วย! คุณสะสมครบ 100 Press Coins แล้ว สามารถเลื่อนลงไปดูตั๋ว 7-Day Dream Pass ได้ทันที')
+                  : (locale === 'en' ? 'Test the 4 playground stations above to collect coins, or scroll down to inspect your medallion below.' : 'ทดลองสั่งการ 4 แท่นพิมพ์ด้านบนเพื่อสะสมเหรียญให้ครบ หรือเลื่อนลงไปดูตราเหรียญและตั๋วด้านล่าง')}
               </p>
             </div>
           </div>
@@ -2496,7 +2496,7 @@ export default function LandingPage() {
                 href="#press-coins"
                 className="py-3 px-6 rounded-xl bg-stone-900 hover:bg-black text-white font-mono text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer active:scale-95"
               >
-                <span>ตรวจดูสมุดเหรียญ (Press Coins) ↓</span>
+                <span>{locale === 'en' ? 'Inspect Coin Ledger (Press Coins) ↓' : 'ตรวจดูสมุดเหรียญ (Press Coins) ↓'}</span>
               </a>
             ) : (
               <button
@@ -2507,7 +2507,7 @@ export default function LandingPage() {
                 className="py-3 px-6 rounded-xl bg-[#A24836] text-white hover:bg-[#8e3f2f] text-xs font-mono font-bold flex items-center gap-2 transition-all cursor-pointer shadow-lg animate-bounce"
               >
                 <Ticket className="w-4 h-4" />
-                <span>ไปที่ตั๋ว Dream Pass →</span>
+                <span>{locale === 'en' ? 'Go to Dream Pass Ticket →' : 'ไปที่ตั๋ว Dream Pass →'}</span>
               </button>
             )}
           </div>
@@ -2527,7 +2527,7 @@ export default function LandingPage() {
               The Currency of Publishing Precision
             </h2>
             <p className="font-sans text-sm text-stone-600 leading-relaxed">
-              เหรียญตราเกียรติยศแห่งโต๊ะบรรณาธิการ RETZPOST หล่อขึ้นเพื่อความแม่นยำในการจัดพิมพ์ ลองคลิกเพื่อพลิกดูเหรียญแบบ 360° ทั้งด้านหน้าและด้านหลัง
+              {locale === 'en' ? 'The honorary medallion of the RETZPOST newsroom, cast for publishing precision. Click to flip the coin 360° front and back.' : 'เหรียญตราเกียรติยศแห่งโต๊ะบรรณาธิการ RETZPOST หล่อขึ้นเพื่อความแม่นยำในการจัดพิมพ์ ลองคลิกเพื่อพลิกดูเหรียญแบบ 360° ทั้งด้านหน้าและด้านหลัง'}
             </p>
           </div>
 
@@ -2551,7 +2551,7 @@ export default function LandingPage() {
                     playChimeSound(soundEnabled);
                   }}
                   className="w-full h-full rounded-full bg-[radial-gradient(ellipse_at_center,_#241E18_0%,_#13100D_65%,_#090807_100%)] shadow-[inset_0_6px_20px_rgba(0,0,0,0.95)] flex items-center justify-center p-3 cursor-pointer group hover:scale-[1.02] transition-transform duration-300"
-                  title="คลิกเพื่อพลิกดูเหรียญ 360°"
+                  title={locale === 'en' ? 'Click to flip coin 360°' : 'คลิกเพื่อพลิกดูเหรียญ 360°'}
                 >
                   <PressCoinIcon size={168} isFlipped={isCoinFlipped} />
                 </div>
@@ -2570,8 +2570,8 @@ export default function LandingPage() {
                   <RotateCcw className={`w-3.5 h-3.5 text-amber-400 transition-transform duration-500 ${isCoinFlipped ? 'rotate-180' : ''}`} />
                   <span>
                     {isCoinFlipped
-                      ? 'กำลังแสดง: ตราประทับกรุงเทพฯ (คลิกเพื่อพลิกกลับ)'
-                      : 'คลิกเพื่อพลิกดูตราสัญลักษณ์ด้านหลัง 360°'}
+                      ? (locale === 'en' ? 'Showing: Bangkok Seal (Click to flip back)' : 'กำลังแสดง: ตราประทับกรุงเทพฯ (คลิกเพื่อพลิกกลับ)')
+                      : (locale === 'en' ? 'Click to flip and inspect reverse seal 360°' : 'คลิกเพื่อพลิกดูตราสัญลักษณ์ด้านหลัง 360°')}
                   </span>
                 </button>
               </div>
@@ -2585,7 +2585,7 @@ export default function LandingPage() {
                   24K Solid Gold Relief Proof • 60-Tooth Reeded Milled Rim
                 </p>
                 <p className="text-xs text-stone-300 font-sans leading-relaxed max-w-sm mx-auto pt-2">
-                  เหรียญตราเกียรติยศแห่งโต๊ะบรรณาธิการ RETZPOST หล่อขึ้นเพื่อยกย่องความแม่นยำในการจัดพิมพ์ สะสมผ่านการทดสอบ 4 สถานีด้านบน เพื่อนำไปประทับตราครั่งปลดล็อกตั๋ว 7-Day Dream Pass
+                  {locale === 'en' ? 'The honorary medallion of the RETZPOST newsroom, cast to honor editorial publishing precision. Collect through the 4 interactive stations above to wax-seal your 7-Day Dream Pass.' : 'เหรียญตราเกียรติยศแห่งโต๊ะบรรณาธิการ RETZPOST หล่อขึ้นเพื่อยกย่องความแม่นยำในการจัดพิมพ์ สะสมผ่านการทดสอบ 4 สถานีด้านบน เพื่อนำไปประทับตราครั่งปลดล็อกตั๋ว 7-Day Dream Pass'}
                 </p>
               </div>
             </div>
@@ -2612,12 +2612,12 @@ export default function LandingPage() {
                     {isPassUnlocked ? (
                       <>
                         <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700" />
-                        <span>ตั๋ว Dream Pass ปลดล็อกแล้ว</span>
+                        <span>{locale === 'en' ? 'Dream Pass Ticket Unlocked' : 'ตั๋ว Dream Pass ปลดล็อกแล้ว'}</span>
                       </>
                     ) : (
                       <>
                         <Lock className="w-3.5 h-3.5 text-amber-700" />
-                        <span>เหลืออีก {100 - coins} Coins เพื่อปลดล็อก</span>
+                        <span>{locale === 'en' ? `${100 - coins} More Coins to Unlock` : `เหลืออีก ${100 - coins} Coins เพื่อปลดล็อก`}</span>
                       </>
                     )}
                   </span>
@@ -2690,10 +2690,10 @@ export default function LandingPage() {
                   >
                     <span className="flex items-center gap-2">
                       <Sparkles className="w-4 h-4 text-amber-600 group-hover:scale-110 transition-transform" />
-                      <span>ทดลองเล่น 4 สตูดิโอด้านบน เพื่อสะสมเหรียญให้ครบ 100 Coins</span>
+                      <span>{locale === 'en' ? 'Test 4 studios above to collect 100 Coins' : 'ทดลองเล่น 4 สตูดิโอด้านบน เพื่อสะสมเหรียญให้ครบ 100 Coins'}</span>
                     </span>
                     <span className="text-[#364165] font-bold flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                      ขึ้นไปที่สตูดิโอ ↑
+                      {locale === 'en' ? 'Up to Studio ↑' : 'ขึ้นไปที่สตูดิโอ ↑'}
                     </span>
                   </a>
                 ) : (
@@ -2705,7 +2705,7 @@ export default function LandingPage() {
                     className="w-full p-4 rounded-2xl bg-[#A24836] hover:bg-[#8e3f2f] text-white flex items-center justify-center gap-2 text-xs font-mono font-bold shadow-md cursor-pointer transition-all hover:scale-[1.01] active:scale-98"
                   >
                     <Ticket className="w-4 h-4" />
-                    <span>สะสมเหรียญครบ 100 แล้ว! เลื่อนลงไปประทับตราตั๋ว 7-Day Dream Pass ทันที ↓</span>
+                    <span>{locale === 'en' ? 'Collected 100 Coins! Scroll down to stamp your 7-Day Dream Pass now ↓' : 'สะสมเหรียญครบ 100 แล้ว! เลื่อนลงไปประทับตราตั๋ว 7-Day Dream Pass ทันที ↓'}</span>
                   </button>
                 )}
               </div>
@@ -2726,7 +2726,7 @@ export default function LandingPage() {
             The Full-Spectrum Publishing Studio
           </h2>
           <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed max-w-2xl mx-auto">
-            สำรวจห้องปฏิบัติการผลิตคอนเทนต์จริงของ RETZPOST ที่ผสานความแม่นยำระดับห้องข่าว เข้ากับเวิร์กโฟลว์ของครีเอเตอร์ยุคใหม่ ลองคลิกสลับแท็บเพื่อดูหน้าจอระบบจริง
+            {locale === 'en' ? 'Explore the actual RETZPOST production lab, blending newsroom precision with modern creator workflows. Click tabs to switch live screens.' : 'สำรวจห้องปฏิบัติการผลิตคอนเทนต์จริงของ RETZPOST ที่ผสานความแม่นยำระดับห้องข่าว เข้ากับเวิร์กโฟลว์ของครีเอเตอร์ยุคใหม่ ลองคลิกสลับแท็บเพื่อดูหน้าจอระบบจริง'}
           </p>
         </div>
 
@@ -3103,7 +3103,7 @@ export default function LandingPage() {
 
                       <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[10px] text-amber-900 font-sans leading-relaxed flex items-start gap-1.5">
                         <EditorialStar size={12} className="shrink-0 mt-0.5" />
-                        <span><b>Bangkok Prime Peak (19:30 ICT):</b> ช่วยเพิ่มอัตราการมองเห็นและการเข้าถึง (Reach Multiplier) ขึ้นเฉลี่ย <b>+2.4 เท่า</b> สำหรับคอนเทนต์ภาษาไทย</span>
+                        <span>{locale === 'en' ? <><b>Bangkok Prime Peak (19:30 ICT):</b> Boosts reach multiplier by an average of <b>+2.4x</b> during Thai peak engagement hours.</> : <><b>Bangkok Prime Peak (19:30 ICT):</b> ช่วยเพิ่มอัตราการมองเห็นและการเข้าถึง (Reach Multiplier) ขึ้นเฉลี่ย <b>+2.4 เท่า</b> สำหรับคอนเทนต์ภาษาไทย</>}</span>
                       </div>
                     </div>
                   </div>
@@ -3134,9 +3134,9 @@ export default function LandingPage() {
                 <div className="flex flex-wrap items-center gap-2 font-mono text-xs">
                   <div className="flex items-center gap-1.5 px-3 py-1.5 bg-white border border-black/10 rounded-xl text-stone-700 shadow-2xs">
                     <Search className="w-3.5 h-3.5 text-stone-400" />
-                    <span className="text-stone-400">ค้นหาไฟล์ Asset...</span>
+                    <span className="text-stone-400">{locale === 'en' ? 'Search Assets...' : 'ค้นหาไฟล์ Asset...'}</span>
                   </div>
-                  <span className="px-3 py-1.5 bg-[#1A1A18] text-white font-bold rounded-xl shadow-xs">ทั้งหมด (128)</span>
+                  <span className="px-3 py-1.5 bg-[#1A1A18] text-white font-bold rounded-xl shadow-xs">{locale === 'en' ? 'All (128)' : 'ทั้งหมด (128)'}</span>
                   <span className="px-3 py-1.5 bg-white hover:bg-stone-50 border border-black/10 text-stone-700 rounded-xl cursor-pointer">4K Masters (42)</span>
                   <span className="px-3 py-1.5 bg-white hover:bg-stone-50 border border-black/10 text-stone-700 rounded-xl cursor-pointer">Vertical 9:16 (56)</span>
                   <span className="px-3 py-1.5 bg-white hover:bg-stone-50 border border-black/10 text-stone-700 rounded-xl cursor-pointer">Carousels (18)</span>
@@ -3212,7 +3212,7 @@ export default function LandingPage() {
 
                       {/* Main Caption Textarea Mock */}
                       <div className="p-3.5 bg-stone-50 rounded-xl border border-black/10 font-sans text-xs sm:text-sm text-[#1A1A18] leading-relaxed">
-                        ยินดีต้อนรับสู่สตูดิโอ RETZPOST — วันนี้เราเปิดตัวเอนจินกระจายสัญญาณฉบับสมบูรณ์ โพสต์วิดีโอ 4K และรูปภาพไปยัง YouTube, Instagram, TikTok และ Facebook ได้พร้อมกันในคลิกเดียว พร้อมระบบตรวจจับ Safe-Zone อัตโนมัติ!
+                        {locale === 'en' ? 'Welcome to RETZPOST Studio — Today we launch our complete multi-channel engine. Dispatch 4K video and images to YouTube, Instagram, TikTok, and Facebook simultaneously with automatic Safe-Zone detection!' : 'ยินดีต้อนรับสู่สตูดิโอ RETZPOST — วันนี้เราเปิดตัวเอนจินกระจายสัญญาณฉบับสมบูรณ์ โพสต์วิดีโอ 4K และรูปภาพไปยัง YouTube, Instagram, TikTok และ Facebook ได้พร้อมกันในคลิกเดียว พร้อมระบบตรวจจับ Safe-Zone อัตโนมัติ!'}
                       </div>
 
                       {/* First Comment Box for IG */}
@@ -3286,7 +3286,7 @@ export default function LandingPage() {
                     </div>
 
                     <div className="text-center font-mono text-[10px] text-stone-500">
-                      ระบบคำนวณตำแหน่งซับไตเติลและโลโก้ ไม่ให้ชนกับปุ่มไลก์และแถบเสียง
+                      {locale === 'en' ? 'System calculates subtitle and logo placement to prevent overlap with like buttons and audio overlays.' : 'ระบบคำนวณตำแหน่งซับไตเติลและโลโก้ ไม่ให้ชนกับปุ่มไลก์และแถบเสียง'}
                     </div>
                   </div>
                 </div>
@@ -3425,7 +3425,7 @@ export default function LandingPage() {
                       <span>21:15 ICT (Night Owl)</span>
                     </span>
                   </div>
-                  <span className="text-stone-400">คลิกที่วันเพื่อตั้งค่าเวลาเผยแพร่</span>
+                  <span className="text-stone-400">{locale === 'en' ? 'Click on a date to schedule dispatch' : 'คลิกที่วันเพื่อตั้งค่าเวลาเผยแพร่'}</span>
                 </div>
               </div>
             )}
@@ -3531,7 +3531,7 @@ export default function LandingPage() {
               Engineered for Serious Publishing
             </h2>
             <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed max-w-2xl mx-auto">
-              8 เสาหลักทางวิศวกรรมของ RETZPOST ที่เปลี่ยนความวุ่นวายของการจัดการหลายโซเชียล ให้กลายเป็นเวิร์กโฟลว์ระดับมืออาชีพที่แม่นยำ ไม่ตกหล่น และวางใจได้ในทุกวินาที
+              {locale === 'en' ? '8 engineering pillars of RETZPOST that transform multi-social chaos into a precise, dependable newsroom workflow.' : '8 เสาหลักทางวิศวกรรมของ RETZPOST ที่เปลี่ยนความวุ่นวายของการจัดการหลายโซเชียล ให้กลายเป็นเวิร์กโฟลว์ระดับมืออาชีพที่แม่นยำ ไม่ตกหล่น และวางใจได้ในทุกวินาที'}
             </p>
           </div>
 
@@ -3555,7 +3555,7 @@ export default function LandingPage() {
                   Upload Once, Stream Everywhere in Full 4K
                 </h3>
                 <p className="text-xs sm:text-sm text-stone-600 font-sans leading-relaxed">
-                  อัปโหลดไฟล์ Master 4K ProRes หรือ H.265 คุณภาพสูงสุดเพียงไฟล์เดียว ระบบจะทรานส์โค้ดแยกบิตเรตและจัดส่งเข้า 5 แพลตฟอร์มอย่างเหมาะสมที่สุด โดยไม่ลดทอนคุณภาพสีหรือความคมชัด
+                  {locale === 'en' ? 'Upload a single Master 4K ProRes or H.265 file. The system transcodes bitrates and dispatches across 5 platforms natively without loss of color fidelity or sharpness.' : 'อัปโหลดไฟล์ Master 4K ProRes หรือ H.265 คุณภาพสูงสุดเพียงไฟล์เดียว ระบบจะทรานส์โค้ดแยกบิตเรตและจัดส่งเข้า 5 แพลตฟอร์มอย่างเหมาะสมที่สุด โดยไม่ลดทอนคุณภาพสีหรือความคมชัด'}
                 </p>
               </div>
 
@@ -3629,7 +3629,7 @@ export default function LandingPage() {
                   Subtitles & Logos Never Clipped
                 </h3>
                 <p className="text-xs text-stone-600 font-sans leading-relaxed">
-                  ระบบจำลองกรอบอินเทอร์เฟซจริงของ TikTok และ Instagram Reels เตือนตำแหน่งข้อความที่เสี่ยงถูกปุ่ม Like, คอมเมนต์ หรือชื่อช่องบดบังทันที
+                  {locale === 'en' ? 'Simulates TikTok and Instagram Reels UI overlays in real time, warning against subtitle collisions with like buttons, comment fields, or channel tags.' : 'ระบบจำลองกรอบอินเทอร์เฟซจริงของ TikTok และ Instagram Reels เตือนตำแหน่งข้อความที่เสี่ยงถูกปุ่ม Like, คอมเมนต์ หรือชื่อช่องบดบังทันที'}
                 </p>
               </div>
 
@@ -3656,7 +3656,7 @@ export default function LandingPage() {
                     <span>Active Telemetry Verification</span>
                   </div>
                   <p className="text-stone-400 text-[10px] font-sans leading-relaxed">
-                    ระบบคำนวณระยะขอบจอ (Safe Margin) ป้องกันผู้ชมเลื่อนผ่านคลิปเพราะอ่านซับไตเติลไม่เห็น
+                    {locale === 'en' ? 'Calculates safe margins to prevent viewers scrolling past due to unreadable captions.' : 'ระบบคำนวณระยะขอบจอ (Safe Margin) ป้องกันผู้ชมเลื่อนผ่านคลิปเพราะอ่านซับไตเติลไม่เห็น'}
                   </p>
                   <span className="inline-block px-2 py-0.5 rounded bg-white/10 text-amber-200 text-[9px] font-mono">
                     Supported: Reels, Shorts & TikTok
@@ -3685,7 +3685,7 @@ export default function LandingPage() {
                   Bangkok Prime Peak Engine
                 </h4>
                 <p className="text-xs text-stone-600 font-sans leading-relaxed">
-                  คลิกเดียวล็อกช่วงเวลาทองคำที่คนไทยออนไลน์มากที่สุด ไม่ต้องสับสนกับ Timezone หรือตั้งนาฬิกาปลุกมากดโพสต์เอง
+                  {locale === 'en' ? 'One click locks peak Bangkok engagement hours without timezone confusion or manual alarms.' : 'คลิกเดียวล็อกช่วงเวลาทองคำที่คนไทยออนไลน์มากที่สุด ไม่ต้องสับสนกับ Timezone หรือตั้งนาฬิกาปลุกมากดโพสต์เอง'}
                 </p>
               </div>
 
@@ -3737,7 +3737,7 @@ export default function LandingPage() {
                   AES-256 GCM Token Vault
                 </h4>
                 <p className="text-xs text-stone-300 font-sans leading-relaxed">
-                  ปลอดภัยสูงสุดด้วยการเข้ารหัสโทเค็น OAuth 2.0 แยกอิสระ ไม่มีใครสามารถเห็นรหัสผ่านของคุณ แม้แต่ทีมงานของระบบ
+                  {locale === 'en' ? 'Maximum security via isolated OAuth 2.0 token vault. No one can ever see your passwords, not even our internal engineers.' : 'ปลอดภัยสูงสุดด้วยการเข้ารหัสโทเค็น OAuth 2.0 แยกอิสระ ไม่มีใครสามารถเห็นรหัสผ่านของคุณ แม้แต่ทีมงานของระบบ'}
                 </p>
               </div>
 
@@ -3777,7 +3777,7 @@ export default function LandingPage() {
                   Isolated Partial Retry Recovery
                 </h4>
                 <p className="text-xs text-stone-600 font-sans leading-relaxed">
-                  หากโซเชียลช่องทางใดเกิด Rate Limit ระบบจะตัดตอนแยก Retry เฉพาะช่องทางนั้น โดยไม่โพสต์ซ้ำไปยังช่องทางที่สำเร็จแล้ว
+                  {locale === 'en' ? 'If a platform encounters rate limits, our fault-isolated workers retry only that channel without double-posting to already successful destinations.' : 'หากโซเชียลช่องทางใดเกิด Rate Limit ระบบจะตัดตอนแยก Retry เฉพาะช่องทางนั้น โดยไม่โพสต์ซ้ำไปยังช่องทางที่สำเร็จแล้ว'}
                 </p>
               </div>
 
@@ -3823,7 +3823,7 @@ export default function LandingPage() {
                   One Story Root, Five Dialects
                 </h4>
                 <p className="text-xs text-stone-600 font-sans leading-relaxed">
-                  เขียนแกนเรื่องหลักเพียงจุดเดียว แต่ปรับแต่งแคปชันเฉพาะแพลตฟอร์มได้อย่างอิสระ แยก First Comment สำหรับ IG และคุม 280 ตัวใน X
+                  {locale === 'en' ? 'Compose the core editorial message once, with full per-platform nuance controls: dedicated Instagram First Comment and 280-char enforcement on X.' : 'เขียนแกนเรื่องหลักเพียงจุดเดียว แต่ปรับแต่งแคปชันเฉพาะแพลตฟอร์มได้อย่างอิสระ แยก First Comment สำหรับ IG และคุม 280 ตัวใน X'}
                 </p>
               </div>
 
@@ -3865,7 +3865,7 @@ export default function LandingPage() {
                   Millisecond Precision Queue
                 </h4>
                 <p className="text-xs text-stone-600 font-sans leading-relaxed">
-                  คลัสเตอร์เวิร์กเกอร์ทำงานคู่ขนาน ส่งสัญญาณไปยังปลายทางพร้อมกันในระดับมิลลิวินาที ไม่มีการต่อแถวรอคิวนานจนเสียจังหวะ
+                  {locale === 'en' ? 'Concurrent ingestion cluster dispatches signals simultaneously in milliseconds without queue delays.' : 'คลัสเตอร์เวิร์กเกอร์ทำงานคู่ขนาน ส่งสัญญาณไปยังปลายทางพร้อมกันในระดับมิลลิวินาที ไม่มีการต่อแถวรอคิวนานจนเสียจังหวะ'}
                 </p>
               </div>
 
@@ -3908,7 +3908,7 @@ export default function LandingPage() {
                   Omni-Channel Creative ROI
                 </h4>
                 <p className="text-xs text-stone-600 font-sans leading-relaxed">
-                  รวมยอดวิว อัตราการดูคลิปจนจบ และ Engagement จากทุกช่องทางไว้ในจอเดียว ชี้ชัดว่าช่องทางไหนสร้างผลกระทบสูงสุด
+                  {locale === 'en' ? 'Consolidates views, completion rates, and engagement across all channels onto one unified pane, pinpointing what drives the highest impact.' : 'รวมยอดวิว อัตราการดูคลิปจนจบ และ Engagement จากทุกช่องทางไว้ในจอเดียว ชี้ชัดว่าช่องทางไหนสร้างผลกระทบสูงสุด'}
                 </p>
               </div>
 
@@ -3945,10 +3945,10 @@ export default function LandingPage() {
             08 / BUILT FOR CREATIVE SCALE
           </span>
           <h2 className="font-serif font-bold text-3xl sm:text-4xl lg:text-5xl text-[#1A1A18]">
-            สถาปัตยกรรมโต๊ะพิมพ์ที่ออกแบบมาเพื่อทุกสเกลงาน
+            {locale === 'en' ? 'Press Desk Architecture Engineered For Every Scale' : 'สถาปัตยกรรมโต๊ะพิมพ์ที่ออกแบบมาเพื่อทุกสเกลงาน'}
           </h2>
           <p className="font-sans text-sm sm:text-base text-stone-600 leading-relaxed">
-            ไม่ว่าคุณจะผลิตคอนเทนต์คนเดียว หรือบริหารการสื่อสารระดับสตูดิโอหลายแบรนด์พร้อมกัน RETZPOST ตอบโจทย์ความแม่นยำในทุกมิติ
+            {locale === 'en' ? 'Whether you are a solo creator or managing enterprise communications across multi-brand studios, RETZPOST delivers precision across every dimension.' : 'ไม่ว่าคุณจะผลิตคอนเทนต์คนเดียว หรือบริหารการสื่อสารระดับสตูดิโอหลายแบรนด์พร้อมกัน RETZPOST ตอบโจทย์ความแม่นยำในทุกมิติ'}
           </p>
         </div>
 
@@ -3960,28 +3960,28 @@ export default function LandingPage() {
                 id: 'SOLO' as const,
                 num: '01',
                 title: 'Solo Creator',
-                sub: 'ยูทูบเบอร์ & สตรีมเมอร์',
+                sub: locale === 'en' ? 'YouTubers & Live Streamers' : 'ยูทูบเบอร์ & สตรีมเมอร์',
                 color: '#364165',
               },
               {
                 id: 'AGENCY' as const,
                 num: '02',
                 title: 'Brand Agency',
-                sub: 'ทีม SMM จัดการหลายแบรนด์',
+                sub: locale === 'en' ? 'SMM Teams Managing Multiple Brands' : 'ทีม SMM จัดการหลายแบรนด์',
                 color: '#A24836',
               },
               {
                 id: 'NEWSROOM' as const,
                 num: '03',
                 title: 'Media Newsroom',
-                sub: 'สำนักข่าว & สื่อออนไลน์',
+                sub: locale === 'en' ? 'Newsrooms & Digital Publishers' : 'สำนักข่าว & สื่อออนไลน์',
                 color: '#1D6F42',
               },
               {
                 id: 'STUDIO' as const,
                 num: '04',
                 title: '4K Production',
-                sub: 'โปรดักชันเฮาส์ไฟล์ใหญ่',
+                sub: locale === 'en' ? 'High-Res Production Houses' : 'โปรดักชันเฮาส์ไฟล์ใหญ่',
                 color: '#C98836',
               },
             ].map((scale) => {
@@ -4038,25 +4038,25 @@ export default function LandingPage() {
                       SCALE 01 • SOLO CREATOR & VIDEO BROADCASTER
                     </span>
                     <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1A1A18]">
-                      ตัดต่อคลิปเดียว ปล่อยครบทุกฟีดใน 2 นาที โดยไม่ต้องจ้างทีมช่วยโพสต์
+                      {locale === 'en' ? 'Edit one video, dispatch across all feeds in 2 minutes without hiring an extra posting team' : 'ตัดต่อคลิปเดียว ปล่อยครบทุกฟีดใน 2 นาที โดยไม่ต้องจ้างทีมช่วยโพสต์'}
                     </h3>
                   </div>
                   <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-mono text-xs font-bold shrink-0 border border-emerald-200">
-                    ⏱️ ประหยัดเวลา 15+ ชม./สัปดาห์
+                    {locale === 'en' ? '⏱️ Save 15+ hours/week' : '⏱️ ประหยัดเวลา 15+ ชม./สัปดาห์'}
                   </span>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#364165] block">Universal Master Ingestion</b>
-                    <p className="text-stone-600 text-[11px] font-sans">อัปโหลดไฟล์ 4K แนวนอนครั้งเดียว ระบบจัดวางเฟรมแนวตั้ง 9:16 ให้ทันที</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'Upload horizontal 4K once; system generates vertical 9:16 crop immediately' : 'อัปโหลดไฟล์ 4K แนวนอนครั้งเดียว ระบบจัดวางเฟรมแนวตั้ง 9:16 ให้ทันที'}</p>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#364165] block">AI Safe-Zone Framing</b>
-                    <p className="text-stone-600 text-[11px] font-sans">มองเห็นกรอบปุ่ม Like ของ Reels & TikTok ก่อนกดส่ง ซับไตเติลไม่โดนบัง</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'Preview Reels & TikTok UI overlay guides before sending; subtitles never clipped' : 'มองเห็นกรอบปุ่ม Like ของ Reels & TikTok ก่อนกดส่ง ซับไตเติลไม่โดนบัง'}</p>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#364165] block">Bangkok Peak Gold Slot</b>
-                    <p className="text-stone-600 text-[11px] font-sans">คลิกเดียวล็อกเวลา 19:30 น. ปล่อยคลิปตอนคนไทยออนไลน์มากที่สุด</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'One click locks 19:30 ICT to publish when Thai viewers are most active' : 'คลิกเดียวล็อกเวลา 19:30 น. ปล่อยคลิปตอนคนไทยออนไลน์มากที่สุด'}</p>
                   </div>
                 </div>
               </div>
@@ -4070,7 +4070,7 @@ export default function LandingPage() {
                       SCALE 02 • SOCIAL MEDIA MANAGEMENT & MULTI-BRAND AGENCY
                     </span>
                     <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1A1A18]">
-                      บริหาร 10+ บัญชีลูกค้าพร้อมกัน แยก Workspaces ชัดเจน ป้องกันการโพสต์ผิดเพจ
+                      {locale === 'en' ? 'Manage 10+ client brands simultaneously with isolated Workspaces, preventing cross-posting accidents' : 'บริหาร 10+ บัญชีลูกค้าพร้อมกัน แยก Workspaces ชัดเจน ป้องกันการโพสต์ผิดเพจ'}
                     </h3>
                   </div>
                   <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 font-mono text-xs font-bold shrink-0 border border-amber-200 flex items-center gap-1.5">
@@ -4081,15 +4081,15 @@ export default function LandingPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#A24836] block">Channel Vault Separation</b>
-                    <p className="text-stone-600 text-[11px] font-sans">สลับโต๊ะทำงานแต่ละแบรนด์ได้ในคลิกเดียว บัญชีและ Token แยกเก็บเข้ารหัส</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'Switch brand desks in one click; accounts and tokens encrypted separately' : 'สลับโต๊ะทำงานแต่ละแบรนด์ได้ในคลิกเดียว บัญชีและ Token แยกเก็บเข้ารหัส'}</p>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#A24836] block">Custom Hashtag Rulesets</b>
-                    <p className="text-stone-600 text-[11px] font-sans">บันทึกชุดแท็กประจำแบรนด์ แทรกอัตโนมัติตามข้อกำหนดของแต่ละโซเชียล</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'Save brand hashtag presets, automatically injected per platform rules' : 'บันทึกชุดแท็กประจำแบรนด์ แทรกอัตโนมัติตามข้อกำหนดของแต่ละโซเชียล'}</p>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#A24836] block">Autonomous Token Recovery</b>
-                    <p className="text-stone-600 text-[11px] font-sans">ระบบ Worker กู้คืนเซสชันอัตโนมัติ ลดปัญหาโพสต์ไม่ติดในวันหยุด</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'Automated worker retry logic recovers sessions to ensure holiday dispatches succeed' : 'ระบบ Worker กู้คืนเซสชันอัตโนมัติ ลดปัญหาโพสต์ไม่ติดในวันหยุด'}</p>
                   </div>
                 </div>
               </div>
@@ -4103,7 +4103,7 @@ export default function LandingPage() {
                       SCALE 03 • DIGITAL NEWSROOM & EDITORIAL DESK
                     </span>
                     <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1A1A18]">
-                      คัดกรองข่าวด่วนด้วยระบบ Review Gate ปล่อยพาดหัวพร้อมกันทุกช่องทางไม่มีดีเลย์
+                      {locale === 'en' ? 'Gate breaking news through editorial Review Gate; publish headlines across all channels with zero delay' : 'คัดกรองข่าวด่วนด้วยระบบ Review Gate ปล่อยพาดหัวพร้อมกันทุกช่องทางไม่มีดีเลย์'}
                     </h3>
                   </div>
                   <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-800 font-mono text-xs font-bold shrink-0 border border-emerald-200 flex items-center gap-1.5">
@@ -4114,15 +4114,15 @@ export default function LandingPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#1D6F42] block">Editorial Gateways</b>
-                    <p className="text-stone-600 text-[11px] font-sans">นักข่าวร่างต้นฉบับ บรรณาธิการกด Approve ก่อนส่งสัญญาณออกสู่สาธารณะ</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'Reporters draft copy; editors click Approve prior to public broadcast' : 'นักข่าวร่างต้นฉบับ บรรณาธิการกด Approve ก่อนส่งสัญญาณออกสู่สาธารณะ'}</p>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#1D6F42] block">Breaking Flash Broadcast</b>
-                    <p className="text-stone-600 text-[11px] font-sans">ยิงแจ้งเตือนข่าวด่วนเข้าสู่ Facebook, X, และ Telegram พร้อมกันเสี้ยววินาที</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'Broadcast breaking alerts into Facebook, X, and Telegram simultaneously in fractions of a second' : 'ยิงแจ้งเตือนข่าวด่วนเข้าสู่ Facebook, X, และ Telegram พร้อมกันเสี้ยววินาที'}</p>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#1D6F42] block">Audit Log & Traceability</b>
-                    <p className="text-stone-600 text-[11px] font-sans">บันทึกประวัติการเผยแพร่ทุกขั้นตอน ตรวจสอบย้อนหลังได้ 100%</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'Complete audit logs of every publishing stage, 100% compliant and traceable' : 'บันทึกประวัติการเผยแพร่ทุกขั้นตอน ตรวจสอบย้อนหลังได้ 100%'}</p>
                   </div>
                 </div>
               </div>
@@ -4136,7 +4136,7 @@ export default function LandingPage() {
                       SCALE 04 • COMMERCIAL PRODUCTION & 4K STUDIOS
                     </span>
                     <h3 className="font-serif font-bold text-xl sm:text-2xl text-[#1A1A18]">
-                      รักษาบิตเรตและสีสันของไฟล์ 4K Master ดั้งเดิม ไม่ถูกบีบอัดจนเสียคุณภาพ
+                      {locale === 'en' ? 'Preserve original 4K Master bitrate and color spaces without compression artifacts' : 'รักษาบิตเรตและสีสันของไฟล์ 4K Master ดั้งเดิม ไม่ถูกบีบอัดจนเสียคุณภาพ'}
                     </h3>
                   </div>
                   <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 font-mono text-xs font-bold shrink-0 border border-amber-200 flex items-center gap-1.5">
@@ -4147,15 +4147,15 @@ export default function LandingPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#C98836] block">Pro Codec Probing</b>
-                    <p className="text-stone-600 text-[11px] font-sans">วิเคราะห์ Container, Keyframe Intervals, และ Color Space ก่อนส่ง</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'Analyzes Container, Keyframe Intervals, and Color Space prior to dispatch' : 'วิเคราะห์ Container, Keyframe Intervals, และ Color Space ก่อนส่ง'}</p>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#C98836] block">Full 4K Video Passthrough</b>
-                    <p className="text-stone-600 text-[11px] font-sans">ส่งสัญญาณไปยัง YouTube 4K v3 API โดยไม่มีการลดทอนบิตเรต</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'Dispatches to YouTube 4K v3 API with zero bitrate throttling' : 'ส่งสัญญาณไปยัง YouTube 4K v3 API โดยไม่มีการลดทอนบิตเรต'}</p>
                   </div>
                   <div className="p-3.5 bg-stone-50 rounded-2xl border border-black/5 space-y-1">
                     <b className="text-[#C98836] block">Zero Redundant Renders</b>
-                    <p className="text-stone-600 text-[11px] font-sans">ไม่ต้อง Export ไฟล์แยกขนาดให้หนักเครื่องอีกต่อไป</p>
+                    <p className="text-stone-600 text-[11px] font-sans">{locale === 'en' ? 'No more exporting separate file dimensions cluttering your drives' : 'ไม่ต้อง Export ไฟล์แยกขนาดให้หนักเครื่องอีกต่อไป'}</p>
                   </div>
                 </div>
               </div>
@@ -4169,32 +4169,32 @@ export default function LandingPage() {
           <div className="editorial-paper-card p-7 sm:p-9 rounded-3xl border border-red-200/80 space-y-5 bg-white/80">
             <div className="flex items-center justify-between pb-3 border-b border-red-100">
               <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-red-100 text-red-700 uppercase">
-                TRADITIONAL DISPATCH • วิธีแบบเดิม
+                {locale === 'en' ? 'TRADITIONAL DISPATCH • CONVENTIONAL WORKFLOW' : 'TRADITIONAL DISPATCH • วิธีแบบเดิม'}
               </span>
               <span className="font-mono text-xs text-red-600 font-bold flex items-center gap-1.5">
                 <EditorialAlert size={13} />
-                <span>สูญเสียเวลา 45 นาที/คลิป</span>
+                <span>{locale === 'en' ? '45 min wasted per clip' : 'สูญเสียเวลา 45 นาที/คลิป'}</span>
               </span>
             </div>
             <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
-              ความยุ่งยากของการจัดการแบบกระจัดกระจาย
+              {locale === 'en' ? 'The Complexity of Fragmented Publishing' : 'ความยุ่งยากของการจัดการแบบกระจัดกระจาย'}
             </h3>
             <ul className="space-y-3 font-sans text-xs sm:text-sm text-stone-600">
               <li className="flex items-start gap-2.5">
                 <EditorialCross size={15} className="shrink-0 mt-0.5" />
-                <span><b>Export แยก 3-4 ไฟล์</b> — ต้องเรนเดอร์ 16:9, 9:16, 1:1 แยกโปรเจกต์ เปลืองพื้นที่ฮาร์ดดิสก์</span>
+                <span><b>{locale === 'en' ? 'Export 3-4 separate files' : 'Export แยก 3-4 ไฟล์'}</b> — {locale === 'en' ? 'Rendering 16:9, 9:16, 1:1 across projects wastes hard drive space' : 'ต้องเรนเดอร์ 16:9, 9:16, 1:1 แยกโปรเจกต์ เปลืองพื้นที่ฮาร์ดดิสก์'}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <EditorialCross size={15} className="shrink-0 mt-0.5" />
-                <span><b>ก๊อปวางข้าม 5 บราวเซอร์</b> — นั่งไล่แก้แฮชแท็กทีละแท็บ เสี่ยงพิมพ์ผิดและหลุดบริบท</span>
+                <span><b>{locale === 'en' ? 'Copy-paste across 5 browsers' : 'ก๊อปวางข้าม 5 บราวเซอร์'}</b> — {locale === 'en' ? 'Editing hashtags per tab risks typos and contextual drift' : 'นั่งไล่แก้แฮชแท็กทีละแท็บ เสี่ยงพิมพ์ผิดและหลุดบริบท'}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <EditorialCross size={15} className="shrink-0 mt-0.5" />
-                <span><b>Token หมดอายุเงียบ</b> — ไม่มีระบบตรวจสอบอัตโนมัติ มารู้ตัวอีกทีคลิปไม่ขึ้น ยอดวิวจม</span>
+                <span><b>{locale === 'en' ? 'Silent token expiration' : 'Token หมดอายุเงียบ'}</b> — {locale === 'en' ? 'No automated monitoring; discovering days later that clips never published' : 'ไม่มีระบบตรวจสอบอัตโนมัติ มารู้ตัวอีกทีคลิปไม่ขึ้น ยอดวิวจม'}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <EditorialCross size={15} className="shrink-0 mt-0.5" />
-                <span><b>หลุดช่วง Golden Hour</b> — คำนวณเวลา Timezone สับสน หรือลืมโพสต์ช่วงเวลาคนออนไลน์</span>
+                <span><b>{locale === 'en' ? 'Missed Golden Hours' : 'หลุดช่วง Golden Hour'}</b> — {locale === 'en' ? 'Timezone calculation errors or forgetting to post during peak hours' : 'คำนวณเวลา Timezone สับสน หรือลืมโพสต์ช่วงเวลาคนออนไลน์'}</span>
               </li>
             </ul>
           </div>
@@ -4203,31 +4203,31 @@ export default function LandingPage() {
           <div className="editorial-paper-card p-7 sm:p-9 rounded-3xl border border-emerald-200/80 space-y-5 bg-white/95 shadow-[0_8px_30px_rgba(29,111,66,0.06)]">
             <div className="flex items-center justify-between pb-3 border-b border-emerald-100">
               <span className="font-mono text-[10px] font-bold tracking-wider px-2.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800 uppercase">
-                RETZPOST DESK • โต๊ะจัดพิมพ์แบบบูรณาการ
+                {locale === 'en' ? 'RETZPOST DESK • INTEGRATED PUBLISHING' : 'RETZPOST DESK • โต๊ะจัดพิมพ์แบบบูรณาการ'}
               </span>
               <span className="font-mono text-xs text-emerald-700 font-bold flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> จบใน 2 นาที/คลิป
+                <CheckCircle2 className="w-3.5 h-3.5" /> {locale === 'en' ? 'Finished in 2 min/clip' : 'จบใน 2 นาที/คลิป'}
               </span>
             </div>
             <h3 className="font-serif font-bold text-xl text-[#1A1A18]">
-              ความแม่นยำและเสถียรภาพของการคุมงานพิมพ์สื่อ
+              {locale === 'en' ? 'Precision and Reliability in Modern Newsroom Publishing' : 'ความแม่นยำและเสถียรภาพของการคุมงานพิมพ์สื่อ'}
             </h3>
             <ul className="space-y-3 font-sans text-xs sm:text-sm text-stone-600">
               <li className="flex items-start gap-2.5">
                 <EditorialCheck size={15} className="shrink-0 mt-0.5" />
-                <span><b>Universal Master 4K Ingestion</b> — อัปโหลดไฟล์เดียว ระบบแปลง 16:9 สู่ 9:16 พร้อม AI Safe-Zone ทันที</span>
+                <span><b>{locale === 'en' ? 'Universal Master 4K Ingestion' : 'Universal Master 4K Ingestion'}</b> — {locale === 'en' ? 'Upload once; system converts 16:9 to 9:16 with AI Safe-Zone instantly' : 'อัปโหลดไฟล์เดียว ระบบแปลง 16:9 สู่ 9:16 พร้อม AI Safe-Zone ทันที'}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <EditorialCheck size={15} className="shrink-0 mt-0.5" />
-                <span><b>Synchronized Platform Nuances</b> — แต่งแคปชันจุดเดียว ปรับจูน Character Limit และแท็กรายช่องทางได้สดๆ</span>
+                <span><b>{locale === 'en' ? 'Synchronized Platform Nuances' : 'Synchronized Platform Nuances'}</b> — {locale === 'en' ? 'Compose once; fine-tune character limits and tags per channel live' : 'แต่งแคปชันจุดเดียว ปรับจูน Character Limit และแท็กรายช่องทางได้สดๆ'}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <EditorialCheck size={15} className="shrink-0 mt-0.5" />
-                <span><b>Isolated Queue Workers</b> — ท่อส่งสัญญาณแยกขาดจากกัน พร้อมระบบ Exponential Backoff Auto-Retry</span>
+                <span><b>{locale === 'en' ? 'Isolated Queue Workers' : 'Isolated Queue Workers'}</b> — {locale === 'en' ? 'Fault-isolated pipelines with exponential backoff auto-retry' : 'ท่อส่งสัญญาณแยกขาดจากกัน พร้อมระบบ Exponential Backoff Auto-Retry'}</span>
               </li>
               <li className="flex items-start gap-2.5">
                 <EditorialCheck size={15} className="shrink-0 mt-0.5" />
-                <span><b>Bangkok Peak Precision</b> — ล็อกเวลาทองคำ (เช่น 19:30 น.) ปล่อยสัญญาณพร้อมกันทุกโซเชียลแบบแม่นยำ</span>
+                <span><b>{locale === 'en' ? 'Bangkok Peak Precision' : 'Bangkok Peak Precision'}</b> — {locale === 'en' ? 'Lock golden hours (e.g. 19:30 ICT); simultaneous dispatch across all socials' : 'ล็อกเวลาทองคำ (เช่น 19:30 น.) ปล่อยสัญญาณพร้อมกันทุกโซเชียลแบบแม่นยำ'}</span>
               </li>
             </ul>
           </div>
@@ -4510,10 +4510,10 @@ export default function LandingPage() {
                 {coins >= 100 ? (
                   <span className="inline-flex items-center gap-1 text-emerald-800 font-bold">
                     <EditorialCheck size={11} />
-                    <span>สะสมเหรียญครบแล้ว! ตั๋วปลดล็อกพร้อมประทับตราใช้งาน</span>
+                    <span>{locale === 'en' ? 'Collected all coins! Ticket unlocked and ready to stamp' : 'สะสมเหรียญครบแล้ว! ตั๋วปลดล็อกพร้อมประทับตราใช้งาน'}</span>
                   </span>
                 ) : (
-                  'สะสมให้ครบ 100 Coins เพื่อปลดล็อกตั๋ว หรือกดรับเหรียญได้ทันทีที่นี่'
+                  locale === 'en' ? 'Collect 100 Coins to unlock your ticket, or claim instantly here' : 'สะสมให้ครบ 100 Coins เพื่อปลดล็อกตั๋ว หรือกดรับเหรียญได้ทันทีที่นี่'
                 )}
               </p>
             </div>
@@ -4527,12 +4527,12 @@ export default function LandingPage() {
                 className="py-2.5 px-5 rounded-xl animate-gold-shimmer text-amber-950 font-bold flex items-center gap-2 shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer text-xs"
               >
                 <EditorialZap size={16} />
-                <span>รับ 100 Coins ทันที (ปลดล็อกตั๋ว)</span>
+                <span>{locale === 'en' ? 'Claim 100 Coins Instantly (Unlock Ticket)' : 'รับ 100 Coins ทันที (ปลดล็อกตั๋ว)'}</span>
               </button>
             ) : (
               <span className="px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-700" />
-                <span>ตั๋วปลดล็อกแล้ว (UNLOCKED)</span>
+                <span>{locale === 'en' ? 'TICKET UNLOCKED' : 'ตั๋วปลดล็อกแล้ว (UNLOCKED)'}</span>
               </span>
             )}
           </div>
@@ -4653,14 +4653,14 @@ export default function LandingPage() {
                   <span>Current balance: <b>{coins} / 100 Press Coins</b></span>
                 </div>
                 <p className="text-xs text-stone-500">
-                  ทดลองสั่งการแท่นพิมพ์ใน Studio ด้านบน หรือคลิกปุ่ม &quot;รับ 100 Coins ทันที&quot; เพื่อเปิดใช้งานตั๋ว
+                  {locale === 'en' ? 'Try the Studio playground above, or click "Claim 100 Coins Instantly" to activate ticket.' : 'ทดลองสั่งการแท่นพิมพ์ใน Studio ด้านบน หรือคลิกปุ่ม "รับ 100 Coins ทันที" เพื่อเปิดใช้งานตั๋ว'}
                 </p>
                 <button
                   onClick={handleClaimAllCoins}
                   className="py-2.5 px-6 rounded-xl animate-gold-shimmer text-amber-950 font-bold text-xs shadow-md transition-all hover:scale-105 active:scale-95 cursor-pointer flex items-center justify-center gap-2 mx-auto"
                 >
                   <EditorialZap size={14} />
-                  <span>รับ 100 Coins ทันที และเปิดตั๋ว →</span>
+                  <span>{locale === 'en' ? 'Claim 100 Coins Instantly & Open Ticket →' : 'รับ 100 Coins ทันที และเปิดตั๋ว →'}</span>
                 </button>
               </div>
             ) : !isPassRedeemed ? (
@@ -4670,10 +4670,10 @@ export default function LandingPage() {
                   className="w-full py-4 px-6 rounded-2xl bg-[#A24836] hover:bg-[#8e3f2f] text-white font-bold text-base shadow-xl transition-all cursor-pointer flex items-center justify-center gap-2 transform active:scale-[0.98] ring-2 ring-amber-400/50"
                 >
                   <Sticker name="approved-seal" size="sm" inline />
-                  <span>Redeem Dream Pass (ประทับตราครั่งเปิดใช้งานตั๋ว)</span>
+                  <span>{locale === 'en' ? 'Redeem Dream Pass (Stamp Wax Seal to Activate)' : 'Redeem Dream Pass (ประทับตราครั่งเปิดใช้งานตั๋ว)'}</span>
                 </button>
                 <p className="text-[11px] text-center font-mono text-stone-500">
-                  *การกดประทับตราในที่นี้เป็นการจำลองประสบการณ์ตั๋วเพื่อความสนุก ไม่มีการผูกมัดหรือตัดบัตรใดๆ
+                  {locale === 'en' ? '*Wax-stamping here is a gamified interactive experience with zero commitment or billing.' : '*การกดประทับตราในที่นี้เป็นการจำลองประสบการณ์ตั๋วเพื่อความสนุก ไม่มีการผูกมัดหรือตัดบัตรใดๆ'}
                 </p>
               </div>
             ) : (
@@ -4686,7 +4686,7 @@ export default function LandingPage() {
                     Your Dream Pass is ready. You&apos;ve completed the publishing experience!
                   </h4>
                   <p className="text-xs sm:text-sm text-stone-600 max-w-xl mx-auto font-sans leading-relaxed">
-                    คุณได้ปลดล็อกตั๋วสำเร็จแล้ว หากพร้อมเริ่มใช้งานจริงกับช่องทางโซเชียลของคุณ สามารถกดสมัครทดลองใช้จริงได้ฟรี 7 วัน
+                    {locale === 'en' ? 'You have successfully unlocked your ticket. Ready to start with your actual social channels? Start your 7-day free trial.' : 'คุณได้ปลดล็อกตั๋วสำเร็จแล้ว หากพร้อมเริ่มใช้งานจริงกับช่องทางโซเชียลของคุณ สามารถกดสมัครทดลองใช้จริงได้ฟรี 7 วัน'}
                   </p>
                 </div>
 
@@ -4696,13 +4696,13 @@ export default function LandingPage() {
                     href="/register"
                     className="py-3 px-6 rounded-xl bg-[#364165] hover:bg-[#2B3452] text-white font-bold shadow-md transition-colors flex items-center justify-center gap-2 text-sm"
                   >
-                    <span>สมัครทดลองใช้จริงฟรี 7 วัน (ไม่ต้องใช้บัตรเครดิต) →</span>
+                    <span>{locale === 'en' ? 'Start 7-Day Free Trial (No Credit Card Required) →' : 'สมัครทดลองใช้จริงฟรี 7 วัน (ไม่ต้องใช้บัตรเครดิต) →'}</span>
                   </Link>
                   <Link
                     href="/docs"
                     className="py-3 px-4 rounded-xl bg-white hover:bg-stone-50 border border-black/10 text-[#1A1A18] font-semibold flex items-center justify-center"
                   >
-                    <span>อ่านคู่มือระบบ (Docs)</span>
+                    <span>{locale === 'en' ? 'Read Documentation (Docs)' : 'อ่านคู่มือระบบ (Docs)'}</span>
                   </Link>
                 </div>
               </div>

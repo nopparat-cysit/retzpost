@@ -154,7 +154,7 @@ export function subscribeToAuthChange(callback: (user: AuthUser | null) => void)
 /**
  * Log in using Gmail or Username
  */
-export function loginUser(identifier: string, password: string): AuthResponse {
+export function loginUser(identifier: string, password: string, locale?: string): AuthResponse {
   const accounts = getStoredAccounts();
   const cleanId = identifier.trim().toLowerCase();
 
@@ -167,14 +167,16 @@ export function loginUser(identifier: string, password: string): AuthResponse {
   if (!found) {
     return {
       success: false,
-      message: 'ไม่พบบัญชีผู้ใช้งานหรืออีเมลนี้ในระบบ กรุณาตรวจสอบอีกครั้งหรือกดสมัครสมาชิก',
+      message: locale === 'en' ? 'User account or email not found. Please check again or register.' : 'ไม่พบบัญชีผู้ใช้งานหรืออีเมลนี้ในระบบ กรุณาตรวจสอบอีกครั้งหรือกดสมัครสมาชิก',
+      messageEn: 'User account or email not found. Please check again or register.',
     };
   }
 
   if (found.passwordHash !== password) {
     return {
       success: false,
-      message: 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง หรือคลิก "ลืมรหัสผ่าน"',
+      message: locale === 'en' ? 'Invalid password. Please try again or click "Forgot Password".' : 'รหัสผ่านไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง หรือคลิก "ลืมรหัสผ่าน"',
+      messageEn: 'Invalid password. Please try again or click "Forgot Password".',
     };
   }
 
@@ -183,7 +185,8 @@ export function loginUser(identifier: string, password: string): AuthResponse {
 
   return {
     success: true,
-    message: `ยินดีต้อนรับกลับ, ${found.user.name}!`,
+    message: locale === 'en' ? `Welcome back, ${found.user.name}!` : `ยินดีต้อนรับกลับ, ${found.user.name}!`,
+    messageEn: `Welcome back, ${found.user.name}!`,
     user: found.user,
   };
 }
@@ -191,7 +194,7 @@ export function loginUser(identifier: string, password: string): AuthResponse {
 /**
  * Register a new user
  */
-export function registerUser(input: RegisterInput): AuthResponse {
+export function registerUser(input: RegisterInput, locale?: string): AuthResponse {
   const accounts = getStoredAccounts();
   const cleanEmail = input.email.trim().toLowerCase();
   const cleanUsername = input.username.trim().replace(/^@/, '').toLowerCase();
@@ -200,7 +203,8 @@ export function registerUser(input: RegisterInput): AuthResponse {
   if (accounts.some((acc) => acc.user.email.toLowerCase() === cleanEmail)) {
     return {
       success: false,
-      message: 'อีเมล Gmail นี้ถูกใช้สมัครสมาชิกไปแล้ว กรุณาใช้อีเมลอื่นหรือเข้าสู่ระบบ',
+      message: locale === 'en' ? 'This email is already registered. Please sign in or use another email.' : 'อีเมล Gmail นี้ถูกใช้สมัครสมาชิกไปแล้ว กรุณาใช้อีเมลอื่นหรือเข้าสู่ระบบ',
+      messageEn: 'This email is already registered. Please sign in or use another email.',
     };
   }
 
@@ -208,7 +212,8 @@ export function registerUser(input: RegisterInput): AuthResponse {
   if (accounts.some((acc) => acc.user.username.toLowerCase() === cleanUsername)) {
     return {
       success: false,
-      message: `ชื่อผู้ใช้ @${cleanUsername} มีผู้อื่นใช้แล้ว กรุณาเลือกชื่อผู้ใช้อื่น`,
+      message: locale === 'en' ? `Username @${cleanUsername} is already taken. Please choose another.` : `ชื่อผู้ใช้ @${cleanUsername} มีผู้อื่นใช้แล้ว กรุณาเลือกชื่อผู้ใช้อื่น`,
+      messageEn: `Username @${cleanUsername} is already taken. Please choose another.`,
     };
   }
 
@@ -238,7 +243,8 @@ export function registerUser(input: RegisterInput): AuthResponse {
 
   return {
     success: true,
-    message: 'สร้างบัญชีผู้ใช้ใหม่และเข้าสู่ระบบเรียบร้อยแล้ว',
+    message: locale === 'en' ? 'User account created and signed in successfully.' : 'สร้างบัญชีผู้ใช้ใหม่และเข้าสู่ระบบเรียบร้อยแล้ว',
+    messageEn: 'User account created and signed in successfully.',
     user: newUser,
   };
 }
@@ -248,8 +254,9 @@ export function registerUser(input: RegisterInput): AuthResponse {
  */
 export function resetUserPassword(
   email: string,
-  newPassword: string
-): { success: boolean; message: string } {
+  newPassword: string,
+  locale?: string
+): { success: boolean; message: string; messageEn?: string } {
   const accounts = getStoredAccounts();
   const cleanEmail = email.trim().toLowerCase();
 
@@ -258,7 +265,8 @@ export function resetUserPassword(
   if (index === -1) {
     return {
       success: false,
-      message: 'ไม่พบบัญชีที่ผูกกับอีเมลนี้ในระบบ',
+      message: locale === 'en' ? 'No account associated with this email.' : 'ไม่พบบัญชีที่ผูกกับอีเมลนี้ในระบบ',
+      messageEn: 'No account associated with this email.',
     };
   }
 

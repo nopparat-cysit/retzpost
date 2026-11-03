@@ -15,6 +15,7 @@ export type PermissionKey =
 export interface RoleDefinition {
   id: WorkspaceRole;
   label: string;
+  labelEn?: string;
   stickerName: string;
   badgeBg: string;
   badgeTextColor: string;
@@ -27,6 +28,7 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   OWNER: {
     id: 'OWNER',
     label: 'เจ้าของโปรเจกต์ (Workspace Owner)',
+    labelEn: 'Workspace Owner',
     stickerName: 'role-owner',
     badgeBg: 'bg-brand-indigo',
     badgeTextColor: 'text-white',
@@ -48,6 +50,7 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   MANAGER: {
     id: 'MANAGER',
     label: 'ผู้จัดการ (Team Manager)',
+    labelEn: 'Team Manager',
     stickerName: 'role-manager',
     badgeBg: 'bg-semantic-info',
     badgeTextColor: 'text-white',
@@ -68,6 +71,7 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   EDITOR: {
     id: 'EDITOR',
     label: 'ครีเอเตอร์ / บรรณาธิการ (Editor & Creator)',
+    labelEn: 'Content Editor',
     stickerName: 'role-editor',
     badgeBg: 'bg-semantic-success',
     badgeTextColor: 'text-white',
@@ -85,6 +89,7 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   CONTRIBUTOR: {
     id: 'CONTRIBUTOR',
     label: 'ผู้ช่วยเขียน / รออนุมัติ (Contributor - Needs Approval)',
+    labelEn: 'Contributor (Needs Approval)',
     stickerName: 'role-contributor',
     badgeBg: 'bg-accent-terracotta',
     badgeTextColor: 'text-white',
@@ -99,6 +104,7 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   VIEWER: {
     id: 'VIEWER',
     label: 'ผู้ตรวจงาน / ลูกค้าภายนอก (Client Viewer - Read Only)',
+    labelEn: 'Client Reviewer (Read-Only)',
     stickerName: 'role-viewer',
     badgeBg: 'bg-paper-subtle border border-border-rule',
     badgeTextColor: 'text-ink-secondary',
@@ -127,9 +133,11 @@ export interface MemberTokenLog {
   id: string;
   action: string;
   actionLabelTh: string;
+  actionLabelEn?: string;
   tokens: number;
   workspaceName: string;
   timestamp: string;
+  timestampEn?: string;
 }
 
 export interface TeamMember {
@@ -164,8 +172,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     tokensUsedThisMonth: 125,
     monthlyTokenLimit: null,
     tokenLogs: [
-      { id: 'log-1', action: 'AI_POST_DIAGNOSIS', actionLabelTh: 'AI วิเคราะห์โพสต์ปัง', tokens: 25, workspaceName: 'Main Studio', timestamp: '10 นาทีที่แล้ว' },
-      { id: 'log-2', action: 'FORCE_SYNC_NOW', actionLabelTh: 'ดึงยอดวิวสดทันที', tokens: 10, workspaceName: 'Main Studio', timestamp: '2 ชั่วโมงที่แล้ว' },
+      { id: 'log-1', action: 'AI_POST_DIAGNOSIS', actionLabelTh: 'AI วิเคราะห์โพสต์ปัง', actionLabelEn: 'AI Content Diagnosis', tokens: 25, workspaceName: 'Main Studio', timestamp: '10 นาทีที่แล้ว', timestampEn: '10 mins ago' },
+      { id: 'log-2', action: 'FORCE_SYNC_NOW', actionLabelTh: 'ดึงยอดวิวสดทันที', actionLabelEn: 'Live Telemetry Force Sync', tokens: 10, workspaceName: 'Main Studio', timestamp: '2 ชั่วโมงที่แล้ว', timestampEn: '2 hours ago' },
     ],
   },
   {
@@ -182,8 +190,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     tokensUsedThisMonth: 80,
     monthlyTokenLimit: 200,
     tokenLogs: [
-      { id: 'log-3', action: 'AI_KPI_COACHING', actionLabelTh: 'AI ร่างแผนโค้ชชิ่งลูกทีม', tokens: 30, workspaceName: 'Main Studio', timestamp: 'เมื่อวานนี้' },
-      { id: 'log-4', action: 'FORCE_SYNC_NOW', actionLabelTh: 'ดึงยอดวิวสดทันที', tokens: 14, workspaceName: 'Main Studio', timestamp: 'เมื่อวานนี้' },
+      { id: 'log-3', action: 'AI_KPI_COACHING', actionLabelTh: 'AI ร่างแผนโค้ชชิ่งลูกทีม', actionLabelEn: 'AI Draft Coaching Plan', tokens: 30, workspaceName: 'Main Studio', timestamp: 'เมื่อวานนี้', timestampEn: 'Yesterday' },
+      { id: 'log-4', action: 'FORCE_SYNC_NOW', actionLabelTh: 'ดึงยอดวิวสดทันที', actionLabelEn: 'Live Telemetry Force Sync', tokens: 14, workspaceName: 'Main Studio', timestamp: 'เมื่อวานนี้', timestampEn: 'Yesterday' },
     ],
   },
   {
@@ -200,8 +208,8 @@ export const INITIAL_TEAM_MEMBERS: TeamMember[] = [
     tokensUsedThisMonth: 45,
     monthlyTokenLimit: 100,
     tokenLogs: [
-      { id: 'log-5', action: 'SMART_AUTOFRAME', actionLabelTh: 'ปรับขนาด Story 9:16', tokens: 25, workspaceName: 'Main Studio', timestamp: '3 ชั่วโมงที่แล้ว' },
-      { id: 'log-6', action: 'FORCE_SYNC_NOW', actionLabelTh: 'ดึงยอดวิวสดทันที', tokens: 6, workspaceName: 'Main Studio', timestamp: '5 ชั่วโมงที่แล้ว' },
+      { id: 'log-5', action: 'SMART_AUTOFRAME', actionLabelTh: 'ปรับขนาด Story 9:16', actionLabelEn: 'Auto-Frame Story 9:16', tokens: 25, workspaceName: 'Main Studio', timestamp: '3 ชั่วโมงที่แล้ว', timestampEn: '3 hours ago' },
+      { id: 'log-6', action: 'FORCE_SYNC_NOW', actionLabelTh: 'ดึงยอดวิวสดทันที', actionLabelEn: 'Live Telemetry Force Sync', tokens: 6, workspaceName: 'Main Studio', timestamp: '5 ชั่วโมงที่แล้ว', timestampEn: '5 hours ago' },
     ],
   },
   {

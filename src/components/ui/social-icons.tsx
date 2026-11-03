@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { ExternalLink, Copy } from 'lucide-react';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 
 export interface SocialIconProps {
   className?: string;
@@ -263,6 +264,7 @@ export const SocialMediaLiveButton: React.FC<SocialMediaLiveButtonProps> = ({
   onCopy,
   className = '',
 }) => {
+  const { locale } = useTranslation();
   const plat = platform.toUpperCase();
   const fmt = (format || '').toUpperCase();
 
@@ -288,17 +290,21 @@ export const SocialMediaLiveButton: React.FC<SocialMediaLiveButtonProps> = ({
     btnTheme = 'bg-emerald-50/80 text-emerald-900 border-emerald-200/80 hover:bg-emerald-100 hover:border-emerald-300';
   }
 
+  const liveTitle = locale === 'th' ? `เปิดดูโพสต์จริงบน ${platform}: ${label}` : `View live post on ${platform}: ${label}`;
+  const liveLabel = locale === 'th' ? `เปิดดูบน ${label}` : `View on ${label}`;
+  const copyTitle = locale === 'th' ? `คัดลอกลิงก์ ${label}` : `Copy link: ${label}`;
+
   return (
     <div className={`inline-flex items-center gap-0.5 group/btn ${className}`}>
       <a
         href={url}
         target="_blank"
         rel="noreferrer"
-        title={`เปิดดูโพสต์จริงบน ${platform}: ${label}`}
+        title={liveTitle}
         className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-mono font-bold border transition-all shadow-2xs hover:shadow-xs cursor-pointer ${btnTheme}`}
       >
         <SocialPlatformIcon platform={platform} format={format} size={16} />
-        <span>เปิดดูบน {label}</span>
+        <span>{liveLabel}</span>
         <ExternalLink className="w-3 h-3 opacity-70 group-hover/btn:opacity-100 group-hover/btn:translate-x-0.5 transition-transform" />
       </a>
       {onCopy && (
@@ -306,7 +312,7 @@ export const SocialMediaLiveButton: React.FC<SocialMediaLiveButtonProps> = ({
           type="button"
           onClick={() => onCopy(url, label)}
           className="p-1 hover:bg-paper-subtle rounded text-ink-muted hover:text-ink-primary transition-colors cursor-pointer"
-          title={`คัดลอกลิงก์ ${label}`}
+          title={copyTitle}
         >
           <Copy className="w-2.5 h-2.5" />
         </button>

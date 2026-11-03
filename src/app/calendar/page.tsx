@@ -91,6 +91,7 @@ export interface CalendarEventItem {
   durationOrPhotos: string;
   status: 'SCHEDULED' | 'PUBLISHED' | 'DRAFT';
   caption: string;
+  captionEn?: string;
   liveUrl?: string;
   websiteUrl?: string;
   storyLinkUrl?: string;
@@ -141,6 +142,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     durationOrPhotos: 'Album (6 Photos)',
     status: 'PUBLISHED',
     caption: 'สรุป 5 เทคนิคจัดแสงสตูดิโอให้ภาพออกมาคมชัดระดับ 4K สำหรับคลิปแนวสารคดีและสัมภาษณ์เชิงลึก พร้อมแผนผัง 3-Point Lighting ให้ดาวน์โหลด! #CreatorStudio #VideoProduction',
+    captionEn: '5 studio lighting techniques for crisp 4K documentary and deep-dive interview visuals, complete with downloadable 3-Point Lighting diagram! #CreatorStudio #VideoProduction',
     liveUrl: 'https://www.facebook.com/officialbrand/posts/991283',
     websiteUrl: 'https://retzpost.io/masterclass/lighting',
     previewImage: 'https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&auto=format&fit=crop&q=80',
@@ -273,6 +275,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     durationOrPhotos: 'Album (4 Photos)',
     status: 'SCHEDULED',
     caption: 'เปิดบ้านวันหยุดสุดสัปดาห์! สัมผัสประสบการณ์จริงใจกลางเมือง ร่วมกิจกรรมพิเศษและรับโปรโมชั่นพิเศษเฉพาะสัปดาห์นี้ #BrandShowcase #WeekendSpecial',
+    captionEn: 'Weekend Open House! Experience prime city center living, join special activities and enjoy exclusive weekly promos #BrandShowcase #WeekendSpecial',
     websiteUrl: 'https://yourbrand.com/events/weekend-showcase',
     previewImage: 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=600&auto=format&fit=crop&q=80',
     isPeakHour: true,
@@ -298,6 +301,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     durationOrPhotos: '24h Story + Link Sticker',
     status: 'SCHEDULED',
     caption: 'เมล็ดกาแฟล็อตใหม่จากแม่จันใต้ คั่วระดับ Light Roast พร้อมเสิร์ฟแล้ววันนี้ที่หน้าร้านทองหล่อ! กดลิงก์เพื่อสั่ง Delivery ได้เลย',
+    captionEn: 'New single-origin beans from Mae Jan Tai, light roast profile now brewing at Thong Lo flagship! Tap link for delivery.',
     storyLinkUrl: 'https://lineman.line.me/coffeecraft',
     storyLinkText: 'Order via LINE MAN',
     previewImage: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop&q=80',
@@ -324,6 +328,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     durationOrPhotos: '00:59 (9:16)',
     status: 'SCHEDULED',
     caption: 'วิเคราะห์การเติบโตของแบรนด์ยุคใหม่ปี 2026 มีทิศทางอย่างไรในการขยายฐานผู้ติดตาม? สรุปเข้าใจง่ายใน 1 นาที! #BrandStrategy #SocialGrowth',
+    captionEn: 'Analyzing 2026 brand growth: How are leaders expanding follower bases? 1-minute breakdown! #BrandStrategy #SocialGrowth',
     previewImage: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=600&auto=format&fit=crop&q=80',
     aiForecast: {
       predictedReach: '22,000 - 35,000',
@@ -419,6 +424,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     durationOrPhotos: '00:48 (9:16)',
     status: 'SCHEDULED',
     caption: 'ชมยูนิต 12B ตกแต่งสไตล์ Modern Luxury พร้อมเฟอร์นิเจอร์นำเข้าทั้งห้อง ลงทะเบียนรับชมสถานที่จริงได้ที่ลิงก์ในไบโอ #ModernLuxury #VirtualTour',
+    captionEn: 'Explore Unit 12B in Modern Luxury style with full imported furniture. Register for private tour at bio link #ModernLuxury #VirtualTour',
     previewImage: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&auto=format&fit=crop&q=80',
     aiForecast: {
       predictedReach: '25,000 - 38,000',
@@ -468,6 +474,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     durationOrPhotos: 'Photo Album (5)',
     status: 'PUBLISHED',
     caption: 'บรรยากาศเวิร์กชอปดริปกาแฟเมื่อวันเสาร์ที่ผ่านมา สนุกสนานและได้ชิมกาแฟจาก 6 แหล่งปลูกทั่วโลก ขอบคุณทุกท่านที่มาร่วมสนุกกันครับ #CoffeeCraftBKK #SpecialtyCoffee',
+    captionEn: 'Highlights from Saturday drip coffee workshop: tasting beans from 6 global origins. Thanks to everyone who joined! #CoffeeCraftBKK #SpecialtyCoffee',
     liveUrl: 'https://www.instagram.com/p/C1CoffeeCraftSingle/',
     previewImage: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&auto=format&fit=crop&q=80',
     metrics: {
@@ -564,6 +571,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
     durationOrPhotos: 'Album (4)',
     status: 'SCHEDULED',
     caption: 'สเปเชียลเบลนด์เฉพาะค่ำคืนฮาโลวีน กลิ่น Dark Chocolate, Roasted Almond และ Spiced Plum มีจำนวนจำกัดเพียง 50 ถุงเท่านั้น! #HalloweenSpecial #CoffeeCraftBKK',
+    captionEn: 'Halloween exclusive special blend with dark chocolate, roasted almond, and spiced plum notes. Limited to 50 bags! #HalloweenSpecial #CoffeeCraftBKK',
     previewImage: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80',
     aiForecast: {
       predictedReach: '11,000 - 16,000',
@@ -635,7 +643,7 @@ export default function EditorialCalendarPage() {
     if (todayRef.current) {
       todayRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
-    showToast('โฟกัสไปยังวันนี้ (24 ต.ค. 2026)');
+    showToast(locale === 'en' ? 'Focused to today (Oct 24, 2026)' : 'โฟกัสไปยังวันนี้ (24 ต.ค. 2026)');
   };
   
   // Slide-Over Event Inspector State
@@ -772,7 +780,7 @@ export default function EditorialCalendarPage() {
       timeStr: rescheduleTime,
     });
     setIsQuickEditing(false);
-    showToast(`✓ บันทึกการแก้ไขโพสต์ "${finalTitle}" เรียบร้อยแล้ว`);
+    showToast(locale === 'en' ? `✓ Saved changes to "${finalTitle}".` : `✓ บันทึกการแก้ไขโพสต์ "${finalTitle}" เรียบร้อยแล้ว`);
   };
 
   // Handle Rescheduling
@@ -797,7 +805,7 @@ export default function EditorialCalendarPage() {
       dayOfMonth: day,
       timeStr: rescheduleTime,
     });
-    showToast(`✓ เลื่อนกำหนดการเผยแพร่เป็น "${rescheduleDate} @ ${rescheduleTime}" เรียบร้อยแล้ว`);
+    showToast(locale === 'en' ? `✓ Rescheduled dispatch to "${rescheduleDate} @ ${rescheduleTime}".` : `✓ เลื่อนกำหนดการเผยแพร่เป็น "${rescheduleDate} @ ${rescheduleTime}" เรียบร้อยแล้ว`);
   };
 
   // Handle Quick Schedule Submit
@@ -836,7 +844,7 @@ export default function EditorialCalendarPage() {
     setQuickScheduleModal(null);
     setQuickTitle('');
     setQuickLinkSticker('');
-    showToast(`✓ เพิ่มโพสต์ใหม่ "${quickTitle}" ลงในปฏิทินวันที่ ${newEvent.dateStr} เรียบร้อย!`);
+    showToast(locale === 'en' ? `✓ Added "${quickTitle}" to calendar on ${newEvent.dateStr}!` : `✓ เพิ่มโพสต์ใหม่ "${quickTitle}" ลงในปฏิทินวันที่ ${newEvent.dateStr} เรียบร้อย!`);
   };
 
   // Helper for platform styling
@@ -891,10 +899,10 @@ export default function EditorialCalendarPage() {
                 onClick={() => {
                   loadSampleMockData();
                   setEvents(SAMPLE_EVENTS);
-                  showToast('โหลดตารางงานปฏิทินตัวอย่างเรียบร้อยแล้ว');
+                  showToast(locale === 'en' ? 'Loaded demo calendar schedule.' : 'โหลดตารางงานปฏิทินตัวอย่างเรียบร้อยแล้ว');
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title="โหลดกำหนดการจำลองสำหรับทดสอบระบบ"
+                title={locale === 'en' ? 'Load mock schedule for calendar testing' : 'โหลดกำหนดการจำลองสำหรับทดสอบระบบ'}
               >
                 <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
                 <span>{locale === 'th' ? 'โหลดปฏิทินตัวอย่าง (Demo)' : 'Load Demo Events'}</span>
@@ -905,10 +913,10 @@ export default function EditorialCalendarPage() {
                 onClick={() => {
                   clearAllMockData();
                   setEvents([]);
-                  showToast('ล้างกำหนดการจำลองในปฏิทินเรียบร้อยแล้ว (Clean Slate)');
+                  showToast(locale === 'en' ? 'Cleared all calendar events (Clean Slate).' : 'ล้างกำหนดการจำลองในปฏิทินเรียบร้อยแล้ว (Clean Slate)');
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title="ล้างปฏิทินให้ว่างเปล่า"
+                title={locale === 'en' ? 'Clear calendar to zero state' : 'ล้างปฏิทินให้ว่างเปล่า'}
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>{locale === 'th' ? 'ล้างปฏิทิน (Clear All)' : 'Clear All Events'}</span>
@@ -946,8 +954,8 @@ export default function EditorialCalendarPage() {
           {/* Quick Metrics */}
           <div className="flex items-center gap-1.5 font-mono">
             <CalendarDays className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
-            <span className="font-bold text-ink-primary">{totalEventsCount} โพสต์</span>
-            <span className="text-[11px] text-semantic-success font-medium">({publishedCount} สด • {scheduledCount} ในคิว)</span>
+            <span className="font-bold text-ink-primary">{totalEventsCount} {locale === 'en' ? 'Posts' : 'โพสต์'}</span>
+            <span className="text-[11px] text-semantic-success font-medium">({publishedCount} {locale === 'en' ? 'Live' : 'สด'} • {scheduledCount} {locale === 'en' ? 'In Queue' : 'ในคิว'})</span>
           </div>
 
           <div className="hidden sm:flex items-center gap-1.5 text-ink-secondary font-mono border-l border-border-rule pl-3">
@@ -964,7 +972,7 @@ export default function EditorialCalendarPage() {
 
           <div className="hidden lg:flex items-center gap-1.5 text-ink-secondary font-mono border-l border-border-rule pl-3">
             <Zap className="w-3.5 h-3.5 text-accent-terracotta shrink-0" />
-            <span className="text-accent-terracotta font-semibold">ชั่วโมง Peak:</span>
+            <span className="text-accent-terracotta font-semibold">{locale === 'en' ? 'Peak Hours:' : 'ชั่วโมง Peak:'}</span>
             <span className="text-ink-primary font-bold">08:30 / 11:30 / 19:30</span>
           </div>
         </div>
@@ -980,7 +988,7 @@ export default function EditorialCalendarPage() {
             }`}
           >
             <Sparkles className="w-3 h-3" />
-            <span>{showAiPeakTimes ? 'เน้นช่วงเวลา Peak' : 'ชั่วโมง Peak'}</span>
+            <span>{showAiPeakTimes ? (locale === 'en' ? 'Highlight Peak Times' : 'เน้นช่วงเวลา Peak') : (locale === 'en' ? 'Peak Hours' : 'ชั่วโมง Peak')}</span>
           </button>
 
           <button
@@ -989,7 +997,7 @@ export default function EditorialCalendarPage() {
             className="px-2.5 py-1 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold transition-colors flex items-center gap-1 cursor-pointer"
           >
             <BarChart3 className="w-3 h-3" />
-            <span>{showStatsOverview ? 'ย่อสรุป ▲' : 'ดูสถิติเต็ม (KPI) ▼'}</span>
+            <span>{showStatsOverview ? (locale === 'en' ? 'Collapse Stats ▲' : 'ย่อสรุป ▲') : (locale === 'en' ? 'Full KPI Stats ▼' : 'ดูสถิติเต็ม (KPI) ▼')}</span>
           </button>
         </div>
       </div>
@@ -1092,8 +1100,8 @@ export default function EditorialCalendarPage() {
           selectedId={selectedWorkspace}
           onSelect={(id) => handleSelectWorkspace(id as any)}
           maxVisiblePills={4}
-          moreButtonText="โปรเจกต์อื่นๆ"
-          searchPlaceholder="ค้นหา Workspace..."
+          moreButtonText={locale === 'en' ? 'More Workspaces' : 'โปรเจกต์อื่นๆ'}
+          searchPlaceholder={locale === 'en' ? 'Search workspaces...' : 'ค้นหา Workspace...'}
         />
       </div>
 
@@ -1102,10 +1110,10 @@ export default function EditorialCalendarPage() {
         <EditorialEmptyState
           stickerName="calendar-deadline"
           badgeText={isMockCleared ? 'Editorial Calendar • Clean Slate' : 'No Events in View'}
-          title="ยังไม่มีกำหนดการเผยแพร่ในปฏิทิน"
-          description="จัดตารางเวลาเผยแพร่คอนเทนต์ล่วงหน้าในช่อง Golden Peak Slots หรือคลิกที่แต่ละวันในปฏิทินเพื่อตั้งเวลาปล่อยโพสต์ทันที"
-          tipText="RetzPost มีระบบคำนวณ Bangkok Golden Peak Slots (เวลาทองของคนไทย: 08:30 น. และ 19:30 น.) เพื่อเพิ่ม Organic Reach"
-          actionLabel="+ จัดตารางโพสต์ใหม่ (Compose Dispatch)"
+          title={locale === 'en' ? 'No scheduled dispatches in calendar yet' : 'ยังไม่มีกำหนดการเผยแพร่ในปฏิทิน'}
+          description={locale === 'en' ? 'Schedule dispatches in advance within Golden Peak Slots, or click any calendar day to set a publishing time.' : 'จัดตารางเวลาเผยแพร่คอนเทนต์ล่วงหน้าในช่อง Golden Peak Slots หรือคลิกที่แต่ละวันในปฏิทินเพื่อตั้งเวลาปล่อยโพสต์ทันที'}
+          tipText={locale === 'en' ? 'RetzPost calculates Bangkok Golden Peak Slots (08:30 AM and 07:30 PM) to maximize organic reach.' : 'RetzPost มีระบบคำนวณ Bangkok Golden Peak Slots (เวลาทองของคนไทย: 08:30 น. และ 19:30 น.) เพื่อเพิ่ม Organic Reach'}
+          actionLabel={locale === 'en' ? '+ Schedule New Dispatch (Compose Dispatch)' : '+ จัดตารางโพสต์ใหม่ (Compose Dispatch)'}
           actionHref="/create"
           onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setEvents(SAMPLE_EVENTS); } : undefined}
         />
@@ -1138,9 +1146,9 @@ export default function EditorialCalendarPage() {
           <button
             onClick={handleScrollToToday}
             className="px-2.5 py-1.5 border border-brand-indigo/30 bg-brand-indigo/10 text-brand-indigo rounded-editorial font-mono text-[11px] font-bold hover:bg-brand-indigo hover:text-white transition-all shadow-2xs cursor-pointer flex items-center gap-1 active:scale-[0.98]"
-            title="คลิกเพื่อเลื่อนดูวันนี้และโพสต์สดทันที"
+            title={locale === 'en' ? 'Jump to today and view live dispatches' : 'คลิกเพื่อเลื่อนดูวันนี้และโพสต์สดทันที'}
           >
-            <span>Today (24 ต.ค.)</span>
+            <span>{locale === 'en' ? 'Today (Oct 24)' : 'Today (24 ต.ค.)'}</span>
           </button>
 
           <div className="flex items-center gap-1.5 font-mono text-[11px] text-ink-secondary border-l border-border-rule pl-3">
@@ -1334,7 +1342,7 @@ export default function EditorialCalendarPage() {
                                 events: dayEvents,
                               });
                             }}
-                            title={`คลิกเพื่อดูรายการโพสต์ทั้ง ${dayEvents.length} รายการของวันที่ ${day}`}
+                            title={locale === 'en' ? `View all ${dayEvents.length} dispatches for day ${day}` : `คลิกเพื่อดูรายการโพสต์ทั้ง ${dayEvents.length} รายการของวันที่ ${day}`}
                             className="text-[9px] font-mono font-bold px-1.5 py-0.2 rounded-full bg-paper-subtle hover:bg-brand-indigo hover:text-white border border-border-rule text-ink-secondary transition-colors cursor-pointer"
                           >
                             {dayEvents.length}
@@ -1432,10 +1440,10 @@ export default function EditorialCalendarPage() {
                                 });
                               }}
                               className="w-full text-center py-1 px-1.5 rounded-editorial bg-brand-indigo/10 hover:bg-brand-indigo text-brand-indigo hover:text-white text-[9px] font-mono font-bold transition-all flex items-center justify-center gap-1 shadow-2xs cursor-pointer border border-brand-indigo/20 active:scale-[0.98]"
-                              title={`คลิกเพื่อเปิด Modal ดูรายการโพสต์ทั้งหมดอีก ${remainingCount} รายการของวันที่ ${day}`}
+                              title={locale === 'en' ? `Open modal to view remaining ${remainingCount} dispatches for day ${day}` : `คลิกเพื่อเปิด Modal ดูรายการโพสต์ทั้งหมดอีก ${remainingCount} รายการของวันที่ ${day}`}
                             >
                               <Layers className="w-3 h-3 shrink-0" />
-                              <span>ดูอีก {remainingCount} โพสต์ (Modal)</span>
+                              <span>{locale === 'en' ? `+${remainingCount} more (Modal)` : `ดูอีก ${remainingCount} โพสต์ (Modal)`}</span>
                             </button>
                           )}
                         </div>
@@ -1797,10 +1805,10 @@ export default function EditorialCalendarPage() {
                       ? 'bg-brand-indigo text-white border-brand-indigo shadow-xs'
                       : 'bg-paper-canvas hover:bg-paper-subtle text-ink-primary border-border-rule'
                   }`}
-                  title="แก้ไขหัวข้อ, แคปชัน และกำหนดเวลาด่วนในหน้าต่างนี้"
+                  title={locale === 'en' ? 'Quickly edit title, caption and schedule in this modal' : 'แก้ไขหัวข้อ, แคปชัน และกำหนดเวลาด่วนในหน้าต่างนี้'}
                 >
                   <Edit3 className="w-3.5 h-3.5" />
-                  <span>{isQuickEditing ? 'โหมดพรีวิว (Preview)' : 'แก้ไขด่วน (Quick Edit)'}</span>
+                  <span>{isQuickEditing ? (locale === 'en' ? 'Preview Mode' : 'โหมดพรีวิว (Preview)') : (locale === 'en' ? 'Quick Edit' : 'แก้ไขด่วน (Quick Edit)')}</span>
                 </button>
                 <span className="text-[10px] font-mono text-ink-muted border border-border-rule px-1.5 py-0.5 rounded hidden sm:inline-block">
                   ESC
@@ -1809,7 +1817,7 @@ export default function EditorialCalendarPage() {
                   type="button"
                   onClick={() => setSelectedEvent(null)}
                   className="p-1.5 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
-                  title="ปิดหน้าต่าง (ESC หรือคลิกพื้นที่ด้านนอก)"
+                  title={locale === 'en' ? 'Close window (ESC or click outside)' : 'ปิดหน้าต่าง (ESC หรือคลิกพื้นที่ด้านนอก)'}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -1822,7 +1830,7 @@ export default function EditorialCalendarPage() {
                 <div className="p-3 bg-brand-indigo/10 border border-brand-indigo/30 rounded-editorial text-xs text-brand-indigo flex items-center justify-between">
                   <span className="font-semibold flex items-center gap-1.5">
                     <Edit3 className="w-4 h-4" />
-                    <span>In-Modal Quick Editor: แก้ไขเนื้อหาและกำหนดเวลาได้ทันที</span>
+                    <span>{locale === 'en' ? 'In-Modal Quick Editor: Modify content and schedule instantly' : 'In-Modal Quick Editor: แก้ไขเนื้อหาและกำหนดเวลาได้ทันที'}</span>
                   </span>
                   <span className="text-[10px] font-mono">Real-time Calendar Sync</span>
                 </div>
@@ -1830,14 +1838,14 @@ export default function EditorialCalendarPage() {
                 {/* Edit Title */}
                 <div>
                   <label className="block font-mono text-xs font-bold text-ink-primary uppercase tracking-wider mb-1.5">
-                    Post Headline / Title (หัวข้อโพสต์)
+                    {locale === 'en' ? 'Post Headline / Title' : 'Post Headline / Title (หัวข้อโพสต์)'}
                   </label>
                   <input
                     type="text"
                     value={quickEditTitle}
                     onChange={(e) => setQuickEditTitle(e.target.value)}
                     className="w-full px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial font-serif text-sm font-bold text-ink-primary focus:outline-none focus:border-brand-indigo"
-                    placeholder="ใส่หัวข้อโพสต์..."
+                    placeholder={locale === 'en' ? 'Enter post headline...' : 'ใส่หัวข้อโพสต์...'}
                   />
                 </div>
 
@@ -1845,7 +1853,7 @@ export default function EditorialCalendarPage() {
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="block font-mono text-xs font-bold text-ink-primary uppercase tracking-wider">
-                      Caption & Copywriting (ข้อความแคปชัน)
+                      {locale === 'en' ? 'Caption & Copywriting' : 'Caption & Copywriting (ข้อความแคปชัน)'}
                     </label>
                     <span className="text-[10px] font-mono text-ink-secondary">
                       {quickEditCaption.length} characters
@@ -1856,7 +1864,7 @@ export default function EditorialCalendarPage() {
                     value={quickEditCaption}
                     onChange={(e) => setQuickEditCaption(e.target.value)}
                     className="w-full px-3 py-2 bg-paper-raised border border-border-rule rounded-editorial font-mono text-xs text-ink-primary leading-relaxed focus:outline-none focus:border-brand-indigo"
-                    placeholder="เขียนแคปชัน..."
+                    placeholder={locale === 'en' ? 'Write caption...' : 'เขียนแคปชัน...'}
                   />
                 </div>
 
@@ -1864,18 +1872,18 @@ export default function EditorialCalendarPage() {
                 <div className="p-4 bg-paper-subtle border border-border-rule rounded-editorial space-y-3">
                   <div className="font-mono text-xs font-bold text-ink-secondary uppercase tracking-wider flex items-center gap-1.5">
                     <Clock className="w-3.5 h-3.5 text-brand-indigo" />
-                    <span>Schedule Date & Time (วันและเวลาที่เผยแพร่)</span>
+                    <span>{locale === 'en' ? 'Schedule Date & Time' : 'Schedule Date & Time (วันและเวลาที่เผยแพร่)'}</span>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <CustomDatePicker
-                      label="วันที่เผยแพร่"
+                      label={locale === 'en' ? 'Publishing Date' : 'วันที่เผยแพร่'}
                       value={rescheduleDate}
                       onChange={(d) => setRescheduleDate(d)}
                       size="sm"
                       showPresets={true}
                     />
                     <CustomTimePicker
-                      label="เวลาเผยแพร่ (Peak Slots)"
+                      label={locale === 'en' ? 'Publishing Time (Peak Slots)' : 'เวลาเผยแพร่ (Peak Slots)'}
                       value={rescheduleTime}
                       onChange={(t) => setRescheduleTime(t)}
                       size="sm"
@@ -1892,7 +1900,7 @@ export default function EditorialCalendarPage() {
                     className="flex-1 py-2.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white font-mono text-xs font-semibold rounded-editorial transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Check className="w-4 h-4" />
-                    <span>บันทึกการแก้ไข (Save Changes)</span>
+                    <span>{locale === 'en' ? 'Save Changes' : 'บันทึกการแก้ไข (Save Changes)'}</span>
                   </button>
                   <button
                     type="button"
@@ -1905,7 +1913,7 @@ export default function EditorialCalendarPage() {
                     }}
                     className="px-4 py-2.5 bg-paper-canvas border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary font-mono text-xs rounded-editorial transition-colors cursor-pointer"
                   >
-                    ยกเลิก
+                    {locale === 'en' ? 'Cancel' : 'ยกเลิก'}
                   </button>
                 </div>
               </div>
@@ -2000,7 +2008,7 @@ export default function EditorialCalendarPage() {
                         )}
 
                         <div className="relative z-10 bg-black/70 backdrop-blur-md p-2 rounded-xl text-[10px] text-gray-200">
-                          <p className="line-clamp-2">{selectedEvent.caption}</p>
+                          <p className="line-clamp-2">{locale === 'en' ? (selectedEvent.captionEn || selectedEvent.caption) : selectedEvent.caption}</p>
                         </div>
                       </div>
                     ) : (
@@ -2026,7 +2034,7 @@ export default function EditorialCalendarPage() {
                         <div className="px-1 text-[10px] space-y-1">
                           <p className="text-gray-200 line-clamp-3">
                             <strong className="text-white mr-1">{selectedEvent.handle}</strong>
-                            {selectedEvent.caption}
+                            {locale === 'en' ? (selectedEvent.captionEn || selectedEvent.caption) : selectedEvent.caption}
                           </p>
                         </div>
                       </div>
@@ -2155,7 +2163,7 @@ export default function EditorialCalendarPage() {
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(selectedEvent.caption);
-                      showToast('✓ คัดลอกแคปชันลงในคลิปบอร์ดแล้ว!');
+                      showToast(locale === 'en' ? '✓ Copied caption to clipboard!' : '✓ คัดลอกแคปชันลงในคลิปบอร์ดแล้ว!');
                     }}
                     className="flex items-center gap-1 font-mono text-[11px] text-brand-indigo hover:underline"
                   >
@@ -2181,7 +2189,7 @@ export default function EditorialCalendarPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <CustomDatePicker
-                      label="Date (วันที่จะเผยแพร่)"
+                      label={locale === 'en' ? 'Publishing Date' : 'Date (วันที่จะเผยแพร่)'}
                       value={rescheduleDate}
                       onChange={(d) => setRescheduleDate(d)}
                       size="sm"
@@ -2195,7 +2203,7 @@ export default function EditorialCalendarPage() {
                   </div>
                   <div>
                     <CustomTimePicker
-                      label="Time (เวลาที่ต้องการ)"
+                      label={locale === 'en' ? 'Publishing Time' : 'Time (เวลาที่ต้องการ)'}
                       value={rescheduleTime}
                       onChange={(t) => setRescheduleTime(t)}
                       size="sm"
@@ -2227,7 +2235,7 @@ export default function EditorialCalendarPage() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => {
-                    showToast(`✓ ทำซ้ำโพสต์ "${selectedEvent.title}" เรียบร้อยแล้ว`);
+                    showToast(locale === 'en' ? `✓ Duplicated "${selectedEvent.title}".` : `✓ ทำซ้ำโพสต์ "${selectedEvent.title}" เรียบร้อยแล้ว`);
                     setSelectedEvent(null);
                   }}
                   className="px-3 py-2 bg-paper-subtle border border-border-rule hover:bg-paper-canvas text-ink-secondary hover:text-ink-primary text-xs font-mono rounded-editorial transition-colors"
@@ -2239,7 +2247,7 @@ export default function EditorialCalendarPage() {
                     const filtered = events.filter((e) => e.id !== selectedEvent.id);
                     setEvents(filtered);
                     setSelectedEvent(null);
-                    showToast(`✓ ลบโพสต์ออกจากปฏิทินแล้ว`);
+                    showToast(locale === 'en' ? '✓ Removed dispatch from calendar.' : '✓ ลบโพสต์ออกจากปฏิทินแล้ว');
                   }}
                   className="px-3 py-2 text-semantic-error hover:bg-semantic-error/10 text-xs font-mono rounded-editorial transition-colors"
                 >
@@ -2277,7 +2285,7 @@ export default function EditorialCalendarPage() {
                     </span>
                   </div>
                   <p className="text-[11px] font-mono text-ink-secondary">
-                    กำหนดการและประวัติการเผยแพร่ประจำวัน
+                    {locale === 'en' ? 'Daily Publishing Schedule & History' : 'กำหนดการและประวัติการเผยแพร่ประจำวัน'}
                   </p>
                 </div>
               </div>
@@ -2304,7 +2312,7 @@ export default function EditorialCalendarPage() {
                   type="button"
                   onClick={() => setDayModal(null)}
                   className="p-1.5 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
-                  title="ปิดหน้าต่าง (ESC หรือคลิกพื้นที่ด้านนอก)"
+                  title={locale === 'en' ? 'Close window (ESC or click outside)' : 'ปิดหน้าต่าง (ESC หรือคลิกพื้นที่ด้านนอก)'}
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -2422,7 +2430,7 @@ export default function EditorialCalendarPage() {
             {/* Modal Footer */}
             <div className="p-4 border-t border-border-rule bg-paper-raised flex items-center justify-between shrink-0">
               <span className="text-[11px] font-mono text-ink-secondary">
-                กดปุ่ม <strong>Inspect & Edit</strong> เพื่อเปิดดู Mockup มือถือ หรือเปลี่ยนเวลาเผยแพร่
+                {locale === 'en' ? <>Click <strong>Inspect & Edit</strong> to preview mobile mockup or reschedule dispatch.</> : <>กดปุ่ม <strong>Inspect & Edit</strong> เพื่อเปิดดู Mockup มือถือ หรือเปลี่ยนเวลาเผยแพร่</>}
               </span>
               <button
                 type="button"
@@ -2506,7 +2514,7 @@ export default function EditorialCalendarPage() {
               <div className="space-y-3">
                 <div>
                   <label className="block font-mono text-[11px] text-ink-secondary mb-1.5">
-                    Channel Platform (เลือกเฉพาะช่องทางที่ต้องการใช้ในโพสต์นี้)
+                    {locale === 'en' ? 'Channel Platform (select destination for this dispatch)' : 'Channel Platform (เลือกเฉพาะช่องทางที่ต้องการใช้ในโพสต์นี้)'}
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {[
@@ -2541,7 +2549,7 @@ export default function EditorialCalendarPage() {
                   <CustomDropdown
                     options={[
                       { value: 'FEED_POST', label: 'Feed Post / Photo Album', badge: 'Feed' },
-                      { value: 'STORY', label: '24h Story (รองรับ Link Sticker)', badge: 'Story' },
+                      { value: 'STORY', label: locale === 'en' ? '24h Story (supports Link Sticker)' : '24h Story (รองรับ Link Sticker)', badge: 'Story' },
                       { value: 'VIDEO_REEL', label: 'Video Reel / Shorts (9:16)', badge: 'Reel' },
                     ]}
                     value={quickFormat}
@@ -2574,7 +2582,7 @@ export default function EditorialCalendarPage() {
               {/* Custom Time Picker with Bangkok Peak Slots */}
               <div>
                 <CustomTimePicker
-                  label="Dispatch Time (เวลาที่จะเผยแพร่ UTC+7)"
+                  label={locale === 'en' ? 'Dispatch Time (UTC+7)' : 'Dispatch Time (เวลาที่จะเผยแพร่ UTC+7)'}
                   value={quickScheduleModal.timeStr}
                   onChange={(t) =>
                     setQuickScheduleModal({

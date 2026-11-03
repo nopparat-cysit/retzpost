@@ -81,7 +81,7 @@ export default function SuperAdminPage() {
   // Token adjust modal state
   const [tokenModalUser, setTokenModalUser] = useState<any>(null);
   const [tokenAdjustAmount, setTokenAdjustAmount] = useState('100');
-  const [tokenAdjustReason, setTokenAdjustReason] = useState('โบนัสพิเศษจาก Super Admin');
+  const [tokenAdjustReason, setTokenAdjustReason] = useState(locale === 'en' ? 'Super Admin Special Bonus' : 'โบนัสพิเศษจาก Super Admin');
 
   // Slip preview modal
   const [previewSlipUrl, setPreviewSlipUrl] = useState<string | null>(null);
@@ -205,7 +205,7 @@ export default function SuperAdminPage() {
       subtextEn: 'CCA Sec 26 & DSAR Queue',
       icon: Scale,
       section: 'GOVERNANCE',
-      badge: 'ม.26',
+      badge: locale === 'en' ? 'Sec.26' : 'ม.26',
     },
     {
       id: 'CIRCUIT',
@@ -603,7 +603,7 @@ export default function SuperAdminPage() {
         {globalFreeze && (
           <div className="bg-semantic-error text-white px-4 py-2.5 text-xs font-bold flex items-center justify-center gap-2 animate-pulse">
             <ShieldAlert className="w-4 h-4" />
-            <span>คำเตือน: ระบบตัดไฟฉุกเฉินเปิดใช้งานอยู่ (Global Freeze Active) การโพสต์ทั้งหมดถูกระงับชั่วคราว</span>
+            <span>{locale === 'en' ? 'Warning: Emergency circuit breaker active (Global Freeze Active). All publishing is suspended.' : 'คำเตือน: ระบบตัดไฟฉุกเฉินเปิดใช้งานอยู่ (Global Freeze Active) การโพสต์ทั้งหมดถูกระงับชั่วคราว'}</span>
           </div>
         )}
 
@@ -631,7 +631,7 @@ export default function SuperAdminPage() {
                     ฿{data?.metrics?.mrrThb?.toLocaleString() || '0'}
                   </p>
                   <p className="text-[11px] text-ink-muted mt-1 font-mono">
-                    ประมาณการรายได้ประจำต่อเดือน (THB)
+                    {locale === 'en' ? 'Estimated monthly recurring revenue (THB)' : 'ประมาณการรายได้ประจำต่อเดือน (THB)'}
                   </p>
                 </div>
 
@@ -644,7 +644,7 @@ export default function SuperAdminPage() {
                     <MasterTokenIcon size={22} className="text-accent-terracotta inline" />
                   </p>
                   <p className="text-[11px] text-ink-muted mt-1 font-mono">
-                    เหรียญคงค้างในกระเป๋าผู้ใช้ทั้งหมด
+                    {locale === 'en' ? 'Total outstanding tokens across all user wallets' : 'เหรียญคงค้างในกระเป๋าผู้ใช้ทั้งหมด'}
                   </p>
                 </div>
 
@@ -669,7 +669,7 @@ export default function SuperAdminPage() {
                     <span>100% Compliant</span>
                   </p>
                   <p className="text-[11px] text-ink-muted mt-1 font-mono">
-                    เก็บบันทึก {data?.metrics?.auditLogsRetainedCount || 0} จราจรคอมพิวเตอร์
+                    {locale === 'en' ? `Retaining ${data?.metrics?.auditLogsRetainedCount || 0} computer traffic logs` : `เก็บบันทึก ${data?.metrics?.auditLogsRetainedCount || 0} จราจรคอมพิวเตอร์`}
                   </p>
                 </div>
               </div>
@@ -677,7 +677,7 @@ export default function SuperAdminPage() {
               {/* Plan Tier Distribution */}
               <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs">
                 <h3 className="font-serif font-bold text-lg text-ink-primary mb-4">
-                  สัดส่วนผู้ใช้งานแยกตามแพ็กเกจแท่นพิมพ์ (Plan Distribution)
+                  {locale === 'en' ? 'Plan Distribution by User Tier' : 'สัดส่วนผู้ใช้งานแยกตามแพ็กเกจแท่นพิมพ์ (Plan Distribution)'}
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                   <div className="p-3.5 rounded-md bg-paper-raised border border-border-rule text-center">
@@ -723,14 +723,14 @@ export default function SuperAdminPage() {
                   <Search className="w-4 h-4 text-ink-secondary absolute left-3 top-2.5" />
                   <input
                     type="text"
-                    placeholder="ค้นหาชื่อ อีเมล หรือ IP..."
+                    placeholder={locale === 'en' ? 'Search name, email, or IP...' : 'ค้นหาชื่อ อีเมล หรือ IP...'}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-9 pr-3 py-2 text-xs rounded-md border border-border-rule bg-paper-card focus:outline-none focus:border-brand-indigo"
                   />
                 </div>
                 <span className="text-xs font-mono text-ink-secondary">
-                  แสดงผล {filteredUsers.length} บัญชี
+                  {locale === 'en' ? `Showing ${filteredUsers.length} accounts` : `แสดงผล ${filteredUsers.length} บัญชี`}
                 </span>
               </div>
 
@@ -811,7 +811,7 @@ export default function SuperAdminPage() {
                               onClick={() => setTokenModalUser(user)}
                               className="py-1 px-2 rounded bg-accent-terracotta/10 text-accent-terracotta hover:bg-accent-terracotta/20 text-[11px] font-bold"
                             >
-                              + ปรับ Token
+                              {locale === 'en' ? '+ Adjust Token' : '+ ปรับ Token'}
                             </button>
                             <button
                               type="button"
@@ -825,7 +825,7 @@ export default function SuperAdminPage() {
                                   : 'bg-green-50 text-green-700 hover:bg-green-100'
                               }`}
                             >
-                              {user.status === 'ACTIVE' ? 'ระงับ' : 'ปลดแบน'}
+                              {user.status === 'ACTIVE' ? (locale === 'en' ? 'Suspend' : 'ระงับ') : (locale === 'en' ? 'Unban' : 'ปลดแบน')}
                             </button>
                           </td>
                         </tr>
@@ -859,7 +859,7 @@ export default function SuperAdminPage() {
                         <tr key={inv.id} className="hover:bg-paper-raised/50">
                           <td className="py-3 px-4 font-mono">
                             <p className="font-bold text-ink-primary">{inv.id.slice(0, 16)}...</p>
-                            <p className="text-[11px] text-ink-muted">{new Date(inv.createdAt).toLocaleString('th-TH')}</p>
+                            <p className="text-[11px] text-ink-muted">{new Date(inv.createdAt).toLocaleString(locale === 'en' ? 'en-US' : 'th-TH')}</p>
                           </td>
                           <td className="py-3 px-4">
                             <p className="font-bold text-ink-primary">{inv.workspaceName}</p>
@@ -890,7 +890,7 @@ export default function SuperAdminPage() {
                                 <p className="text-[10px] font-mono text-ink-secondary">Tax ID: {inv.taxId} ({inv.branchId})</p>
                               </div>
                             ) : (
-                              <span className="text-ink-muted text-[11px]">- ทั่วไป -</span>
+                              <span className="text-ink-muted text-[11px]">{locale === 'en' ? '- General -' : '- ทั่วไป -'}</span>
                             )}
                           </td>
                           <td className="py-3 px-4 text-right space-x-1.5">
@@ -900,7 +900,7 @@ export default function SuperAdminPage() {
                                 onClick={() => setPreviewSlipUrl(inv.promptPaySlipUrl)}
                                 className="py-1 px-2 rounded bg-brand-indigo/10 text-brand-indigo hover:bg-brand-indigo/20 text-[11px] font-bold"
                               >
-                                ตรวจสลิป
+                                {locale === 'en' ? 'Verify Slip' : 'ตรวจสลิป'}
                               </button>
                             )}
                             {inv.paymentStatus === 'PENDING' && (
@@ -909,7 +909,7 @@ export default function SuperAdminPage() {
                                 onClick={() => handleAdminAction('UPDATE_INVOICE_STATUS', inv.id, { status: 'COMPLETED' })}
                                 className="py-1 px-2 rounded bg-semantic-success text-white text-[11px] font-bold hover:bg-semantic-success/90"
                               >
-                                อนุมัติ
+                                {locale === 'en' ? 'Approve' : 'อนุมัติ'}
                               </button>
                             )}
                           </td>
@@ -931,11 +931,11 @@ export default function SuperAdminPage() {
                   <div className="flex items-center gap-2">
                     <Scale className="w-5 h-5 text-brand-indigo shrink-0" />
                     <h3 className="font-serif font-bold text-base text-ink-primary">
-                      การจัดเก็บข้อมูลจราจรคอมพิวเตอร์ตาม พ.ร.บ. คอมพิวเตอร์ฯ ม.26 (Computer Crime Act Sec. 26)
+                      {locale === 'en' ? 'Computer Crime Act Sec. 26 Traffic Data Retention' : 'การจัดเก็บข้อมูลจราจรคอมพิวเตอร์ตาม พ.ร.บ. คอมพิวเตอร์ฯ ม.26 (Computer Crime Act Sec. 26)'}
                     </h3>
                   </div>
                   <p className="text-xs text-ink-secondary mt-1 max-w-3xl leading-relaxed">
-                    ระบบ RETZPOST บันทึกข้อมูลจราจรคอมพิวเตอร์ (Log Retention) ต่อเนื่องไม่น้อยกว่า 90 วัน เพื่อให้ระบุตัวบุคคล วัน เวลา และสถานที่ใช้งานได้ตามข้อกำหนดของกระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม
+                    {locale === 'en' ? 'RETZPOST continuously logs and retains computer traffic data (Log Retention) for not less than 90 days to identify users, timestamps, and network access points in full compliance with the Ministry of Digital Economy and Society regulations.' : 'ระบบ RETZPOST บันทึกข้อมูลจราจรคอมพิวเตอร์ (Log Retention) ต่อเนื่องไม่น้อยกว่า 90 วัน เพื่อให้ระบุตัวบุคคล วัน เวลา และสถานที่ใช้งานได้ตามข้อกำหนดของกระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม'}
                   </p>
                 </div>
 
@@ -945,7 +945,7 @@ export default function SuperAdminPage() {
                   className="py-2.5 px-4 rounded-btn bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-bold font-mono transition-colors flex items-center gap-2 shrink-0 shadow-xs"
                 >
                   <FileDown className="w-4 h-4" />
-                  <span>ดาวน์โหลด Log Audit 90 วัน (CSV)</span>
+                  <span>{locale === 'en' ? 'Download 90-Day Audit Log (CSV)' : 'ดาวน์โหลด Log Audit 90 วัน (CSV)'}</span>
                 </button>
               </div>
 
@@ -953,10 +953,10 @@ export default function SuperAdminPage() {
               <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs">
                 <h3 className="font-serif font-bold text-lg text-ink-primary mb-2 flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-semantic-success" />
-                  <span>คิวคำร้องขอใช้สิทธิ์เจ้าของข้อมูลส่วนบุคคล (PDPA DSAR Queue)</span>
+                  <span>{locale === 'en' ? 'PDPA Data Subject Access Request Queue (DSAR)' : 'คิวคำร้องขอใช้สิทธิ์เจ้าของข้อมูลส่วนบุคคล (PDPA DSAR Queue)'}</span>
                 </h3>
                 <p className="text-xs text-ink-secondary mb-4">
-                  สิทธิ์ในการเข้าถึงและขอรับสำเนา (Right of Access), สิทธิ์ในการลบทำลาย (Right to Erasure), และสิทธิ์ในการแก้ไข (Right to Rectification)
+                  {locale === 'en' ? 'Right of Access, Right to Erasure, and Right to Rectification requests under Thailand PDPA.' : 'สิทธิ์ในการเข้าถึงและขอรับสำเนา (Right of Access), สิทธิ์ในการลบทำลาย (Right to Erasure), และสิทธิ์ในการแก้ไข (Right to Rectification)'}
                 </p>
 
                 <div className="overflow-x-auto">
@@ -975,7 +975,7 @@ export default function SuperAdminPage() {
                       {(data?.dsarRequests || []).length === 0 ? (
                         <tr>
                           <td colSpan={6} className="py-6 text-center text-ink-muted">
-                            ไม่มีคำร้อง PDPA ค้างอยู่ในระบบ
+                            {locale === 'en' ? 'No pending PDPA requests in system' : 'ไม่มีคำร้อง PDPA ค้างอยู่ในระบบ'}
                           </td>
                         </tr>
                       ) : (
@@ -990,10 +990,10 @@ export default function SuperAdminPage() {
                               </span>
                             </td>
                             <td className="py-2.5 px-3 text-ink-secondary">
-                              {dsar.reason || 'ขอส่งออกข้อมูลตามสิทธิ์ PDPA'}
+                              {dsar.reason || (locale === 'en' ? 'PDPA data export request' : 'ขอส่งออกข้อมูลตามสิทธิ์ PDPA')}
                             </td>
                             <td className="py-2.5 px-3 font-mono text-ink-muted">
-                              {new Date(dsar.requestedAt).toLocaleDateString('th-TH')}
+                              {new Date(dsar.requestedAt).toLocaleDateString(locale === 'en' ? 'en-US' : 'th-TH')}
                             </td>
                             <td className="py-2.5 px-3">
                               <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold ${
@@ -1009,7 +1009,7 @@ export default function SuperAdminPage() {
                                   onClick={() => handleAdminAction('RESOLVE_DSAR', dsar.id, { status: 'COMPLETED' })}
                                   className="py-1 px-2.5 rounded bg-semantic-success text-white text-[11px] font-bold"
                                 >
-                                  ประมวลผลและปิดคำร้อง
+                                  {locale === 'en' ? 'Process & Resolve' : 'ประมวลผลและปิดคำร้อง'}
                                 </button>
                               )}
                             </td>
@@ -1024,7 +1024,7 @@ export default function SuperAdminPage() {
               {/* Audit Logs Sample Table */}
               <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs">
                 <h3 className="font-serif font-bold text-lg text-ink-primary mb-3">
-                  ตัวอย่างประวัติการปฏิบัติการคอมพิวเตอร์ล่าสุด (Recent Audit Trail)
+                  {locale === 'en' ? 'Recent Computer Operations & Audit Trail' : 'ตัวอย่างประวัติการปฏิบัติการคอมพิวเตอร์ล่าสุด (Recent Audit Trail)'}
                 </h3>
                 <div className="overflow-x-auto max-h-80 overflow-y-auto">
                   <table className="w-full text-left text-xs font-mono">
@@ -1040,7 +1040,7 @@ export default function SuperAdminPage() {
                       {(data?.auditLogs || []).slice(0, 15).map((log: any) => (
                         <tr key={log.id} className="hover:bg-paper-raised/40">
                           <td className="py-2 px-3 text-ink-muted">
-                            {new Date(log.createdAt).toLocaleString('th-TH')}
+                            {new Date(log.createdAt).toLocaleString(locale === 'en' ? 'en-US' : 'th-TH')}
                           </td>
                           <td className="py-2 px-3 font-bold text-ink-primary">
                             {log.userEmail}
@@ -1067,21 +1067,21 @@ export default function SuperAdminPage() {
                 <div className="flex items-center gap-2 mb-2 text-accent-terracotta">
                   <Flame className="w-5 h-5" />
                   <h3 className="font-serif font-bold text-lg text-ink-primary">
-                    ระบบตัดไฟฉุกเฉินระดับแพลตฟอร์ม (Emergency Circuit Breakers)
+                    {locale === 'en' ? 'Platform Emergency Circuit Breakers' : 'ระบบตัดไฟฉุกเฉินระดับแพลตฟอร์ม (Emergency Circuit Breakers)'}
                   </h3>
                 </div>
                 <p className="text-xs text-ink-secondary mb-6 leading-relaxed">
-                  ในกรณีที่ Social API ภายนอกขัดข้อง มีการเปลี่ยนแปลงข้อกำหนดเร่งด่วน หรือเกิดเหตุการณ์ความปลอดภัยร้ายแรง คุณสามารถหยุดการยิงโพสต์ของแพลตฟอร์มนั้นๆ ได้ทันทีโดยไม่กระทบแพลตฟอร์มอื่น
+                  {locale === 'en' ? 'In the event of external Social API outages, urgent policy updates, or critical security incidents, you can immediately halt dispatches to that platform without affecting others.' : 'ในกรณีที่ Social API ภายนอกขัดข้อง มีการเปลี่ยนแปลงข้อกำหนดเร่งด่วน หรือเกิดเหตุการณ์ความปลอดภัยร้ายแรง คุณสามารถหยุดการยิงโพสต์ของแพลตฟอร์มนั้นๆ ได้ทันทีโดยไม่กระทบแพลตฟอร์มอื่น'}
                 </p>
 
                 {/* Global Emergency Publishing Freeze */}
                 <div className="p-4 mb-6 rounded-editorial border-2 border-red-500/40 bg-red-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <span className="font-serif font-bold text-sm text-red-900 block">
-                      สวิตช์แช่แข็งการเผยแพร่ทั้งแพลตฟอร์ม (Global Publishing Freeze)
+                      {locale === 'en' ? 'Global Publishing Freeze Switch' : 'สวิตช์แช่แข็งการเผยแพร่ทั้งแพลตฟอร์ม (Global Publishing Freeze)'}
                     </span>
                     <span className="text-xs text-red-700">
-                      หยุดคิวเผยแพร่ทุกช่องทางทั่วทั้งระบบทันที เหมาะสำหรับกรณีฉุกเฉินระดับวิกฤต
+                      {locale === 'en' ? 'Immediately suspend dispatch queues across all channels platform-wide. Recommended for high-severity emergency situations.' : 'หยุดคิวเผยแพร่ทุกช่องทางทั่วทั้งระบบทันที เหมาะสำหรับกรณีฉุกเฉินระดับวิกฤต'}
                     </span>
                   </div>
                   <button
@@ -1094,7 +1094,7 @@ export default function SuperAdminPage() {
                     }`}
                   >
                     <AlertOctagon className="w-4 h-4 inline mr-1" />
-                    <span>{globalFreeze ? 'ปลดล็อกการแช่แข็ง' : 'Freeze All Dispatches'}</span>
+                    <span>{globalFreeze ? (locale === 'en' ? 'Unfreeze All Dispatches' : 'ปลดล็อกการแช่แข็ง') : (locale === 'en' ? 'Freeze All Dispatches' : 'แช่แข็งการยิงโพสต์ทั้งหมด')}</span>
                   </button>
                 </div>
 
@@ -1115,7 +1115,7 @@ export default function SuperAdminPage() {
                         metaActive ? 'bg-red-100 text-red-800 hover:bg-red-200' : 'bg-green-600 text-white hover:bg-green-700'
                       }`}
                     >
-                      {metaActive ? 'พักการยิง Meta ชั่วคราว' : 'เปิดใช้งาน Meta ตามปกติ'}
+                      {metaActive ? (locale === 'en' ? 'Pause Meta Dispatches' : 'พักการยิง Meta ชั่วคราว') : (locale === 'en' ? 'Resume Meta Dispatches' : 'เปิดใช้งาน Meta ตามปกติ')}
                     </button>
                   </div>
 
@@ -1135,7 +1135,7 @@ export default function SuperAdminPage() {
                         youtubeActive ? 'bg-red-100 text-red-800 hover:bg-red-200' : 'bg-green-600 text-white hover:bg-green-700'
                       }`}
                     >
-                      {youtubeActive ? 'พักการยิง YouTube' : 'เปิดใช้งาน YouTube'}
+                      {youtubeActive ? (locale === 'en' ? 'Pause YouTube' : 'พักการยิง YouTube') : (locale === 'en' ? 'Resume YouTube' : 'เปิดใช้งาน YouTube')}
                     </button>
                   </div>
 
@@ -1155,7 +1155,7 @@ export default function SuperAdminPage() {
                         tiktokActive ? 'bg-red-100 text-red-800 hover:bg-red-200' : 'bg-green-600 text-white hover:bg-green-700'
                       }`}
                     >
-                      {tiktokActive ? 'พักการยิง TikTok' : 'เปิดใช้งาน TikTok'}
+                      {tiktokActive ? (locale === 'en' ? 'Pause TikTok' : 'พักการยิง TikTok') : (locale === 'en' ? 'Resume TikTok' : 'เปิดใช้งาน TikTok')}
                     </button>
                   </div>
                 </div>
@@ -1171,10 +1171,10 @@ export default function SuperAdminPage() {
                 <div>
                   <h3 className="font-serif font-bold text-xl text-ink-primary flex items-center gap-2">
                     <SlidersHorizontal className="w-5 h-5 text-accent-terracotta" />
-                    <span>การตั้งค่าแพลตฟอร์ม แท่นพิมพ์ & โทเคน (Platform Engine Settings)</span>
+                    <span>{locale === 'en' ? 'Platform Engine Settings & Token Economy' : 'การตั้งค่าแพลตฟอร์ม แท่นพิมพ์ & โทเคน (Platform Engine Settings)'}</span>
                   </h3>
                   <p className="text-xs text-ink-secondary mt-1">
-                    ปรับแต่งเงื่อนไขการทดลองใช้ฟรี 7 วัน โปรโมชั่นลดพิเศษ อัตราสิ้นเปลืองโทเคน และการคำนวณภาษีมูลค่าเพิ่ม (VAT 7%)
+                    {locale === 'en' ? 'Configure 7-day free trial terms, promotion ladders, token consumption rates, and VAT (7%) calculation.' : 'ปรับแต่งเงื่อนไขการทดลองใช้ฟรี 7 วัน โปรโมชั่นลดพิเศษ อัตราสิ้นเปลืองโทเคน และการคำนวณภาษีมูลค่าเพิ่ม (VAT 7%)'}
                   </p>
                 </div>
 
@@ -1194,7 +1194,7 @@ export default function SuperAdminPage() {
                   className="py-2.5 px-5 rounded-btn bg-accent-terracotta hover:bg-accent-terracotta/90 text-white text-xs font-bold font-mono transition-colors shadow-xs flex items-center gap-2 shrink-0"
                 >
                   <Check className="w-4 h-4" />
-                  <span>บันทึกการตั้งค่าแพลตฟอร์ม</span>
+                  <span>{locale === 'en' ? 'Save Platform Settings' : 'บันทึกการตั้งค่าแพลตฟอร์ม'}</span>
                 </button>
               </div>
 
@@ -1203,7 +1203,7 @@ export default function SuperAdminPage() {
                 <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs space-y-4">
                   <div className="flex items-center justify-between border-b border-border-rule pb-3">
                     <h4 className="font-serif font-bold text-base text-ink-primary flex items-center gap-2">
-                      <span>ระบบทดลองใช้งานฟรี (Free Trial)</span>
+                      <span>{locale === 'en' ? 'Free Trial System' : 'ระบบทดลองใช้งานฟรี (Free Trial)'}</span>
                     </h4>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -1219,7 +1219,7 @@ export default function SuperAdminPage() {
                   <div className="space-y-3">
                     <div>
                       <label className="block text-xs font-mono font-bold text-ink-secondary mb-1">
-                        จำนวนวันทดลองใช้งานฟรี (Trial Days)
+                        {locale === 'en' ? 'Trial Duration (Trial Days)' : 'จำนวนวันทดลองใช้งานฟรี (Trial Days)'}
                       </label>
                       <div className="flex items-center gap-2">
                         <input
@@ -1230,12 +1230,15 @@ export default function SuperAdminPage() {
                           onChange={(e) => setTrialDays(Number(e.target.value))}
                           className="w-24 px-3 py-1.5 text-xs font-mono rounded border border-border-rule bg-paper-canvas focus:outline-none focus:border-brand-indigo tabular-nums lining-nums"
                         />
-                        <span className="text-xs text-ink-secondary">วัน (ค่าเริ่มต้น: 7 วัน สำหรับ Solo Press ฿79)</span>
+                        <span className="text-xs text-ink-secondary">{locale === 'en' ? 'Days (Default: 7 days for Solo Press ฿79)' : 'วัน (ค่าเริ่มต้น: 7 วัน สำหรับ Solo Press ฿79)'}</span>
                       </div>
                     </div>
 
                     <p className="text-[11px] text-ink-secondary bg-paper-raised p-3 rounded border border-border-rule/80 leading-relaxed">
-                      <strong>เงื่อนไข:</strong> ผู้ใช้ทดลองฟรีไม่ต้องจ่ายเงินล่วงหน้า (฿0.00) ในวันแรก ได้สิทธิ์ 1 Workspace, 5 ช่องทาง, 150 Press Tokens เมื่อครบกำหนด 7 วัน ระบบจะแสดงข้อเสนอโปรโมชั่นส่วนลดพิเศษ
+                      <strong>{locale === 'en' ? 'Terms:' : 'เงื่อนไข:'}</strong>{' '}
+                      {locale === 'en'
+                        ? 'Free trial users pay ฿0 upfront, receive 1 Workspace, 5 channels, and 150 Press Tokens. Upon 7-day expiration, special promotional discounts will display.'
+                        : 'ผู้ใช้ทดลองฟรีไม่ต้องจ่ายเงินล่วงหน้า (฿0.00) ในวันแรก ได้สิทธิ์ 1 Workspace, 5 ช่องทาง, 150 Press Tokens เมื่อครบกำหนด 7 วัน ระบบจะแสดงข้อเสนอโปรโมชั่นส่วนลดพิเศษ'}
                     </p>
                   </div>
                 </div>
@@ -1244,15 +1247,15 @@ export default function SuperAdminPage() {
                 <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs space-y-4">
                   <div className="border-b border-border-rule pb-3">
                     <h4 className="font-serif font-bold text-base text-ink-primary flex items-center gap-2">
-                      <span>บันไดส่วนลดหลังหมดทดลอง (Promo Ladder)</span>
+                      <span>{locale === 'en' ? 'Post-Trial Promotion Ladder (Promo Ladder)' : 'บันไดส่วนลดหลังหมดทดลอง (Promo Ladder)'}</span>
                     </h4>
                   </div>
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-4">
                       <div>
-                        <p className="text-xs font-bold text-ink-primary">ส่วนลดรายเดือน (3 เดือนแรก)</p>
-                        <p className="text-[10px] text-ink-muted">Solo Press เหลือ ฿59.25/ด.</p>
+                        <p className="text-xs font-bold text-ink-primary">{locale === 'en' ? 'Monthly Discount (First 3 Months)' : 'ส่วนลดรายเดือน (3 เดือนแรก)'}</p>
+                        <p className="text-[10px] text-ink-muted">{locale === 'en' ? 'Solo Press: ฿59.25/mo' : 'Solo Press เหลือ ฿59.25/ด.'}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <input
@@ -1269,8 +1272,8 @@ export default function SuperAdminPage() {
 
                     <div className="flex items-center justify-between gap-4">
                       <div>
-                        <p className="text-xs font-bold text-ink-primary">ส่วนลดรายปีพิเศษ (1 ปีแรก)</p>
-                        <p className="text-[10px] text-ink-muted">Solo Press เหลือ ฿462.15/ปี</p>
+                        <p className="text-xs font-bold text-ink-primary">{locale === 'en' ? 'Special Annual Discount (1st Year)' : 'ส่วนลดรายปีพิเศษ (1 ปีแรก)'}</p>
+                        <p className="text-[10px] text-ink-muted">{locale === 'en' ? 'Solo Press: ฿462.15/yr' : 'Solo Press เหลือ ฿462.15/ปี'}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <input
@@ -1287,8 +1290,8 @@ export default function SuperAdminPage() {
 
                     <div className="flex items-center justify-between gap-4 pt-2 border-t border-border-rule/60">
                       <div>
-                        <p className="text-xs font-bold text-ink-primary">ส่วนลดรายปีมาตรฐาน (Standard Yearly)</p>
-                        <p className="text-[10px] text-ink-muted">เทียบเท่าจ่าย 9 เดือน ใช้ได้ 12 เดือน</p>
+                        <p className="text-xs font-bold text-ink-primary">{locale === 'en' ? 'Standard Annual Discount (Standard Yearly)' : 'ส่วนลดรายปีมาตรฐาน (Standard Yearly)'}</p>
+                        <p className="text-[10px] text-ink-muted">{locale === 'en' ? 'Pay 9 months, get 12 months access' : 'เทียบเท่าจ่าย 9 เดือน ใช้ได้ 12 เดือน'}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <input
@@ -1309,13 +1312,13 @@ export default function SuperAdminPage() {
                 <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs space-y-4">
                   <div className="border-b border-border-rule pb-3">
                     <h4 className="font-serif font-bold text-base text-ink-primary flex items-center gap-2">
-                      <span>อัตราหักเหรียญ Master Token กลาง</span>
+                      <span>{locale === 'en' ? 'Master Token Action Rates' : 'อัตราหักเหรียญ Master Token กลาง'}</span>
                     </h4>
                   </div>
 
                   <div className="space-y-2.5 text-xs">
                     <div className="flex items-center justify-between py-1 border-b border-border-rule/40">
-                      <span className="text-ink-secondary">เหรียญต้อนรับผู้ใช้ใหม่ (Welcome Bonus)</span>
+                      <span className="text-ink-secondary">{locale === 'en' ? 'Welcome Bonus (New Users)' : 'เหรียญต้อนรับผู้ใช้ใหม่ (Welcome Bonus)'}</span>
                       <div className="flex items-center gap-1">
                         <input
                           type="number"
@@ -1328,22 +1331,22 @@ export default function SuperAdminPage() {
                     </div>
 
                     <div className="flex items-center justify-between py-1 border-b border-border-rule/40">
-                      <span className="text-ink-secondary">AI Post Diagnosis (วิเคราะห์จุดอ่อนโพสต์)</span>
+                      <span className="text-ink-secondary">{locale === 'en' ? 'AI Post Diagnosis (Analyze Weaknesses)' : 'AI Post Diagnosis (วิเคราะห์จุดอ่อนโพสต์)'}</span>
                       <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">5 Tokens</span>
                     </div>
 
                     <div className="flex items-center justify-between py-1 border-b border-border-rule/40">
-                      <span className="text-ink-secondary">AI KPI Strategy Coaching (โค้ชกลยุทธ์ AI)</span>
+                      <span className="text-ink-secondary">{locale === 'en' ? 'AI KPI Strategy Coaching' : 'AI KPI Strategy Coaching (โค้ชกลยุทธ์ AI)'}</span>
                       <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">10 Tokens</span>
                     </div>
 
                     <div className="flex items-center justify-between py-1 border-b border-border-rule/40">
-                      <span className="text-ink-secondary">Force Sync Telemetry (ดึงสถิติด่วน)</span>
+                      <span className="text-ink-secondary">{locale === 'en' ? 'Force Sync Telemetry (Quick Fetch)' : 'Force Sync Telemetry (ดึงสถิติด่วน)'}</span>
                       <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">2 Tokens</span>
                     </div>
 
                     <div className="flex items-center justify-between py-1">
-                      <span className="text-ink-secondary">Auto-Frame Aspect Ratio (ปรับสัดส่วนภาพ)</span>
+                      <span className="text-ink-secondary">{locale === 'en' ? 'Auto-Frame Aspect Ratio' : 'Auto-Frame Aspect Ratio (ปรับสัดส่วนภาพ)'}</span>
                       <span className="font-mono font-bold text-accent-terracotta tabular-nums lining-nums">5 Tokens</span>
                     </div>
                   </div>
@@ -1353,15 +1356,15 @@ export default function SuperAdminPage() {
                 <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs space-y-4">
                   <div className="border-b border-border-rule pb-3">
                     <h4 className="font-serif font-bold text-base text-ink-primary flex items-center gap-2">
-                      <span>ภาษีมูลค่าเพิ่มและข้อมูลนิติบุคคล</span>
+                      <span>{locale === 'en' ? 'VAT & Legal Corporate Information' : 'ภาษีมูลค่าเพิ่มและข้อมูลนิติบุคคล'}</span>
                     </h4>
                   </div>
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-4">
                       <div>
-                        <p className="text-xs font-bold text-ink-primary">อัตราภาษีมูลค่าเพิ่ม (VAT)</p>
-                        <p className="text-[10px] text-ink-muted">คำนวณแยกแสดงใน e-Tax Invoice</p>
+                        <p className="text-xs font-bold text-ink-primary">{locale === 'en' ? 'Value Added Tax (VAT Rate)' : 'อัตราภาษีมูลค่าเพิ่ม (VAT)'}</p>
+                        <p className="text-[10px] text-ink-muted">{locale === 'en' ? 'Calculated and itemized on e-Tax Invoice' : 'คำนวณแยกแสดงใน e-Tax Invoice'}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
                         <input
@@ -1378,16 +1381,16 @@ export default function SuperAdminPage() {
 
                     <div className="pt-2 border-t border-border-rule/60 space-y-1.5 text-xs">
                       <div className="flex justify-between">
-                        <span className="text-ink-secondary">ชื่อนิติบุคคลผู้ให้บริการ:</span>
+                        <span className="text-ink-secondary">{locale === 'en' ? 'Service Provider Legal Entity:' : 'ชื่อนิติบุคคลผู้ให้บริการ:'}</span>
                         <span className="font-bold text-ink-primary">RETZPOST (THAILAND) CO., LTD.</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-ink-secondary">เลขประจำตัวผู้เสียภาษี (13 หลัก):</span>
+                        <span className="text-ink-secondary">{locale === 'en' ? 'Tax Identification Number (13 digits):' : 'เลขประจำตัวผู้เสียภาษี (13 หลัก):'}</span>
                         <span className="font-mono text-ink-primary font-bold tabular-nums lining-nums">0105567012345</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-ink-secondary">Log พ.ร.บ. คอมฯ ม.26:</span>
-                        <span className="text-semantic-success font-bold font-mono">90 วันอัตโนมัติ (Compliant)</span>
+                        <span className="text-ink-secondary">{locale === 'en' ? 'CCA Sec. 26 Traffic Log:' : 'Log พ.ร.บ. คอมฯ ม.26:'}</span>
+                        <span className="text-semantic-success font-bold font-mono">{locale === 'en' ? '90 Days Automated (Compliant)' : '90 วันอัตโนมัติ (Compliant)'}</span>
                       </div>
                     </div>
                   </div>
@@ -1403,15 +1406,15 @@ export default function SuperAdminPage() {
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-paper-card border-2 border-brand-indigo rounded-editorial max-w-md w-full p-6 shadow-xl space-y-4">
             <h3 className="font-serif font-bold text-lg text-ink-primary">
-              ปรับเหรียญ Press Token สำหรับ {tokenModalUser.name}
+              {locale === 'en' ? `Adjust Press Tokens for ${tokenModalUser.name}` : `ปรับเหรียญ Press Token สำหรับ ${tokenModalUser.name}`}
             </h3>
             <p className="text-xs text-ink-secondary">
-              ยอดคงเหลือปัจจุบัน: <span className="font-bold font-mono text-accent-terracotta tabular-nums lining-nums inline-flex items-center gap-1">{tokenModalUser.workspace?.tokenBalance ?? 50} <MasterTokenIcon size={12} className="inline text-accent-terracotta" /></span>
+              {locale === 'en' ? 'Current Balance: ' : 'ยอดคงเหลือปัจจุบัน: '}<span className="font-bold font-mono text-accent-terracotta tabular-nums lining-nums inline-flex items-center gap-1">{tokenModalUser.workspace?.tokenBalance ?? 50} <MasterTokenIcon size={12} className="inline text-accent-terracotta" /></span>
             </p>
 
             <div>
               <label className="block text-xs font-bold text-ink-secondary mb-1">
-                จำนวนเหรียญที่ต้องการเพิ่ม (+) หรือลด (-)
+                {locale === 'en' ? 'Tokens to Add (+) or Deduct (-)' : 'จำนวนเหรียญที่ต้องการเพิ่ม (+) หรือลด (-)'}
               </label>
               <input
                 type="number"
@@ -1423,7 +1426,7 @@ export default function SuperAdminPage() {
 
             <div>
               <label className="block text-xs font-bold text-ink-secondary mb-1">
-                เหตุผลในการปรับยอด (Audit Log Reason)
+                {locale === 'en' ? 'Audit Log Reason' : 'เหตุผลในการปรับยอด (Audit Log Reason)'}
               </label>
               <input
                 type="text"
@@ -1439,7 +1442,7 @@ export default function SuperAdminPage() {
                 onClick={() => setTokenModalUser(null)}
                 className="py-1.5 px-3 rounded border border-border-rule text-xs font-medium text-ink-secondary hover:text-ink-primary"
               >
-                ยกเลิก
+                {locale === 'en' ? 'Cancel' : 'ยกเลิก'}
               </button>
               <button
                 type="button"
@@ -1454,7 +1457,7 @@ export default function SuperAdminPage() {
                 }}
                 className="py-1.5 px-4 rounded bg-accent-terracotta hover:bg-accent-terracotta/90 text-white text-xs font-bold"
               >
-                บันทึกการปรับยอด
+                {locale === 'en' ? 'Save Token Adjustment' : 'บันทึกการปรับยอด'}
               </button>
             </div>
           </div>
@@ -1466,7 +1469,7 @@ export default function SuperAdminPage() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-paper-card border border-border-rule rounded-editorial max-w-sm w-full p-6 shadow-xl space-y-4 text-center">
             <h3 className="font-serif font-bold text-base text-ink-primary">
-              หลักฐานสลิปการโอนเงิน (PromptPay Slip)
+              {locale === 'en' ? 'PromptPay Payment Slip Evidence' : 'หลักฐานสลิปการโอนเงิน (PromptPay Slip)'}
             </h3>
             <div className="p-2 bg-paper-canvas rounded border border-border-rule flex items-center justify-center min-h-[200px]">
               {previewSlipUrl.startsWith('data:image') || previewSlipUrl.startsWith('http') ? (
@@ -1481,7 +1484,7 @@ export default function SuperAdminPage() {
               onClick={() => setPreviewSlipUrl(null)}
               className="w-full py-2 px-4 rounded bg-brand-indigo text-white text-xs font-bold"
             >
-              ปิดหน้าต่าง
+              {locale === 'en' ? 'Close Window' : 'ปิดหน้าต่าง'}
             </button>
           </div>
         </div>

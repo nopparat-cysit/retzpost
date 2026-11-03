@@ -1162,47 +1162,47 @@ export default function CreatePostPage() {
 
     if (format === 'reel') {
       if (mediaMode === 'VIDEO_LANDSCAPE') {
-        return { eligible: false, reason: 'Shorts/Reels ต้องการวิดีโอแนวตั้ง 9:16 (สลับแท็บเป็น Shorts/Reels)' };
+        return { eligible: false, reason: locale === 'en' ? 'Shorts/Reels require 9:16 vertical video (switch tab to Shorts/Reels)' : 'Shorts/Reels ต้องการวิดีโอแนวตั้ง 9:16 (สลับแท็บเป็น Shorts/Reels)' };
       }
       if (mediaMode !== 'VIDEO') {
-        return { eligible: false, reason: 'ต้องการไฟล์วิดีโอ MP4/MOV แนวตั้ง 9:16' };
+        return { eligible: false, reason: locale === 'en' ? 'Requires 9:16 vertical MP4/MOV video file' : 'ต้องการไฟล์วิดีโอ MP4/MOV แนวตั้ง 9:16' };
       }
       return { eligible: true };
     }
 
     if (format === 'story') {
       if (mediaMode === 'TEXT_ONLY') {
-        return { eligible: false, reason: '24h Stories ต้องการรูปภาพหรือวิดีโอ' };
+        return { eligible: false, reason: locale === 'en' ? '24h Stories require image or video media' : '24h Stories ต้องการรูปภาพหรือวิดีโอ' };
       }
       if (mediaMode === 'VIDEO_LANDSCAPE') {
-        return { eligible: false, reason: '24h Stories ต้องการรูปภาพหรือวิดีโอแนวตั้ง 9:16' };
+        return { eligible: false, reason: locale === 'en' ? '24h Stories require 9:16 vertical image or video' : '24h Stories ต้องการรูปภาพหรือวิดีโอแนวตั้ง 9:16' };
       }
       return { eligible: true };
     }
 
     if (format === 'feed') {
       if (mediaMode === 'TEXT_ONLY' && account.platform === 'INSTAGRAM') {
-        return { eligible: false, reason: 'Instagram Feed ต้องการรูปภาพหรือวิดีโอ' };
+        return { eligible: false, reason: locale === 'en' ? 'Instagram Feed requires image or video media' : 'Instagram Feed ต้องการรูปภาพหรือวิดีโอ' };
       }
       if (mediaMode === 'TEXT_ONLY' && (account.platform === 'YOUTUBE' || account.platform === 'TIKTOK')) {
-        return { eligible: false, reason: 'ต้องการรูปภาพหรือวิดีโอ' };
+        return { eligible: false, reason: locale === 'en' ? 'Requires image or video media' : 'ต้องการรูปภาพหรือวิดีโอ' };
       }
       if (mediaMode === 'VIDEO_LANDSCAPE') {
         if (account.platform === 'INSTAGRAM' || account.platform === 'TIKTOK') {
-          return { eligible: false, reason: 'Full Video 16:9 แนวนอน รองรับเฉพาะ YouTube และ Facebook Video (Instagram และ TikTok รองรับเฉพาะแนวตั้ง 9:16)' };
+          return { eligible: false, reason: locale === 'en' ? 'Full Video 16:9 Landscape is only supported on YouTube and Facebook Video (Instagram and TikTok require 9:16 vertical)' : 'Full Video 16:9 แนวนอน รองรับเฉพาะ YouTube และ Facebook Video (Instagram และ TikTok รองรับเฉพาะแนวตั้ง 9:16)' };
         }
       }
       if (account.platform === 'TIKTOK') {
         if (mediaMode === 'VIDEO' || mediaMode === 'VIDEO_LANDSCAPE') {
-          return { eligible: false, reason: 'TikTok Feed ออกแบบสำหรับ Photo Slide (วิดีโอให้ใช้ TikTok Video/Reel 9:16)' };
+          return { eligible: false, reason: locale === 'en' ? 'TikTok Feed is designed for Photo Slides (for video use TikTok Video/Reel 9:16)' : 'TikTok Feed ออกแบบสำหรับ Photo Slide (วิดีโอให้ใช้ TikTok Video/Reel 9:16)' };
         }
       }
       if (account.platform === 'YOUTUBE') {
         if (mediaMode === 'PHOTOS') {
-          return { eligible: false, reason: 'YouTube Studio API ไม่รองรับการโพสต์รูปภาพเดี่ยว/อัลบั้ม' };
+          return { eligible: false, reason: locale === 'en' ? 'YouTube Studio API does not support single/album photo dispatches' : 'YouTube Studio API ไม่รองรับการโพสต์รูปภาพเดี่ยว/อัลบั้ม' };
         }
         if (mediaMode !== 'VIDEO_LANDSCAPE') {
-          return { eligible: false, reason: 'YouTube Video ต้องการ Full Video (16:9)' };
+          return { eligible: false, reason: locale === 'en' ? 'YouTube Video requires 16:9 Full Video' : 'YouTube Video ต้องการ Full Video (16:9)' };
         }
       }
       return { eligible: true };
@@ -1469,35 +1469,35 @@ export default function CreatePostPage() {
                 options={[
                   { 
                     value: 'OWNER', 
-                    label: 'Owner (เจ้าของ)', 
+                    label: locale === 'en' ? 'Owner (Full Access)' : 'Owner (เจ้าของ)', 
                     icon: <Sticker name="role-owner" size="xs" />,
                     badge: 'Owner', 
                     badgeColor: 'bg-brand-indigo/15 text-brand-indigo' 
                   },
                   { 
                     value: 'MANAGER', 
-                    label: 'Manager (ยิงสด)', 
+                    label: locale === 'en' ? 'Manager (Direct Publish)' : 'Manager (ยิงสด)', 
                     icon: <Sticker name="role-manager" size="xs" />,
                     badge: 'Manager', 
                     badgeColor: 'bg-semantic-info/15 text-semantic-info' 
                   },
                   { 
                     value: 'EDITOR', 
-                    label: 'Editor (ยิงสด)', 
+                    label: locale === 'en' ? 'Editor (Direct Publish)' : 'Editor (ยิงสด)', 
                     icon: <Sticker name="role-editor" size="xs" />,
                     badge: 'Editor', 
                     badgeColor: 'bg-brand-indigo/15 text-brand-indigo' 
                   },
                   { 
                     value: 'CONTRIBUTOR', 
-                    label: 'Contributor (รออนุมัติ)', 
+                    label: locale === 'en' ? 'Contributor (Approval Flow)' : 'Contributor (รออนุมัติ)', 
                     icon: <Sticker name="role-contributor" size="xs" />,
                     badge: 'Approval', 
                     badgeColor: 'bg-accent-terracotta/15 text-accent-terracotta' 
                   },
                   { 
                     value: 'VIEWER', 
-                    label: 'Viewer (อ่านอย่างเดียว)', 
+                    label: locale === 'en' ? 'Viewer (Read-Only)' : 'Viewer (อ่านอย่างเดียว)', 
                     icon: <Sticker name="role-viewer" size="xs" />,
                     badge: 'Read-only', 
                     badgeColor: 'bg-paper-subtle text-ink-secondary' 
@@ -1513,9 +1513,9 @@ export default function CreatePostPage() {
               <Link
                 href="/settings/team"
                 className="text-[10px] font-mono text-brand-indigo hover:underline font-semibold ml-0.5"
-                title="จัดการสิทธิ์ทีม"
+                title={locale === 'en' ? 'Manage Team RBAC' : 'จัดการสิทธิ์ทีม'}
               >
-                ทีม →
+                {locale === 'en' ? 'Team →' : 'ทีม →'}
               </Link>
             </div>
 
@@ -1530,10 +1530,10 @@ export default function CreatePostPage() {
                   loadSampleMockData();
                 }}
                 className="px-2.5 py-1.5 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                title="โหลดข้อมูลตัวอย่างสำหรับทดสอบเขียนโพสต์"
+                title={locale === 'en' ? 'Load sample draft for composer testing' : 'โหลดข้อมูลตัวอย่างสำหรับทดสอบเขียนโพสต์'}
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>โหลดตัวอย่าง (Demo)</span>
+                <span>{locale === 'en' ? 'Load Demo' : 'โหลดตัวอย่าง (Demo)'}</span>
               </button>
             ) : (
               <button
@@ -1542,10 +1542,10 @@ export default function CreatePostPage() {
                   clearAllMockData();
                 }}
                 className="px-2.5 py-1.5 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-accent-terracotta font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                title="ล้างข้อมูลตัวอย่างทั้งหมด เริ่มต้นเขียนจากศูนย์"
+                title={locale === 'en' ? 'Clear all draft data to start from clean slate' : 'ล้างข้อมูลตัวอย่างทั้งหมด เริ่มต้นเขียนจากศูนย์'}
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>เคลียร์แบบร่าง (Clean)</span>
+                <span>{locale === 'en' ? 'Clear Draft' : 'เคลียร์แบบร่าง (Clean)'}</span>
               </button>
             )}
           </div>
@@ -1630,7 +1630,7 @@ export default function CreatePostPage() {
                   type="button"
                   onClick={() => setIsWorkspaceMenuOpen(!isWorkspaceMenuOpen)}
                   className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-brand-indigo/10 hover:bg-brand-indigo/15 text-brand-indigo border border-brand-indigo/20 transition-colors cursor-pointer truncate max-w-[170px]"
-                  title="คลิกเพื่อสลับโปรเจกต์"
+                  title={locale === 'en' ? 'Click to switch workspace' : 'คลิกเพื่อสลับโปรเจกต์'}
                 >
                   <span className={`w-1.5 h-1.5 rounded-full ${activeWorkspace.badgeColor} shrink-0`} />
                   <span className="truncate">{activeWorkspace.name}</span>
@@ -1851,7 +1851,7 @@ export default function CreatePostPage() {
           {/* Quick Header: Channel Count & Collapse/Expand All Toggle */}
           <div className="flex items-center justify-between text-[10px] font-mono text-ink-secondary px-0.5 pt-0.5">
             <span>
-              ช่องทางพร้อมโพสต์ ({compatibleAccounts.length}/{filteredAccounts.length})
+              {locale === 'en' ? `Target Channels (${compatibleAccounts.length}/${filteredAccounts.length})` : `ช่องทางพร้อมโพสต์ (${compatibleAccounts.length}/${filteredAccounts.length})`}
             </span>
             <div className="flex items-center gap-2">
               {incompatibleAccounts.length > 0 && (
@@ -1860,7 +1860,7 @@ export default function CreatePostPage() {
                   onClick={() => setHideIncompatibleChannels(!hideIncompatibleChannels)}
                   className="text-brand-indigo hover:underline font-semibold cursor-pointer transition-colors"
                 >
-                  {hideIncompatibleChannels ? 'แสดงทั้งหมด' : 'ซ่อนที่ไม่รองรับ'}
+                  {hideIncompatibleChannels ? (locale === 'en' ? 'Show All' : 'แสดงทั้งหมด') : (locale === 'en' ? 'Hide Incompatible' : 'ซ่อนที่ไม่รองรับ')}
                 </button>
               )}
               {groupedAccounts.size > 1 && (
@@ -1868,9 +1868,9 @@ export default function CreatePostPage() {
                   type="button"
                   onClick={toggleAllGroups}
                   className="text-brand-indigo hover:underline font-semibold cursor-pointer flex items-center gap-0.5 transition-colors"
-                  title={isAllGroupsCollapsed ? 'กางทุกแพลตฟอร์ม' : 'พับทุกแพลตฟอร์ม'}
+                  title={isAllGroupsCollapsed ? (locale === 'en' ? 'Expand All' : 'กางทุกแพลตฟอร์ม') : (locale === 'en' ? 'Collapse All' : 'พับทุกแพลตฟอร์ม')}
                 >
-                  <span>{isAllGroupsCollapsed ? '▾ กางทั้งหมด' : '▴ พับทั้งหมด'}</span>
+                  <span>{isAllGroupsCollapsed ? (locale === 'en' ? '▾ Expand All' : '▾ กางทั้งหมด') : (locale === 'en' ? '▴ Collapse All' : '▴ พับทั้งหมด')}</span>
                 </button>
               )}
             </div>
@@ -1885,10 +1885,10 @@ export default function CreatePostPage() {
                 </div>
                 <div className="space-y-1">
                   <h4 className="font-serif font-bold text-xs text-ink-primary">
-                    ยังไม่มีช่องทางสำหรับโปรเจกต์นี้
+                    {locale === 'en' ? 'No channels connected for this workspace' : 'ยังไม่มีช่องทางสำหรับโปรเจกต์นี้'}
                   </h4>
                   <p className="text-[11px] text-ink-secondary leading-snug">
-                    เปิดใช้งานหรือเชื่อมต่อเพจ Facebook, Instagram, TikTok หรือ YouTube เพื่อเริ่มกระจายโพสต์
+                    {locale === 'en' ? 'Connect Facebook, Instagram, TikTok, or YouTube to start distributing dispatches.' : 'เปิดใช้งานหรือเชื่อมต่อเพจ Facebook, Instagram, TikTok หรือ YouTube เพื่อเริ่มกระจายโพสต์'}
                   </p>
                 </div>
                 <Link
@@ -1896,7 +1896,7 @@ export default function CreatePostPage() {
                   className="inline-flex items-center gap-1.5 py-1.5 px-3 rounded-editorial bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-mono font-semibold transition-colors shadow-2xs"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>ตั้งค่าช่องทางใน /accounts</span>
+                  <span>{locale === 'en' ? 'Configure in /accounts' : 'ตั้งค่าช่องทางใน /accounts'}</span>
                 </Link>
               </div>
             ) : (
@@ -1916,7 +1916,7 @@ export default function CreatePostPage() {
                     type="button"
                     onClick={() => toggleGroupCollapse(groupName)}
                     className="w-full flex items-center justify-between text-[10px] font-mono py-1 px-1 rounded hover:bg-paper-canvas border-b border-border-rule/80 transition-colors group/hdr cursor-pointer text-left"
-                    title={isCollapsed ? `คลิกเพื่อกาง ${groupName}` : `คลิกเพื่อพับ ${groupName}`}
+                    title={isCollapsed ? (locale === 'en' ? `Expand ${groupName}` : `คลิกเพื่อกาง ${groupName}`) : (locale === 'en' ? `Collapse ${groupName}` : `คลิกเพื่อพับ ${groupName}`)}
                   >
                     <div className="flex items-center gap-1.5">
                       <ChevronDown
@@ -2094,7 +2094,7 @@ export default function CreatePostPage() {
                   <span className="text-[10px] font-mono text-ink-secondary flex items-center gap-1.5 font-semibold">
                     <Lock className="w-3 h-3 text-ink-secondary" />
                     <span>
-                      ช่องทางที่ไม่รองรับ{mediaMode === 'VIDEO_LANDSCAPE' ? ' 16:9 แนวนอน' : mediaMode === 'PHOTOS' ? 'ภาพเดี่ยว' : mediaMode === 'TEXT_ONLY' ? 'ข้อความล้วน' : ''} ({incompatibleAccounts.length})
+                      {locale === 'en' ? `Incompatible Channels${mediaMode === 'VIDEO_LANDSCAPE' ? ' (16:9 Landscape)' : mediaMode === 'PHOTOS' ? ' (Photos)' : mediaMode === 'TEXT_ONLY' ? ' (Text-Only)' : ''} (${incompatibleAccounts.length})` : `ช่องทางที่ไม่รองรับ${mediaMode === 'VIDEO_LANDSCAPE' ? ' 16:9 แนวนอน' : mediaMode === 'PHOTOS' ? 'ภาพเดี่ยว' : mediaMode === 'TEXT_ONLY' ? 'ข้อความล้วน' : ''} (${incompatibleAccounts.length})`}
                     </span>
                   </span>
                   <button
@@ -2102,24 +2102,24 @@ export default function CreatePostPage() {
                     onClick={() => setHideIncompatibleChannels(!hideIncompatibleChannels)}
                     className="text-[9px] font-mono text-brand-indigo hover:underline font-semibold cursor-pointer"
                   >
-                    {hideIncompatibleChannels ? '▸ แสดงรายการ' : '▾ ซ่อน'}
+                    {hideIncompatibleChannels ? (locale === 'en' ? '▸ Show' : '▸ แสดงรายการ') : (locale === 'en' ? '▾ Hide' : '▾ ซ่อน')}
                   </button>
                 </div>
                 <p className="text-[9px] text-ink-secondary leading-snug">
                   {mediaMode === 'VIDEO_LANDSCAPE'
-                    ? 'Instagram และ TikTok ต้องการวิดีโอแนวตั้ง 9:16 (ไม่รองรับ Full Video 16:9 แนวนอน)'
+                    ? (locale === 'en' ? 'Instagram and TikTok require 9:16 vertical video (16:9 Landscape not supported)' : 'Instagram และ TikTok ต้องการวิดีโอแนวตั้ง 9:16 (ไม่รองรับ Full Video 16:9 แนวนอน)')
                     : mediaMode === 'PHOTOS'
-                    ? 'YouTube Studio API ไม่มีระบบโพสต์ภาพเดี่ยว/อัลบั้ม'
+                    ? (locale === 'en' ? 'YouTube Studio API does not support photo albums' : 'YouTube Studio API ไม่มีระบบโพสต์ภาพเดี่ยว/อัลบั้ม')
                     : mediaMode === 'TEXT_ONLY'
-                    ? 'Instagram, TikTok และ YouTube ต้องมีไฟล์มีเดียประกอบ'
-                    : 'ช่องทางเหล่านี้ไม่มีรูปแบบที่ตรงกับมีเดียปัจจุบัน'}
+                    ? (locale === 'en' ? 'Instagram, TikTok, and YouTube require media assets' : 'Instagram, TikTok และ YouTube ต้องมีไฟล์มีเดียประกอบ')
+                    : (locale === 'en' ? 'These channels do not match current media format' : 'ช่องทางเหล่านี้ไม่มีรูปแบบที่ตรงกับมีเดียปัจจุบัน')}
                 </p>
                 {!hideIncompatibleChannels && (
                   <div className="space-y-1 pt-1.5 border-t border-border-rule/60">
                     {incompatibleAccounts.map((acc) => (
                       <div key={acc.id} className="p-1.5 rounded bg-paper-subtle/60 text-[10px] text-ink-secondary flex items-center justify-between opacity-60">
                         <span className="truncate">{acc.name} ({acc.badge})</span>
-                        <span className="font-mono text-[9px] text-accent-terracotta">ล็อก</span>
+                        <span className="font-mono text-[9px] text-accent-terracotta">{locale === 'en' ? 'Locked' : 'ล็อก'}</span>
                       </div>
                     ))}
                   </div>
@@ -2248,7 +2248,7 @@ export default function CreatePostPage() {
                   className="aspect-square border-2 border-dashed border-brand-indigo/40 rounded-editorial flex flex-col items-center justify-center p-2 text-center cursor-pointer hover:border-brand-indigo hover:bg-brand-indigo/5 transition-colors bg-paper-canvas/30 group"
                 >
                   <Sparkles className="w-4 h-4 text-brand-indigo mb-0.5 group-hover:scale-110 transition-transform" />
-                  <span className="text-[11px] font-serif font-medium text-brand-indigo">เลือกจากคลัง AI</span>
+                  <span className="text-[11px] font-serif font-medium text-brand-indigo">{locale === 'en' ? 'AI Media Hub' : 'เลือกจากคลัง AI'}</span>
                   <span className="text-[9px] font-mono text-ink-secondary">AI Assets Hub</span>
                 </button>
               </div>
@@ -2279,7 +2279,7 @@ export default function CreatePostPage() {
                       type="button"
                       onClick={() => setVideoAsset(null)}
                       className="p-1 text-ink-secondary hover:text-accent-terracotta transition-colors"
-                      title="ลบวิดีโอ"
+                      title={locale === 'en' ? 'Remove Video' : 'ลบวิดีโอ'}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -2289,10 +2289,10 @@ export default function CreatePostPage() {
                 <div className="border-2 border-dashed border-border-rule rounded-editorial p-6 text-center bg-paper-canvas hover:border-brand-indigo/50 transition-colors">
                   <Film className="w-8 h-8 mx-auto text-brand-indigo/50 mb-2" />
                   <p className="text-xs font-semibold text-ink-primary">
-                    คลิกหรือลากไฟล์วิดีโอ (MP4/MOV) มาวางที่นี่
+                    {locale === 'en' ? 'Click or drag video file (MP4/MOV) here' : 'คลิกหรือลากไฟล์วิดีโอ (MP4/MOV) มาวางที่นี่'}
                   </p>
                   <p className="text-[10px] font-mono text-ink-secondary mt-1">
-                    รองรับอัตราส่วน 9:16 (Reels/Shorts/TikTok) ความละเอียดสูงสุด 1080x1920
+                    {locale === 'en' ? 'Supports 9:16 vertical ratio (Reels/Shorts/TikTok) up to 1080x1920' : 'รองรับอัตราส่วน 9:16 (Reels/Shorts/TikTok) ความละเอียดสูงสุด 1080x1920'}
                   </p>
                 </div>
               )
@@ -2315,7 +2315,7 @@ export default function CreatePostPage() {
                           </h3>
                         </div>
                         <p className="text-[10px] font-mono text-semantic-success mt-0.5">
-                          {videoAsset.resolution} • ความยาว {videoAsset.duration} • 16:9 Landscape
+                          {videoAsset.resolution} • {locale === 'en' ? 'Duration ' : 'ความยาว '}{videoAsset.duration} • 16:9 Landscape
                         </p>
                       </div>
                     </div>
@@ -2327,7 +2327,7 @@ export default function CreatePostPage() {
                         type="button"
                         onClick={() => setVideoAsset(null)}
                         className="p-1 text-ink-secondary hover:text-accent-terracotta transition-colors"
-                        title="ลบวิดีโอ"
+                        title={locale === 'en' ? 'Remove Video' : 'ลบวิดีโอ'}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -2349,13 +2349,13 @@ export default function CreatePostPage() {
                       <Play className="w-6 h-6 fill-[#FF0000] ml-0.5" />
                     </div>
                     <p className="text-xs font-semibold text-ink-primary">
-                      คลิกหรือลากไฟล์วิดีโอแนวนอน 16:9 Landscape (YouTube Full Video / FB Watch)
+                      {locale === 'en' ? 'Click or drag 16:9 Landscape video (YouTube Full Video / FB Watch)' : 'คลิกหรือลากไฟล์วิดีโอแนวนอน 16:9 Landscape (YouTube Full Video / FB Watch)'}
                     </p>
                     <p className="text-[10px] font-mono text-ink-secondary mt-1">
-                      รองรับ MP4, MOV, WebM • 1080p, 2K, 4K UHD • ไม่จำกัดความยาว (YouTube API สูงสุด 128GB)
+                      {locale === 'en' ? 'Supports MP4, MOV, WebM • 1080p, 2K, 4K UHD • Unlimited length (YouTube API max 128GB)' : 'รองรับ MP4, MOV, WebM • 1080p, 2K, 4K UHD • ไม่จำกัดความยาว (YouTube API สูงสุด 128GB)'}
                     </p>
                     <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full bg-[#FF0000]/10 text-[#FF0000] font-mono text-[9px] font-semibold border border-[#FF0000]/20">
-                      + คลิกเพื่อเลือกไฟล์วิดีโอ 16:9
+                      {locale === 'en' ? '+ Choose 16:9 Video File' : '+ คลิกเพื่อเลือกไฟล์วิดีโอ 16:9'}
                     </span>
                   </div>
                 )}
@@ -2366,11 +2366,11 @@ export default function CreatePostPage() {
                     <div className="flex items-center gap-1.5">
                       <ImageIcon className="w-3.5 h-3.5 text-brand-indigo" />
                       <span className="text-xs font-semibold text-ink-primary">
-                        ภาพปกคลิปวิดีโอ (Custom Thumbnail 16:9)
+                        {locale === 'en' ? 'Custom Thumbnail (16:9)' : 'ภาพปกคลิปวิดีโอ (Custom Thumbnail 16:9)'}
                       </span>
                     </div>
                     <span className="text-[9px] font-mono text-ink-secondary">
-                      แนะนำ 1280 × 720 px (16:9) ไม่เกิน 2MB
+                      {locale === 'en' ? 'Recommended: 1280 × 720 px (16:9), under 2MB' : 'แนะนำ 1280 × 720 px (16:9) ไม่เกิน 2MB'}
                     </span>
                   </div>
 
@@ -2378,7 +2378,7 @@ export default function CreatePostPage() {
                     <div className="flex items-center justify-between p-2 bg-paper-canvas rounded border border-border-rule">
                       <div className="flex items-center gap-2.5">
                         <div className="w-12 h-7 bg-brand-indigo/10 rounded flex items-center justify-center text-[8px] font-mono text-brand-indigo font-bold border border-brand-indigo/20 overflow-hidden">
-                          16:9 ปก
+                          {locale === 'en' ? '16:9 Cover' : '16:9 ปก'}
                         </div>
                         <div>
                           <p className="text-xs font-medium text-ink-primary font-mono">{customThumbnail.name}</p>
@@ -2389,7 +2389,7 @@ export default function CreatePostPage() {
                         type="button"
                         onClick={() => setCustomThumbnail(null)}
                         className="text-ink-secondary hover:text-accent-terracotta p-1"
-                        title="ลบภาพปก"
+                        title={locale === 'en' ? 'Remove thumbnail' : 'ลบภาพปก'}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -2402,7 +2402,7 @@ export default function CreatePostPage() {
                         className="py-2 px-3 border border-dashed border-border-rule hover:border-brand-indigo rounded text-center text-xs bg-paper-canvas transition-colors group flex items-center justify-center gap-1.5"
                       >
                         <Plus className="w-3.5 h-3.5 text-brand-indigo group-hover:scale-110 transition-transform" />
-                        <span className="text-[11px] font-medium text-ink-primary">อัปโหลดภาพปก 16:9</span>
+                        <span className="text-[11px] font-medium text-ink-primary">{locale === 'en' ? 'Upload 16:9 Thumbnail' : 'อัปโหลดภาพปก 16:9'}</span>
                       </button>
                       <button
                         type="button"
@@ -2410,7 +2410,7 @@ export default function CreatePostPage() {
                         className="py-2 px-3 border border-brand-indigo/40 hover:border-brand-indigo rounded text-center text-xs bg-brand-indigo/5 text-brand-indigo transition-colors flex items-center justify-center gap-1.5"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span className="text-[11px] font-medium">สุ่มตัดปกจากวิดีโอ (AI)</span>
+                        <span className="text-[11px] font-medium">{locale === 'en' ? 'Auto-Extract Frame (AI)' : 'สุ่มตัดปกจากวิดีโอ (AI)'}</span>
                       </button>
                     </div>
                   )}
@@ -2421,14 +2421,14 @@ export default function CreatePostPage() {
                   <div className="flex items-center gap-1.5">
                     <SocialPlatformIcon platform="YOUTUBE" size={14} />
                     <span className="text-xs font-semibold text-ink-primary">
-                      การตั้งค่าช่อง YouTube (YouTube Metadata & Privacy)
+                      {locale === 'en' ? 'YouTube Settings (Metadata & Privacy)' : 'การตั้งค่าช่อง YouTube (YouTube Metadata & Privacy)'}
                     </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
                       <label className="text-[10px] font-mono text-ink-secondary uppercase block mb-1 font-semibold">
-                        ระดับการมองเห็น (Visibility):
+                        {locale === 'en' ? 'Visibility:' : 'ระดับการมองเห็น (Visibility):'}
                       </label>
                       <div className="grid grid-cols-3 gap-1">
                         {(['PUBLIC', 'UNLISTED', 'PRIVATE'] as const).map((vis) => (
@@ -2450,7 +2450,7 @@ export default function CreatePostPage() {
 
                     <div>
                       <label className="text-[10px] font-mono text-ink-secondary uppercase block mb-1 font-semibold">
-                        หมวดหมู่วิดีโอ (Category):
+                        {locale === 'en' ? 'Category:' : 'หมวดหมู่วิดีโอ (Category):'}
                       </label>
                       <select
                         value={youtubeCategory}
@@ -2469,7 +2469,7 @@ export default function CreatePostPage() {
 
                   <div className="flex items-center gap-2 pt-1 border-t border-border-rule/60 text-[10px] text-ink-secondary font-mono">
                     <span className="w-1.5 h-1.5 rounded-full bg-semantic-success"></span>
-                    <span>COPPA: ไม่ได้สร้างมาเพื่อเด็กโดยเฉพาะ (Not Made for Kids)</span>
+                    <span>{locale === 'en' ? 'COPPA: Not Made for Kids' : 'COPPA: ไม่ได้สร้างมาเพื่อเด็กโดยเฉพาะ (Not Made for Kids)'}</span>
                   </div>
                 </div>
               </div>
@@ -2496,7 +2496,7 @@ export default function CreatePostPage() {
                 {lastSavedDraftTime && (
                   <span className="text-[10px] font-mono text-semantic-success flex items-center gap-1 font-medium bg-semantic-success/10 px-2 py-0.5 rounded border border-semantic-success/30">
                     <Check className="w-3 h-3 text-semantic-success shrink-0" />
-                    <span>บันทึกอัตโนมัติ</span>
+                    <span>{locale === 'en' ? 'Auto-Saved' : 'บันทึกอัตโนมัติ'}</span>
                     <span className="text-ink-secondary">({lastSavedDraftTime})</span>
                   </span>
                 )}
@@ -2510,7 +2510,7 @@ export default function CreatePostPage() {
               <div className="p-2.5 bg-brand-indigo/10 border border-brand-indigo/30 rounded-editorial flex items-center justify-between text-xs text-brand-indigo">
                 <span className="flex items-center gap-1.5 font-medium">
                   <CheckCircle2 className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
-                  <span>กู้คืนแบบร่างล่าสุดของ <strong>{activeWorkspace.name}</strong> อัตโนมัติแล้ว</span>
+                  <span>{locale === 'en' ? <>Restored latest draft for <strong>{activeWorkspace.name}</strong></> : <>กู้คืนแบบร่างล่าสุดของ <strong>{activeWorkspace.name}</strong> อัตโนมัติแล้ว</>}</span>
                 </span>
                 <div className="flex items-center gap-2.5">
                   <button
@@ -2518,13 +2518,13 @@ export default function CreatePostPage() {
                     onClick={handleClearDraft}
                     className="text-[10px] font-mono text-ink-secondary hover:text-semantic-error underline cursor-pointer"
                   >
-                    ล้างแบบร่าง (Reset)
+                    {locale === 'en' ? 'Reset Draft' : 'ล้างแบบร่าง (Reset)'}
                   </button>
                   <button
                     type="button"
                     onClick={() => setDraftRestoredNotice(false)}
                     className="text-ink-secondary hover:text-ink-primary text-xs cursor-pointer"
-                    title="ปิดข้อความแจ้งเตือน"
+                    title={locale === 'en' ? 'Dismiss notice' : 'ปิดข้อความแจ้งเตือน'}
                   >
                     ✕
                   </button>
@@ -2641,10 +2641,10 @@ export default function CreatePostPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs pt-2">
                 <div>
                   <CustomDatePicker
-                    label="Target Date (วันที่ต้องการเผยแพร่)"
+                    label={locale === 'en' ? 'Target Date (Publishing Date)' : 'Target Date (วันที่ต้องการเผยแพร่)'}
                     value={scheduledDate}
                     onChange={(d) => setScheduledDate(d)}
-                    placeholder="เลือกวันที่..."
+                    placeholder={locale === 'en' ? 'Select date...' : 'เลือกวันที่...'}
                     size="sm"
                     showPresets={true}
                     markedDates={{
@@ -2656,10 +2656,10 @@ export default function CreatePostPage() {
                 </div>
                 <div>
                   <CustomTimePicker
-                    label="Target Time (เวลาที่ต้องการเผยแพร่)"
+                    label={locale === 'en' ? 'Target Time (Publishing Time)' : 'Target Time (เวลาที่ต้องการเผยแพร่)'}
                     value={scheduledTime}
                     onChange={(t) => setScheduledTime(t)}
-                    placeholder="เลือกเวลา..."
+                    placeholder={locale === 'en' ? 'Select time...' : 'เลือกเวลา...'}
                     size="sm"
                     showPeakSlots={true}
                   />
@@ -2690,7 +2690,7 @@ export default function CreatePostPage() {
                       ? 'bg-semantic-warning/20 text-semantic-warning border-semantic-warning/60 font-bold shadow-2xs'
                       : 'bg-paper-canvas text-ink-secondary hover:text-ink-primary border-border-rule/80'
                   }`}
-                  title="Toggle 9:16 Safe Zone Guidelines (ขอบบน 15%, ขอบล่าง 25%, เสาขวา 18% และ IG Grid 1:1)"
+                  title={locale === 'en' ? 'Toggle 9:16 Safe Zone Guidelines (Top 15%, Bottom 25%, Right 18%, IG Grid 1:1)' : 'Toggle 9:16 Safe Zone Guidelines (ขอบบน 15%, ขอบล่าง 25%, เสาขวา 18% และ IG Grid 1:1)'}
                 >
                   <ShieldCheck className="w-3 h-3 text-semantic-warning" />
                   <span>Safe Zone</span>
@@ -2729,7 +2729,7 @@ export default function CreatePostPage() {
                         ? 'bg-paper-raised text-ink-primary shadow-xs ring-1 ring-border-rule font-bold'
                         : 'text-ink-secondary hover:text-ink-primary hover:bg-paper-raised/50'
                     }`}
-                    title={`สลับไปพรีวิว ${plat}`}
+                    title={locale === 'en' ? `Switch preview to ${plat}` : `สลับไปพรีวิว ${plat}`}
                   >
                     {plat === 'INSTAGRAM' && <InstagramLogo size={14} className="shrink-0" />}
                     {plat === 'FACEBOOK' && <FacebookLogo size={14} className="shrink-0" />}
@@ -2806,7 +2806,7 @@ export default function CreatePostPage() {
                       ) : (
                         <div className="text-center p-3 text-ink-secondary/60">
                           <ImageIcon className="w-8 h-8 mx-auto mb-1 opacity-40 text-brand-indigo" />
-                          <span className="text-[10px] font-mono">ยังไม่มีรูปภาพ</span>
+                          <span className="text-[10px] font-mono">{locale === 'en' ? 'No image yet' : 'ยังไม่มีรูปภาพ'}</span>
                         </div>
                       )
                     )}
@@ -3021,7 +3021,7 @@ export default function CreatePostPage() {
                       ) : (
                         <div className="text-center p-3 text-ink-secondary/60">
                           <ImageIcon className="w-8 h-8 mx-auto mb-1 opacity-40 text-[#1877F2]" />
-                          <span className="text-[10px] font-mono">ยังไม่มีรูปภาพ</span>
+                          <span className="text-[10px] font-mono">{locale === 'en' ? 'No image yet' : 'ยังไม่มีรูปภาพ'}</span>
                         </div>
                       )}
                     </div>
@@ -3248,7 +3248,7 @@ export default function CreatePostPage() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/30 flex items-center justify-center">
                         <span className="text-[10px] font-mono text-white/90 absolute top-2 left-2 bg-black/70 px-1.5 py-0.5 rounded border border-white/20 flex items-center gap-1">
                           <ImageIcon className="w-3 h-3 text-white/80" />
-                          <span>ปก: {customThumbnail.name}</span>
+                          <span>{locale === 'en' ? 'Cover: ' : 'ปก: '}{customThumbnail.name}</span>
                         </span>
                       </div>
                     ) : null}
@@ -3498,7 +3498,7 @@ export default function CreatePostPage() {
                 type="button"
                 disabled={totalActivePlacements === 0}
                 onClick={() => {
-                  setSubmittedForApprovalNotice(`ส่งโพสต์ "${workingTitle}" ให้ Manager ตรวจสอบและอนุมัติเรียบร้อยแล้ว (Pending Review)`);
+                  setSubmittedForApprovalNotice(locale === 'en' ? `Submitted "${workingTitle}" for Manager review (Pending Review).` : `ส่งโพสต์ "${workingTitle}" ให้ Manager ตรวจสอบและอนุมัติเรียบร้อยแล้ว (Pending Review)`);
                   setTimeout(() => setSubmittedForApprovalNotice(null), 4500);
                 }}
                 className={`w-full py-2.5 px-4 text-xs font-semibold rounded-editorial flex items-center justify-center gap-2 shadow-xs transition-all ${
@@ -3509,22 +3509,22 @@ export default function CreatePostPage() {
               >
                 <Send className="w-4 h-4" />
                 <span>
-                  ส่งให้ Manager อนุมัติ ({totalActivePlacements} Placements)
+                  {locale === 'en' ? `Submit for Approval (${totalActivePlacements} Placements)` : `ส่งให้ Manager อนุมัติ (${totalActivePlacements} Placements)`}
                 </span>
               </button>
               <p className="text-[10px] text-accent-terracotta font-sans text-center leading-tight flex items-center justify-center gap-1.5">
                 <Sticker name="guarded-shield" size="xs" inline />
-                <span>บทบาท Contributor: ต้องผ่านการอนุมัติก่อนยิงขึ้นช่องทางจริง</span>
+                <span>{locale === 'en' ? 'Contributor Role: Manager approval required prior to live dispatch.' : 'บทบาท Contributor: ต้องผ่านการอนุมัติก่อนยิงขึ้นช่องทางจริง'}</span>
               </p>
             </div>
           ) : currentRole === 'VIEWER' ? (
             <div className="space-y-1.5">
               <div className="w-full py-2.5 px-4 text-xs font-semibold rounded-editorial flex items-center justify-center gap-2 bg-paper-subtle border border-border-rule text-ink-secondary cursor-not-allowed">
                 <Lock className="w-4 h-4" />
-                <span>โหมดผู้ตรวจงาน / ลูกค้า (Read-Only)</span>
+                <span>{locale === 'en' ? 'Reviewer / Client Mode (Read-Only)' : 'โหมดผู้ตรวจงาน / ลูกค้า (Read-Only)'}</span>
               </div>
               <p className="text-[10px] text-ink-secondary font-sans text-center leading-tight">
-                สามารถดู Live Phone Mockup และกำหนดการได้เท่านั้น
+                {locale === 'en' ? 'Preview Live Phone Mockup and schedule only' : 'สามารถดู Live Phone Mockup และกำหนดการได้เท่านั้น'}
               </p>
             </div>
           ) : (
@@ -3563,10 +3563,10 @@ export default function CreatePostPage() {
                 </div>
                 <div>
                   <h3 className="font-serif font-medium text-base text-ink-primary">
-                    คลังภาพสื่อ AI (AI Media Asset Hub)
+                    {locale === 'en' ? 'AI Media Asset Hub' : 'คลังภาพสื่อ AI (AI Media Asset Hub)'}
                   </h3>
                   <span className="text-[10px] font-mono text-ink-secondary block">
-                    เลือกรูปภาพสตูดิโอและมีเดียกราฟิกระดับ 8K ที่พร้อมใช้งาน
+                    {locale === 'en' ? 'Select studio images and 8K AI graphic assets ready for deployment.' : 'เลือกรูปภาพสตูดิโอและมีเดียกราฟิกระดับ 8K ที่พร้อมใช้งาน'}
                   </span>
                 </div>
               </div>
@@ -3611,7 +3611,7 @@ export default function CreatePostPage() {
                     className="w-full mt-2 py-1.5 px-3 bg-paper-raised hover:bg-brand-indigo hover:text-white text-ink-primary border border-border-rule rounded text-xs font-mono font-medium transition-colors flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span>เลือกภาพนี้เข้าโพสต์</span>
+                    <span>{locale === 'en' ? 'Insert into Post' : 'เลือกภาพนี้เข้าโพสต์'}</span>
                   </button>
                 </div>
               ))}
@@ -3626,7 +3626,7 @@ export default function CreatePostPage() {
                 onClick={() => setIsAiMediaModalOpen(false)}
                 className="px-3 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule rounded-editorial text-xs font-mono cursor-pointer"
               >
-                ปิด
+                {locale === 'en' ? 'Close' : 'ปิด'}
               </button>
             </div>
           </div>
@@ -3647,7 +3647,7 @@ export default function CreatePostPage() {
               : 'text-white/70 hover:text-white'
           }`}
         >
-          <span>1. จุดหมาย</span>
+          <span>{locale === 'en' ? '1. Channels' : '1. จุดหมาย'}</span>
           <span className="px-1.5 py-0.2 rounded-full bg-white/20 text-[9px] font-bold">
             {totalActivePlacements}
           </span>
@@ -3665,7 +3665,7 @@ export default function CreatePostPage() {
               : 'text-white/70 hover:text-white'
           }`}
         >
-          <span>2. เขียนงาน</span>
+          <span>{locale === 'en' ? '2. Compose' : '2. เขียนงาน'}</span>
         </button>
 
         <button
@@ -3680,7 +3680,7 @@ export default function CreatePostPage() {
               : 'text-white/70 hover:text-white'
           }`}
         >
-          <span>3. พรีวิวสด</span>
+          <span>{locale === 'en' ? '3. Live Proof' : '3. พรีวิวสด'}</span>
           <span className="w-2 h-2 rounded-full bg-semantic-success animate-pulse" />
         </button>
       </div>

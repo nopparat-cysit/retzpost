@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useEffect, useMemo, useCallback } from 'react';
 import { ChevronDown, Check, Search, X } from 'lucide-react';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 
 export interface DropdownOption {
   value: string;
@@ -25,6 +26,8 @@ export interface CustomDropdownProps {
   disabled?: boolean;
   searchable?: boolean;
   searchPlaceholder?: string;
+  emptyText?: string;
+  locale?: string;
   clearable?: boolean;
   prefixIcon?: React.ReactNode;
   className?: string;
@@ -39,13 +42,15 @@ export function CustomDropdown({
   options,
   value,
   onChange,
-  placeholder = 'เลือกรายการ...',
+  placeholder,
   label,
   helperText,
   error,
   disabled = false,
   searchable = false,
-  searchPlaceholder = 'ค้นหา...',
+  searchPlaceholder,
+  emptyText,
+  locale,
   clearable = false,
   prefixIcon,
   className = '',
@@ -55,6 +60,12 @@ export function CustomDropdown({
   align = 'left',
   fullWidth = true,
 }: CustomDropdownProps) {
+  const i18n = useTranslation();
+  const currentLocale = locale || i18n?.locale || 'th';
+  const resolvedPlaceholder = placeholder ?? (currentLocale === 'th' ? 'เลือกรายการ...' : 'Select item...');
+  const resolvedSearchPlaceholder = searchPlaceholder ?? (currentLocale === 'th' ? 'ค้นหา...' : 'Search...');
+  const resolvedEmptyText = emptyText ?? (currentLocale === 'th' ? 'ไม่พบข้อมูลที่ค้นหา' : 'No items found');
+
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
@@ -234,7 +245,7 @@ export function CustomDropdown({
             </div>
           ) : (
             <span className="text-ink-secondary/60 truncate font-mono text-[11px]">
-              {placeholder}
+              {resolvedPlaceholder}
             </span>
           )}
         </div>
@@ -290,7 +301,7 @@ export function CustomDropdown({
                     setSearchQuery(e.target.value);
                     setHighlightedIndex(0);
                   }}
-                  placeholder={searchPlaceholder}
+                  placeholder={resolvedSearchPlaceholder}
                   className="w-full pl-7 pr-7 py-1 text-xs bg-paper-canvas border border-border-rule rounded text-ink-primary placeholder:text-ink-secondary/50 focus:outline-hidden focus:border-brand-indigo font-sans"
                 />
                 {searchQuery && (
@@ -310,7 +321,7 @@ export function CustomDropdown({
           <div className="max-h-60 overflow-y-auto space-y-0.5 custom-scrollbar">
             {filteredOptions.length === 0 ? (
               <div className="py-4 text-center text-xs font-mono text-ink-secondary">
-                ไม่พบข้อมูลที่ค้นหา
+                {resolvedEmptyText}
               </div>
             ) : (
               filteredOptions.map((opt, idx) => {

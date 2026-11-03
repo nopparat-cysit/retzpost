@@ -78,11 +78,11 @@ export default function DocsPage() {
     {
       id: 'quickstart',
       category: '01 — GETTING STARTED',
-      title: 'เริ่มต้นใช้งานและตั้งค่าบัญชีด่วน (Quickstart & Onboarding)',
-      badge: 'เริ่มที่นี่',
+      title: locale === 'en' ? 'Quickstart & Account Onboarding' : 'เริ่มต้นใช้งานและตั้งค่าบัญชีด่วน (Quickstart & Onboarding)',
+      badge: locale === 'en' ? 'Start Here' : 'เริ่มที่นี่',
       icon: Rocket,
-      summary: 'การสมัครสมาชิก, ยืนยันรหัส OTP ทาง Gmail, และการเลือกโปรเจกต์',
-      lead: 'เรียนรู้วิธีตั้งค่าบัญชี RetzPost และเริ่มกระจายโพสต์ลงทุกช่องทางโซเชียลมีเดียพร้อมกันภายใน 3 นาที',
+      summary: locale === 'en' ? 'Registration, OTP verification via Gmail, and workspace selection' : 'การสมัครสมาชิก, ยืนยันรหัส OTP ทาง Gmail, และการเลือกโปรเจกต์',
+      lead: locale === 'en' ? 'Learn how to set up your RetzPost account and start multi-channel publishing across social platforms in 3 minutes.' : 'เรียนรู้วิธีตั้งค่าบัญชี RetzPost และเริ่มกระจายโพสต์ลงทุกช่องทางโซเชียลมีเดียพร้อมกันภายใน 3 นาที',
       content: (
         <div className="space-y-6 text-xs leading-relaxed text-ink-secondary">
           {/* Visual Step-by-Step Cards */}
@@ -95,10 +95,10 @@ export default function DocsPage() {
                 <Sticker name="approved-seal" size="xs" />
               </div>
               <h4 className="font-serif font-bold text-sm text-ink-primary">
-                1. กรอก Gmail & Username
+                {locale === 'en' ? '1. Enter Gmail & Username' : '1. กรอก Gmail & Username'}
               </h4>
               <p className="text-[11px] text-ink-secondary leading-snug">
-                เข้าหน้า <Link href="/register" className="text-brand-indigo underline font-semibold">/register</Link> ระบุ Gmail และชื่อผู้ใช้งาน Creator ของคุณ
+                {locale === 'en' ? <>Go to <Link href="/register" className="text-brand-indigo underline font-semibold">/register</Link> and enter your Gmail and Creator handle.</> : <>เข้าหน้า <Link href="/register" className="text-brand-indigo underline font-semibold">/register</Link> ระบุ Gmail และชื่อผู้ใช้งาน Creator ของคุณ</>}
               </p>
             </div>
 
@@ -110,10 +110,10 @@ export default function DocsPage() {
                 <Sticker name="vault-keyhole" size="xs" />
               </div>
               <h4 className="font-serif font-bold text-sm text-ink-primary">
-                2. ยืนยันรหัส OTP 6 หลัก
+                {locale === 'en' ? '2. Verify 6-Digit OTP' : '2. ยืนยันรหัส OTP 6 หลัก'}
               </h4>
               <p className="text-[11px] text-ink-secondary leading-snug">
-                รับรหัส OTP ใน Gmail แล้วกรอกยืนยันตัวตน (หรือคลิกปุ่ม <em>Autofill ⚡</em> บนกล่องแจ้งเตือนมุมบน)
+                {locale === 'en' ? <>Receive the OTP code in Gmail and verify (or click <em>Autofill ⚡</em> on the top toast notification).</> : <>รับรหัส OTP ใน Gmail แล้วกรอกยืนยันตัวตน (หรือคลิกปุ่ม <em>Autofill ⚡</em> บนกล่องแจ้งเตือนมุมบน)</>}
               </p>
             </div>
 
@@ -125,10 +125,10 @@ export default function DocsPage() {
                 <Sticker name="broadsheet-newspaper" size="xs" />
               </div>
               <h4 className="font-serif font-bold text-sm text-ink-primary">
-                3. เลือกโปรเจกต์งาน
+                {locale === 'en' ? '3. Select Workspace' : '3. เลือกโปรเจกต์งาน'}
               </h4>
               <p className="text-[11px] text-ink-secondary leading-snug">
-                ระบบสลับข้อมูลให้อัตโนมัติ เช่น <em>Main Studio</em>, <em>Creator Hub</em>, หรือ <em>Lifestyle & Brand</em>
+                {locale === 'en' ? <>System automatically switches contexts, e.g. <em>Main Studio</em>, <em>Creator Hub</em>, or <em>Lifestyle & Brand</em>.</> : <>ระบบสลับข้อมูลให้อัตโนมัติ เช่น <em>Main Studio</em>, <em>Creator Hub</em>, หรือ <em>Lifestyle & Brand</em></>}
               </p>
             </div>
           </div>
@@ -137,10 +137,12 @@ export default function DocsPage() {
           <div className="p-4 rounded-editorial bg-brand-indigo/5 border-l-3 border-brand-indigo text-xs space-y-1">
             <h4 className="font-bold text-brand-indigo flex items-center gap-1.5 font-mono">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Global Workspace Sync Engine คืออะไร?</span>
+              <span>{locale === 'en' ? 'What is the Global Workspace Sync Engine?' : 'Global Workspace Sync Engine คืออะไร?'}</span>
             </h4>
             <p className="text-[11px] text-ink-primary/90 leading-relaxed font-sans">
-              เมื่อคุณเลือกโปรเจกต์ในหน้าใดหน้าหนึ่ง เช่น <em>Main Studio</em> ระบบจะซิงค์โปรเจกต์เดียวกันไปยังหน้า <strong>แดชบอร์ด</strong>, <strong>ปฏิทิน</strong>, และ <strong>ห้องเขียนโพสต์</strong> ให้ตรงกันทันทีแบบ Real-time โดยไม่ต้องเลือกใหม่ซ้ำซ้อน
+              {locale === 'en'
+                ? <>When you select a workspace on any page, the sync engine mirrors it to <strong>Desk</strong>, <strong>Calendar</strong>, and <strong>Composer</strong> in real time without repetitive switching.</>
+                : <>เมื่อคุณเลือกโปรเจกต์ในหน้าใดหน้าหนึ่ง เช่น <em>Main Studio</em> ระบบจะซิงค์โปรเจกต์เดียวกันไปยังหน้า <strong>แดชบอร์ด</strong>, <strong>ปฏิทิน</strong>, และ <strong>ห้องเขียนโพสต์</strong> ให้ตรงกันทันทีแบบ Real-time โดยไม่ต้องเลือกใหม่ซ้ำซ้อน</>}
             </p>
           </div>
         </div>
@@ -149,15 +151,15 @@ export default function DocsPage() {
     {
       id: 'composer',
       category: '02 — PUBLISHING STUDIO',
-      title: 'ห้องเขียนข่าวและปรับแต่งข้ามแพลตฟอร์ม (Universal Studio Composer)',
-      badge: 'ฟีเจอร์หลัก',
+      title: locale === 'en' ? 'Universal Studio Composer & Multi-Platform Adaptation' : 'ห้องเขียนข่าวและปรับแต่งข้ามแพลตฟอร์ม (Universal Studio Composer)',
+      badge: locale === 'en' ? 'Core Feature' : 'ฟีเจอร์หลัก',
       icon: PenSquare,
-      summary: 'สลับ 3 โหมดสื่อ, Live Phone Preview 9:16, และการเลือกปลายทาง',
-      lead: 'สร้างคอนเทนต์ครั้งเดียว แล้วให้ RetzPost จัดการสัดส่วนและจัดส่งไปยังแต่ละโซเชียลตามธรรมชาติของแต่ละแอป',
+      summary: locale === 'en' ? '3 media modes, Live Phone Preview 9:16, and channel selection' : 'สลับ 3 โหมดสื่อ, Live Phone Preview 9:16, และการเลือกปลายทาง',
+      lead: locale === 'en' ? 'Create content once, and let RetzPost automatically adapt aspect ratios and dispatch to each social network natively.' : 'สร้างคอนเทนต์ครั้งเดียว แล้วให้ RetzPost จัดการสัดส่วนและจัดส่งไปยังแต่ละโซเชียลตามธรรมชาติของแต่ละแอป',
       content: (
         <div className="space-y-6 text-xs leading-relaxed text-ink-secondary">
           <p>
-            เข้าใช้งานที่ <Link href="/create" className="text-brand-indigo underline font-bold">/create</Link> ซึ่งจัดวางแบบ 3 คอลัมน์ที่สมดุล เพื่อให้กองบรรณาธิการทำงานได้อย่างแม่นยำ:
+            {locale === 'en' ? <>Access at <Link href="/create" className="text-brand-indigo underline font-bold">/create</Link>, featuring a balanced 3-column layout engineered for newsroom precision:</> : <>เข้าใช้งานที่ <Link href="/create" className="text-brand-indigo underline font-bold">/create</Link> ซึ่งจัดวางแบบ 3 คอลัมน์ที่สมดุล เพื่อให้กองบรรณาธิการทำงานได้อย่างแม่นยำ:</>}
           </p>
 
           {/* Platform Spec Comparison Table */}
@@ -165,7 +167,7 @@ export default function DocsPage() {
             <div className="p-3 bg-paper-subtle/80 border-b border-border-rule flex items-center justify-between">
               <span className="font-mono font-bold text-xs text-ink-primary flex items-center gap-1.5">
                 <Smartphone className="w-3.5 h-3.5 text-brand-indigo" />
-                <span>ตารางเปรียบเทียบสเปกสื่อที่รองรับทั้ง 6 แพลตฟอร์ม</span>
+                <span>{locale === 'en' ? 'Supported Media Specs Across 6 Platforms' : 'ตารางเปรียบเทียบสเปกสื่อที่รองรับทั้ง 6 แพลตฟอร์ม'}</span>
               </span>
               <span className="text-[10px] font-mono text-semantic-success font-semibold">
                 ● 2026 Engine Ready
@@ -176,11 +178,11 @@ export default function DocsPage() {
               <table className="w-full text-left font-mono text-[11px]">
                 <thead className="bg-paper-subtle/40 border-b border-border-rule text-ink-secondary text-[10px] uppercase">
                   <tr>
-                    <th className="p-2.5">แพลตฟอร์ม</th>
-                    <th className="p-2.5">โหมดสื่อหลัก</th>
-                    <th className="p-2.5">สัดส่วนที่แนะนำ</th>
-                    <th className="p-2.5">ความยาววิดีโอ</th>
-                    <th className="p-2.5 text-right">การสั่งลบผ่าน API</th>
+                    <th className="p-2.5">{locale === 'en' ? 'Platform' : 'แพลตฟอร์ม'}</th>
+                    <th className="p-2.5">{locale === 'en' ? 'Primary Media Mode' : 'โหมดสื่อหลัก'}</th>
+                    <th className="p-2.5">{locale === 'en' ? 'Recommended Ratio' : 'สัดส่วนที่แนะนำ'}</th>
+                    <th className="p-2.5">{locale === 'en' ? 'Video Duration' : 'ความยาววิดีโอ'}</th>
+                    <th className="p-2.5 text-right">{locale === 'en' ? 'API Deletion' : 'การสั่งลบผ่าน API'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-rule/60 text-ink-primary">
@@ -190,8 +192,8 @@ export default function DocsPage() {
                     </td>
                     <td className="p-2.5">Reels, Feed, Photos</td>
                     <td className="p-2.5">9:16 / 1:1 / 4:5</td>
-                    <td className="p-2.5">ไม่เกิน 90 วินาที (Reels)</td>
-                    <td className="p-2.5 text-right text-semantic-success font-bold">⚡ สั่งลบได้ทันที</td>
+                    <td className="p-2.5">{locale === 'en' ? 'Under 90s (Reels)' : 'ไม่เกิน 90 วินาที (Reels)'}</td>
+                    <td className="p-2.5 text-right text-semantic-success font-bold">{locale === 'en' ? '⚡ Instant Deletion' : '⚡ สั่งลบได้ทันที'}</td>
                   </tr>
                   <tr className="hover:bg-paper-subtle/30">
                     <td className="p-2.5 font-bold flex items-center gap-1.5">
@@ -199,8 +201,8 @@ export default function DocsPage() {
                     </td>
                     <td className="p-2.5">Reels, Feed, Stories</td>
                     <td className="p-2.5">9:16 Vertical</td>
-                    <td className="p-2.5">15 - 90 วินาที</td>
-                    <td className="p-2.5 text-right text-accent-ochre font-bold">🛡️ Deep Link 3 วิ</td>
+                    <td className="p-2.5">{locale === 'en' ? '15 - 90 seconds' : '15 - 90 วินาที'}</td>
+                    <td className="p-2.5 text-right text-accent-ochre font-bold">{locale === 'en' ? '🛡️ Deep Link 3s' : '🛡️ Deep Link 3 วิ'}</td>
                   </tr>
                   <tr className="hover:bg-paper-subtle/30">
                     <td className="p-2.5 font-bold flex items-center gap-1.5">
@@ -208,8 +210,8 @@ export default function DocsPage() {
                     </td>
                     <td className="p-2.5">Shorts, VOD</td>
                     <td className="p-2.5">9:16 (Shorts) / 16:9</td>
-                    <td className="p-2.5">ไม่เกิน 60 วินาที (Shorts)</td>
-                    <td className="p-2.5 text-right text-semantic-success font-bold">⚡ สั่งลบได้ทันที</td>
+                    <td className="p-2.5">{locale === 'en' ? 'Under 60s (Shorts)' : 'ไม่เกิน 60 วินาที (Shorts)'}</td>
+                    <td className="p-2.5 text-right text-semantic-success font-bold">{locale === 'en' ? '⚡ Instant Deletion' : '⚡ สั่งลบได้ทันที'}</td>
                   </tr>
                   <tr className="hover:bg-paper-subtle/30">
                     <td className="p-2.5 font-bold flex items-center gap-1.5">
@@ -217,8 +219,8 @@ export default function DocsPage() {
                     </td>
                     <td className="p-2.5">Video Clip, Photo Carousel</td>
                     <td className="p-2.5">9:16 Vertical</td>
-                    <td className="p-2.5">15 - 180 วินาที</td>
-                    <td className="p-2.5 text-right text-accent-ochre font-bold">🛡️ Deep Link 3 วิ</td>
+                    <td className="p-2.5">{locale === 'en' ? '15 - 180 seconds' : '15 - 180 วินาที'}</td>
+                    <td className="p-2.5 text-right text-accent-ochre font-bold">{locale === 'en' ? '🛡️ Deep Link 3s' : '🛡️ Deep Link 3 วิ'}</td>
                   </tr>
                   <tr className="hover:bg-paper-subtle/30">
                     <td className="p-2.5 font-bold flex items-center gap-1.5">
@@ -226,8 +228,8 @@ export default function DocsPage() {
                     </td>
                     <td className="p-2.5">Text Post, Clip, Photos</td>
                     <td className="p-2.5">16:9 / 1:1</td>
-                    <td className="p-2.5">ข้อความ 280 ตัวอักษร</td>
-                    <td className="p-2.5 text-right text-semantic-success font-bold">⚡ สั่งลบได้ทันที</td>
+                    <td className="p-2.5">{locale === 'en' ? 'Text 280 chars' : 'ข้อความ 280 ตัวอักษร'}</td>
+                    <td className="p-2.5 text-right text-semantic-success font-bold">{locale === 'en' ? '⚡ Instant Deletion' : '⚡ สั่งลบได้ทันที'}</td>
                   </tr>
                   <tr className="hover:bg-paper-subtle/30">
                     <td className="p-2.5 font-bold flex items-center gap-1.5">
@@ -235,8 +237,8 @@ export default function DocsPage() {
                     </td>
                     <td className="p-2.5">Photo Album, Lifestyle Clip</td>
                     <td className="p-2.5">3:4 / 9:16</td>
-                    <td className="p-2.5">คลิปและรูปภาพคุมโทน</td>
-                    <td className="p-2.5 text-right text-accent-ochre font-bold">🛡️ Deep Link 3 วิ</td>
+                    <td className="p-2.5">{locale === 'en' ? 'Aesthetic clips & photos' : 'คลิปและรูปภาพคุมโทน'}</td>
+                    <td className="p-2.5 text-right text-accent-ochre font-bold">{locale === 'en' ? '🛡️ Deep Link 3s' : '🛡️ Deep Link 3 วิ'}</td>
                   </tr>
                 </tbody>
               </table>
@@ -250,7 +252,9 @@ export default function DocsPage() {
               <span>Safe Zone Overlay & Live Preview</span>
             </h4>
             <p className="text-[11px] text-ink-primary/90 font-sans">
-              ในคอลัมน์ขวาจะมีปุ่ม <strong>[Safe Zone Overlay]</strong> แสดงกรอบเซฟโซนสีเหลือง เพื่อให้คุณมั่นใจว่าข้อความหรือปุ่มแคปชันจะไม่ถูกไอคอน Like, Comment, หรือแถบ Navigation ของ TikTok / Reels บังทับ
+              {locale === 'en'
+                ? <>In the right column, click <strong>[Safe Zone Overlay]</strong> to toggle the yellow safe-zone guide, ensuring key captions and buttons avoid TikTok / Reels UI overlays.</>
+                : <>ในคอลัมน์ขวาจะมีปุ่ม <strong>[Safe Zone Overlay]</strong> แสดงกรอบเซฟโซนสีเหลือง เพื่อให้คุณมั่นใจว่าข้อความหรือปุ่มแคปชันจะไม่ถูกไอคอน Like, Comment, หรือแถบ Navigation ของ TikTok / Reels บังทับ</>}
             </p>
           </div>
         </div>
@@ -259,15 +263,15 @@ export default function DocsPage() {
     {
       id: 'calendar',
       category: '03 — PLANNING & SCHEDULING',
-      title: 'ปฏิทินกองบรรณาธิการและเวลานาทีทอง (Editorial Calendar)',
-      badge: 'การจัดตาราง',
+      title: locale === 'en' ? 'Editorial Calendar & Peak Slots' : 'ปฏิทินกองบรรณาธิการและเวลานาทีทอง (Editorial Calendar)',
+      badge: locale === 'en' ? 'Scheduling' : 'การจัดตาราง',
       icon: Calendar,
-      summary: 'การจัดคิวคอนเทนต์ล่วงหน้า และเวลานาทีทอง Bangkok Golden Peak Slots',
-      lead: 'วางแผนงานล่วงหน้าแบบมองเห็นรอบสัปดาห์ พร้อมระบบล็อกเวลาที่ให้ยอด Engagement สูงที่สุดในไทย',
+      summary: locale === 'en' ? 'Content queue planning and Bangkok Golden Peak Slots' : 'การจัดคิวคอนเทนต์ล่วงหน้า และเวลานาทีทอง Bangkok Golden Peak Slots',
+      lead: locale === 'en' ? 'Plan content ahead across weeks with high-precision time locks for maximum engagement in Bangkok timezone.' : 'วางแผนงานล่วงหน้าแบบมองเห็นรอบสัปดาห์ พร้อมระบบล็อกเวลาที่ให้ยอด Engagement สูงที่สุดในไทย',
       content: (
         <div className="space-y-6 text-xs leading-relaxed text-ink-secondary">
           <p>
-            หน้าปฏิทิน (<Link href="/calendar" className="text-brand-indigo underline font-bold">/calendar</Link>) คือเครื่องมือควบคุมจังหวะการสื่อสารของแบรนด์ ไม่ให้โพสต์กระจุกตัวหรือเว้นว่างนานเกินไป:
+            {locale === 'en' ? <>The calendar view (<Link href="/calendar" className="text-brand-indigo underline font-bold">/calendar</Link>) regulates brand publishing cadence to prevent content clustering or gaps:</> : <>หน้าปฏิทิน (<Link href="/calendar" className="text-brand-indigo underline font-bold">/calendar</Link>) คือเครื่องมือควบคุมจังหวะการสื่อสารของแบรนด์ ไม่ให้โพสต์กระจุกตัวหรือเว้นว่างนานเกินไป:</>}
           </p>
 
           {/* Golden Peak Slots Box */}
@@ -275,7 +279,7 @@ export default function DocsPage() {
             <div className="flex items-center justify-between pb-2 border-b border-border-rule">
               <span className="font-mono font-bold text-xs text-ink-primary flex items-center gap-1.5">
                 <Flame className="w-4 h-4 text-accent-ochre" />
-                <span>Bangkok Golden Peak Slots (เวลาปล่อยโพสต์ที่ดีที่สุด)</span>
+                <span>{locale === 'en' ? 'Bangkok Golden Peak Slots (Optimal Dispatch Windows)' : 'Bangkok Golden Peak Slots (เวลาปล่อยโพสต์ที่ดีที่สุด)'}</span>
               </span>
               <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-accent-ochre/15 text-accent-ochre font-bold">
                 High Virality 🚀
@@ -285,21 +289,21 @@ export default function DocsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div className="p-3 rounded-editorial bg-paper-subtle border border-border-rule space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-brand-indigo font-mono">☀️ ช่วงพักกลางวัน (Lunch Hour)</span>
-                  <span className="font-mono text-[10px] text-ink-secondary">11:30 - 13:30 น.</span>
+                  <span className="font-bold text-brand-indigo font-mono">{locale === 'en' ? '☀️ Lunch Break (Lunch Hour)' : '☀️ ช่วงพักกลางวัน (Lunch Hour)'}</span>
+                  <span className="font-mono text-[10px] text-ink-secondary">{locale === 'en' ? '11:30 AM - 1:30 PM' : '11:30 - 13:30 น.'}</span>
                 </div>
                 <p className="text-[11px] text-ink-secondary font-sans">
-                  เหมาะกับ: คอนเทนต์รีวิว, โปรโมชันด่วน, ดีไซน์สตูดิโอ และข่าวสารสาระสั้นที่อ่านจบใน 1 นาที
+                  {locale === 'en' ? 'Ideal for: Reviews, flash promos, design studios, and short news bites read in under 1 minute.' : 'เหมาะกับ: คอนเทนต์รีวิว, โปรโมชันด่วน, ดีไซน์สตูดิโอ และข่าวสารสาระสั้นที่อ่านจบใน 1 นาที'}
                 </p>
               </div>
 
               <div className="p-3 rounded-editorial bg-paper-subtle border border-border-rule space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-accent-terracotta font-mono">🌙 ช่วงหัวค่ำผ่อนคลาย (Prime Time)</span>
-                  <span className="font-mono text-[10px] text-ink-secondary">18:30 - 21:30 น.</span>
+                  <span className="font-bold text-accent-terracotta font-mono">{locale === 'en' ? '🌙 Evening Prime Time' : '🌙 ช่วงหัวค่ำผ่อนคลาย (Prime Time)'}</span>
+                  <span className="font-mono text-[10px] text-ink-secondary">{locale === 'en' ? '6:30 PM - 9:30 PM' : '18:30 - 21:30 น.'}</span>
                 </div>
                 <p className="text-[11px] text-ink-secondary font-sans">
-                  เหมาะกับ: วิดีโอสั้น Reels, TikTok, YouTube Shorts, และคอนเทนต์บันเทิง/ไลฟ์สไตล์ที่ต้องใช้เวลาดู
+                  {locale === 'en' ? 'Ideal for: Short video Reels, TikTok, YouTube Shorts, and entertainment/lifestyle content requiring viewer attention.' : 'เหมาะกับ: วิดีโอสั้น Reels, TikTok, YouTube Shorts, และคอนเทนต์บันเทิง/ไลฟ์สไตล์ที่ต้องใช้เวลาดู'}
                 </p>
               </div>
             </div>
@@ -310,55 +314,55 @@ export default function DocsPage() {
     {
       id: 'roles',
       category: '04 — GOVERNANCE & TEAMS',
-      title: 'สิทธิ์ 5 ระดับและขั้นตอนการอนุมัติงาน (Team Roles & Review Flow)',
-      badge: 'การควบคุมคุณภาพ',
+      title: locale === 'en' ? '5-Level Roles & Review Approval Flow' : 'สิทธิ์ 5 ระดับและขั้นตอนการอนุมัติงาน (Team Roles & Review Flow)',
+      badge: locale === 'en' ? 'Quality Governance' : 'การควบคุมคุณภาพ',
       icon: Users,
-      summary: 'โครงสร้างสิทธิ์ Owner, Manager, Editor, Creator พร้อมตรายาง Approved / Needs Revision',
-      lead: 'สร้างความมั่นใจในมาตรฐานเนื้อหาองค์กร ด้วยระบบตรวจแก้งานและบันทึกประวัติก่อนปล่อยสู่สาธารณะ',
+      summary: locale === 'en' ? 'Permission structure for Owner, Manager, Editor, Creator with Approved / Needs Revision stamps' : 'โครงสร้างสิทธิ์ Owner, Manager, Editor, Creator พร้อมตรายาง Approved / Needs Revision',
+      lead: locale === 'en' ? 'Maintain enterprise content standards with multi-level review workflows and audit trails prior to publishing.' : 'สร้างความมั่นใจในมาตรฐานเนื้อหาองค์กร ด้วยระบบตรวจแก้งานและบันทึกประวัติก่อนปล่อยสู่สาธารณะ',
       content: (
         <div className="space-y-6 text-xs leading-relaxed text-ink-secondary">
           <p>
-            RetzPost แบ่งระดับการเข้าถึงตามหลักการ Least Privilege ในหน้า <Link href="/settings/team" className="text-brand-indigo underline font-bold">/settings/team</Link>:
+            {locale === 'en' ? <>RetzPost enforces Least Privilege access control on <Link href="/settings/team" className="text-brand-indigo underline font-bold">/settings/team</Link>:</> : <>RetzPost แบ่งระดับการเข้าถึงตามหลักการ Least Privilege ในหน้า <Link href="/settings/team" className="text-brand-indigo underline font-bold">/settings/team</Link>:</>}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 font-mono text-[11px]">
             <div className="p-3 rounded bg-paper-canvas border border-border-rule space-y-1">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-ink-primary">👑 Owner (เจ้าของบัญชี)</span>
+                <span className="font-bold text-ink-primary">{locale === 'en' ? '👑 Owner (Workspace Owner)' : '👑 Owner (เจ้าของบัญชี)'}</span>
                 <span className="text-[9px] bg-brand-indigo/10 text-brand-indigo px-1.5 py-0.2 rounded font-bold">Full Admin</span>
               </div>
               <p className="text-[10px] text-ink-secondary font-sans">
-                จัดการสิทธิ์ทั้งระบบ, จัดการชำระเงิน, และลบหรือสร้างโปรเจกต์ใหม่
+                {locale === 'en' ? 'Full system governance, billing management, and workspace lifecycle.' : 'จัดการสิทธิ์ทั้งระบบ, จัดการชำระเงิน, และลบหรือสร้างโปรเจกต์ใหม่'}
               </p>
             </div>
 
             <div className="p-3 rounded bg-paper-canvas border border-border-rule space-y-1">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-ink-primary">⭐ Manager (ผู้จัดการโปรเจกต์)</span>
+                <span className="font-bold text-ink-primary">{locale === 'en' ? '⭐ Manager (Project Manager)' : '⭐ Manager (ผู้จัดการโปรเจกต์)'}</span>
                 <span className="text-[9px] bg-brand-indigo/10 text-brand-indigo px-1.5 py-0.2 rounded font-bold">Approve & Revoke</span>
               </div>
               <p className="text-[10px] text-ink-secondary font-sans">
-                มีอำนาจอนุมัติโพสต์, แก้ไขคะแนน KPI, และสั่งถอนโพสต์ฉุกเฉิน
+                {locale === 'en' ? 'Post approval authority, KPI adjustments, and emergency post revocation.' : 'มีอำนาจอนุมัติโพสต์, แก้ไขคะแนน KPI, และสั่งถอนโพสต์ฉุกเฉิน'}
               </p>
             </div>
 
             <div className="p-3 rounded bg-paper-canvas border border-border-rule space-y-1">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-ink-primary">✍️ Lead Editor (หัวหน้ากอง บ.ก.)</span>
+                <span className="font-bold text-ink-primary">{locale === 'en' ? '✍️ Lead Editor (Senior Editor)' : '✍️ Lead Editor (หัวหน้ากอง บ.ก.)'}</span>
                 <span className="text-[9px] bg-semantic-info-bg text-semantic-info px-1.5 py-0.2 rounded font-bold">Editor</span>
               </div>
               <p className="text-[10px] text-ink-secondary font-sans">
-                ตรวจความถูกต้องของแคปชัน, แก้ไขต้นฉบับ, และประทับตรา <em>APPROVED ✓</em>
+                {locale === 'en' ? <>Caption verification, draft editing, and <em>APPROVED ✓</em> stamping.</> : <>ตรวจความถูกต้องของแคปชัน, แก้ไขต้นฉบับ, และประทับตรา <em>APPROVED ✓</em></>}
               </p>
             </div>
 
             <div className="p-3 rounded bg-paper-canvas border border-border-rule space-y-1">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-ink-primary">🎨 Creator (ครีเอเตอร์)</span>
+                <span className="font-bold text-ink-primary">{locale === 'en' ? '🎨 Creator (Content Creator)' : '🎨 Creator (ครีเอเตอร์)'}</span>
                 <span className="text-[9px] bg-semantic-warning-bg text-semantic-warning px-1.5 py-0.2 rounded font-bold">Draft Only</span>
               </div>
               <p className="text-[10px] text-ink-secondary font-sans">
-                สร้างดราฟต์โพสต์ อัปโหลดไฟล์สื่อ และส่งคำร้องขออนุมัติ
+                {locale === 'en' ? 'Create post drafts, upload media files, and submit review requests.' : 'สร้างดราฟต์โพสต์ อัปโหลดไฟล์สื่อ และส่งคำร้องขออนุมัติ'}
               </p>
             </div>
           </div>
@@ -368,43 +372,43 @@ export default function DocsPage() {
     {
       id: 'kpi',
       category: '05 — AI & ANALYTICS',
-      title: 'ระบบประเมิน KPI & AI Coaching Synthesis',
-      badge: 'การวิเคราะห์อัจฉริยะ',
+      title: locale === 'en' ? 'KPI Evaluation System & AI Coaching Synthesis' : 'ระบบประเมิน KPI & AI Coaching Synthesis',
+      badge: locale === 'en' ? 'Smart Analytics' : 'การวิเคราะห์อัจฉริยะ',
       icon: BarChart3,
-      summary: 'การคำนวณสถิติ 4 มิติ, สังเคราะห์ข้อแนะนำด้วย AI, และออกใบคะแนน Slip',
-      lead: 'เปลี่ยนตัวเลขสถิติแห้งๆ ให้เป็นข้อแนะนำในการพัฒนาพนักงาน พร้อมใบคะแนนอย่างเป็นทางการสำหรับ HR',
+      summary: locale === 'en' ? '4-dimensional metric engine, AI coaching synthesis, and official evaluation slips' : 'การคำนวณสถิติ 4 มิติ, สังเคราะห์ข้อแนะนำด้วย AI, และออกใบคะแนน Slip',
+      lead: locale === 'en' ? 'Transform raw operational metrics into actionable staff coaching insights with official printable HR evaluation slips.' : 'เปลี่ยนตัวเลขสถิติแห้งๆ ให้เป็นข้อแนะนำในการพัฒนาพนักงาน พร้อมใบคะแนนอย่างเป็นทางการสำหรับ HR',
       content: (
         <div className="space-y-6 text-xs leading-relaxed text-ink-secondary">
           <p>
-            เปิดใช้งานที่หน้าแดชบอร์ดแท็บ <Link href="/?tab=kpi" className="text-brand-indigo underline font-bold">/?tab=kpi</Link> เพื่อประเมินผลงานของทีมผลิตคอนเทนต์:
+            {locale === 'en' ? <>Launch from the dashboard tab <Link href="/desk?tab=kpi" className="text-brand-indigo underline font-bold">/desk?tab=kpi</Link> to evaluate production team output:</> : <>เปิดใช้งานที่หน้าแดชบอร์ดแท็บ <Link href="/?tab=kpi" className="text-brand-indigo underline font-bold">/?tab=kpi</Link> เพื่อประเมินผลงานของทีมผลิตคอนเทนต์:</>}
           </p>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
               <span className="font-bold font-mono text-ink-primary block">1. Volume Completion Rate (%)</span>
               <p className="text-[11px] text-ink-secondary font-sans">
-                สัดส่วนการยิงโพสต์สำเร็จจริงเทียบกับเป้าหมายที่ตั้งไว้ในแต่ละเดือน
+                {locale === 'en' ? 'Ratio of actual successful dispatches against monthly target.' : 'สัดส่วนการยิงโพสต์สำเร็จจริงเทียบกับเป้าหมายที่ตั้งไว้ในแต่ละเดือน'}
               </p>
             </div>
 
             <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
               <span className="font-bold font-mono text-ink-primary block">2. On-Time Accuracy (%)</span>
               <p className="text-[11px] text-ink-secondary font-sans">
-                ความแม่นยำในการปล่อยโพสต์ตรงตามเวลานาทีทอง (Golden Peak Slots)
+                {locale === 'en' ? 'Accuracy of publishing strictly within Bangkok Golden Peak Slots.' : 'ความแม่นยำในการปล่อยโพสต์ตรงตามเวลานาทีทอง (Golden Peak Slots)'}
               </p>
             </div>
 
             <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
               <span className="font-bold font-mono text-ink-primary block">3. First-Pass Approval (%)</span>
               <p className="text-[11px] text-ink-secondary font-sans">
-                อัตราการผ่านอนุมัติในรอบแรกโดยไม่ต้องแก้งานซ้ำซ้อน สะท้อนความประณีตของผลงาน
+                {locale === 'en' ? 'First-pass approval rate without requiring revision loops, reflecting work precision.' : 'อัตราการผ่านอนุมัติในรอบแรกโดยไม่ต้องแก้งานซ้ำซ้อน สะท้อนความประณีตของผลงาน'}
               </p>
             </div>
 
             <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
               <span className="font-bold font-mono text-ink-primary block">4. Total Impressions & Views</span>
               <p className="text-[11px] text-ink-secondary font-sans">
-                ยอดการเข้าชมสะสมจริงที่ซิงค์อัตโนมัติจาก Meta Graph API, YouTube Data API และ TikTok
+                {locale === 'en' ? 'Verified cumulative reach synced automatically via Meta Graph, YouTube Data, and TikTok APIs.' : 'ยอดการเข้าชมสะสมจริงที่ซิงค์อัตโนมัติจาก Meta Graph API, YouTube Data API และ TikTok'}
               </p>
             </div>
           </div>
@@ -412,10 +416,12 @@ export default function DocsPage() {
           <div className="p-4 rounded-editorial bg-paper-canvas border border-border-rule space-y-2">
             <h4 className="font-bold text-ink-primary flex items-center gap-1.5 font-mono">
               <Sparkles className="w-3.5 h-3.5 text-brand-indigo" />
-              <span>ปุ่ม [📄 พิมพ์ใบประเมิน (Slip)]</span>
+              <span>{locale === 'en' ? '[📄 Print Evaluation Slip] Feature' : 'ปุ่ม [📄 พิมพ์ใบประเมิน (Slip)]'}</span>
             </h4>
             <p className="text-[11px] text-ink-secondary font-sans">
-              ในหน้าต่าง Scorecard รายบุคคล ผู้จัดการสามารถคลิกปุ่ม <em>[📄 พิมพ์ใบประเมิน (Slip)]</em> เพื่อเปิดเอกสารขนาดมาตรฐาน พร้อมสั่งพิมพ์ (<code>window.print()</code>) หรือคัดลอกข้อความสรุปส่งต่อให้ฝ่ายบริหารและ HR ได้ทันที
+              {locale === 'en'
+                ? <>In each employee Scorecard modal, managers can click <em>[📄 Print Evaluation Slip]</em> to open a standardized slip, ready for printing (<code>window.print()</code>) or sharing with HR leadership.</>
+                : <>ในหน้าต่าง Scorecard รายบุคคล ผู้จัดการสามารถคลิกปุ่ม <em>[📄 พิมพ์ใบประเมิน (Slip)]</em> เพื่อเปิดเอกสารขนาดมาตรฐาน พร้อมสั่งพิมพ์ (<code>window.print()</code>) หรือคัดลอกข้อความสรุปส่งต่อให้ฝ่ายบริหารและ HR ได้ทันที</>}
             </p>
           </div>
         </div>
@@ -424,15 +430,15 @@ export default function DocsPage() {
     {
       id: 'revoke',
       category: '06 — SECURITY & COMPLIANCE',
-      title: 'นโยบายและการสั่งลบโพสต์จริงผ่าน API (Revoke & API Deletion Policy)',
-      badge: 'ความปลอดภัย',
+      title: locale === 'en' ? 'Revoke & API Deletion Policy' : 'นโยบายและการสั่งลบโพสต์จริงผ่าน API (Revoke & API Deletion Policy)',
+      badge: locale === 'en' ? 'Security' : 'ความปลอดภัย',
       icon: Trash2,
-      summary: 'มาตรฐานการสั่งลบโพสต์จริงแยกตามขีดความสามารถของแต่ละแพลตฟอร์มโซเชียล',
-      lead: 'เข้าใจข้อกำหนดและความเป็นไปได้ทางเทคนิคของ Social Media APIs ในการสั่งถอนโพสต์ฉุกเฉิน',
+      summary: locale === 'en' ? 'Platform-specific technical standards for live post revocation and deletion' : 'มาตรฐานการสั่งลบโพสต์จริงแยกตามขีดความสามารถของแต่ละแพลตฟอร์มโซเชียล',
+      lead: locale === 'en' ? 'Understand technical capabilities and policy constraints of Social Media APIs when initiating emergency post recalls.' : 'เข้าใจข้อกำหนดและความเป็นไปได้ทางเทคนิคของ Social Media APIs ในการสั่งถอนโพสต์ฉุกเฉิน',
       content: (
         <div className="space-y-6 text-xs leading-relaxed text-ink-secondary">
           <p>
-            หากโพสต์มีข้อมูลผิดพลาดหรือต้องการระงับการเผยแพร่อย่างเร่งด่วน RetzPost มีปุ่ม <strong>[🗑️ ถอนโพสต์]</strong> ในแท็บ Dispatch Monitor ซึ่งจะทำงานตามมาตรฐานจริงของแต่ละแพลตฟอร์ม:
+            {locale === 'en' ? <>If a post contains errors or requires urgent takedown, RetzPost provides <strong>[🗑️ Revoke Post]</strong> in Dispatch Monitor, operating natively per platform:</> : <>หากโพสต์มีข้อมูลผิดพลาดหรือต้องการระงับการเผยแพร่อย่างเร่งด่วน RetzPost มีปุ่ม <strong>[🗑️ ถอนโพสต์]</strong> ในแท็บ Dispatch Monitor ซึ่งจะทำงานตามมาตรฐานจริงของแต่ละแพลตฟอร์ม:</>}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -442,12 +448,14 @@ export default function DocsPage() {
                   ⚡ API Direct Deletion
                 </span>
                 <span className="text-[9px] bg-semantic-success/20 text-semantic-success px-1.5 py-0.2 rounded font-bold">
-                  อัตโนมัติ 100%
+                  {locale === 'en' ? '100% Automated' : 'อัตโนมัติ 100%'}
                 </span>
               </div>
               <h4 className="font-bold text-ink-primary">Facebook, YouTube, X (Twitter)</h4>
               <p className="text-[11px] text-ink-secondary font-sans leading-relaxed">
-                ทั้ง 3 แพลตฟอร์มอนุญาตให้แอปพลิเคชัน 3rd-party สั่งลบโพสต์ได้ผ่าน API อย่างเป็นทางการ เมื่อกดถอนโพสต์ ระบบจะยิงคำสั่ง <code>DELETE</code> ไปยังเซิร์ฟเวอร์ปลายทาง และลบเนื้อหาจริงออกทันที
+                {locale === 'en'
+                  ? <>All 3 platforms permit third-party applications to delete posts via official APIs. When revoking, RetzPost dispatches a <code>DELETE</code> command directly to remote servers, removing content immediately.</>
+                  : <>ทั้ง 3 แพลตฟอร์มอนุญาตให้แอปพลิเคชัน 3rd-party สั่งลบโพสต์ได้ผ่าน API อย่างเป็นทางการ เมื่อกดถอนโพสต์ ระบบจะยิงคำสั่ง <code>DELETE</code> ไปยังเซิร์ฟเวอร์ปลายทาง และลบเนื้อหาจริงออกทันที</>}
               </p>
             </div>
 
@@ -457,19 +465,21 @@ export default function DocsPage() {
                   🛡️ Guided Deep Link Deletion
                 </span>
                 <span className="text-[9px] bg-semantic-warning/20 text-semantic-warning px-1.5 py-0.2 rounded font-bold">
-                  ลบในแอป 3 วินาที
+                  {locale === 'en' ? '3-Second App Action' : 'ลบในแอป 3 วินาที'}
                 </span>
               </div>
               <h4 className="font-bold text-ink-primary">Instagram, TikTok, Lemon8</h4>
               <p className="text-[11px] text-ink-secondary font-sans leading-relaxed">
-                ตามนโยบายความปลอดภัยของ Meta และ ByteDance เพื่อป้องกันการลบข้อมูลโดยมิชอบ API สาธารณะจึงไม่อนุญาตให้แอปภายนอกลบคลิปแทนผู้ใช้ RetzPost จึงแสดงหน้าต่างแจ้งเตือนพร้อมปุ่ม <em>[เปิดไปที่โพสต์จริง ↗]</em> เพื่อให้คุณเปิดเข้าแอปและกดลบได้ใน 3 วินาที
+                {locale === 'en'
+                  ? <>Per Meta and ByteDance policies preventing unauthorized data deletion, public APIs do not allow third parties to delete short clips. RetzPost triggers a guided modal with <em>[Open Live Post ↗]</em> for a 3-second in-app removal.</>
+                  : <>ตามนโยบายความปลอดภัยของ Meta และ ByteDance เพื่อป้องกันการลบข้อมูลโดยมิชอบ API สาธารณะจึงไม่อนุญาตให้แอปภายนอกลบคลิปแทนผู้ใช้ RetzPost จึงแสดงหน้าต่างแจ้งเตือนพร้อมปุ่ม <em>[เปิดไปที่โพสต์จริง ↗]</em> เพื่อให้คุณเปิดเข้าแอปและกดลบได้ใน 3 วินาที</>}
               </p>
             </div>
           </div>
         </div>
       ),
     },
-  ], []);
+  ], [locale]);
 
   // Filter sections by search query
   const filteredSections = useMemo(() => {
@@ -543,10 +553,10 @@ export default function DocsPage() {
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { id: 'quickstart', label: '⚡ 3-Min Quickstart', sub: 'สมัคร & ยืนยัน OTP' },
-              { id: 'composer', label: '📱 6-Platform Specs', sub: 'ขนาดคลิป Reels / Shorts' },
-              { id: 'calendar', label: '🔥 Peak Golden Slots', sub: 'เวลานาทีทอง Engagement สูง' },
-              { id: 'revoke', label: '🗑️ API Revoke Policy', sub: 'นโยบายการสั่งลบโพสต์จริง' },
+              { id: 'quickstart', label: '⚡ 3-Min Quickstart', sub: locale === 'en' ? 'Register & Verify OTP' : 'สมัคร & ยืนยัน OTP' },
+              { id: 'composer', label: '📱 6-Platform Specs', sub: locale === 'en' ? 'Reels & Shorts Specs' : 'ขนาดคลิป Reels / Shorts' },
+              { id: 'calendar', label: '🔥 Peak Golden Slots', sub: locale === 'en' ? 'Peak Engagement Times' : 'เวลานาทีทอง Engagement สูง' },
+              { id: 'revoke', label: '🗑️ API Revoke Policy', sub: locale === 'en' ? 'Live API Deletion Policy' : 'นโยบายการสั่งลบโพสต์จริง' },
             ].map((card) => (
               <button
                 key={card.id}
@@ -578,10 +588,10 @@ export default function DocsPage() {
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-border-rule/80">
                 <span className="text-xs font-mono font-bold text-ink-primary uppercase tracking-wider flex items-center gap-1.5">
                   <Layers className="w-3.5 h-3.5 text-accent-terracotta" />
-                  สารบัญคู่มือ (Table of Contents)
+                  {locale === 'en' ? 'Table of Contents' : 'สารบัญคู่มือ (Table of Contents)'}
                 </span>
                 <span className="text-[10px] font-mono text-ink-secondary">
-                  {filteredSections.length} หัวข้อ
+                  {locale === 'en' ? `${filteredSections.length} sections` : `${filteredSections.length} หัวข้อ`}
                 </span>
               </div>
 
@@ -617,7 +627,7 @@ export default function DocsPage() {
             {/* Legal Documents Quick Card */}
             <div className="p-4 bg-paper-subtle/70 border border-border-rule rounded-dialog text-xs space-y-2.5">
               <span className="font-mono font-bold text-ink-primary block text-[11px] uppercase tracking-wider">
-                เอกสารทางกฎหมาย & นโยบาย
+                {locale === 'en' ? 'Legal & Policy Documents' : 'เอกสารทางกฎหมาย & นโยบาย'}
               </span>
               <div className="space-y-1.5 font-mono text-[11px]">
                 <Link
@@ -625,14 +635,14 @@ export default function DocsPage() {
                   className="flex items-center gap-1.5 text-brand-indigo hover:underline font-semibold"
                 >
                   <ShieldCheck className="w-3.5 h-3.5 text-semantic-success" />
-                  <span>นโยบายความเป็นส่วนตัว (Privacy Policy) →</span>
+                  <span>{locale === 'en' ? 'Privacy Policy →' : 'นโยบายความเป็นส่วนตัว (Privacy Policy) →'}</span>
                 </Link>
                 <Link
                   href="/terms"
                   className="flex items-center gap-1.5 text-brand-indigo hover:underline font-semibold"
                 >
                   <FileText className="w-3.5 h-3.5 text-brand-indigo" />
-                  <span>ข้อกำหนดการให้บริการ (Terms of Service) →</span>
+                  <span>{locale === 'en' ? 'Terms of Service →' : 'ข้อกำหนดการให้บริการ (Terms of Service) →'}</span>
                 </Link>
               </div>
             </div>
@@ -644,10 +654,10 @@ export default function DocsPage() {
               <div className="p-12 text-center bg-paper-raised border-2 border-border-rule rounded-dialog text-ink-secondary">
                 <HelpCircle className="w-10 h-10 mx-auto mb-3 opacity-40 text-accent-terracotta" />
                 <h3 className="font-serif font-bold text-lg text-ink-primary mb-1">
-                  ไม่พบคู่มือที่ตรงกับคำค้นหา &quot;{searchQuery}&quot;
+                  {locale === 'en' ? `No documentation found for "${searchQuery}"` : `ไม่พบคู่มือที่ตรงกับคำค้นหา "${searchQuery}"`}
                 </h3>
                 <p className="text-xs font-mono text-ink-secondary">
-                  ลองพิมพ์คำสั้นๆ เช่น &quot;สมัคร&quot;, &quot;ปฏิทิน&quot;, &quot;สเปก&quot;, หรือกดปุ่มล้างคำค้นหาด้านบน
+                  {locale === 'en' ? 'Try searching keywords like "quickstart", "calendar", "specs", or click clear above' : 'ลองพิมพ์คำสั้นๆ เช่น "สมัคร", "ปฏิทิน", "สเปก", หรือกดปุ่มล้างคำค้นหาด้านบน'}
                 </p>
               </div>
             ) : (
@@ -693,13 +703,13 @@ export default function DocsPage() {
                     <div className="mt-6 pt-4 border-t border-border-rule/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-ink-secondary">
                       <span className="flex items-center gap-1.5">
                         <CheckCheck className="w-3.5 h-3.5 text-semantic-success" />
-                        <span>คู่มือหัวข้อนี้มีประโยชน์ต่อการทำงานของคุณหรือไม่?</span>
+                        <span>{locale === 'en' ? 'Was this documentation section helpful?' : 'คู่มือหัวข้อนี้มีประโยชน์ต่อการทำงานของคุณหรือไม่?'}</span>
                       </span>
 
                       <div className="flex items-center gap-2">
                         {feedback ? (
                           <span className="text-[11px] font-semibold text-semantic-success bg-semantic-success-bg px-2.5 py-1 rounded-editorial border border-semantic-success/20 animate-in fade-in">
-                            ✓ ขอบคุณสำหรับข้อเสนอแนะ!
+                            {locale === 'en' ? '✓ Thank you for your feedback!' : '✓ ขอบคุณสำหรับข้อเสนอแนะ!'}
                           </span>
                         ) : (
                           <>
@@ -709,7 +719,7 @@ export default function DocsPage() {
                               className="flex items-center gap-1 px-2.5 py-1 rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-[11px] font-medium transition-colors cursor-pointer"
                             >
                               <ThumbsUp className="w-3 h-3 text-semantic-success" />
-                              <span>มีประโยชน์</span>
+                              <span>{locale === 'en' ? 'Helpful' : 'มีประโยชน์'}</span>
                             </button>
                             <button
                               type="button"
@@ -717,7 +727,7 @@ export default function DocsPage() {
                               className="flex items-center gap-1 px-2.5 py-1 rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-[11px] font-medium transition-colors cursor-pointer"
                             >
                               <ThumbsDown className="w-3 h-3 text-accent-terracotta" />
-                              <span>ต้องการรายละเอียดเพิ่ม</span>
+                              <span>{locale === 'en' ? 'Needs More Detail' : 'ต้องการรายละเอียดเพิ่ม'}</span>
                             </button>
                           </>
                         )}

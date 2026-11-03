@@ -84,17 +84,17 @@ export default function RegisterPage() {
 
   // Password strength score calculation
   const getPasswordStrength = () => {
-    if (!password) return { score: 0, label: 'ว่างเปล่า', color: 'bg-border-rule' };
+    if (!password) return { score: 0, label: locale === 'en' ? 'Empty' : 'ว่างเปล่า', color: 'bg-border-rule' };
     let score = 0;
     if (password.length >= 8) score += 1;
     if (/[A-Z]/.test(password)) score += 1;
     if (/[0-9]/.test(password)) score += 1;
     if (/[^A-Za-z0-9]/.test(password)) score += 1;
 
-    if (score <= 1) return { score: 1, label: 'เปราะบาง', color: 'bg-semantic-error' };
-    if (score === 2) return { score: 2, label: 'ปานกลาง', color: 'bg-accent-ochre' };
-    if (score === 3) return { score: 3, label: 'ค่อนข้างดี', color: 'bg-brand-indigo' };
-    return { score: 4, label: 'แข็งแรงมาก', color: 'bg-semantic-success' };
+    if (score <= 1) return { score: 1, label: locale === 'en' ? 'Weak' : 'เปราะบาง', color: 'bg-semantic-error' };
+    if (score === 2) return { score: 2, label: locale === 'en' ? 'Medium' : 'ปานกลาง', color: 'bg-accent-ochre' };
+    if (score === 3) return { score: 3, label: locale === 'en' ? 'Good' : 'ค่อนข้างดี', color: 'bg-brand-indigo' };
+    return { score: 4, label: locale === 'en' ? 'Strong' : 'แข็งแรงมาก', color: 'bg-semantic-success' };
   };
 
   const strength = getPasswordStrength();
@@ -108,32 +108,32 @@ export default function RegisterPage() {
     const cleanUsername = username.trim().replace(/^@/, '');
 
     if (!cleanGmail || !cleanGmail.includes('@') || !cleanGmail.includes('.')) {
-      setErrorMessage('กรุณาระบุที่อยู่อีเมล Gmail ให้ถูกต้องตามรูปแบบ (เช่น name@gmail.com)');
+      setErrorMessage(locale === 'en' ? 'Please enter a valid Gmail address (e.g. name@gmail.com)' : 'กรุณาระบุที่อยู่อีเมล Gmail ให้ถูกต้องตามรูปแบบ (เช่น name@gmail.com)');
       return;
     }
 
     if (isEmailRegistered(cleanGmail)) {
-      setErrorMessage('อีเมลนี้เคยลงทะเบียนไว้แล้ว กรุณาเข้าสู่ระบบหรือใช้อีเมลอื่น');
+      setErrorMessage(locale === 'en' ? 'This email is already registered. Please sign in or use another email.' : 'อีเมลนี้เคยลงทะเบียนไว้แล้ว กรุณาเข้าสู่ระบบหรือใช้อีเมลอื่น');
       return;
     }
 
     if (!cleanUsername || cleanUsername.length < 3) {
-      setErrorMessage('ชื่อผู้ใช้ (Username) ต้องมีความยาวอย่างน้อย 3 ตัวอักษร');
+      setErrorMessage(locale === 'en' ? 'Username must be at least 3 characters' : 'ชื่อผู้ใช้ (Username) ต้องมีความยาวอย่างน้อย 3 ตัวอักษร');
       return;
     }
 
     if (password.length < 8) {
-      setErrorMessage('รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร');
+      setErrorMessage(locale === 'en' ? 'Password must be at least 8 characters' : 'รหัสผ่านต้องมีความยาวอย่างน้อย 8 ตัวอักษร');
       return;
     }
 
     if (password !== confirmPassword) {
-      setErrorMessage('รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง');
+      setErrorMessage(locale === 'en' ? 'Passwords do not match. Please verify again.' : 'รหัสผ่านและยืนยันรหัสผ่านไม่ตรงกัน กรุณาตรวจสอบอีกครั้ง');
       return;
     }
 
     if (!agreeTerms) {
-      setErrorMessage('กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว');
+      setErrorMessage(locale === 'en' ? 'Please accept the Terms of Service and Privacy Policy' : 'กรุณายอมรับข้อกำหนดและนโยบายความเป็นส่วนตัว');
       return;
     }
 
@@ -145,12 +145,12 @@ export default function RegisterPage() {
       if (res.success) {
         setStep('OTP');
         setCooldown(60);
-        setSuccessMessage(`รหัส OTP 6 หลักถูกส่งไปยัง ${cleanGmail} เรียบร้อยแล้ว`);
+        setSuccessMessage(locale === 'en' ? `6-digit OTP code sent to ${cleanGmail}` : `รหัส OTP 6 หลักถูกส่งไปยัง ${cleanGmail} เรียบร้อยแล้ว`);
       } else {
         setErrorMessage(res.message);
       }
     } catch {
-      setErrorMessage('เกิดข้อผิดพลาดในการส่ง OTP กรุณาลองใหม่อีกครั้ง');
+      setErrorMessage(locale === 'en' ? 'Error sending OTP, please try again' : 'เกิดข้อผิดพลาดในการส่ง OTP กรุณาลองใหม่อีกครั้ง');
     } finally {
       setIsSubmitting(false);
     }
@@ -191,7 +191,7 @@ export default function RegisterPage() {
     const code = otpDigits.join('');
 
     if (code.length < 6) {
-      setErrorMessage('กรุณากรอกรหัส OTP ให้ครบทั้ง 6 หลัก');
+      setErrorMessage(locale === 'en' ? 'Please enter the complete 6-digit OTP' : 'กรุณากรอกรหัส OTP ให้ครบทั้ง 6 หลัก');
       return;
     }
 
@@ -213,7 +213,7 @@ export default function RegisterPage() {
     });
 
     if (!regResult.success) {
-      setErrorMessage(regResult.message || 'ไม่สามารถลงทะเบียนได้');
+      setErrorMessage(regResult.message || (locale === 'en' ? 'Registration failed' : 'ไม่สามารถลงทะเบียนได้'));
       setIsSubmitting(false);
       return;
     }
@@ -234,7 +234,7 @@ export default function RegisterPage() {
     const res = sendEmailOtp(gmail, 'REGISTER');
     if (res.success) {
       setCooldown(60);
-      setSuccessMessage('ส่งรหัส OTP ชุดใหม่ไปยังอีเมลของคุณเรียบร้อยแล้ว');
+      setSuccessMessage(locale === 'en' ? 'A new OTP has been sent to your email.' : 'ส่งรหัส OTP ชุดใหม่ไปยังอีเมลของคุณเรียบร้อยแล้ว');
       setTimeout(() => setSuccessMessage(''), 4000);
     }
   };
@@ -326,7 +326,7 @@ export default function RegisterPage() {
               {/* 1. Gmail Input */}
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-ink-primary font-mono">
-                  Gmail / อีเมลติดต่อ <span className="text-accent-terracotta">*</span>
+                  {locale === 'en' ? 'Gmail / Contact Email' : 'Gmail / อีเมลติดต่อ'} <span className="text-accent-terracotta">*</span>
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-ink-secondary absolute left-3 top-3 pointer-events-none" />
@@ -340,14 +340,14 @@ export default function RegisterPage() {
                   />
                 </div>
                 <p className="text-[10px] text-ink-secondary font-mono">
-                  ระบบจะส่งรหัสยืนยัน OTP 6 หลักไปยังอีเมลนี้
+                  {locale === 'en' ? 'We will send a 6-digit OTP code to this email' : 'ระบบจะส่งรหัสยืนยัน OTP 6 หลักไปยังอีเมลนี้'}
                 </p>
               </div>
 
               {/* 2. Username Input */}
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-ink-primary font-mono">
-                  ชื่อผู้ใช้ (Username) <span className="text-accent-terracotta">*</span>
+                  {locale === 'en' ? 'Username' : 'ชื่อผู้ใช้ (Username)'} <span className="text-accent-terracotta">*</span>
                 </label>
                 <div className="relative">
                   <User className="w-4 h-4 text-ink-secondary absolute left-3 top-3 pointer-events-none" />
@@ -365,14 +365,14 @@ export default function RegisterPage() {
               {/* 3. Password Input */}
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-ink-primary font-mono">
-                  รหัสผ่าน (Password) <span className="text-accent-terracotta">*</span>
+                  {locale === 'en' ? 'Password' : 'รหัสผ่าน (Password)'} <span className="text-accent-terracotta">*</span>
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-ink-secondary absolute left-3 top-3 pointer-events-none" />
                   <input
                     type={showPassword ? 'text' : 'password'}
                     required
-                    placeholder="อย่างน้อย 8 ตัวอักษร"
+                    placeholder={locale === 'en' ? 'At least 8 characters' : 'อย่างน้อย 8 ตัวอักษร'}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="w-full pl-9 pr-10 py-2 text-xs bg-paper-canvas border border-border-rule rounded-editorial font-mono text-ink-primary placeholder:text-ink-secondary/50 focus:outline-none focus:border-brand-indigo focus:ring-1 focus:ring-brand-indigo transition-all"
@@ -391,7 +391,7 @@ export default function RegisterPage() {
                 {password && (
                   <div className="pt-1 space-y-1">
                     <div className="flex items-center justify-between text-[10px] font-mono">
-                      <span className="text-ink-secondary">ความปลอดภัยของรหัส:</span>
+                      <span className="text-ink-secondary">{locale === 'en' ? 'Password Strength:' : 'ความปลอดภัยของรหัส:'}</span>
                       <span className="font-semibold text-ink-primary">{strength.label}</span>
                     </div>
                     <div className="grid grid-cols-4 gap-1 h-1">
@@ -411,14 +411,14 @@ export default function RegisterPage() {
               {/* 4. Confirm Password */}
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-ink-primary font-mono">
-                  ยืนยันรหัสผ่านอีกครั้ง <span className="text-accent-terracotta">*</span>
+                  {locale === 'en' ? 'Confirm Password' : 'ยืนยันรหัสผ่านอีกครั้ง'} <span className="text-accent-terracotta">*</span>
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-ink-secondary absolute left-3 top-3 pointer-events-none" />
                   <input
                     type={showConfirmPassword ? 'text' : 'password'}
                     required
-                    placeholder="พิมพ์รหัสผ่านเดิมซ้ำอีกครั้ง"
+                    placeholder={locale === 'en' ? 'Re-type your password' : 'พิมพ์รหัสผ่านเดิมซ้ำอีกครั้ง'}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     className="w-full pl-9 pr-10 py-2 text-xs bg-paper-canvas border border-border-rule rounded-editorial font-mono text-ink-primary placeholder:text-ink-secondary/50 focus:outline-none focus:border-brand-indigo focus:ring-1 focus:ring-brand-indigo transition-all"
@@ -444,15 +444,15 @@ export default function RegisterPage() {
                   className="mt-0.5 rounded text-brand-indigo focus:ring-brand-indigo"
                 />
                 <label htmlFor="terms" className="text-[11px] text-ink-secondary leading-tight cursor-pointer">
-                  ฉันยอมรับ{' '}
+                  {locale === 'en' ? 'I agree to the ' : 'ฉันยอมรับ '}
                   <Link href="/terms" target="_blank" className="text-brand-indigo font-semibold underline underline-offset-1 hover:text-brand-indigo-hover">
-                    ข้อกำหนดการใช้งาน
-                  </Link>{' '}
-                  และ{' '}
+                    {locale === 'en' ? 'Terms of Service' : 'ข้อกำหนดการใช้งาน'}
+                  </Link>
+                  {locale === 'en' ? ' and ' : ' และ '}
                   <Link href="/privacy" target="_blank" className="text-brand-indigo font-semibold underline underline-offset-1 hover:text-brand-indigo-hover">
-                    นโยบายความเป็นส่วนตัว (Privacy Policy)
-                  </Link>{' '}
-                  ของ RetzPost
+                    {locale === 'en' ? 'Privacy Policy' : 'นโยบายความเป็นส่วนตัว (Privacy Policy)'}
+                  </Link>
+                  {locale === 'en' ? ' of RetzPost' : ' ของ RetzPost'}
                 </label>
               </div>
 
@@ -463,10 +463,10 @@ export default function RegisterPage() {
                 className="w-full mt-2 py-2.5 px-4 bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-bold rounded-editorial shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? (
-                  <span>กำลังส่งรหัส OTP...</span>
+                  <span>{locale === 'en' ? 'Sending OTP code...' : 'กำลังส่งรหัส OTP...'}</span>
                 ) : (
                   <>
-                    <span>ส่งรหัส OTP ยืนยันไปยัง Gmail</span>
+                    <span>{locale === 'en' ? 'Send OTP Verification to Gmail' : 'ส่งรหัส OTP ยืนยันไปยัง Gmail'}</span>
                     <ArrowRight className="w-4 h-4" />
                   </>
                 )}
@@ -479,7 +479,7 @@ export default function RegisterPage() {
             <form onSubmit={handleVerifyOtpAndRegister} className="space-y-5 animate-in fade-in duration-200">
               <div className="p-3 bg-paper-subtle/80 rounded-editorial border border-border-rule text-xs flex items-center justify-between">
                 <div>
-                  <span className="text-[10px] text-ink-secondary font-mono block">อีเมลปลายทาง:</span>
+                  <span className="text-[10px] text-ink-secondary font-mono block">{locale === 'en' ? 'Destination Email:' : 'อีเมลปลายทาง:'}</span>
                   <span className="font-mono font-bold text-ink-primary">{gmail}</span>
                 </div>
                 <button
@@ -488,14 +488,14 @@ export default function RegisterPage() {
                   className="text-[10px] font-mono text-brand-indigo hover:underline flex items-center gap-1 font-semibold"
                 >
                   <ArrowLeft className="w-3 h-3" />
-                  <span>แก้ไขอีเมล</span>
+                  <span>{locale === 'en' ? 'Edit email' : 'แก้ไขอีเมล'}</span>
                 </button>
               </div>
 
               {/* 6 Digits Boxes */}
               <div className="space-y-2">
                 <label className="block text-xs font-semibold text-ink-primary font-mono text-center">
-                  กรอกรหัส 6 หลัก (OTP Verification Code)
+                  {locale === 'en' ? 'Enter 6-Digit OTP (OTP Verification Code)' : 'กรอกรหัส 6 หลัก (OTP Verification Code)'}
                 </label>
                 <div className="flex items-center justify-between gap-1.5 sm:gap-2">
                   {otpDigits.map((digit, index) => (
@@ -522,9 +522,9 @@ export default function RegisterPage() {
                 <div className="flex items-center gap-1 text-[11px] font-mono text-ink-secondary">
                   <Clock className="w-3.5 h-3.5 text-accent-terracotta" />
                   {cooldown > 0 ? (
-                    <span>ขอรหัสใหม่ได้ในอีก 00:{cooldown < 10 ? `0${cooldown}` : cooldown}</span>
+                    <span>{locale === 'en' ? `Resend code in 00:${cooldown < 10 ? `0${cooldown}` : cooldown}` : `ขอรหัสใหม่ได้ในอีก 00:${cooldown < 10 ? `0${cooldown}` : cooldown}`}</span>
                   ) : (
-                    <span className="text-semantic-success font-semibold">ขอรหัส OTP ใหม่ได้แล้ว</span>
+                    <span className="text-semantic-success font-semibold">{locale === 'en' ? 'You can now request a new OTP' : 'ขอรหัส OTP ใหม่ได้แล้ว'}</span>
                   )}
                 </div>
 
@@ -535,7 +535,7 @@ export default function RegisterPage() {
                   className="text-xs font-semibold font-mono text-brand-indigo hover:underline disabled:opacity-40 disabled:no-underline cursor-pointer flex items-center gap-1"
                 >
                   <RotateCcw className="w-3 h-3" />
-                  <span>ขอรหัสใหม่ (Resend)</span>
+                  <span>{locale === 'en' ? 'Resend Code' : 'ขอรหัสใหม่ (Resend)'}</span>
                 </button>
               </div>
 
@@ -546,11 +546,11 @@ export default function RegisterPage() {
                 className="w-full py-2.5 px-4 bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-bold rounded-editorial shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
               >
                 {isSubmitting ? (
-                  <span>กำลังตรวจสอบรหัส...</span>
+                  <span>{locale === 'en' ? 'Verifying OTP code...' : 'กำลังตรวจสอบรหัส...'}</span>
                 ) : (
                   <>
                     <ShieldCheck className="w-4 h-4" />
-                    <span>ยืนยันรหัส OTP และสร้างบัญชี</span>
+                    <span>{locale === 'en' ? 'Verify OTP & Create Account' : 'ยืนยันรหัส OTP และสร้างบัญชี'}</span>
                   </>
                 )}
               </button>
@@ -560,7 +560,7 @@ export default function RegisterPage() {
                 onClick={() => setStep('DETAILS')}
                 className="w-full py-2 text-center text-xs font-mono text-ink-secondary hover:text-ink-primary"
               >
-                ← ย้อนกลับไปแก้ไขข้อมูล
+                {locale === 'en' ? '← Back to edit details' : '← ย้อนกลับไปแก้ไขข้อมูล'}
               </button>
             </form>
           )}
@@ -573,16 +573,16 @@ export default function RegisterPage() {
               </div>
               <div>
                 <h3 className="font-serif text-lg font-bold text-ink-primary">
-                  ยินดีต้อนรับสู่ RetzPost!
+                  {locale === 'en' ? 'Welcome to RetzPost!' : 'ยินดีต้อนรับสู่ RetzPost!'}
                 </h3>
                 <p className="text-xs text-ink-secondary mt-1">
-                  สร้างบัญชี <span className="font-mono font-bold text-brand-indigo">{username}</span> เรียบร้อยแล้ว
+                  {locale === 'en' ? <>Account <span className="font-mono font-bold text-brand-indigo">{username}</span> created successfully.</> : <>สร้างบัญชี <span className="font-mono font-bold text-brand-indigo">{username}</span> เรียบร้อยแล้ว</>}
                 </p>
               </div>
               <div className="pt-2">
                 <div className="inline-flex items-center gap-2 text-xs font-mono text-ink-secondary bg-paper-subtle px-3 py-1.5 rounded-full border border-border-rule">
                   <span className="w-2 h-2 rounded-full bg-semantic-success animate-ping" />
-                  <span>กำลังเข้าสู่ระบบและนำท่านไปยังแดชบอร์ด...</span>
+                  <span>{locale === 'en' ? 'Signing in and redirecting to dashboard...' : 'กำลังเข้าสู่ระบบและนำท่านไปยังแดชบอร์ด...'}</span>
                 </div>
               </div>
             </div>
@@ -594,15 +594,15 @@ export default function RegisterPage() {
       <footer className="max-w-5xl mx-auto w-full pt-6 border-t border-border-rule/60 text-center text-[11px] font-mono text-ink-secondary space-y-2">
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-medium">
           <Link href="/docs" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            📖 คู่มือใช้งาน (Docs & Guide)
+            📖 {locale === 'en' ? 'Docs & Guides' : 'คู่มือใช้งาน (Docs & Guide)'}
           </Link>
           <span>•</span>
           <Link href="/privacy" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            🔒 นโยบายความเป็นส่วนตัว (Privacy Policy)
+            🔒 {locale === 'en' ? 'Privacy Policy' : 'นโยบายความเป็นส่วนตัว (Privacy Policy)'}
           </Link>
           <span>•</span>
           <Link href="/terms" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            📜 ข้อกำหนดการใช้งาน (Terms of Service)
+            📜 {locale === 'en' ? 'Terms of Service' : 'ข้อกำหนดการใช้งาน (Terms of Service)'}
           </Link>
         </div>
         <p>RETZPOST — Dream Press Publishing Desk &copy; {new Date().getFullYear()} RetzPost SaaS. All rights reserved.</p>

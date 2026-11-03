@@ -3,10 +3,14 @@ export type TemplateCategory = 'REAL_ESTATE' | 'PROMOTION' | 'PRODUCT_LAUNCH' | 
 export interface PostTemplate {
   id: string;
   name: string;
+  nameEn?: string;
   category: TemplateCategory;
   categoryLabel: string;
+  categoryLabelEn?: string;
   title: string;
+  titleEn?: string;
   caption: string;
+  captionEn?: string;
   tags: string;
   storyLink?: string;
   isBuiltIn: boolean;
@@ -21,14 +25,33 @@ export const CATEGORY_LABELS: Record<string, string> = {
   CUSTOM: 'เทมเพลตของฉัน',
 };
 
+export const CATEGORY_LABELS_EN: Record<string, string> = {
+  REAL_ESTATE: 'Studio & Media Space',
+  PROMOTION: 'Promotion',
+  PRODUCT_LAUNCH: 'Product Launch',
+  INSIGHTS: 'Market Insights',
+  CUSTOM: 'My Templates',
+};
+
+export function getCategoryLabel(category: string, locale?: string): string {
+  if (locale === 'en') {
+    return CATEGORY_LABELS_EN[category] || CATEGORY_LABELS[category] || category;
+  }
+  return CATEGORY_LABELS[category] || category;
+}
+
 export const BUILT_IN_TEMPLATES: PostTemplate[] = [
   {
     id: 'tpl-c1-luxury-space',
     name: '🏢 สตูดิโอโปรดักชัน & สเปซใจกลางเมือง (Studio Space)',
+    nameEn: '🏢 Urban Production Studio & Media Space',
     category: 'REAL_ESTATE',
     categoryLabel: 'สตูดิโอ & มีเดียสเปซ',
+    categoryLabelEn: 'Studio & Media Space',
     title: '[EXCLUSIVE ACCESS] เปิดจองสตูดิโอระดับพรีเมียม ทำเลใจกลางเมือง',
+    titleEn: '[EXCLUSIVE ACCESS] Book Premium Central Studio Today',
     caption: `✨ สัมผัสประสบการณ์พื้นที่ทำงานและสตูดิโอระดับพรีเมียม ดีไซน์โมเดิร์นใจกลางเมือง\n\n🏢 รายละเอียดพื้นที่:\n• สตูดิโอเก็บเสียงมาตรฐานสตูดิโอบรอดแคสต์\n• ระบบไฟ 3-Point Lighting และฉาก Cyc Wall ครบชุด\n• พื้นที่รับรองและ Workstation สะดวกสบาย\n\n🚆 การเดินทางสะดวกสบาย:\n• ใกล้ระบบขนส่งหลักเพียง 250 เมตร\n• ที่จอดรถสะดวกสบาย\n\n📲 สนใจนัดหมายเข้าชมสตูดิโอจริง:\nTel: 02-XXX-XXXX / Line Official: @retzpost`,
+    captionEn: `✨ Experience premium workspace and modern studio space in the city center.\n\n🏢 Space Highlights:\n• Soundproof studio meeting broadcast acoustics standards\n• Full 3-Point Lighting system & Cyc Wall\n• Dedicated lounge and workstation\n\n🚆 Convenient Transit:\n• Only 250m from major transit\n• Easy dedicated parking\n\n📲 Schedule your studio tour:\nTel: +66 (0) 2-XXX-XXXX / Line Official: @retzpost`,
     tags: 'StudioSpace, CreativeStudio, PodcastSetup, MediaProduction',
     storyLink: 'https://retzpost.io/studio',
     isBuiltIn: true,
@@ -36,10 +59,14 @@ export const BUILT_IN_TEMPLATES: PostTemplate[] = [
   {
     id: 'tpl-studio-master-suite',
     name: '🎙️ The Master Studio Suite Collection',
+    nameEn: '🎙️ The Master Studio Suite Collection',
     category: 'REAL_ESTATE',
     categoryLabel: 'สตูดิโอ & มีเดียสเปซ',
+    categoryLabelEn: 'Studio & Media Space',
     title: 'The Ultimate Studio Setup: 4K Production Suite & Acoustic Control',
+    titleEn: 'The Ultimate Studio Setup: 4K Production Suite & Acoustic Control',
     caption: `Experience sheer exclusivity at The Master Studio Suite Collection.\n\nKey Highlights:\n- 180 sqm Production Studio with Acoustic Isolation\n- 4K Multi-cam Live Switching Suite\n- Panoramic skyline views for natural light filming\n\nAvailable exclusively by appointment.\nDirect inquiry: +66 (0) 2-XXX-XXXX`,
+    captionEn: `Experience sheer exclusivity at The Master Studio Suite Collection.\n\nKey Highlights:\n- 180 sqm Production Studio with Acoustic Isolation\n- 4K Multi-cam Live Switching Suite\n- Panoramic skyline views for natural light filming\n\nAvailable exclusively by appointment.\nDirect inquiry: +66 (0) 2-XXX-XXXX`,
     tags: 'StudioSuite, CreativeProduction, PodcastStudio, FilmmakingSpace',
     storyLink: 'https://retzpost.io/suite-collection',
     isBuiltIn: true,
@@ -47,10 +74,14 @@ export const BUILT_IN_TEMPLATES: PostTemplate[] = [
   {
     id: 'tpl-flash-sale',
     name: '⚡ Flash Sale & ส่วนลดพิเศษจำกัดเวลา',
+    nameEn: '⚡ Flash Sale & Limited Time Deal',
     category: 'PROMOTION',
     categoryLabel: 'โปรโมชั่น',
+    categoryLabelEn: 'Promotion',
     title: '⚡ FLASH SALE 48 ชั่วโมงเท่านั้น! ลดสูงสุด 50%',
+    titleEn: '⚡ 48-HOUR FLASH SALE! Up to 50% Off',
     caption: `🔥 มอบสิทธิพิเศษเฉพาะผู้ติดตามเพจของเรา!\n\nรับส่วนลดพิเศษทันทีสูงสุด 50% สำหรับทุกรายการ\n📅 ระยะเวลาแคมเปญ: วันนี้ - วันอาทิตย์นี้เท่านั้น (หรือจนกว่าสิทธิ์จะเต็ม)\n\n⚠️ ด่วน! โค้ดส่วนลดและสิทธิ์มีจำนวนจำกัด\n\n👇 แตะปุ่มลิงก์ในสตอรี่เพื่อกดรับสิทธิ์และชมรายละเอียดโปรโมชั่นก่อนหมดเวลา`,
+    captionEn: `🔥 Exclusive offer for our followers!\n\nGet up to 50% discount on all production suites.\n📅 Campaign duration: Today - This Sunday only (or while supplies last)\n\n⚠️ Hurry! Discount codes and slots are limited.\n\n👇 Tap the story link to claim your offer before time runs out.`,
     tags: 'FlashSale, ExclusiveDeal, ส่วนลดพิเศษ, SpecialOffer, LimitedTime',
     storyLink: 'https://retzpost.io/promotions/flash-deal',
     isBuiltIn: true,
@@ -58,10 +89,14 @@ export const BUILT_IN_TEMPLATES: PostTemplate[] = [
   {
     id: 'tpl-product-launch',
     name: '🚀 Product Launch & Tech Announcement',
+    nameEn: '🚀 Product Launch & Tech Announcement',
     category: 'PRODUCT_LAUNCH',
     categoryLabel: 'เปิดตัวสินค้า',
+    categoryLabelEn: 'Product Launch',
     title: '🚀 Introducing Next-Gen Multi-Placement Publishing Studio',
+    titleEn: '🚀 Introducing Next-Gen Multi-Placement Publishing Studio',
     caption: `Today we are thrilled to unveil our biggest leap forward in content distribution.\n\nWhat makes this different?\n• Simultaneous Feed, Story (24h), and Reels distribution from one canvas\n• Intelligent phone mockups with vertical 9:16 safe zones\n• Project-scoped automation with 1-click recipes\n\nUpload once. Adapt everywhere.\nRead our launch editorial and documentation at the link below.`,
+    captionEn: `Today we are thrilled to unveil our biggest leap forward in content distribution.\n\nWhat makes this different?\n• Simultaneous Feed, Story (24h), and Reels distribution from one canvas\n• Intelligent phone mockups with vertical 9:16 safe zones\n• Project-scoped automation with 1-click recipes\n\nUpload once. Adapt everywhere.\nRead our launch editorial and documentation at the link below.`,
     tags: 'ProductLaunch, RetzPost, CreatorEconomy, SaaS, Automation',
     storyLink: 'https://retzpost.io/whats-new',
     isBuiltIn: true,
@@ -69,10 +104,14 @@ export const BUILT_IN_TEMPLATES: PostTemplate[] = [
   {
     id: 'tpl-weekly-insights',
     name: '📊 Weekly Market Brief & Analysis',
+    nameEn: '📊 Weekly Market Brief & Analysis',
     category: 'INSIGHTS',
     categoryLabel: 'บทวิเคราะห์',
+    categoryLabelEn: 'Market Insights',
     title: '📊 Weekly Dispatch: Social Platform Algorithm Shifts in 2026',
+    titleEn: '📊 Weekly Dispatch: Social Platform Algorithm Shifts in 2026',
     caption: `สรุป 3 การเปลี่ยนแปลงสำคัญของ Social Algorithms สัปดาห์นี้ ที่ครีเอเตอร์และแบรนด์ควรรู้:\n\n1. การให้ค่าน้ำหนักกับ 24h Stories ที่มี Link Sticker ปฏิสัมพันธ์สูงขึ้น\n2. อัตรา Re-watch ของวิดีโอสั้น Reels/Shorts ภายใต้ความยาว 45 วินาที\n3. โครงสร้างอัลบั้มภาพแบบ Mixed Carousel ที่เพิ่มการบันทึก (Saves)\n\nคุณคิดเห็นอย่างไรกับทิศทางนี้? แลกเปลี่ยนกันได้ในคอมเมนต์ด้านล่างครับ 👇`,
+    captionEn: `Summary of 3 key social algorithm changes this week every creator should know:\n\n1. Higher weighting for 24h Stories with interactive link stickers\n2. Re-watch rates for short-form Reels/Shorts under 45 seconds\n3. Mixed Carousel album structures boosting bookmark/save actions\n\nWhat are your thoughts on this trend? Let us know in the comments below 👇`,
     tags: 'WeeklyBrief, MarketTrends, SocialMediaStrategy, ContentGrowth',
     storyLink: 'https://retzpost.io/insights/2026-algorithms',
     isBuiltIn: true,

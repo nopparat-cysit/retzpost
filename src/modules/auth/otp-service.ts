@@ -54,8 +54,9 @@ function saveStoredOtps(otps: Record<string, OTPRecord>): void {
  */
 export function sendEmailOtp(
   email: string,
-  purpose: OTPPurpose
-): { success: boolean; code: string; message: string } {
+  purpose: OTPPurpose,
+  locale?: string
+): { success: boolean; code: string; message: string; messageEn?: string } {
   const normalizedEmail = email.trim().toLowerCase();
   const code = generateRandomOtpCode();
   const now = Date.now();
@@ -80,8 +81,8 @@ export function sendEmailOtp(
       to: normalizedEmail,
       subject:
         purpose === 'REGISTER'
-          ? `[RetzPost Security] รหัส OTP ยืนยันการสมัครสมาชิก: ${code}`
-          : `[RetzPost Security] รหัส OTP กู้คืนรหัสผ่านของคุณ: ${code}`,
+          ? (locale === 'en' ? `[RetzPost Security] Registration OTP Code: ${code}` : `[RetzPost Security] รหัส OTP ยืนยันการสมัครสมาชิก: ${code}`)
+          : (locale === 'en' ? `[RetzPost Security] Password Reset OTP Code: ${code}` : `[RetzPost Security] รหัส OTP กู้คืนรหัสผ่านของคุณ: ${code}`),
       code,
       purpose,
       timestamp: now,
@@ -99,7 +100,8 @@ export function sendEmailOtp(
   return {
     success: true,
     code,
-    message: `ส่งรหัส OTP 6 หลักไปยัง ${normalizedEmail} สำเร็จแล้ว`,
+    message: locale === 'en' ? `6-digit OTP code sent to ${normalizedEmail}` : `ส่งรหัส OTP 6 หลักไปยัง ${normalizedEmail} สำเร็จแล้ว`,
+    messageEn: `6-digit OTP code sent to ${normalizedEmail}`,
   };
 }
 
@@ -109,8 +111,9 @@ export function sendEmailOtp(
 export function verifyEmailOtp(
   email: string,
   code: string,
-  purpose: OTPPurpose
-): { valid: boolean; message: string } {
+  purpose: OTPPurpose,
+  locale?: string
+): { valid: boolean; message: string; messageEn?: string } {
   const normalizedEmail = email.trim().toLowerCase();
   const enteredCode = code.trim();
   const otps = getStoredOtps();
@@ -120,7 +123,8 @@ export function verifyEmailOtp(
   if (!record) {
     return {
       valid: false,
-      message: 'ไม่พบรหัส OTP สำหรับอีเมลนี้ กรุณากดขอรหัส OTP ใหม่อีกครั้ง',
+      message: locale === 'en' ? 'No active OTP found for this email. Please request a new code.' : 'ไม่พบรหัส OTP สำหรับอีเมลนี้ กรุณากดขอรหัส OTP ใหม่อีกครั้ง',
+      messageEn: 'No active OTP found for this email. Please request a new code.',
     };
   }
 
@@ -130,14 +134,16 @@ export function verifyEmailOtp(
     saveStoredOtps(otps);
     return {
       valid: false,
-      message: 'รหัส OTP หมดอายุแล้ว (เกิน 5 นาที) กรุณากดขอรหัสใหม่',
+      message: locale === 'en' ? 'OTP code expired (after 5 minutes). Please request a new code.' : 'รหัส OTP หมดอายุแล้ว (เกิน 5 นาที) กรุณากดขอรหัสใหม่',
+      messageEn: 'OTP code expired (after 5 minutes). Please request a new code.',
     };
   }
 
   if (record.code !== enteredCode) {
     return {
       valid: false,
-      message: 'รหัส OTP ไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง',
+      message: locale === 'en' ? 'Invalid OTP code. Please check and try again.' : 'รหัส OTP ไม่ถูกต้อง กรุณาตรวจสอบและลองใหม่อีกครั้ง',
+      messageEn: 'Invalid OTP code. Please check and try again.',
     };
   }
 

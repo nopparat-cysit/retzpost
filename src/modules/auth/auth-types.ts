@@ -42,5 +42,6 @@ export interface RegisterInput {
 export interface AuthResponse {
   success: boolean;
   message?: string;
+  messageEn?: string;
   user?: AuthUser;
 }

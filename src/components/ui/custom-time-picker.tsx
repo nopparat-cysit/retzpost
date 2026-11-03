@@ -10,11 +10,14 @@ import {
   Flame,
   Check
 } from 'lucide-react';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 
 export interface TimePeakSlot {
   time: string; // e.g. '08:30 AM' or '19:30 PM'
   label: string; // e.g. 'เช้าข่าวสาร & Brief'
+  labelEn?: string;
   badge?: string;
+  badgeEn?: string;
   isPeak?: boolean;
 }
 
@@ -33,14 +36,15 @@ export interface CustomTimePickerProps {
   align?: 'left' | 'right';
   fullWidth?: boolean;
   showPeakSlots?: boolean;
+  locale?: 'th' | 'en';
 }
 
 export const BANGKOK_PEAK_SLOTS: TimePeakSlot[] = [
-  { time: '08:30 AM', label: 'ช่วงเช้า: ข่าวสาร & Morning Brief', badge: 'Prime', isPeak: true },
-  { time: '11:30 AM', label: 'พักเที่ยง: Story & โปรโมชั่น', badge: 'Swipes', isPeak: false },
-  { time: '14:00 PM', label: 'ช่วงบ่าย: คาเฟ่ & SME', badge: 'Active', isPeak: false },
-  { time: '19:30 PM', label: 'หัวค่ำ: ยอด Reach & Engagement สูงสุด', badge: 'Peak Window', isPeak: true },
-  { time: '21:00 PM', label: 'รอบดึก: Reels & TikTok สบายๆ', badge: 'Viral', isPeak: false },
+  { time: '08:30 AM', label: 'ช่วงเช้า: ข่าวสาร & Morning Brief', labelEn: 'Morning: News & Morning Brief', badge: 'Prime', isPeak: true },
+  { time: '11:30 AM', label: 'พักเที่ยง: Story & โปรโมชั่น', labelEn: 'Noon: Story & Promotion', badge: 'Swipes', isPeak: false },
+  { time: '14:00 PM', label: 'ช่วงบ่าย: คาเฟ่ & SME', labelEn: 'Afternoon: Cafe & SME', badge: 'Active', isPeak: false },
+  { time: '19:30 PM', label: 'หัวค่ำ: ยอด Reach & Engagement สูงสุด', labelEn: 'Peak Window: Max Reach & Engagement', badge: 'Peak Window', isPeak: true },
+  { time: '21:00 PM', label: 'รอบดึก: Reels & TikTok สบายๆ', labelEn: 'Late Night: Reels & TikTok Relaxed', badge: 'Viral', isPeak: false },
 ];
 
 // Helper to parse time string
@@ -91,7 +95,7 @@ export function CustomTimePicker({
   value,
   onChange,
   label,
-  placeholder = 'เลือกเวลา...',
+  placeholder,
   disabled = false,
   clearable = false,
   format24 = false,
@@ -102,7 +106,12 @@ export function CustomTimePicker({
   align = 'left',
   fullWidth = true,
   showPeakSlots = true,
+  locale,
 }: CustomTimePickerProps) {
+  const i18n = useTranslation();
+  const activeLocale = locale || i18n?.locale || 'th';
+  const resolvedPlaceholder = placeholder ?? (activeLocale === 'th' ? 'เลือกเวลา...' : 'Select time...');
+
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -223,7 +232,7 @@ export function CustomTimePicker({
             </div>
           ) : (
             <span className="text-ink-secondary/60 truncate font-mono text-[11px]">
-              {placeholder}
+              {resolvedPlaceholder}
             </span>
           )}
         </div>
@@ -299,7 +308,9 @@ export function CustomTimePicker({
                     >
                       <div className="flex items-center gap-2 truncate">
                         <span className="font-mono font-bold">{slot.time}</span>
-                        <span className="text-[10px] opacity-80 truncate">{slot.label}</span>
+                        <span className="text-[10px] opacity-80 truncate">
+                          {activeLocale === 'th' ? slot.label : (slot.labelEn || slot.label)}
+                        </span>
                       </div>
                       {slot.badge && (
                         <span
@@ -350,7 +361,7 @@ export function CustomTimePicker({
               {/* Hour Dropdown / Wheel */}
               <div className="col-span-4">
                 <label className="block text-[9px] font-mono text-ink-secondary mb-0.5 text-center">
-                  Hour (ชม.)
+                  {activeLocale === 'th' ? 'Hour (ชม.)' : 'Hour'}
                 </label>
                 <select
                   value={selectedHour}
@@ -372,7 +383,7 @@ export function CustomTimePicker({
               {/* Minute Dropdown / Wheel */}
               <div className="col-span-4">
                 <label className="block text-[9px] font-mono text-ink-secondary mb-0.5 text-center">
-                  Minute (นาที)
+                  {activeLocale === 'th' ? 'Minute (นาที)' : 'Minute'}
                 </label>
                 <select
                   value={selectedMinute}
@@ -423,14 +434,14 @@ export function CustomTimePicker({
           {/* Confirm Button */}
           <div className="mt-2.5 pt-2 border-t border-border-rule flex items-center justify-between">
             <span className="text-[10px] font-mono text-ink-secondary">
-              เลือกเวลา: <strong className="text-brand-indigo font-bold">{formatTimeOutput(selectedHour, selectedMinute, selectedPeriod, format24)}</strong>
+              {activeLocale === 'th' ? 'เลือกเวลา: ' : 'Selected: '}<strong className="text-brand-indigo font-bold">{formatTimeOutput(selectedHour, selectedMinute, selectedPeriod, format24)}</strong>
             </span>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
               className="px-3 py-1 bg-brand-indigo text-white text-xs font-mono font-semibold rounded hover:bg-brand-indigo-hover transition-colors shadow-2xs cursor-pointer"
             >
-              ยืนยันเวลา
+              {activeLocale === 'th' ? 'ยืนยันเวลา' : 'Confirm Time'}
             </button>
           </div>
         </div>

@@ -160,6 +160,7 @@ export interface PostPerformanceData {
   }[];
   websiteUrl?: string;
   websiteLabel?: string;
+  websiteLabelEn?: string;
 }
 
 const SAMPLE_BATCHES: DispatchBatch[] = [
@@ -513,6 +514,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ],
     websiteUrl: 'https://yourbrand.com/prime-skyview',
     websiteLabel: 'หน้าเว็บแคมเปญ',
+    websiteLabelEn: 'Campaign Website',
   },
   {
     id: 'perf-2',
@@ -556,6 +558,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ],
     websiteUrl: 'https://yourbrand.com/master-collection',
     websiteLabel: 'หน้าเว็บแคมเปญ',
+    websiteLabelEn: 'Campaign Website',
   },
   {
     id: 'perf-3',
@@ -606,6 +609,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ],
     websiteUrl: 'https://creatorhub.io/redesign-tour',
     websiteLabel: 'หน้าเว็บ Creator',
+    websiteLabelEn: 'Creator Portal',
   },
   {
     id: 'perf-4',
@@ -649,6 +653,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ],
     websiteUrl: 'https://retzpost.io/whats-new',
     websiteLabel: 'หน้าเว็บ Changelog',
+    websiteLabelEn: 'Changelog Page',
   },
   {
     id: 'perf-5',
@@ -692,6 +697,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
     ],
     websiteUrl: 'https://coffeecraft.bkk/menu',
     websiteLabel: 'หน้าเมนูร้าน',
+    websiteLabelEn: 'Store Menu',
   },
 ];
 
@@ -766,7 +772,7 @@ export default function HomePage() {
 
       if (res.status === 429) {
         setTelemetryCooldownRemaining(data.cooldownSecondsRemaining || 60);
-        setTelemetryNotice(data.message || 'ระบบป้องกัน Rate Limit: กรุณารอสักครู่');
+        setTelemetryNotice(data.message || (locale === 'en' ? 'Rate Limit Protection: Please wait a moment' : 'ระบบป้องกัน Rate Limit: กรุณารอสักครู่'));
       } else if (res.ok && data.status === 'SUCCESS') {
         if (data.records && data.records.length > 0) {
           setPerformancePosts((prev) =>
@@ -789,10 +795,11 @@ export default function HomePage() {
           );
         }
 
-        const timeStr = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-        setTelemetryLastSynced(`อัปเดตล่าสุด ${timeStr}`);
+        const timeLocale = locale === 'en' ? 'en-US' : 'th-TH';
+        const timeStr = new Date().toLocaleTimeString(timeLocale, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        setTelemetryLastSynced(locale === 'en' ? `Last updated ${timeStr}` : `อัปเดตล่าสุด ${timeStr}`);
         setTelemetryCooldownRemaining(data.cooldownSecondsRemaining || 60);
-        setTelemetryNotice('ซิงค์ตัวเลขสถิติสดเรียบร้อยแล้ว (-2 Master Tokens)');
+        setTelemetryNotice(locale === 'en' ? 'Live telemetry synced successfully (-2 Master Tokens)' : 'ซิงค์ตัวเลขสถิติสดเรียบร้อยแล้ว (-2 Master Tokens)');
 
         // Deduct 2 tokens and record team log
         fetch('/api/billing/tokens', {
@@ -801,15 +808,15 @@ export default function HomePage() {
           body: JSON.stringify({
             actionKey: 'FORCE_SYNC_NOW',
             actorName: currentUser?.name || 'Staff Member',
-            description: `ดึงยอดวิวย้อนหลังสด (${workspaceFilter})`,
+            description: locale === 'en' ? `Fetch live telemetry (${workspaceFilter})` : `ดึงยอดวิวย้อนหลังสด (${workspaceFilter})`,
           }),
         }).catch(() => null);
-        recordTeamTokenConsumption(currentUser?.email || 'admin@retzpost.com', 'FORCE_SYNC_NOW', 'ดึงยอดวิวสดทันที', 2);
+        recordTeamTokenConsumption(currentUser?.email || 'admin@retzpost.com', 'FORCE_SYNC_NOW', locale === 'en' ? 'Live Telemetry Force Sync' : 'ดึงยอดวิวสดทันที', 2);
       } else {
-        setTelemetryNotice('เกิดข้อผิดพลาดในการดึงข้อมูล กรุณาลองใหม่อีกครั้ง');
+        setTelemetryNotice(locale === 'en' ? 'Error fetching data. Please try again.' : 'เกิดข้อผิดพลาดในการดึงข้อมูล กรุณาลองใหม่อีกครั้ง');
       }
     } catch {
-      setTelemetryNotice('ไม่สามารถเชื่อมต่อ API ได้ในขณะนี้');
+      setTelemetryNotice(locale === 'en' ? 'Cannot connect to API at this time.' : 'ไม่สามารถเชื่อมต่อ API ได้ในขณะนี้');
     } finally {
       setIsSyncingTelemetry(false);
       setTimeout(() => setTelemetryNotice(null), 5000);
@@ -917,12 +924,12 @@ export default function HomePage() {
     // Simulate brief AI inference time for delightful feedback
     setTimeout(() => {
       const result = generateAiKpiCoaching(selectedEmployeeKpi);
-      setEditStrengths(result.strengthsTh);
-      setEditCoachingNotes(result.coachingNotesTh);
+      setEditStrengths(locale === 'en' ? (result.strengthsEn || result.strengthsTh) : result.strengthsTh);
+      setEditCoachingNotes(locale === 'en' ? (result.coachingNotesEn || result.coachingNotesTh) : result.coachingNotesTh);
       setEditFocusTags(result.focusTags);
       setIsEditingKpiNotes(true);
       setIsAiGeneratingCoaching(false);
-      setKpiEvaluationNotice('AI ร่างจุดเด่นและแผนโค้ชชิ่งให้เรียบร้อยแล้ว (-10 Master Tokens)');
+      setKpiEvaluationNotice(locale === 'en' ? 'AI drafted strengths & coaching plan successfully (-10 Master Tokens)' : 'AI ร่างจุดเด่นและแผนโค้ชชิ่งให้เรียบร้อยแล้ว (-10 Master Tokens)');
       setTimeout(() => setKpiEvaluationNotice(null), 4000);
 
       // Deduct 10 tokens and record team log
@@ -932,10 +939,10 @@ export default function HomePage() {
         body: JSON.stringify({
           actionKey: 'AI_KPI_COACHING',
           actorName: currentUser?.name || 'Staff Member',
-          description: `AI ร่างแผนโค้ชชิ่ง: ${selectedEmployeeKpi.name}`,
+          description: locale === 'en' ? `AI Draft Coaching Plan: ${selectedEmployeeKpi.name}` : `AI ร่างแผนโค้ชชิ่ง: ${selectedEmployeeKpi.name}`,
         }),
       }).catch(() => null);
-      recordTeamTokenConsumption(currentUser?.email || 'admin@retzpost.com', 'AI_KPI_COACHING', 'AI ร่างแผนโค้ชชิ่งลูกทีม', 10);
+      recordTeamTokenConsumption(currentUser?.email || 'admin@retzpost.com', 'AI_KPI_COACHING', locale === 'en' ? 'AI Draft Team Coaching Plan' : 'AI ร่างแผนโค้ชชิ่งลูกทีม', 10);
     }, 500);
   };
 
@@ -952,17 +959,20 @@ export default function HomePage() {
     const updatedEmp: EmployeeKPI = {
       ...selectedEmployeeKpi,
       strengthsTh: editStrengths,
+      strengthsEn: editStrengths,
       coachingNotesTh: editCoachingNotes,
+      coachingNotesEn: editCoachingNotes,
       focusTags: editFocusTags,
       lastEvaluatedAt: new Date().toISOString(),
-      evaluatedBy: 'หัวหน้างาน (Lead Editor)',
+      evaluatedBy: locale === 'en' ? 'Lead Editor' : 'หัวหน้างาน (Lead Editor)',
+      evaluatedByEn: 'Lead Editor',
       isAiGenerated: false,
     };
 
     setSelectedEmployeeKpi(updatedEmp);
     setKpiUpdateVersion((v) => v + 1);
     setIsEditingKpiNotes(false);
-    setKpiEvaluationNotice(`บันทึกการประเมินและแผนโค้ชชิ่งของ "${selectedEmployeeKpi.name}" เรียบร้อยแล้ว`);
+    setKpiEvaluationNotice(locale === 'en' ? `Evaluation and coaching plan for "${selectedEmployeeKpi.name}" saved.` : `บันทึกการประเมินและแผนโค้ชชิ่งของ "${selectedEmployeeKpi.name}" เรียบร้อยแล้ว`);
     setTimeout(() => setKpiEvaluationNotice(null), 3500);
   };
 
@@ -980,13 +990,13 @@ export default function HomePage() {
         setEditFocusTags(refreshed.focusTags || []);
       }
     }
-    setKpiEvaluationNotice('คืนค่าการประเมินกลับสู่ค่ามาตรฐานเรียบร้อยแล้ว');
+    setKpiEvaluationNotice(locale === 'en' ? 'Evaluation reset to standard defaults.' : 'คืนค่าการประเมินกลับสู่ค่ามาตรฐานเรียบร้อยแล้ว');
     setTimeout(() => setKpiEvaluationNotice(null), 3000);
   };
 
   const handleCopyLink = (url: string, label: string) => {
     navigator.clipboard.writeText(url);
-    setCopiedLinkNotice(`คัดลอกลิงก์ "${label}" แล้ว`);
+    setCopiedLinkNotice(locale === 'en' ? `Copied link "${label}"` : `คัดลอกลิงก์ "${label}" แล้ว`);
     setTimeout(() => setCopiedLinkNotice(null), 2500);
   };
 
@@ -1204,11 +1214,11 @@ export default function HomePage() {
                 type="button"
                 onClick={() => {
                   loadSampleMockData();
-                  setDownloadToast('โหลดข้อมูลตัวอย่างสำหรับการพรีวิวและทดสอบระบบเรียบร้อยแล้ว');
+                  setDownloadToast(locale === 'en' ? 'Loaded demo sample data for preview and testing.' : 'โหลดข้อมูลตัวอย่างสำหรับการพรีวิวและทดสอบระบบเรียบร้อยแล้ว');
                   setTimeout(() => setDownloadToast(null), 3500);
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title="โหลดชุดข้อมูลตัวอย่าง (Dispatches, Telemetry, KPIs) เพื่อพรีวิวการแสดงผล"
+                title={locale === 'en' ? 'Load sample dataset (Dispatches, Telemetry, KPIs) for preview' : 'โหลดชุดข้อมูลตัวอย่าง (Dispatches, Telemetry, KPIs) เพื่อพรีวิวการแสดงผล'}
               >
                 <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
                 <span>{locale === 'th' ? 'โหลดข้อมูลตัวอย่าง (Demo)' : 'Load Demo Data'}</span>
@@ -1218,11 +1228,11 @@ export default function HomePage() {
                 type="button"
                 onClick={() => {
                   clearAllMockData();
-                  setDownloadToast('เคลียร์ข้อมูลจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate / Zero Data)');
+                  setDownloadToast(locale === 'en' ? 'Cleared all mock data (Clean Slate / Zero Data).' : 'เคลียร์ข้อมูลจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate / Zero Data)');
                   setTimeout(() => setDownloadToast(null), 3500);
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title="เคลียร์ข้อมูลจำลองทั้งหมด ให้ระบบกลับสู่ Zero State สำหรับใช้งานจริง"
+                title={locale === 'en' ? 'Clear all mock data to restore system to zero state' : 'เคลียร์ข้อมูลจำลองทั้งหมด ให้ระบบกลับสู่ Zero State สำหรับใช้งานจริง'}
               >
                 <RotateCcw className="w-3.5 h-3.5 text-ink-secondary" />
                 <span>{locale === 'th' ? 'ล้างข้อมูลจำลอง (Clear All)' : 'Clear All Mock Data'}</span>
@@ -1244,7 +1254,7 @@ export default function HomePage() {
             <Link
               href="/landing"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs"
-              title="เปิดดูหน้า Dream Press Landing Page สาธารณะ"
+              title={locale === 'en' ? 'View public Dream Press Landing Page' : 'เปิดดูหน้า Dream Press Landing Page สาธารณะ'}
             >
               <Sparkles className="w-3.5 h-3.5 text-brand-indigo" />
               <span>Dream Press Landing</span>
@@ -1356,8 +1366,8 @@ export default function HomePage() {
           selectedId={workspaceFilter}
           onSelect={(id) => handleSelectWorkspaceFilter(id)}
           maxVisiblePills={4}
-          moreButtonText="โปรเจกต์อื่นๆ"
-          searchPlaceholder="ค้นหาชื่อโปรเจกต์ หรือ Workspace..."
+          moreButtonText={locale === 'en' ? 'More Workspaces' : 'โปรเจกต์อื่นๆ'}
+          searchPlaceholder={locale === 'en' ? 'Search workspaces...' : 'ค้นหาชื่อโปรเจกต์ หรือ Workspace...'}
         />
 
         <div className="hidden lg:flex items-center gap-2 text-[11px] font-mono text-ink-secondary shrink-0">
@@ -1429,7 +1439,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                {isMockCleared ? 'ยังไม่มีบัญชีเชื่อมต่อใน Workspace' : 'FB (7) • IG (5) • YT (3) • TT (2)'}
+                {isMockCleared ? (locale === 'en' ? 'No accounts connected in workspace' : 'ยังไม่มีบัญชีเชื่อมต่อใน Workspace') : 'FB (7) • IG (5) • YT (3) • TT (2)'}
               </p>
             </div>
 
@@ -1448,7 +1458,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                {isMockCleared ? 'พร้อมสำหรับการปล่อยโพสต์ใหม่' : '33 Feeds • 26 Stories • 15 Reels'}
+                {isMockCleared ? (locale === 'en' ? 'Ready for new dispatches' : 'พร้อมสำหรับการปล่อยโพสต์ใหม่') : '33 Feeds • 26 Stories • 15 Reels'}
               </p>
             </div>
 
@@ -1467,7 +1477,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                {timelineItems.length > 0 ? 'Timezone: Asia/Bangkok' : 'คิวงานว่าง พร้อมจัดตารางเวลาใหม่'}
+                {timelineItems.length > 0 ? 'Timezone: Asia/Bangkok' : (locale === 'en' ? 'Dispatch queue empty, ready for scheduling' : 'คิวงานว่าง พร้อมจัดตารางเวลาใหม่')}
               </p>
             </div>
 
@@ -1495,7 +1505,7 @@ export default function HomePage() {
                 )}
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono truncate">
-                {isMockCleared ? 'ระบบปกติ ไม่พบข้อผิดพลาดค้างท่อ' : 'FB Token Expired & IG Story Ratio'}
+                {isMockCleared ? (locale === 'en' ? 'All systems normal, zero operational errors' : 'ระบบปกติ ไม่พบข้อผิดพลาดค้างท่อ') : 'FB Token Expired & IG Story Ratio'}
               </p>
             </div>
           </section>
@@ -1539,11 +1549,11 @@ export default function HomePage() {
                   {filteredBatches.length === 0 ? (
                     <EditorialEmptyState
                       stickerName="broadsheet-newspaper"
-                      badgeText={isMockCleared ? 'Publishing Desk • Clean Slate' : 'Filter Empty'}
-                      title="ยังไม่มีประวัติการปล่อยโพสต์ (Operations Ledger Empty)"
-                      description="ระบบพร้อมรับงานโพสต์ใหม่ของคุณ เมื่อคุณเผยแพร่โพสต์ผ่าน Universal Composer สถานะและความคืบหน้าของแต่ละแพลตฟอร์มจะบันทึกที่นี่แบบ Real-Time"
-                      tipText="คุณสามารถสร้างโพสต์แบบ Multi-Placement พร้อมระบบ Live Phone Preview ได้ทันที"
-                      actionLabel="สร้างโพสต์แรก (Compose Dispatch)"
+                      badgeText={isMockCleared ? (locale === 'en' ? 'Publishing Desk • Clean Slate' : 'Publishing Desk • Clean Slate') : (locale === 'en' ? 'Filter Empty' : 'Filter Empty')}
+                      title={locale === 'en' ? 'No dispatch history yet (Operations Ledger Empty)' : 'ยังไม่มีประวัติการปล่อยโพสต์ (Operations Ledger Empty)'}
+                      description={locale === 'en' ? 'The system is ready for your content. When you publish through the Universal Composer, platform statuses and progress will record here in real-time.' : 'ระบบพร้อมรับงานโพสต์ใหม่ของคุณ เมื่อคุณเผยแพร่โพสต์ผ่าน Universal Composer สถานะและความคืบหน้าของแต่ละแพลตฟอร์มจะบันทึกที่นี่แบบ Real-Time'}
+                      tipText={locale === 'en' ? 'You can create multi-placement dispatches with live mobile previews immediately.' : 'คุณสามารถสร้างโพสต์แบบ Multi-Placement พร้อมระบบ Live Phone Preview ได้ทันที'}
+                      actionLabel={locale === 'en' ? 'Create First Dispatch (Compose Dispatch)' : 'สร้างโพสต์แรก (Compose Dispatch)'}
                       actionHref="/create"
                       onDemoActionClick={isMockCleared ? () => loadSampleMockData() : undefined}
                     />
@@ -1575,7 +1585,7 @@ export default function HomePage() {
                             {revokedBatchIds[batch.id] ? (
                               <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-neutral-200 text-neutral-800 border border-neutral-300 flex items-center gap-1">
                                 <Trash2 className="w-3 h-3 text-red-600" />
-                                <span>ถอนโพสต์แล้ว (REVOKED)</span>
+                                <span>{locale === 'en' ? 'REVOKED' : 'ถอนโพสต์แล้ว (REVOKED)'}</span>
                               </span>
                             ) : (
                               <StatusTag status={batch.status as any} />
@@ -1587,7 +1597,7 @@ export default function HomePage() {
                               className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-medium text-brand-indigo hover:text-white hover:bg-brand-indigo bg-paper-canvas border border-brand-indigo/30 rounded-editorial transition-all shadow-2xs cursor-pointer group"
                             >
                               <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                              <span>ดูโพสต์จริง ({batch.placements.filter(p => p.liveUrl).length} ช่องทาง)</span>
+                              <span>{locale === 'en' ? `View Live (${batch.placements.filter(p => p.liveUrl).length} Placements)` : `ดูโพสต์จริง (${batch.placements.filter(p => p.liveUrl).length} ช่องทาง)`}</span>
                             </button>
 
                             {!revokedBatchIds[batch.id] && (
@@ -1595,10 +1605,10 @@ export default function HomePage() {
                                 type="button"
                                 onClick={() => setRevokeCandidateBatch(batch)}
                                 className="inline-flex items-center gap-1 px-2 py-1 text-xs font-mono font-medium text-red-700 hover:bg-red-50 bg-paper-canvas border border-red-200 rounded-editorial transition-colors cursor-pointer shadow-2xs"
-                                title="สั่งลบหรือถอนโพสต์ออกจากระบบและแพลตฟอร์ม"
+                                title={locale === 'en' ? 'Revoke or delete dispatch from platforms and system' : 'สั่งลบหรือถอนโพสต์ออกจากระบบและแพลตฟอร์ม'}
                               >
                                 <Trash2 className="w-3 h-3 text-red-600" />
-                                <span>ถอนโพสต์</span>
+                                <span>{locale === 'en' ? 'Revoke Post' : 'ถอนโพสต์'}</span>
                               </button>
                             )}
                           </div>
@@ -1631,10 +1641,10 @@ export default function HomePage() {
                           <div className="flex items-center justify-between text-[10px] font-mono">
                             <span className="font-bold text-ink-primary flex items-center gap-1.5 uppercase tracking-wider">
                               <Globe className="w-3 h-3 text-brand-indigo" />
-                              <span>แถบเปิดดูโพสต์จริงบนเว็บ (Live Web Destinations):</span>
+                              <span>{locale === 'en' ? 'Live Web Destinations:' : 'แถบเปิดดูโพสต์จริงบนเว็บ (Live Web Destinations):'}</span>
                             </span>
                             <span className="text-ink-secondary text-[9px]">
-                              คลิกเพื่อเปิดหน้าจริงทันที
+                              {locale === 'en' ? 'Click to open live destination' : 'คลิกเพื่อเปิดหน้าจริงทันที'}
                             </span>
                           </div>
 
@@ -1655,7 +1665,7 @@ export default function HomePage() {
                             {batch.websiteUrl && (
                               <SocialMediaLiveButton
                                 platform="WEBSITE"
-                                label="ลิงก์ปลายทาง (Website)"
+                                label={locale === 'en' ? 'Destination (Website)' : 'ลิงก์ปลายทาง (Website)'}
                                 url={batch.websiteUrl}
                                 onCopy={handleCopyLink}
                               />
@@ -1706,14 +1716,14 @@ export default function HomePage() {
                         <Sticker name="calendar-deadline" size="md" />
                       </div>
                       <div>
-                        <h4 className="font-serif font-bold text-sm text-ink-primary">ไม่มีกำหนดการใน 24 ชม. ข้างหน้า</h4>
-                        <p className="text-xs text-ink-secondary mt-0.5 font-sans">คิวงานว่าง พร้อมสำหรับจัดตารางปล่อยโพสต์ใหม่</p>
+                        <h4 className="font-serif font-bold text-sm text-ink-primary">{locale === 'en' ? 'No scheduled dispatches in next 24h' : 'ไม่มีกำหนดการใน 24 ชม. ข้างหน้า'}</h4>
+                        <p className="text-xs text-ink-secondary mt-0.5 font-sans">{locale === 'en' ? 'Queue is clear, ready for scheduling new dispatches.' : 'คิวงานว่าง พร้อมสำหรับจัดตารางปล่อยโพสต์ใหม่'}</p>
                       </div>
                       <Link
                         href="/calendar"
                         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-editorial bg-paper-raised hover:bg-paper-subtle border border-border-rule text-xs font-mono text-brand-indigo font-semibold transition-colors"
                       >
-                        <span>เปิดดูปฏิทินงาน (Calendar)</span>
+                        <span>{locale === 'en' ? 'Open Calendar' : 'เปิดดูปฏิทินงาน (Calendar)'}</span>
                         <ArrowRight className="w-3 h-3" />
                       </Link>
                     </div>
@@ -1805,7 +1815,7 @@ export default function HomePage() {
                 </div>
 
                 <p className="text-[10px] text-ink-secondary font-mono pt-2 border-t border-border-rule leading-relaxed">
-                  {isMockCleared ? 'ยังไม่มีการส่งกระจายโพสต์ สถิติการจัดสรรรูปแบบสื่อจะแสดงเมื่อเริ่มส่งงาน' : 'Omni-Format Synergy: 78% of image assets published simultaneously to both Feed and 24h Story.'}
+                  {isMockCleared ? (locale === 'en' ? 'No dispatches yet. Format mix metrics will display once publishing begins.' : 'ยังไม่มีการส่งกระจายโพสต์ สถิติการจัดสรรรูปแบบสื่อจะแสดงเมื่อเริ่มส่งงาน') : 'Omni-Format Synergy: 78% of image assets published simultaneously to both Feed and 24h Story.'}
                 </p>
               </div>
 
@@ -1828,12 +1838,12 @@ export default function HomePage() {
 
                 {isMockCleared ? (
                   <div className="p-4 text-center rounded-editorial bg-paper-canvas border border-dashed border-border-rule space-y-2">
-                    <p className="text-xs font-mono text-ink-secondary">ยังไม่มีบัญชีโซเชียลที่เชื่อมต่อ</p>
+                    <p className="text-xs font-mono text-ink-secondary">{locale === 'en' ? 'No social accounts connected yet' : 'ยังไม่มีบัญชีโซเชียลที่เชื่อมต่อ'}</p>
                     <Link
                       href="/accounts"
                       className="inline-flex items-center gap-1.5 px-3 py-1 bg-brand-indigo text-white text-[11px] font-mono rounded font-semibold hover:bg-brand-indigo-hover transition-colors"
                     >
-                      <span>+ เชื่อมต่อช่องทางแรก</span>
+                      <span>{locale === 'en' ? '+ Connect First Channel' : '+ เชื่อมต่อช่องทางแรก'}</span>
                     </Link>
                   </div>
                 ) : (
@@ -1901,7 +1911,7 @@ export default function HomePage() {
                         <div className="flex items-center gap-2 text-ink-primary">
                           <Plus className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
                           <div>
-                            <span className="font-semibold block text-xs">สร้างโพสต์ใหม่ (Universal Composer)</span>
+                            <span className="font-semibold block text-xs">{locale === 'en' ? 'Compose New Dispatch (Universal Composer)' : 'สร้างโพสต์ใหม่ (Universal Composer)'}</span>
                             <span className="text-[10px] font-mono text-ink-secondary">Feed, 24h Story, Reels 9:16</span>
                           </div>
                         </div>
@@ -1915,8 +1925,8 @@ export default function HomePage() {
                         <div className="flex items-center gap-2 text-ink-primary">
                           <Calendar className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
                           <div>
-                            <span className="font-semibold block text-xs">เปิดปฏิทินคอนเทนต์ (Editorial Calendar)</span>
-                            <span className="text-[10px] font-mono text-ink-secondary">เช็ค Bangkok Golden Peak Slots</span>
+                            <span className="font-semibold block text-xs">{locale === 'en' ? 'Open Content Calendar (Editorial Calendar)' : 'เปิดปฏิทินคอนเทนต์ (Editorial Calendar)'}</span>
+                            <span className="text-[10px] font-mono text-ink-secondary">{locale === 'en' ? 'Check Bangkok Golden Peak Slots' : 'เช็ค Bangkok Golden Peak Slots'}</span>
                           </div>
                         </div>
                         <ArrowRight className="w-3.5 h-3.5 text-ink-secondary group-hover:translate-x-0.5 transition-transform" />
@@ -1929,7 +1939,7 @@ export default function HomePage() {
                         <div className="flex items-center gap-2 text-ink-primary">
                           <Users className="w-4 h-4 text-accent-terracotta group-hover:scale-110 transition-transform" />
                           <div>
-                            <span className="font-semibold block text-xs">จัดการทีมงาน & สิทธิ์ 5 ระดับ</span>
+                            <span className="font-semibold block text-xs">{locale === 'en' ? 'Manage Team & 5-Tier RBAC' : 'จัดการทีมงาน & สิทธิ์ 5 ระดับ'}</span>
                             <span className="text-[10px] font-mono text-ink-secondary">Owner, Manager, Editor, Contributor</span>
                           </div>
                         </div>
@@ -1945,7 +1955,7 @@ export default function HomePage() {
                         <div className="flex items-center gap-2 text-ink-primary">
                           <Bookmark className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
                           <div>
-                            <span className="font-semibold block text-xs">พรีเมียมสเปซ & ทำเลทอง (Prime Living)</span>
+                            <span className="font-semibold block text-xs">{locale === 'en' ? 'Prime Living & Spaces' : 'พรีเมียมสเปซ & ทำเลทอง (Prime Living)'}</span>
                             <span className="text-[10px] font-mono text-ink-secondary">Pre-filled specs & Story link</span>
                           </div>
                         </div>
@@ -1959,7 +1969,7 @@ export default function HomePage() {
                         <div className="flex items-center gap-2 text-ink-primary">
                           <Sparkles className="w-4 h-4 text-brand-indigo group-hover:scale-110 transition-transform" />
                           <div>
-                            <span className="font-semibold block text-xs">คลังภาพสื่อ AI (8K Renders)</span>
+                            <span className="font-semibold block text-xs">{locale === 'en' ? 'AI Media Assets (8K Renders)' : 'คลังภาพสื่อ AI (8K Renders)'}</span>
                             <span className="text-[10px] font-mono text-ink-secondary">Studio Lighting, 4K Footage, Covers</span>
                           </div>
                         </div>
@@ -2037,7 +2047,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                {isMockCleared ? 'ยังไม่มีข้อมูลการเข้าชม' : 'Across FB, IG, YouTube & TikTok'}
+                {isMockCleared ? (locale === 'en' ? 'No impression data yet' : 'ยังไม่มีข้อมูลการเข้าชม') : 'Across FB, IG, YouTube & TikTok'}
               </p>
             </div>
 
@@ -2079,7 +2089,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                {isMockCleared ? 'ยังไม่มีทราฟฟิกจากลิงก์สตอรี่' : 'Direct Web & Landing Page Leads'}
+                {isMockCleared ? (locale === 'en' ? 'No Story link traffic yet' : 'ยังไม่มีทราฟฟิกจากลิงก์สตอรี่') : 'Direct Web & Landing Page Leads'}
               </p>
             </div>
 
@@ -2100,7 +2110,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono truncate">
-                {isMockCleared ? 'ยังไม่มีชิ้นงานที่ติดอันดับ' : 'Main Studio Brand Album + Story'}
+                {isMockCleared ? (locale === 'en' ? 'No ranked content yet' : 'ยังไม่มีชิ้นงานที่ติดอันดับ') : 'Main Studio Brand Album + Story'}
               </p>
             </div>
           </section>
@@ -2111,7 +2121,7 @@ export default function HomePage() {
               <div className="flex flex-wrap items-center gap-2">
                 <Trophy className="w-4 h-4 text-amber-500" />
                 <h2 className="font-serif font-bold text-base text-ink-primary">
-                  จัดอันดับ "Top Performing Posts" โพสต์และคอนเทนต์ที่ผลตอบรับดีที่สุด
+                  {locale === 'en' ? 'Top Performing Posts Leaderboard' : 'จัดอันดับ "Top Performing Posts" โพสต์และคอนเทนต์ที่ผลตอบรับดีที่สุด'}
                 </h2>
                 {/* Live Telemetry Pulse Status Indicator */}
                 <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono font-medium bg-semantic-success/10 text-semantic-success border border-semantic-success/20">
@@ -2120,7 +2130,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-xs text-ink-secondary mt-0.5 font-sans">
-                วิเคราะห์ผลตอบรับจริงจากคนดู (Views), ยอดการมีส่วนร่วม (Engagements) และคนคลิกลิงก์ Story (Web Traffic)
+                {locale === 'en' ? 'Audience response analytics across Views, Engagements, and Story Link Clicks (Web Traffic)' : 'วิเคราะห์ผลตอบรับจริงจากคนดู (Views), ยอดการมีส่วนร่วม (Engagements) และคนคลิกลิงก์ Story (Web Traffic)'}
               </p>
             </div>
 
@@ -2132,8 +2142,8 @@ export default function HomePage() {
                 disabled={isSyncingTelemetry || telemetryCooldownRemaining > 0}
                 title={
                   telemetryCooldownRemaining > 0
-                    ? `ระบบป้องกัน Rate Limit / Social API Quota: กรุณารอ ${telemetryCooldownRemaining} วินาที`
-                    : 'ซิงค์ยอดวิว ยอดไลก์ และสถิติล่าสุดจาก Facebook, Instagram, YouTube, TikTok ทันที'
+                    ? (locale === 'en' ? `Rate Limit Protection: Please wait ${telemetryCooldownRemaining}s` : `ระบบป้องกัน Rate Limit / Social API Quota: กรุณารอ ${telemetryCooldownRemaining} วินาที`)
+                    : (locale === 'en' ? 'Sync live views, likes and metrics from FB, IG, YouTube, TikTok now' : 'ซิงค์ยอดวิว ยอดไลก์ และสถิติล่าสุดจาก Facebook, Instagram, YouTube, TikTok ทันที')
                 }
                 className={`px-3 py-1.5 rounded-editorial flex items-center gap-1.5 transition-all shadow-2xs font-semibold text-xs border ${
                   telemetryCooldownRemaining > 0
@@ -2146,20 +2156,20 @@ export default function HomePage() {
                 <RefreshCw className={`w-3.5 h-3.5 ${isSyncingTelemetry ? 'animate-spin' : ''}`} />
                 <span>
                   {isSyncingTelemetry
-                    ? 'กำลังดึงสถิติ...'
+                    ? (locale === 'en' ? 'Syncing...' : 'กำลังดึงสถิติ...')
                     : telemetryCooldownRemaining > 0
-                    ? `รอซิงค์ (${telemetryCooldownRemaining}s)`
-                    : 'อัปเดตสถิติตอนนี้ (Sync Now)'}
+                    ? (locale === 'en' ? `Cooldown (${telemetryCooldownRemaining}s)` : `รอซิงค์ (${telemetryCooldownRemaining}s)`)
+                    : (locale === 'en' ? 'Sync Live Telemetry' : 'อัปเดตสถิติตอนนี้ (Sync Now)')}
                 </span>
               </button>
 
               <div className="flex items-center gap-1 bg-paper-canvas border border-border-rule rounded-editorial p-1">
                 <span className="text-[10px] text-ink-muted pl-1">Sort:</span>
                 {[
-                  { id: 'OVERALL', label: 'อันดับรวม' },
-                  { id: 'VIEWS', label: 'คนดูสูงสุด' },
-                  { id: 'ENGAGEMENT', label: 'มีส่วนร่วมสูงสุด' },
-                  { id: 'CLICKS', label: 'คนคลิกลิงก์สูงสุด' },
+                  { id: 'OVERALL', label: locale === 'en' ? 'Overall' : 'อันดับรวม' },
+                  { id: 'VIEWS', label: locale === 'en' ? 'Top Views' : 'คนดูสูงสุด' },
+                  { id: 'ENGAGEMENT', label: locale === 'en' ? 'Top Engagement' : 'มีส่วนร่วมสูงสุด' },
+                  { id: 'CLICKS', label: locale === 'en' ? 'Top Clicks' : 'คนคลิกลิงก์สูงสุด' },
                 ].map((s) => (
                   <button
                     key={s.id}
@@ -2209,10 +2219,10 @@ export default function HomePage() {
               <EditorialEmptyState
                 stickerName="award-star-badge"
                 badgeText={isMockCleared ? 'Telemetry Pulse • Zero Data' : 'Leaderboard Empty'}
-                title="ยังไม่มีข้อมูลสถิติและการมีส่วนร่วม (Content Telemetry Empty)"
-                description="เมื่อคุณเริ่มปล่อยโพสต์ ระบบจะเชื่อมโยง Telemetry Webhook จาก Meta Graph, YouTube Data API และ TikTok Content API เพื่อดึง Views, Engagements และ Clicks อัตโนมัติ"
-                tipText="เชื่อมต่อบัญชีโซเชียลที่หน้า /accounts เพื่อเปิดรับการวัดผลแบบ Real-Time"
-                actionLabel="ไปที่หน้าเชื่อมต่อบัญชี (Accounts)"
+                title={locale === 'en' ? 'No telemetry data yet (Content Telemetry Empty)' : 'ยังไม่มีข้อมูลสถิติและการมีส่วนร่วม (Content Telemetry Empty)'}
+                description={locale === 'en' ? 'When you start publishing dispatches, telemetry webhooks from Meta Graph, YouTube Data API, and TikTok Content API will automatically aggregate Views, Engagements, and Clicks.' : 'เมื่อคุณเริ่มปล่อยโพสต์ ระบบจะเชื่อมโยง Telemetry Webhook จาก Meta Graph, YouTube Data API และ TikTok Content API เพื่อดึง Views, Engagements และ Clicks อัตโนมัติ'}
+                tipText={locale === 'en' ? 'Connect social channels at /accounts to enable real-time telemetry.' : 'เชื่อมต่อบัญชีโซเชียลที่หน้า /accounts เพื่อเปิดรับการวัดผลแบบ Real-Time'}
+                actionLabel={locale === 'en' ? 'Go to Accounts' : 'ไปที่หน้าเชื่อมต่อบัญชี (Accounts)'}
                 actionHref="/accounts"
                 onDemoActionClick={isMockCleared ? () => loadSampleMockData() : undefined}
               />
@@ -2270,16 +2280,16 @@ export default function HomePage() {
                           body: JSON.stringify({
                             actionKey: 'AI_POST_DIAGNOSIS',
                             actorName: currentUser?.name || 'Staff Member',
-                            description: `AI วิเคราะห์โพสต์ปัง: ${post.title.slice(0, 30)}`,
+                            description: locale === 'en' ? `AI Content Diagnosis: ${post.title.slice(0, 30)}` : `AI วิเคราะห์โพสต์ปัง: ${post.title.slice(0, 30)}`,
                           }),
                         }).catch(() => null);
-                        recordTeamTokenConsumption(currentUser?.email || 'admin@retzpost.com', 'AI_POST_DIAGNOSIS', 'AI วิเคราะห์โพสต์ปัง', 5);
+                        recordTeamTokenConsumption(currentUser?.email || 'admin@retzpost.com', 'AI_POST_DIAGNOSIS', locale === 'en' ? 'AI Content Diagnosis' : 'AI วิเคราะห์โพสต์ปัง', 5);
                       }}
                       className="px-2.5 py-1 rounded bg-brand-indigo/10 hover:bg-brand-indigo hover:text-white border border-brand-indigo/30 text-brand-indigo font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer"
-                      title="วิเคราะห์ปัจจัยความสำเร็จด้วย AI: ทำไมถึงได้ยอด (-5 Master Tokens)"
+                      title={locale === 'en' ? 'Analyze success drivers with AI: Why it performed (-5 Master Tokens)' : 'วิเคราะห์ปัจจัยความสำเร็จด้วย AI: ทำไมถึงได้ยอด (-5 Master Tokens)'}
                     >
                       <Sparkles className="w-3.5 h-3.5 text-accent-terracotta" />
-                      <span>ทำไมถึงปัง? (AI Diagnosis)</span>
+                      <span>{locale === 'en' ? 'AI Attribution Diagnosis' : 'ทำไมถึงปัง? (AI Diagnosis)'}</span>
                     </button>
                     <span className="px-2.5 py-1 rounded bg-semantic-success/10 border border-semantic-success/20 text-semantic-success font-bold flex items-center gap-1">
                       <Flame className="w-3.5 h-3.5 fill-semantic-success text-semantic-success" />
@@ -2293,7 +2303,7 @@ export default function HomePage() {
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
                     <span className="text-[10px] text-ink-secondary flex items-center justify-center gap-1">
                       <Eye className="w-3 h-3 text-ink-secondary" />
-                      <span>คนดูทั้งหมด (Views)</span>
+                      <span>{locale === 'en' ? 'Views' : 'คนดูทั้งหมด (Views)'}</span>
                     </span>
                     <span className="font-bold text-ink-primary text-sm block mt-0.5">
                       <AnimatedCounter value={post.views} />
@@ -2303,7 +2313,7 @@ export default function HomePage() {
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
                     <span className="text-[10px] text-ink-secondary flex items-center justify-center gap-1">
                       <Heart className="w-3 h-3 text-rose-500 fill-rose-500" />
-                      <span>คนกดไลค์ (Likes)</span>
+                      <span>{locale === 'en' ? 'Likes' : 'คนกดไลค์ (Likes)'}</span>
                     </span>
                     <span className="font-bold text-ink-primary text-sm block mt-0.5">
                       <AnimatedCounter value={post.likes} />
@@ -2313,7 +2323,7 @@ export default function HomePage() {
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
                     <span className="text-[10px] text-ink-secondary flex items-center justify-center gap-1">
                       <MessageSquare className="w-3 h-3 text-brand-indigo" />
-                      <span>คอมเมนต์ (Comments)</span>
+                      <span>{locale === 'en' ? 'Comments' : 'คอมเมนต์ (Comments)'}</span>
                     </span>
                     <span className="font-bold text-ink-primary text-sm block mt-0.5">
                       <AnimatedCounter value={post.comments} />
@@ -2323,7 +2333,7 @@ export default function HomePage() {
                   <div className="p-2.5 bg-paper-canvas border border-border-rule rounded-editorial text-center">
                     <span className="text-[10px] text-ink-secondary flex items-center justify-center gap-1">
                       <Share2 className="w-3 h-3 text-semantic-info" />
-                      <span>แชร์ (Shares)</span>
+                      <span>{locale === 'en' ? 'Shares' : 'แชร์ (Shares)'}</span>
                     </span>
                     <span className="font-bold text-ink-primary text-sm block mt-0.5">
                       <AnimatedCounter value={post.shares} />
@@ -2333,7 +2343,7 @@ export default function HomePage() {
                   <div className="p-2.5 bg-accent-terracotta/10 border border-accent-terracotta/30 rounded-editorial text-center col-span-2 sm:col-span-1">
                     <span className="text-[10px] text-accent-terracotta font-bold flex items-center justify-center gap-1">
                       <MousePointerClick className="w-3 h-3 text-accent-terracotta" />
-                      <span>คลิกลิงก์ Story (Clicks)</span>
+                      <span>{locale === 'en' ? 'Story Link Clicks' : 'คลิกลิงก์ Story (Clicks)'}</span>
                     </span>
                     <span className="font-bold text-accent-terracotta text-sm block mt-0.5">
                       <AnimatedCounter value={post.linkClicks} /> Clicks ({post.ctr})
@@ -2346,10 +2356,10 @@ export default function HomePage() {
                   <div className="flex items-center justify-between text-[10px] font-mono">
                     <span className="font-bold text-ink-primary flex items-center gap-1.5 uppercase tracking-wider">
                       <Globe className="w-3 h-3 text-brand-indigo" />
-                      <span>แถบเปิดดูโพสต์จริงบนเว็บ (Live Social & Web Links):</span>
+                      <span>{locale === 'en' ? 'Live Social & Web Links:' : 'แถบเปิดดูโพสต์จริงบนเว็บ (Live Social & Web Links):'}</span>
                     </span>
                     <span className="text-ink-secondary text-[9px]">
-                      คลิกเพื่อเปิดหน้าจริงทันที
+                      {locale === 'en' ? 'Click to open live post' : 'คลิกเพื่อเปิดหน้าจริงทันที'}
                     </span>
                   </div>
 
@@ -2368,7 +2378,7 @@ export default function HomePage() {
                     {post.websiteUrl && (
                       <SocialMediaLiveButton
                         platform="WEBSITE"
-                        label={post.websiteLabel || 'ลิงก์ปลายทาง (Website)'}
+                        label={locale === 'en' ? (post.websiteLabelEn || 'Target Destination (Website)') : (post.websiteLabel || 'ลิงก์ปลายทาง (Website)')}
                         url={post.websiteUrl}
                         onCopy={handleCopyLink}
                       />
@@ -2386,11 +2396,15 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <Sparkles className="w-4 h-4 text-brand-indigo" />
                 <h4 className="font-serif font-bold text-sm text-ink-primary">
-                  กลยุทธ์สร้างยอดการมีส่วนร่วม (Engagement & Conversion Insight): พลังของ 24h Story + Link Sticker
+                  {locale === 'en' ? 'Engagement & Conversion Insight: Synergy of 24h Story + Link Sticker' : 'กลยุทธ์สร้างยอดการมีส่วนร่วม (Engagement & Conversion Insight): พลังของ 24h Story + Link Sticker'}
                 </h4>
               </div>
               <p className="text-xs text-ink-secondary max-w-2xl font-sans leading-relaxed">
-                โพสต์แบบ <strong className="text-ink-primary">Feed Album</strong> สร้างการรับรู้และการแชร์สูงสุด (Reach Leader) ในขณะที่ <strong className="text-accent-terracotta">24h Story พร้อม Interactive Link Sticker</strong> สร้างยอดคนคลิกเข้าหน้าเว็บเป้าหมายสูงกว่าถึง <strong className="text-ink-primary">3.2 เท่า</strong> (890 vs 280 clicks) ทำให้ควรจับคู่โพสต์ Feed และ Story ควบคู่กันเสมอในทุกแคมเปญ
+                {locale === 'en' ? (
+                <>Feed Album dispatches drive the highest brand awareness and viral sharing (Reach Leader), while <strong className="text-accent-terracotta">24h Stories with Interactive Link Stickers</strong> deliver <strong className="text-ink-primary">3.2x higher direct web clicks</strong> (890 vs 280 clicks). Always pair Feed and Story formats across marketing campaigns.</>
+              ) : (
+                <>โพสต์แบบ <strong className="text-ink-primary">Feed Album</strong> สร้างการรับรู้และการแชร์สูงสุด (Reach Leader) ในขณะที่ <strong className="text-accent-terracotta">24h Story พร้อม Interactive Link Sticker</strong> สร้างยอดคนคลิกเข้าหน้าเว็บเป้าหมายสูงกว่าถึง <strong className="text-ink-primary">3.2 เท่า</strong> (890 vs 280 clicks) ทำให้ควรจับคู่โพสต์ Feed และ Story ควบคู่กันเสมอในทุกแคมเปญ</>
+              )}
               </p>
             </div>
 
@@ -2399,7 +2413,7 @@ export default function HomePage() {
               className="px-4 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-semibold rounded-editorial shrink-0 shadow-xs transition-colors flex items-center gap-1.5"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>สร้างแคมเปญแบบคู่นี้ทันที</span>
+              <span>{locale === 'en' ? 'Create Dual-Format Campaign' : 'สร้างแคมเปญแบบคู่นี้ทันที'}</span>
             </Link>
           </div>
         </div>
@@ -2419,14 +2433,14 @@ export default function HomePage() {
               <div className="space-y-0.5">
                 <div className="flex flex-wrap items-center gap-2">
                   <h3 className="font-serif font-bold text-base text-ink-primary">
-                    ระบบวัดผล KPI ประสิทธิภาพทีมงานและครีเอเตอร์ (Staff & Creator KPI Telemetry)
+                    {locale === 'en' ? 'Staff & Creator KPI Telemetry System' : 'ระบบวัดผล KPI ประสิทธิภาพทีมงานและครีเอเตอร์ (Staff & Creator KPI Telemetry)'}
                   </h3>
                   <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-100 text-emerald-900 border border-emerald-300 font-bold flex items-center gap-1">
                     <span>MOCK DATA / SIMULATION</span>
                   </span>
                 </div>
                 <p className="text-xs font-mono text-ink-secondary">
-                  ติดตามยอดการผลิตโพสต์ (Target vs Actual), ความตรงต่อเวลา, อัตราผ่านงานรอบแรก, ยอด Reach ที่ทำได้ และคะแนนประเมินรายบุคคล
+                  {locale === 'en' ? 'Track dispatch production volume (Target vs Actual), on-time adherence, first-pass approval rates, aggregate reach, and individual scorecards.' : 'ติดตามยอดการผลิตโพสต์ (Target vs Actual), ความตรงต่อเวลา, อัตราผ่านงานรอบแรก, ยอด Reach ที่ทำได้ และคะแนนประเมินรายบุคคล'}
                 </p>
               </div>
             </div>
@@ -2442,7 +2456,7 @@ export default function HomePage() {
                       : 'text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
-                  เดือนนี้ (ต.ค. 2026)
+                  {locale === 'en' ? 'This Month (Oct 2026)' : 'เดือนนี้ (ต.ค. 2026)'}
                 </button>
                 <button
                   type="button"
@@ -2453,7 +2467,7 @@ export default function HomePage() {
                       : 'text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
-                  ก.ย. 2026
+                  {locale === 'en' ? 'Sep 2026' : 'ก.ย. 2026'}
                 </button>
                 <button
                   type="button"
@@ -2464,14 +2478,14 @@ export default function HomePage() {
                       : 'text-ink-secondary hover:text-ink-primary'
                   }`}
                 >
-                  ไตรมาส 3
+                  {locale === 'en' ? 'Q3 2026' : 'ไตรมาส 3'}
                 </button>
               </div>
 
               <button
                 type="button"
                 onClick={() => {
-                  setDownloadToast('✓ ส่งออกตารางประเมินผล KPI บุคลากรเป็นไฟล์ CSV เรียบร้อยแล้ว');
+                  setDownloadToast(locale === 'en' ? '✓ Exported staff KPI scorecard to CSV.' : '✓ ส่งออกตารางประเมินผล KPI บุคลากรเป็นไฟล์ CSV เรียบร้อยแล้ว');
                   setTimeout(() => setDownloadToast(null), 3000);
                 }}
                 className="px-3 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary font-bold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
@@ -2483,11 +2497,11 @@ export default function HomePage() {
               <button
                 type="button"
                 onClick={handleResetKpis}
-                title="คืนค่าการประเมินเป็นค่าเริ่มต้นจำลอง"
+                title={locale === 'en' ? 'Reset evaluation to default mock values' : 'คืนค่าการประเมินเป็นค่าเริ่มต้นจำลอง'}
                 className="px-2.5 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-secondary hover:text-ink-primary font-mono text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>รีเซ็ตค่าเริ่มต้น</span>
+                <span>{locale === 'en' ? 'Reset Defaults' : 'รีเซ็ตค่าเริ่มต้น'}</span>
               </button>
             </div>
           </div>
@@ -2515,7 +2529,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                  ยอดผลิตโพสต์รวม (OUTPUT)
+                  {locale === 'en' ? 'TOTAL DISPATCH OUTPUT' : 'ยอดผลิตโพสต์รวม (OUTPUT)'}
                 </span>
                 <Target className="w-3.5 h-3.5 text-brand-indigo" />
               </div>
@@ -2528,7 +2542,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                +{departmentSummary.totalActualPosts - departmentSummary.totalTargetPosts} งาน เกินเป้าหมายประจำเดือน
+                {locale === 'en' ? `+${departmentSummary.totalActualPosts - departmentSummary.totalTargetPosts} posts over monthly target` : `+${departmentSummary.totalActualPosts - departmentSummary.totalTargetPosts} งาน เกินเป้าหมายประจำเดือน`}
               </p>
             </div>
 
@@ -2536,7 +2550,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                  ความตรงต่อเวลา (ON-TIME RATE)
+                  {locale === 'en' ? 'ON-TIME PUBLISHING RATE' : 'ความตรงต่อเวลา (ON-TIME RATE)'}
                 </span>
                 <Clock className="w-3.5 h-3.5 text-semantic-success" />
               </div>
@@ -2549,7 +2563,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                ปล่อยโพสต์ตรงตามเวลาทอง (Peak Hours)
+                {locale === 'en' ? 'Dispatched within golden peak hours' : 'ปล่อยโพสต์ตรงตามเวลาทอง (Peak Hours)'}
               </p>
             </div>
 
@@ -2557,7 +2571,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold">
-                  ยอด REACH ที่ทีมสร้างได้
+                  {locale === 'en' ? 'AGGREGATE TEAM REACH' : 'ยอด REACH ที่ทีมสร้างได้'}
                 </span>
                 <TrendingUp className="w-3.5 h-3.5 text-accent-terracotta" />
               </div>
@@ -2570,7 +2584,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono">
-                สร้างผลลัพธ์ผ่าน 4 ช่องทางหลัก
+                {locale === 'en' ? 'Generated across 4 core channels' : 'สร้างผลลัพธ์ผ่าน 4 ช่องทางหลัก'}
               </p>
             </div>
 
@@ -2578,7 +2592,7 @@ export default function HomePage() {
             <div className="bg-paper-raised p-4 rounded-card border border-emerald-300 shadow-2xs bg-gradient-to-br from-paper-raised to-emerald-50/40">
               <div className="flex items-center justify-between text-ink-secondary mb-2">
                 <span className="text-[10px] font-mono uppercase tracking-wider font-semibold text-emerald-800">
-                  ครีเอเตอร์ยอดเยี่ยม
+                  {locale === 'en' ? 'TOP PERFORMING CREATOR' : 'ครีเอเตอร์ยอดเยี่ยม'}
                 </span>
                 <Trophy className="w-3.5 h-3.5 text-amber-500" />
               </div>
@@ -2591,7 +2605,7 @@ export default function HomePage() {
                 </span>
               </div>
               <p className="text-[10px] text-ink-secondary mt-1 font-mono truncate">
-                {departmentSummary.topPerformer ? departmentSummary.topPerformer.roleTh : 'ยังไม่มีข้อมูลผลงาน'}
+                {departmentSummary.topPerformer ? (locale === 'en' ? (departmentSummary.topPerformer.roleEn || departmentSummary.topPerformer.roleTh) : departmentSummary.topPerformer.roleTh) : (locale === 'en' ? 'No performance data yet' : 'ยังไม่มีข้อมูลผลงาน')}
               </p>
             </div>
           </div>
@@ -2601,10 +2615,10 @@ export default function HomePage() {
             <div className="p-4 border-b border-border-rule flex items-center justify-between">
               <div>
                 <h4 className="font-serif font-bold text-base text-ink-primary">
-                  ตารางประเมินผล KPI รายบุคคล (Employee Scorecard & Post Attribution)
+                  {locale === 'en' ? 'Individual KPI Scorecard & Attribution' : 'ตารางประเมินผล KPI รายบุคคล (Employee Scorecard & Post Attribution)'}
                 </h4>
                 <p className="text-[11px] font-mono text-ink-secondary">
-                  แสดง {employeeKpis.length} บุคลากรใน Workspace ที่เลือก • คลิกที่แถวเพื่อดูงานโพสต์จริงและข้อเสนอแนะโค้ชชิ่ง
+                  {locale === 'en' ? `Showing ${employeeKpis.length} team members in selected workspace • Click a row to view dispatches and coaching notes` : `แสดง ${employeeKpis.length} บุคลากรใน Workspace ที่เลือก • คลิกที่แถวเพื่อดูงานโพสต์จริงและข้อเสนอแนะโค้ชชิ่ง`}
                 </p>
               </div>
               <span className="text-[10px] font-mono text-ink-muted hidden sm:inline-block">
@@ -2617,10 +2631,10 @@ export default function HomePage() {
                 <EditorialEmptyState
                   stickerName="bullseye"
                   badgeText={isMockCleared ? 'Team Scorecard • Clean State' : 'No Staff Found'}
-                  title="ยังไม่มีบันทึกการประเมิน KPI บุคลากร"
-                  description="ระบบคำนวณ KPI 4 มิติ (Output, Quality, Timeliness, Efficiency) พร้อม AI สังเคราะห์ข้อเสนอแนะโค้ชชิ่งรายบุคคลเมื่อทีมเริ่มสร้างและอนุมัติงาน"
-                  tipText="เริ่มต้นมอบหมายงานและอนุมัติโพสต์ในคิวงาน หรือคลิกโหลดข้อมูลตัวอย่างเพื่อพรีวิวการคำนวณเกรดและ Scorecard Slip"
-                  actionLabel="ไปที่คิวตรวจรับงาน (Queue)"
+                  title={locale === 'en' ? 'No employee KPI records yet' : 'ยังไม่มีบันทึกการประเมิน KPI บุคลากร'}
+                  description={locale === 'en' ? 'The system calculates 4-dimensional KPIs (Output, Quality, Timeliness, Efficiency) and AI synthesizes individual coaching recommendations when teams create and approve dispatches.' : 'ระบบคำนวณ KPI 4 มิติ (Output, Quality, Timeliness, Efficiency) พร้อม AI สังเคราะห์ข้อเสนอแนะโค้ชชิ่งรายบุคคลเมื่อทีมเริ่มสร้างและอนุมัติงาน'}
+                  tipText={locale === 'en' ? 'Start assigning and approving dispatches in queue, or load demo data to preview grade calculation and scorecard slips.' : 'เริ่มต้นมอบหมายงานและอนุมัติโพสต์ในคิวงาน หรือคลิกโหลดข้อมูลตัวอย่างเพื่อพรีวิวการคำนวณเกรดและ Scorecard Slip'}
+                  actionLabel={locale === 'en' ? 'Go to Queue' : 'ไปที่คิวตรวจรับงาน (Queue)'}
                   actionHref="/publishing/queue"
                   onDemoActionClick={isMockCleared ? () => loadSampleMockData() : undefined}
                 />
@@ -2630,13 +2644,13 @@ export default function HomePage() {
               <table className="w-full text-left font-mono text-xs">
                 <thead className="bg-paper-subtle text-[11px] text-ink-secondary uppercase border-b border-border-rule">
                   <tr>
-                    <th className="py-3 px-4 font-semibold">อันดับ & พนักงาน</th>
-                    <th className="py-3 px-4 font-semibold">เป้าหมาย vs งานจริง</th>
-                    <th className="py-3 px-4 font-semibold">ความตรงต่อเวลา</th>
-                    <th className="py-3 px-4 font-semibold">ยอด Reach ที่สร้างได้</th>
-                    <th className="py-3 px-4 font-semibold">ผ่านรอบแรก</th>
-                    <th className="py-3 px-4 font-semibold">เกรด & คะแนนรวม</th>
-                    <th className="py-3 px-4 font-semibold text-right">การประเมิน</th>
+                    <th className="py-3 px-4 font-semibold">{locale === 'en' ? 'Rank & Employee' : 'อันดับ & พนักงาน'}</th>
+                    <th className="py-3 px-4 font-semibold">{locale === 'en' ? 'Target vs Actual' : 'เป้าหมาย vs งานจริง'}</th>
+                    <th className="py-3 px-4 font-semibold">{locale === 'en' ? 'On-Time Rate' : 'ความตรงต่อเวลา'}</th>
+                    <th className="py-3 px-4 font-semibold">{locale === 'en' ? 'Reach Generated' : 'ยอด Reach ที่สร้างได้'}</th>
+                    <th className="py-3 px-4 font-semibold">{locale === 'en' ? 'First-Pass' : 'ผ่านรอบแรก'}</th>
+                    <th className="py-3 px-4 font-semibold">{locale === 'en' ? 'Grade & Score' : 'เกรด & คะแนนรวม'}</th>
+                    <th className="py-3 px-4 font-semibold text-right">{locale === 'en' ? 'Evaluation' : 'การประเมิน'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-rule">
@@ -2678,7 +2692,7 @@ export default function HomePage() {
                                 )}
                               </div>
                               <div className="flex items-center gap-1.5 text-[10px] text-ink-secondary">
-                                <span className="truncate">{emp.roleTh}</span>
+                                <span className="truncate">{locale === 'en' ? (emp.roleEn || emp.roleTh) : emp.roleTh}</span>
                                 <span>•</span>
                                 <span className="truncate">{emp.workspaceName}</span>
                               </div>
@@ -2690,7 +2704,7 @@ export default function HomePage() {
                         <td className="py-3.5 px-4">
                           <div className="space-y-1">
                             <div className="flex items-center justify-between text-xs font-bold">
-                              <span>{emp.actualPosts} / {emp.targetPosts} โพสต์</span>
+                              <span>{emp.actualPosts} / {emp.targetPosts} {locale === 'en' ? 'posts' : 'โพสต์'}</span>
                               <span className={isExceeding ? 'text-semantic-success' : 'text-semantic-error'}>
                                 {emp.postsCompletionRate}%
                               </span>
@@ -2740,7 +2754,7 @@ export default function HomePage() {
                         <td className="py-3.5 px-4">
                           <div className="flex items-center gap-2">
                             <span className={`px-2 py-0.5 rounded font-mono text-[10px] font-bold border ${gradeColor}`}>
-                              เกรด {emp.grade}
+                              {locale === 'en' ? 'Grade' : 'เกรด'} {emp.grade}
                             </span>
                             <span className="font-serif font-bold text-sm text-ink-primary">
                               {emp.overallKpiScore}/100
@@ -2758,7 +2772,7 @@ export default function HomePage() {
                             }}
                             className="px-2.5 py-1.5 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary text-xs font-semibold hover:text-brand-indigo transition-colors shadow-2xs cursor-pointer"
                           >
-                            <span>ดู Scorecard</span>
+                            <span>{locale === 'en' ? 'View Scorecard' : 'ดู Scorecard'}</span>
                           </button>
                         </td>
                       </tr>
@@ -2782,7 +2796,7 @@ export default function HomePage() {
                 </div>
                 <div>
                   <h3 className="font-serif font-medium text-base text-ink-primary">
-                    เปิดดูโพสต์จริงบนเว็บ (Live Social Links)
+                    {locale === 'en' ? 'Live Social Destinations' : 'เปิดดูโพสต์จริงบนเว็บ (Live Social Links)'}
                   </h3>
                   <span className="text-[10px] font-mono text-ink-secondary block">
                     {selectedLiveBatch.title} • {selectedLiveBatch.workspaceName}
@@ -2807,7 +2821,7 @@ export default function HomePage() {
 
             <div className="space-y-2.5 text-xs">
               <span className="text-[10px] font-mono uppercase text-ink-secondary block font-semibold">
-                ช่องทางโซเชียลที่เผยแพร่แล้ว (Published Destinations):
+                {locale === 'en' ? 'Published Social Destinations:' : 'ช่องทางโซเชียลที่เผยแพร่แล้ว (Published Destinations):'}
               </span>
 
               {selectedLiveBatch.placements.filter((p) => p.liveUrl).map((plc, idx) => (
@@ -2832,7 +2846,7 @@ export default function HomePage() {
                       type="button"
                       onClick={() => handleCopyLink(plc.liveUrl!, plc.label)}
                       className="p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-paper-subtle rounded border border-border-rule transition-colors cursor-pointer"
-                      title="คัดลอกลิงก์"
+                      title={locale === 'en' ? 'Copy Link' : 'คัดลอกลิงก์'}
                     >
                       <Copy className="w-3.5 h-3.5" />
                     </button>
@@ -2842,7 +2856,7 @@ export default function HomePage() {
                       rel="noreferrer"
                       className="inline-flex items-center gap-1 px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded text-xs font-mono font-medium transition-colors cursor-pointer shadow-2xs"
                     >
-                      <span>เปิดดูโพสต์</span>
+                      <span>{locale === 'en' ? 'View Live' : 'เปิดดูโพสต์'}</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
@@ -2856,7 +2870,7 @@ export default function HomePage() {
                     <SocialPlatformIcon platform="WEBSITE" size={24} className="shrink-0" />
                     <div className="min-w-0">
                       <span className="text-[10px] font-mono uppercase text-brand-indigo font-bold block">
-                        เว็บไซต์เป้าหมาย / Landing Page:
+                        {locale === 'en' ? 'Target Destination / Landing Page:' : 'เว็บไซต์เป้าหมาย / Landing Page:'}
                       </span>
                       <p className="font-mono text-xs text-ink-primary truncate font-semibold mt-0.5">
                         {selectedLiveBatch.websiteUrl}
@@ -2868,7 +2882,7 @@ export default function HomePage() {
                       type="button"
                       onClick={() => handleCopyLink(selectedLiveBatch.websiteUrl!, 'Landing Webpage')}
                       className="p-1.5 text-ink-secondary hover:text-ink-primary hover:bg-paper-canvas rounded border border-border-rule transition-colors cursor-pointer"
-                      title="คัดลอกลิงก์"
+                      title={locale === 'en' ? 'Copy Link' : 'คัดลอกลิงก์'}
                     >
                       <Copy className="w-3.5 h-3.5" />
                     </button>
@@ -2878,7 +2892,7 @@ export default function HomePage() {
                       rel="noreferrer"
                       className="inline-flex items-center gap-1 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-brand-indigo border border-brand-indigo/30 rounded text-xs font-mono font-semibold transition-colors cursor-pointer shadow-2xs"
                     >
-                      <span>เปิดดูเว็บ</span>
+                      <span>{locale === 'en' ? 'View Page' : 'เปิดดูเว็บ'}</span>
                       <ExternalLink className="w-3 h-3" />
                     </a>
                   </div>
@@ -2892,7 +2906,7 @@ export default function HomePage() {
                 onClick={() => setSelectedLiveBatch(null)}
                 className="px-3 py-1.5 text-ink-secondary hover:text-ink-primary text-xs font-mono cursor-pointer"
               >
-                ปิด
+                {locale === 'en' ? 'Close' : 'ปิด'}
               </button>
             </div>
           </div>
@@ -2923,14 +2937,14 @@ export default function HomePage() {
                       {selectedEmployeeKpi.name}
                     </h3>
                     <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-100 text-emerald-900 border border-emerald-300">
-                      เกรด {selectedEmployeeKpi.grade} ({selectedEmployeeKpi.overallKpiScore}/100)
+                      {locale === 'en' ? 'Grade' : 'เกรด'} {selectedEmployeeKpi.grade} ({selectedEmployeeKpi.overallKpiScore}/100)
                     </span>
                     <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-paper-subtle border border-border-rule text-ink-secondary">
                       MOCK KPI SCORECARD
                     </span>
                   </div>
                   <p className="text-xs font-mono text-ink-secondary mt-0.5">
-                    {selectedEmployeeKpi.roleTh} • {selectedEmployeeKpi.workspaceName}
+                    {locale === 'en' ? (selectedEmployeeKpi.roleEn || selectedEmployeeKpi.roleTh) : selectedEmployeeKpi.roleTh} • {selectedEmployeeKpi.workspaceName}
                   </p>
                 </div>
               </div>
@@ -2939,7 +2953,7 @@ export default function HomePage() {
                 type="button"
                 onClick={() => setSelectedEmployeeKpi(null)}
                 className="p-1.5 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
-                title="ปิดหน้าต่าง (ESC)"
+                title={locale === 'en' ? 'Close window (ESC)' : 'ปิดหน้าต่าง (ESC)'}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -2950,17 +2964,17 @@ export default function HomePage() {
               {/* 4 Score Dimensions Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                 <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
-                  <span className="text-[10px] text-ink-secondary block uppercase">เป้าหมายงาน</span>
+                  <span className="text-[10px] text-ink-secondary block uppercase">{locale === 'en' ? 'Target Output' : 'เป้าหมายงาน'}</span>
                   <p className="font-serif font-bold text-lg text-ink-primary">
                     {selectedEmployeeKpi.actualPosts} / {selectedEmployeeKpi.targetPosts}
                   </p>
                   <span className="text-[10px] text-semantic-success block font-bold">
-                    สำเร็จ {selectedEmployeeKpi.postsCompletionRate}%
+                    {locale === 'en' ? `Achieved ${selectedEmployeeKpi.postsCompletionRate}%` : `สำเร็จ ${selectedEmployeeKpi.postsCompletionRate}%`}
                   </span>
                 </div>
 
                 <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
-                  <span className="text-[10px] text-ink-secondary block uppercase">ตรงต่อเวลา</span>
+                  <span className="text-[10px] text-ink-secondary block uppercase">{locale === 'en' ? 'On-Time' : 'ตรงต่อเวลา'}</span>
                   <p className="font-serif font-bold text-lg text-ink-primary">
                     {selectedEmployeeKpi.onTimePublishingRate}%
                   </p>
@@ -2970,7 +2984,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
-                  <span className="text-[10px] text-ink-secondary block uppercase">ผ่านงานรอบแรก</span>
+                  <span className="text-[10px] text-ink-secondary block uppercase">{locale === 'en' ? 'First-Pass' : 'ผ่านงานรอบแรก'}</span>
                   <p className="font-serif font-bold text-lg text-ink-primary">
                     {selectedEmployeeKpi.firstPassApprovalRate}%
                   </p>
@@ -2980,7 +2994,7 @@ export default function HomePage() {
                 </div>
 
                 <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
-                  <span className="text-[10px] text-ink-secondary block uppercase">ยอดคนดูรวม</span>
+                  <span className="text-[10px] text-ink-secondary block uppercase">{locale === 'en' ? 'Total Views' : 'ยอดคนดูรวม'}</span>
                   <p className="font-serif font-bold text-lg text-ink-primary">
                     {(selectedEmployeeKpi.totalImpressions / 1000).toFixed(0)}K
                   </p>
@@ -2997,7 +3011,7 @@ export default function HomePage() {
                   <div className="flex items-center gap-2">
                     <span className="font-mono text-xs font-bold text-ink-primary uppercase tracking-wider flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-accent-terracotta" />
-                      <span>การประเมินผลงาน & โค้ชชิ่ง</span>
+                      <span>{locale === 'en' ? 'Performance Evaluation & Coaching' : 'การประเมินผลงาน & โค้ชชิ่ง'}</span>
                     </span>
                     {selectedEmployeeKpi.evaluatedBy && (
                       <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-brand-indigo/10 text-brand-indigo border border-brand-indigo/20 font-medium">
@@ -3013,33 +3027,38 @@ export default function HomePage() {
                       onClick={handleAiGenerateCoaching}
                       disabled={isAiGeneratingCoaching}
                       className="px-2.5 py-1 rounded-editorial bg-gradient-to-r from-accent-terracotta/15 to-brand-indigo/15 hover:from-accent-terracotta/25 hover:to-brand-indigo/25 text-ink-primary border border-brand-indigo/30 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-2xs cursor-pointer disabled:opacity-50"
-                      title="วิเคราะห์ On-Time, Approval Rate, และ Volume เพื่อสังเคราะห์ข้อความใหม่"
+                      title={locale === 'en' ? 'Analyze on-time, approval rate, and volume to synthesize new evaluation' : 'วิเคราะห์ On-Time, Approval Rate, และ Volume เพื่อสังเคราะห์ข้อความใหม่'}
                     >
                       <Sparkles className={`w-3.5 h-3.5 text-brand-indigo ${isAiGeneratingCoaching ? 'animate-spin' : ''}`} />
-                      <span>{isAiGeneratingCoaching ? 'AI กำลังประมวลผล...' : 'สังเคราะห์ด้วย AI'}</span>
+                      <span>{isAiGeneratingCoaching ? (locale === 'en' ? 'AI Synthesizing...' : 'AI กำลังประมวลผล...') : (locale === 'en' ? 'AI Synthesize' : 'สังเคราะห์ด้วย AI')}</span>
                     </button>
 
                     {!isEditingKpiNotes ? (
                       <button
                         type="button"
-                        onClick={() => setIsEditingKpiNotes(true)}
+                        onClick={() => {
+                          setEditStrengths(locale === 'en' ? (selectedEmployeeKpi.strengthsEn || selectedEmployeeKpi.strengthsTh) : selectedEmployeeKpi.strengthsTh);
+                          setEditCoachingNotes(locale === 'en' ? (selectedEmployeeKpi.coachingNotesEn || selectedEmployeeKpi.coachingNotesTh) : selectedEmployeeKpi.coachingNotesTh);
+                          setEditFocusTags(selectedEmployeeKpi.focusTags || []);
+                          setIsEditingKpiNotes(true);
+                        }}
                         className="px-2.5 py-1 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary hover:text-brand-indigo text-xs font-mono font-semibold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
                       >
                         <Edit3 className="w-3.5 h-3.5" />
-                        <span>แก้ไขโน้ต</span>
+                        <span>{locale === 'en' ? 'Edit Notes' : 'แก้ไขโน้ต'}</span>
                       </button>
                     ) : (
                       <button
                         type="button"
                         onClick={() => {
                           setIsEditingKpiNotes(false);
-                          setEditStrengths(selectedEmployeeKpi.strengthsTh);
-                          setEditCoachingNotes(selectedEmployeeKpi.coachingNotesTh);
+                          setEditStrengths(locale === 'en' ? (selectedEmployeeKpi.strengthsEn || selectedEmployeeKpi.strengthsTh) : selectedEmployeeKpi.strengthsTh);
+                          setEditCoachingNotes(locale === 'en' ? (selectedEmployeeKpi.coachingNotesEn || selectedEmployeeKpi.coachingNotesTh) : selectedEmployeeKpi.coachingNotesTh);
                           setEditFocusTags(selectedEmployeeKpi.focusTags || []);
                         }}
                         className="px-2.5 py-1 rounded-editorial bg-paper-canvas border border-border-rule hover:bg-paper-subtle text-ink-secondary text-xs font-mono transition-colors cursor-pointer"
                       >
-                        ยกเลิก
+                        {locale === 'en' ? 'Cancel' : 'ยกเลิก'}
                       </button>
                     )}
                   </div>
@@ -3063,16 +3082,16 @@ export default function HomePage() {
                       <div className="flex items-center justify-between text-xs font-mono">
                         <label className="font-bold text-emerald-800 flex items-center gap-1.5 uppercase">
                           <Award className="w-4 h-4 text-emerald-600" />
-                          <span>จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):</span>
+                          <span>{locale === 'en' ? 'Key Strengths & Growth Factors:' : 'จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):'}</span>
                         </label>
-                        <span className="text-[10px] text-ink-muted">{editStrengths.length} ตัวอักษร</span>
+                        <span className="text-[10px] text-ink-muted">{editStrengths.length} {locale === 'en' ? 'chars' : 'ตัวอักษร'}</span>
                       </div>
                       <textarea
                         value={editStrengths}
                         onChange={(e) => setEditStrengths(e.target.value)}
                         rows={3}
                         className="w-full p-2.5 bg-paper-canvas border border-brand-indigo/40 rounded-editorial text-xs text-ink-primary font-sans leading-relaxed focus:outline-none focus:ring-1 focus:ring-brand-indigo"
-                        placeholder="ระบุจุดเด่น ปัจจัยความสำเร็จ หรือผลงานที่โดดเด่น..."
+                        placeholder={locale === 'en' ? 'Specify key strengths, success factors, or standout achievements...' : 'ระบุจุดเด่น ปัจจัยความสำเร็จ หรือผลงานที่โดดเด่น...'}
                       />
                     </div>
 
@@ -3080,35 +3099,35 @@ export default function HomePage() {
                       <div className="flex items-center justify-between text-xs font-mono">
                         <label className="font-bold text-brand-indigo flex items-center gap-1.5 uppercase">
                           <FileText className="w-4 h-4 text-brand-indigo" />
-                          <span>ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):</span>
+                          <span>{locale === 'en' ? 'Manager Coaching & Growth Recommendations:' : 'ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):'}</span>
                         </label>
-                        <span className="text-[10px] text-ink-muted">{editCoachingNotes.length} ตัวอักษร</span>
+                        <span className="text-[10px] text-ink-muted">{editCoachingNotes.length} {locale === 'en' ? 'chars' : 'ตัวอักษร'}</span>
                       </div>
                       <textarea
                         value={editCoachingNotes}
                         onChange={(e) => setEditCoachingNotes(e.target.value)}
                         rows={3}
                         className="w-full p-2.5 bg-paper-canvas border border-brand-indigo/40 rounded-editorial text-xs text-ink-primary font-sans leading-relaxed focus:outline-none focus:ring-1 focus:ring-brand-indigo"
-                        placeholder="ระบุคำแนะนำ แผนการเติบโต หรือจุดที่ต้องการให้พัฒนา..."
+                        placeholder={locale === 'en' ? 'Specify actionable growth recommendations or development areas...' : 'ระบุคำแนะนำ แผนการเติบโต หรือจุดที่ต้องการให้พัฒนา...'}
                       />
                     </div>
 
                     <div className="flex items-center justify-between pt-2 border-t border-border-rule">
                       <span className="text-[10px] text-ink-muted font-mono">
-                        กด &quot;สังเคราะห์ด้วย AI&quot; เพื่อให้ AI ช่วยร่างข้อความใหม่ได้ตลอดเวลา
+                        {locale === 'en' ? 'Click "AI Synthesize" anytime to regenerate tailored recommendations.' : 'กด "สังเคราะห์ด้วย AI" เพื่อให้ AI ช่วยร่างข้อความใหม่ได้ตลอดเวลา'}
                       </span>
                       <div className="flex items-center gap-2">
                         <button
                           type="button"
                           onClick={() => {
                             setIsEditingKpiNotes(false);
-                            setEditStrengths(selectedEmployeeKpi.strengthsTh);
-                            setEditCoachingNotes(selectedEmployeeKpi.coachingNotesTh);
+                            setEditStrengths(locale === 'en' ? (selectedEmployeeKpi.strengthsEn || selectedEmployeeKpi.strengthsTh) : selectedEmployeeKpi.strengthsTh);
+                            setEditCoachingNotes(locale === 'en' ? (selectedEmployeeKpi.coachingNotesEn || selectedEmployeeKpi.coachingNotesTh) : selectedEmployeeKpi.coachingNotesTh);
                             setEditFocusTags(selectedEmployeeKpi.focusTags || []);
                           }}
                           className="px-3 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas text-ink-secondary text-xs font-mono transition-colors cursor-pointer border border-border-rule"
                         >
-                          ยกเลิก
+                          {locale === 'en' ? 'Cancel' : 'ยกเลิก'}
                         </button>
                         <button
                           type="button"
@@ -3116,7 +3135,7 @@ export default function HomePage() {
                           className="px-4 py-1.5 rounded-editorial bg-emerald-600 hover:bg-emerald-700 text-white font-mono text-xs font-bold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer"
                         >
                           <Save className="w-3.5 h-3.5" />
-                          <span>บันทึกการประเมิน</span>
+                          <span>{locale === 'en' ? 'Save Evaluation' : 'บันทึกการประเมิน'}</span>
                         </button>
                       </div>
                     </div>
@@ -3126,26 +3145,26 @@ export default function HomePage() {
                     <div className="space-y-1">
                       <span className="font-mono text-xs font-bold text-emerald-800 flex items-center gap-1.5 uppercase">
                         <Award className="w-4 h-4 text-emerald-600" />
-                        <span>จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):</span>
+                        <span>{locale === 'en' ? 'Key Strengths & Growth Factors:' : 'จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):'}</span>
                       </span>
                       <p className="text-xs text-ink-primary leading-relaxed pl-5">
-                        {selectedEmployeeKpi.strengthsTh}
+                        {locale === 'en' ? (selectedEmployeeKpi.strengthsEn || selectedEmployeeKpi.strengthsTh) : selectedEmployeeKpi.strengthsTh}
                       </p>
                     </div>
 
                     <div className="pt-2.5 border-t border-border-rule space-y-1">
                       <span className="font-mono text-xs font-bold text-brand-indigo flex items-center gap-1.5 uppercase">
                         <FileText className="w-4 h-4 text-brand-indigo" />
-                        <span>ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):</span>
+                        <span>{locale === 'en' ? 'Manager Coaching & Growth Recommendations:' : 'ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):'}</span>
                       </span>
                       <p className="text-xs text-ink-secondary leading-relaxed pl-5">
-                        {selectedEmployeeKpi.coachingNotesTh}
+                        {locale === 'en' ? (selectedEmployeeKpi.coachingNotesEn || selectedEmployeeKpi.coachingNotesTh) : selectedEmployeeKpi.coachingNotesTh}
                       </p>
                     </div>
 
                     {selectedEmployeeKpi.lastEvaluatedAt && (
                       <p className="text-[10px] text-ink-muted font-mono pt-1">
-                        บันทึกล่าสุด: {new Date(selectedEmployeeKpi.lastEvaluatedAt).toLocaleString('th-TH')}
+                        {locale === 'en' ? 'Last recorded: ' : 'บันทึกล่าสุด: '}{new Date(selectedEmployeeKpi.lastEvaluatedAt).toLocaleString(locale === 'en' ? 'en-US' : 'th-TH')}
                       </p>
                     )}
                   </div>
@@ -3156,7 +3175,7 @@ export default function HomePage() {
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-xs font-bold text-ink-primary uppercase tracking-wider">
-                    ผลงานโพสต์ที่สร้างและเผยแพร่ ({selectedEmployeeKpi.recentPosts.length} รายการล่าสุด):
+                    {locale === 'en' ? `Recent published dispatches (${selectedEmployeeKpi.recentPosts.length} latest):` : `ผลงานโพสต์ที่สร้างและเผยแพร่ (${selectedEmployeeKpi.recentPosts.length} รายการล่าสุด):`}
                   </span>
                   <span className="text-[10px] text-ink-muted">Recorded in audit ledger</span>
                 </div>
@@ -3175,7 +3194,7 @@ export default function HomePage() {
                           </h4>
                         </div>
                         <p className="text-[10px] text-ink-secondary">
-                          เผยแพร่เมื่อ: {post.dateStr}
+                          {locale === 'en' ? 'Published on: ' : 'เผยแพร่เมื่อ: '}{post.dateStr}
                         </p>
                       </div>
 
@@ -3202,33 +3221,33 @@ export default function HomePage() {
             {/* Modal Footer */}
             <div className="p-4 border-t border-border-rule bg-paper-canvas flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-mono">
               <span className="text-[10px] text-ink-muted">
-                เกณฑ์การวัดผล: Productivity (40%) + Punctuality (30%) + Quality (30%)
+                {locale === 'en' ? 'Telemetry Weights: Productivity (40%) + Punctuality (30%) + Quality (30%)' : 'เกณฑ์การวัดผล: Productivity (40%) + Punctuality (30%) + Quality (30%)'}
               </span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => setIsEvaluationSlipOpen(true)}
                   className="px-3 py-1.5 rounded-editorial bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
-                  title="พิมพ์ใบคะแนนและแผนโค้ชชิ่งสำหรับ HR"
+                  title={locale === 'en' ? 'Print scorecard and coaching plan for HR' : 'พิมพ์ใบคะแนนและแผนโค้ชชิ่งสำหรับ HR'}
                 >
                   <Printer className="w-3.5 h-3.5 text-brand-indigo" />
-                  <span>พิมพ์ใบประเมิน (Slip)</span>
+                  <span>{locale === 'en' ? 'Print Slip' : 'พิมพ์ใบประเมิน (Slip)'}</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleResetKpis}
-                  title="คืนค่าผลประเมินเป็นค่าเริ่มต้นจำลอง"
+                  title={locale === 'en' ? 'Reset evaluation to default mock values' : 'คืนค่าผลประเมินเป็นค่าเริ่มต้นจำลอง'}
                   className="px-3 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas text-ink-secondary hover:text-ink-primary border border-border-rule text-xs cursor-pointer flex items-center gap-1 transition-colors"
                 >
                   <RotateCcw className="w-3 h-3" />
-                  <span>รีเซ็ตค่าเริ่มต้น</span>
+                  <span>{locale === 'en' ? 'Reset Defaults' : 'รีเซ็ตค่าเริ่มต้น'}</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setSelectedEmployeeKpi(null)}
                   className="px-4 py-1.5 rounded-editorial bg-paper-raised hover:bg-paper-subtle text-ink-primary border border-border-rule cursor-pointer font-bold shadow-2xs transition-colors"
                 >
-                  ปิดหน้าต่าง
+                  {locale === 'en' ? 'Close Window' : 'ปิดหน้าต่าง'}
                 </button>
               </div>
             </div>
@@ -3253,14 +3272,30 @@ export default function HomePage() {
               <div className="flex items-center gap-2">
                 <Printer className="w-4 h-4 text-brand-indigo" />
                 <span className="font-serif font-bold text-sm text-ink-primary">
-                  ใบคะแนนประเมินผลงานและแผนโค้ชชิ่ง (Official Evaluation Slip)
+                  {locale === 'en' ? 'Official Evaluation Scorecard Slip & Coaching Directive' : 'ใบคะแนนประเมินผลงานและแผนโค้ชชิ่ง (Official Evaluation Slip)'}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   onClick={() => {
-                    const textSummary = `[RETZPOST EMPLOYEE EVALUATION SLIP]
+                    const isEn = locale === 'en';
+                    const textSummary = isEn
+                      ? `[RETZPOST EMPLOYEE EVALUATION SLIP]
+Employee: ${selectedEmployeeKpi.name} (${selectedEmployeeKpi.roleEn || selectedEmployeeKpi.roleTh})
+Workspace: ${selectedEmployeeKpi.workspaceName}
+Result: Grade ${selectedEmployeeKpi.grade} (${selectedEmployeeKpi.overallKpiScore}/100)
+- Output: ${selectedEmployeeKpi.actualPosts}/${selectedEmployeeKpi.targetPosts} posts (${selectedEmployeeKpi.postsCompletionRate}%)
+- On-Time: ${selectedEmployeeKpi.onTimePublishingRate}%
+- First-Pass: ${selectedEmployeeKpi.firstPassApprovalRate}%
+- Total Reach: ${(selectedEmployeeKpi.totalImpressions / 1000).toFixed(0)}K Views (${selectedEmployeeKpi.avgEngagementRate} ER)
+Key Strengths:
+${selectedEmployeeKpi.strengthsEn || selectedEmployeeKpi.strengthsTh}
+Manager Coaching:
+${selectedEmployeeKpi.coachingNotesEn || selectedEmployeeKpi.coachingNotesTh}
+Evaluated by: ${selectedEmployeeKpi.evaluatedByEn || 'Lead Editor'}
+Date: ${new Date().toLocaleDateString('en-US')}`
+                      : `[RETZPOST EMPLOYEE EVALUATION SLIP]
 พนักงาน: ${selectedEmployeeKpi.name} (${selectedEmployeeKpi.roleTh})
 โปรเจกต์: ${selectedEmployeeKpi.workspaceName}
 ผลการประเมิน: เกรด ${selectedEmployeeKpi.grade} (${selectedEmployeeKpi.overallKpiScore}/100)
@@ -3275,13 +3310,13 @@ ${selectedEmployeeKpi.coachingNotesTh}
 ประเมินโดย: ${selectedEmployeeKpi.evaluatedBy || 'หัวหน้างาน'}
 ลงวันที่: ${new Date().toLocaleDateString('th-TH')}`;
                     navigator.clipboard.writeText(textSummary);
-                    setDownloadToast('✓ คัดลอกข้อความสรุปใบคะแนนประเมินเรียบร้อยแล้ว');
+                    setDownloadToast(isEn ? '✓ Evaluation slip copied to clipboard.' : '✓ คัดลอกข้อความสรุปใบคะแนนประเมินเรียบร้อยแล้ว');
                     setTimeout(() => setDownloadToast(null), 3000);
                   }}
                   className="px-2.5 py-1 rounded-editorial bg-paper-canvas border border-border-rule hover:border-brand-indigo text-ink-primary text-xs font-mono font-semibold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
                 >
                   <Copy className="w-3 h-3 text-ink-secondary" />
-                  <span>คัดลอกข้อความ</span>
+                  <span>{locale === 'en' ? 'Copy Summary' : 'คัดลอกข้อความ'}</span>
                 </button>
                 <button
                   type="button"
@@ -3289,7 +3324,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
                   className="px-3 py-1 rounded-editorial bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-mono font-semibold flex items-center gap-1 transition-colors cursor-pointer shadow-2xs"
                 >
                   <Printer className="w-3 h-3" />
-                  <span>พิมพ์ใบคะแนน</span>
+                  <span>{locale === 'en' ? 'Print Slip' : 'พิมพ์ใบคะแนน'}</span>
                 </button>
                 <button
                   type="button"
@@ -3323,12 +3358,12 @@ ${selectedEmployeeKpi.coachingNotesTh}
                     {selectedEmployeeKpi.name}
                   </h4>
                   <p className="text-[11px] text-ink-secondary font-sans">
-                    {selectedEmployeeKpi.roleTh} • {selectedEmployeeKpi.workspaceName}
+                    {locale === 'en' ? (selectedEmployeeKpi.roleEn || selectedEmployeeKpi.roleTh) : selectedEmployeeKpi.roleTh} • {selectedEmployeeKpi.workspaceName}
                   </p>
                 </div>
                 <div className="text-right">
                   <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-900 border border-emerald-300 inline-block font-mono">
-                    เกรด {selectedEmployeeKpi.grade} ({selectedEmployeeKpi.overallKpiScore}/100)
+                    {locale === 'en' ? 'Grade' : 'เกรด'} {selectedEmployeeKpi.grade} ({selectedEmployeeKpi.overallKpiScore}/100)
                   </span>
                   <span className="text-[9px] text-ink-muted block mt-0.5">Rank #{selectedEmployeeKpi.rank} of {employeeKpis.length}</span>
                 </div>
@@ -3337,10 +3372,10 @@ ${selectedEmployeeKpi.coachingNotesTh}
               {/* 4 Dimension Score Table */}
               <div className="border border-border-rule rounded-editorial overflow-hidden bg-paper-raised">
                 <div className="grid grid-cols-4 p-2 bg-paper-subtle text-[10px] font-bold text-ink-secondary border-b border-border-rule uppercase tracking-wider">
-                  <span>เป้าหมาย (Output)</span>
-                  <span>ตรงต่อเวลา (On-Time)</span>
-                  <span>ผ่านรอบแรก (Quality)</span>
-                  <span>การเข้าถึง (Reach)</span>
+                  <span>{locale === 'en' ? 'Output' : 'เป้าหมาย (Output)'}</span>
+                  <span>{locale === 'en' ? 'On-Time' : 'ตรงต่อเวลา (On-Time)'}</span>
+                  <span>{locale === 'en' ? 'Quality' : 'ผ่านรอบแรก (Quality)'}</span>
+                  <span>{locale === 'en' ? 'Reach' : 'การเข้าถึง (Reach)'}</span>
                 </div>
                 <div className="grid grid-cols-4 p-2.5 text-xs font-bold text-ink-primary">
                   <span>{selectedEmployeeKpi.actualPosts}/{selectedEmployeeKpi.targetPosts} ({selectedEmployeeKpi.postsCompletionRate}%)</span>
@@ -3354,10 +3389,10 @@ ${selectedEmployeeKpi.coachingNotesTh}
               <div className="p-3 bg-paper-raised border border-border-rule rounded-editorial space-y-1 font-sans">
                 <span className="text-[11px] font-mono font-bold text-emerald-800 uppercase flex items-center gap-1">
                   <Award className="w-3.5 h-3.5 text-emerald-600" />
-                  <span>จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):</span>
+                  <span>{locale === 'en' ? 'Key Strengths & Growth Factors:' : 'จุดเด่น & ปัจจัยความสำเร็จ (Key Strengths):'}</span>
                 </span>
                 <p className="text-xs text-ink-primary leading-relaxed pl-4">
-                  {selectedEmployeeKpi.strengthsTh}
+                  {locale === 'en' ? (selectedEmployeeKpi.strengthsEn || selectedEmployeeKpi.strengthsTh) : selectedEmployeeKpi.strengthsTh}
                 </p>
               </div>
 
@@ -3365,10 +3400,10 @@ ${selectedEmployeeKpi.coachingNotesTh}
               <div className="p-3 bg-paper-raised border border-border-rule rounded-editorial space-y-1 font-sans">
                 <span className="text-[11px] font-mono font-bold text-brand-indigo uppercase flex items-center gap-1">
                   <FileText className="w-3.5 h-3.5 text-brand-indigo" />
-                  <span>ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):</span>
+                  <span>{locale === 'en' ? 'Manager Coaching & Growth Recommendations:' : 'ข้อแนะนำจากหัวหน้างาน (Manager Coaching & Growth):'}</span>
                 </span>
                 <p className="text-xs text-ink-secondary leading-relaxed pl-4">
-                  {selectedEmployeeKpi.coachingNotesTh}
+                  {locale === 'en' ? (selectedEmployeeKpi.coachingNotesEn || selectedEmployeeKpi.coachingNotesTh) : selectedEmployeeKpi.coachingNotesTh}
                 </p>
               </div>
 
@@ -3387,13 +3422,13 @@ ${selectedEmployeeKpi.coachingNotesTh}
               {/* Signature Line Footer */}
               <div className="pt-4 border-t-2 border-dashed border-border-strong grid grid-cols-2 gap-4 text-[11px] text-ink-secondary">
                 <div className="space-y-4">
-                  <p>ผู้ประเมิน: <strong>{selectedEmployeeKpi.evaluatedBy || 'หัวหน้างาน (Lead Editor)'}</strong></p>
-                  <p className="text-[9px] text-ink-muted">บันทึกผ่าน RetzPost Secure Ledger</p>
+                  <p>{locale === 'en' ? 'Evaluator: ' : 'ผู้ประเมิน: '}<strong>{locale === 'en' ? (selectedEmployeeKpi.evaluatedByEn || 'Lead Editor') : (selectedEmployeeKpi.evaluatedBy || 'หัวหน้างาน (Lead Editor)')}</strong></p>
+                  <p className="text-[9px] text-ink-muted">{locale === 'en' ? 'Recorded via RetzPost Secure Ledger' : 'บันทึกผ่าน RetzPost Secure Ledger'}</p>
                 </div>
                 <div className="text-right space-y-3">
                   <div className="border-b border-border-strong w-44 ml-auto pt-4" />
-                  <p className="text-[10px]">ลายเซ็นหัวหน้างาน / ผู้มีอำนาจอนุมัติ</p>
-                  <p className="text-[9px] text-ink-muted">วันที่: {new Date().toLocaleDateString('th-TH')}</p>
+                  <p className="text-[10px]">{locale === 'en' ? 'Manager Signature / Approving Authority' : 'ลายเซ็นหัวหน้างาน / ผู้มีอำนาจอนุมัติ'}</p>
+                  <p className="text-[9px] text-ink-muted">{locale === 'en' ? 'Date: ' : 'วันที่: '}{new Date().toLocaleDateString(locale === 'en' ? 'en-US' : 'th-TH')}</p>
                 </div>
               </div>
             </div>
@@ -3421,7 +3456,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
                 </div>
                 <div>
                   <h3 className="font-serif font-bold text-sm text-ink-primary">
-                    ถอนโพสต์ / สั่งลบงานเผยแพร่ (Revoke & Delete Dispatch)
+                    {locale === 'en' ? 'Revoke & Delete Dispatch' : 'ถอนโพสต์ / สั่งลบงานเผยแพร่ (Revoke & Delete Dispatch)'}
                   </h3>
                   <span className="text-[10px] text-ink-secondary block">
                     {revokeCandidateBatch.id} • {revokeCandidateBatch.title}
@@ -3440,13 +3475,17 @@ ${selectedEmployeeKpi.coachingNotesTh}
             {/* Body */}
             <div className="p-4 space-y-3.5">
               <div className="p-3 bg-amber-50 border border-amber-200 text-amber-900 rounded-editorial text-[11px] leading-relaxed">
-                <strong>ข้อกำหนดการลบแยกตาม API:</strong> แพลตฟอร์ม Facebook, YouTube, และ X รองรับการสั่งลบผ่าน API ได้ 100% ส่วน Instagram, TikTok, และ Lemon8 เป็นข้อกำหนดความปลอดภัยของแพลตฟอร์มที่ต้องกดเปิดเข้าไปลบในแอปโดยตรง
+                {locale === 'en' ? (
+                  <><strong>API Deletion Protocol:</strong> Facebook, YouTube, and X support 100% automated API deletion. For Instagram, TikTok, and Lemon8, platform security requires direct in-app removal.</>
+                ) : (
+                  <><strong>ข้อกำหนดการลบแยกตาม API:</strong> แพลตฟอร์ม Facebook, YouTube, และ X รองรับการสั่งลบผ่าน API ได้ 100% ส่วน Instagram, TikTok, และ Lemon8 เป็นข้อกำหนดความปลอดภัยของแพลตฟอร์มที่ต้องกดเปิดเข้าไปลบในแอปโดยตรง</>
+                )}
               </div>
 
               {/* Channels List Breakdown */}
               <div className="space-y-2">
                 <span className="font-bold text-ink-primary block uppercase tracking-wider text-[10px]">
-                  สถานะการลบในแต่ละช่องทาง ({revokeCandidateBatch.placements.length} รายการ):
+                  {locale === 'en' ? `Deletion status per destination (${revokeCandidateBatch.placements.length} channels):` : `สถานะการลบในแต่ละช่องทาง (${revokeCandidateBatch.placements.length} รายการ):`}
                 </span>
 
                 {revokeCandidateBatch.placements.map((plc, idx) => {
@@ -3480,7 +3519,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
                               setIsApiDeleting(prev => ({ ...prev, [`${revokeCandidateBatch.id}_${idx}`]: true }));
                               setTimeout(() => {
                                 setIsApiDeleting(prev => ({ ...prev, [`${revokeCandidateBatch.id}_${idx}`]: false }));
-                                setDownloadToast(`✓ ส่งคำสั่ง API DELETE สำหรับ "${plc.label}" สำเร็จ โพสต์ถูกลบออกจากระบบจริงแล้ว`);
+                                setDownloadToast(locale === 'en' ? `✓ Sent API DELETE for "${plc.label}". Dispatch removed from destination.` : `✓ ส่งคำสั่ง API DELETE สำหรับ "${plc.label}" สำเร็จ โพสต์ถูกลบออกจากระบบจริงแล้ว`);
                                 setTimeout(() => setDownloadToast(null), 3000);
                               }, 600);
                             }}
@@ -3488,7 +3527,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
                             className="px-2.5 py-1 rounded bg-red-600 hover:bg-red-700 text-white text-[11px] font-bold transition-colors cursor-pointer shadow-2xs disabled:opacity-50 flex items-center gap-1"
                           >
                             <Trash2 className="w-3 h-3" />
-                            <span>{isApiDeleting[`${revokeCandidateBatch.id}_${idx}`] ? 'กำลังลบ...' : 'ลบผ่าน API'}</span>
+                            <span>{isApiDeleting[`${revokeCandidateBatch.id}_${idx}`] ? (locale === 'en' ? 'Deleting...' : 'กำลังลบ...') : (locale === 'en' ? 'Delete via API' : 'ลบผ่าน API')}</span>
                           </button>
                         ) : (
                           plc.liveUrl ? (
@@ -3498,10 +3537,10 @@ ${selectedEmployeeKpi.coachingNotesTh}
                               rel="noreferrer"
                               className="px-2.5 py-1 rounded bg-paper-raised hover:bg-paper-subtle border border-border-rule text-brand-indigo hover:underline text-[11px] font-semibold transition-colors inline-flex items-center gap-1"
                             >
-                              <span>เปิดโพสต์เพื่อลบ</span>
+                              <span>{locale === 'en' ? 'Open App to Delete' : 'เปิดโพสต์เพื่อลบ'}</span>
                             </a>
                           ) : (
-                            <span className="text-[10px] text-ink-muted">ไม่มีลิงก์</span>
+                            <span className="text-[10px] text-ink-muted">{locale === 'en' ? 'No Link' : 'ไม่มีลิงก์'}</span>
                           )
                         )}
                       </div>
@@ -3520,19 +3559,19 @@ ${selectedEmployeeKpi.coachingNotesTh}
                   onClick={() => setRevokeCandidateBatch(null)}
                   className="px-3 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas border border-border-rule text-ink-secondary hover:text-ink-primary cursor-pointer text-xs"
                 >
-                  ปิดหน้าต่าง
+                  {locale === 'en' ? 'Close Window' : 'ปิดหน้าต่าง'}
                 </button>
                 <button
                   type="button"
                   onClick={() => {
                     setRevokedBatchIds(prev => ({ ...prev, [revokeCandidateBatch.id]: true }));
-                    setDownloadToast(`✓ บันทึกการถอนโพสต์ "${revokeCandidateBatch.title}" ใน RetzPost Ledger เรียบร้อยแล้ว`);
+                    setDownloadToast(locale === 'en' ? `✓ Recorded revocation of "${revokeCandidateBatch.title}" in RetzPost Ledger.` : `✓ บันทึกการถอนโพสต์ "${revokeCandidateBatch.title}" ใน RetzPost Ledger เรียบร้อยแล้ว`);
                     setTimeout(() => setDownloadToast(null), 3000);
                     setRevokeCandidateBatch(null);
                   }}
                   className="px-3.5 py-1.5 rounded-editorial bg-neutral-900 hover:bg-black text-white font-bold cursor-pointer text-xs shadow-xs"
                 >
-                  บันทึกสถานะถอนโพสต์ทั้งหมด
+                  {locale === 'en' ? 'Confirm Full Revocation' : 'บันทึกสถานะถอนโพสต์ทั้งหมด'}
                 </button>
               </div>
             </div>
@@ -3567,7 +3606,11 @@ ${selectedEmployeeKpi.coachingNotesTh}
                   </span>
                 </div>
                 <p className="text-xs font-mono text-ink-secondary">
-                  วิเคราะห์ว่า <strong>&quot;ทำไมถึงดี หรือได้ยอด&quot;</strong> พร้อม <strong>&quot;แนวทางต่อยอด&quot;</strong> สำหรับแคมเปญถัดไป
+                  {locale === 'en' ? (
+                <>AI performance diagnosis: <strong>&quot;Attribution Factors&quot;</strong> paired with an <strong>&quot;Actionable Playbook&quot;</strong> for upcoming campaigns</>
+              ) : (
+                <>วิเคราะห์ว่า <strong>&quot;ทำไมถึงดี หรือได้ยอด&quot;</strong> พร้อม <strong>&quot;แนวทางต่อยอด&quot;</strong> สำหรับแคมเปญถัดไป</>
+              )}
                 </p>
               </div>
 
@@ -3575,7 +3618,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
                 type="button"
                 onClick={() => setSelectedPostDiagnosis(null)}
                 className="p-1.5 rounded-editorial border border-border-rule hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer"
-                title="ปิดหน้าต่าง (ESC)"
+                title={locale === 'en' ? 'Close window (ESC)' : 'ปิดหน้าต่าง (ESC)'}
               >
                 <X className="w-4 h-4" />
               </button>
@@ -3597,11 +3640,11 @@ ${selectedEmployeeKpi.coachingNotesTh}
 
                 <div className="flex items-center gap-3 shrink-0 font-mono text-xs">
                   <div className="text-right">
-                    <span className="text-[10px] text-ink-secondary block">ยอดคนดู / วิว</span>
+                    <span className="text-[10px] text-ink-secondary block">{locale === 'en' ? 'Total Views' : 'ยอดคนดู / วิว'}</span>
                     <span className="font-bold text-ink-primary">{selectedPostDiagnosis.views.toLocaleString()}</span>
                   </div>
                   <div className="text-right pl-3 border-l border-border-rule">
-                    <span className="text-[10px] text-ink-secondary block">คะแนนความสำเร็จ</span>
+                    <span className="text-[10px] text-ink-secondary block">{locale === 'en' ? 'Success Score' : 'คะแนนความสำเร็จ'}</span>
                     <span className="font-bold text-semantic-success">{selectedPostDiagnosis.overallSuccessScore}/100</span>
                   </div>
                 </div>
@@ -3611,10 +3654,10 @@ ${selectedEmployeeKpi.coachingNotesTh}
               <div className="p-4 bg-brand-indigo/5 border border-brand-indigo/20 rounded-editorial space-y-1.5">
                 <span className="font-mono text-[11px] font-bold text-brand-indigo flex items-center gap-1.5 uppercase tracking-wider">
                   <Sparkles className="w-3.5 h-3.5 text-brand-indigo" />
-                  <span>สรุปผลการวิเคราะห์ด้วย AI (Executive Diagnosis):</span>
+                  <span>{locale === 'en' ? 'Executive AI Attribution Diagnosis:' : 'สรุปผลการวิเคราะห์ด้วย AI (Executive Diagnosis):'}</span>
                 </span>
                 <p className="text-xs font-sans text-ink-primary leading-relaxed">
-                  {selectedPostDiagnosis.executiveSummaryTh}
+                  {locale === 'en' ? (selectedPostDiagnosis.executiveSummaryEn || selectedPostDiagnosis.executiveSummaryTh) : selectedPostDiagnosis.executiveSummaryTh}
                 </p>
               </div>
 
@@ -3622,10 +3665,10 @@ ${selectedEmployeeKpi.coachingNotesTh}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between border-b border-border-rule pb-1.5">
                   <h4 className="font-mono text-xs font-bold text-ink-primary flex items-center gap-1.5 uppercase">
-                    <span>ปัจจัยความสำเร็จ: ทำไมโพสต์นี้ถึงได้ยอด? (Attribution Drivers)</span>
+                    <span>{locale === 'en' ? 'Attribution Drivers: Why Did This Post Perform?' : 'ปัจจัยความสำเร็จ: ทำไมโพสต์นี้ถึงได้ยอด? (Attribution Drivers)'}</span>
                   </h4>
                   <span className="text-[10px] font-mono text-semantic-success font-semibold">
-                    {selectedPostDiagnosis.attributionDrivers.length} ปัจจัยหลัก
+                    {selectedPostDiagnosis.attributionDrivers.length} {locale === 'en' ? 'Core Drivers' : 'ปัจจัยหลัก'}
                   </span>
                 </div>
 
@@ -3638,7 +3681,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
                       <div className="flex items-center justify-between">
                         <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-paper-subtle border border-border-rule text-ink-secondary font-bold flex items-center gap-1">
                           <span>{driver.icon}</span>
-                          <span>{driver.categoryLabelTh}</span>
+                          <span>{locale === 'en' ? (driver.categoryLabelEn || driver.categoryLabelTh) : driver.categoryLabelTh}</span>
                         </span>
                         <span className="text-[9px] font-mono font-bold text-semantic-success">
                           Impact: {driver.impactScore}/100
@@ -3646,11 +3689,11 @@ ${selectedEmployeeKpi.coachingNotesTh}
                       </div>
 
                       <h5 className="font-serif font-bold text-xs text-ink-primary">
-                        {driver.titleTh}
+                        {locale === 'en' ? (driver.titleEn || driver.titleTh) : driver.titleTh}
                       </h5>
 
                       <p className="text-[11px] text-ink-secondary leading-relaxed font-sans">
-                        {driver.descriptionTh}
+                        {locale === 'en' ? (driver.descriptionEn || driver.descriptionTh) : driver.descriptionTh}
                       </p>
 
                       <div className="pt-1 border-t border-border-rule/60 text-[10px] font-mono text-brand-indigo font-bold flex items-center gap-1">
@@ -3666,7 +3709,7 @@ ${selectedEmployeeKpi.coachingNotesTh}
               <div className="space-y-2.5">
                 <div className="flex items-center justify-between border-b border-border-rule pb-1.5">
                   <h4 className="font-mono text-xs font-bold text-ink-primary flex items-center gap-1.5 uppercase">
-                    <span>แนวทางต่อยอดและแผนการดำเนินการถัดไป (Actionable Playbook)</span>
+                    <span>{locale === 'en' ? 'Actionable Playbook & Next Optimization Steps' : 'แนวทางต่อยอดและแผนการดำเนินการถัดไป (Actionable Playbook)'}</span>
                   </h4>
                   <span className="text-[10px] font-mono text-accent-terracotta font-semibold">
                     AI Recommended Playbook
@@ -3684,13 +3727,13 @@ ${selectedEmployeeKpi.coachingNotesTh}
                       </div>
                       <div className="space-y-1 flex-1">
                         <h5 className="font-serif font-bold text-xs text-ink-primary">
-                          {play.titleTh}
+                          {locale === 'en' ? (play.titleEn || play.titleTh) : play.titleTh}
                         </h5>
                         <p className="text-[11px] text-ink-secondary leading-relaxed font-sans">
-                          {play.actionTh}
+                          {locale === 'en' ? (play.actionEn || play.actionTh) : play.actionTh}
                         </p>
                         <p className="text-[10px] font-mono text-semantic-success font-semibold">
-                          ↳ ผลลัพธ์ที่คาดการณ์: {play.expectedOutcomeTh}
+                          {locale === 'en' ? '↳ Expected Outcome: ' + (play.expectedOutcomeEn || play.expectedOutcomeTh) : '↳ ผลลัพธ์ที่คาดการณ์: ' + play.expectedOutcomeTh}
                         </p>
                       </div>
                     </div>
@@ -3702,14 +3745,14 @@ ${selectedEmployeeKpi.coachingNotesTh}
             {/* Modal Footer */}
             <div className="p-4 border-t border-border-rule bg-paper-canvas flex items-center justify-between text-xs font-mono">
               <span className="text-[10px] text-ink-muted">
-                บันทึกใน docs/MOCKUP_REGISTRY.md สำหรับสลับไปต่อกับ Live Gemini 1.5 API
+                {locale === 'en' ? 'Logged in docs/MOCKUP_REGISTRY.md for live Gemini 1.5 API routing' : 'บันทึกใน docs/MOCKUP_REGISTRY.md สำหรับสลับไปต่อกับ Live Gemini 1.5 API'}
               </span>
               <button
                 type="button"
                 onClick={() => setSelectedPostDiagnosis(null)}
                 className="px-4 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule cursor-pointer"
               >
-                ปิดหน้าต่าง
+                {locale === 'en' ? 'Close Window' : 'ปิดหน้าต่าง'}
               </button>
             </div>
           </div>

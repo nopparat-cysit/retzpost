@@ -9,6 +9,7 @@ import {
   Sparkles,
   RotateCcw
 } from 'lucide-react';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 
 export interface DateMarker {
   dots?: string[]; // Array of tailwind color classes e.g. ['bg-brand-indigo', 'bg-accent-terracotta']
@@ -33,6 +34,7 @@ export interface CustomDatePickerProps {
   align?: 'left' | 'right';
   fullWidth?: boolean;
   showPresets?: boolean;
+  locale?: 'th' | 'en';
 }
 
 const MONTH_NAMES_EN = [
@@ -79,7 +81,7 @@ export function CustomDatePicker({
   value,
   onChange,
   label,
-  placeholder = 'เลือกวันที่...',
+  placeholder,
   minDate,
   maxDate,
   disabled = false,
@@ -92,7 +94,12 @@ export function CustomDatePicker({
   align = 'left',
   fullWidth = true,
   showPresets = true,
+  locale,
 }: CustomDatePickerProps) {
+  const i18n = useTranslation();
+  const activeLocale = locale || i18n?.locale || 'th';
+  const resolvedPlaceholder = placeholder ?? (activeLocale === 'th' ? 'เลือกวันที่...' : 'Select date...');
+
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -302,12 +309,12 @@ export function CustomDatePicker({
                 {value}
               </span>
               <span className="text-[11px] text-ink-secondary truncate">
-                ({formatDateDisplay(value, 'th')})
+                ({formatDateDisplay(value, activeLocale)})
               </span>
             </div>
           ) : (
             <span className="text-ink-secondary/60 truncate font-mono text-[11px]">
-              {placeholder}
+              {resolvedPlaceholder}
             </span>
           )}
         </div>
@@ -352,28 +359,28 @@ export function CustomDatePicker({
                 onClick={() => handleQuickPreset('TODAY')}
                 className="px-2 py-0.5 rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-primary whitespace-nowrap transition-colors cursor-pointer"
               >
-                วันนี้
+                {activeLocale === 'th' ? 'วันนี้' : 'Today'}
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickPreset('TOMORROW')}
                 className="px-2 py-0.5 rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-primary whitespace-nowrap transition-colors cursor-pointer"
               >
-                พรุ่งนี้
+                {activeLocale === 'th' ? 'พรุ่งนี้' : 'Tomorrow'}
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickPreset('WEEKEND')}
                 className="px-2 py-0.5 rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold whitespace-nowrap transition-colors cursor-pointer"
               >
-                สุดสัปดาห์ (Peak)
+                {activeLocale === 'th' ? 'สุดสัปดาห์ (Peak)' : 'Weekend (Peak)'}
               </button>
               <button
                 type="button"
                 onClick={() => handleQuickPreset('NEXT_MON')}
                 className="px-2 py-0.5 rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-primary whitespace-nowrap transition-colors cursor-pointer"
               >
-                จันทร์หน้า
+                {activeLocale === 'th' ? 'จันทร์หน้า' : 'Next Mon'}
               </button>
             </div>
           )}
@@ -391,11 +398,15 @@ export function CustomDatePicker({
 
             <div className="text-center font-sans">
               <span className="text-xs font-bold text-ink-primary">
-                {MONTH_NAMES_TH[viewMonth]} {viewYear}
+                {activeLocale === 'th'
+                  ? `${MONTH_NAMES_TH[viewMonth]} ${viewYear}`
+                  : `${MONTH_NAMES_EN[viewMonth]} ${viewYear}`}
               </span>
-              <span className="text-[10px] font-mono text-ink-secondary block">
-                {MONTH_NAMES_EN[viewMonth]}
-              </span>
+              {activeLocale === 'th' && (
+                <span className="text-[10px] font-mono text-ink-secondary block">
+                  {MONTH_NAMES_EN[viewMonth]}
+                </span>
+              )}
             </div>
 
             <button
@@ -410,7 +421,7 @@ export function CustomDatePicker({
 
           {/* Day of Week Headers */}
           <div className="grid grid-cols-7 gap-1 text-center mb-1">
-            {SHORT_WEEKDAYS.map((wd, i) => (
+            {(activeLocale === 'th' ? SHORT_WEEKDAYS : ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']).map((wd, i) => (
               <span
                 key={wd}
                 className={`text-[10px] font-mono font-semibold ${
@@ -472,7 +483,7 @@ export function CustomDatePicker({
           <div className="mt-2.5 pt-2 border-t border-border-rule flex items-center justify-between text-[10px] font-mono text-ink-secondary">
             <span className="flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-accent-terracotta" />
-              <span>ช่วงเวลา Peak วันเสาร์-อาทิตย์</span>
+              <span>{activeLocale === 'th' ? 'ช่วงเวลา Peak วันเสาร์-อาทิตย์' : 'Peak window: Sat-Sun'}</span>
             </span>
             <button
               type="button"
@@ -482,7 +493,7 @@ export function CustomDatePicker({
               }}
               className="text-brand-indigo hover:underline font-semibold cursor-pointer"
             >
-              เลือกวันนี้
+              {activeLocale === 'th' ? 'เลือกวันนี้' : 'Select Today'}
             </button>
           </div>
         </div>

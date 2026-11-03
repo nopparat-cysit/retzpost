@@ -17,20 +17,96 @@ export interface WorkspaceMapping {
   standardId: string; // e.g. 'ws_capitalone'
   calendarId: string; // e.g. 'CAPITAL_ONE'
   name: string;
+  nameTh?: string;
+  nameEn?: string;
 }
 
 export const WORKSPACE_MAPPINGS: WorkspaceMapping[] = [
-  { standardId: 'ALL', calendarId: 'ALL', name: 'Master Hub (รวมทุกบัญชี)' },
-  { standardId: 'ws_main', calendarId: 'MAIN_STUDIO', name: 'Main Studio (โปรเจกต์หลัก)' },
-  { standardId: 'ws_creator', calendarId: 'CREATOR_HUB', name: 'Creator Hub' },
-  { standardId: 'ws_software', calendarId: 'SOFTWARE_DEV', name: 'Tech & Product Studio' },
-  { standardId: 'ws_brand', calendarId: 'BRAND_LIFESTYLE', name: 'Lifestyle & Brand' },
+  {
+    standardId: 'ALL',
+    calendarId: 'ALL',
+    name: 'Master Hub (รวมทุกบัญชี)',
+    nameTh: 'Master Hub (รวมทุกบัญชี)',
+    nameEn: 'Master Hub (All Channels)',
+  },
+  {
+    standardId: 'ws_main',
+    calendarId: 'MAIN_STUDIO',
+    name: 'Main Studio (โปรเจกต์หลัก)',
+    nameTh: 'Main Studio (โปรเจกต์หลัก)',
+    nameEn: 'Main Studio (Flagship)',
+  },
+  {
+    standardId: 'ws_creator',
+    calendarId: 'CREATOR_HUB',
+    name: 'Creator Hub (ครีเอเตอร์ / สตูดิโอ)',
+    nameTh: 'Creator Hub (ครีเอเตอร์ / สตูดิโอ)',
+    nameEn: 'Creator Hub (Studio)',
+  },
+  {
+    standardId: 'ws_software',
+    calendarId: 'SOFTWARE_DEV',
+    name: 'Tech & Product Studio (SaaS & ซอฟต์แวร์)',
+    nameTh: 'Tech & Product Studio (SaaS & ซอฟต์แวร์)',
+    nameEn: 'Tech & Product Studio (SaaS)',
+  },
+  {
+    standardId: 'ws_brand',
+    calendarId: 'BRAND_LIFESTYLE',
+    name: 'Lifestyle & Brand (ไลฟ์สไตล์ & แบรนด์)',
+    nameTh: 'Lifestyle & Brand (ไลฟ์สไตล์ & แบรนด์)',
+    nameEn: 'Lifestyle & Brand',
+  },
   // Backward compatibility aliases
-  { standardId: 'ws_capitalone', calendarId: 'MAIN_STUDIO', name: 'Main Studio (โปรเจกต์หลัก)' },
-  { standardId: 'ws_acme', calendarId: 'CREATOR_HUB', name: 'Creator Hub' },
-  { standardId: 'ws_retzpost', calendarId: 'SOFTWARE_DEV', name: 'Tech & Product Studio' },
-  { standardId: 'ws_coffee', calendarId: 'BRAND_LIFESTYLE', name: 'Lifestyle & Brand' },
+  {
+    standardId: 'ws_capitalone',
+    calendarId: 'MAIN_STUDIO',
+    name: 'Main Studio (โปรเจกต์หลัก)',
+    nameTh: 'Main Studio (โปรเจกต์หลัก)',
+    nameEn: 'Main Studio (Flagship)',
+  },
+  {
+    standardId: 'ws_acme',
+    calendarId: 'CREATOR_HUB',
+    name: 'Creator Hub (ครีเอเตอร์ / สตูดิโอ)',
+    nameTh: 'Creator Hub (ครีเอเตอร์ / สตูดิโอ)',
+    nameEn: 'Creator Hub (Studio)',
+  },
+  {
+    standardId: 'ws_retzpost',
+    calendarId: 'SOFTWARE_DEV',
+    name: 'Tech & Product Studio (SaaS & ซอฟต์แวร์)',
+    nameTh: 'Tech & Product Studio (SaaS & ซอฟต์แวร์)',
+    nameEn: 'Tech & Product Studio (SaaS)',
+  },
+  {
+    standardId: 'ws_coffee',
+    calendarId: 'BRAND_LIFESTYLE',
+    name: 'Lifestyle & Brand (ไลฟ์สไตล์ & แบรนด์)',
+    nameTh: 'Lifestyle & Brand (ไลฟ์สไตล์ & แบรนด์)',
+    nameEn: 'Lifestyle & Brand',
+  },
 ];
+
+export const PREDEFINED_WORKSPACES = WORKSPACE_MAPPINGS;
+
+export function getWorkspaceDisplayName(
+  ws: { name?: string; nameTh?: string; nameEn?: string } | null | undefined,
+  locale: string = 'th'
+): string {
+  if (!ws) return '';
+  if (locale === 'en') {
+    return ws.nameEn || ws.name || '';
+  }
+  return ws.nameTh || ws.name || '';
+}
+
+export function getWorkspaceName(
+  ws: { name?: string; nameTh?: string; nameEn?: string } | null | undefined,
+  locale: string = 'th'
+): string {
+  return getWorkspaceDisplayName(ws, locale);
+}
 
 /**
  * Get active workspace ID (defaults to 'ALL' or stored value)

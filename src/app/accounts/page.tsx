@@ -60,6 +60,7 @@ import {
 } from '@/modules/data/mock-data-manager';
 import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
 import { useTranslation } from '@/modules/i18n/i18n-context';
+import { getWorkspaceDisplayName } from '@/modules/workspaces/active-workspace';
 
 export interface MasterChannelAccount {
   id: string;
@@ -276,7 +277,9 @@ const INITIAL_MASTER_ACCOUNTS: MasterChannelAccount[] = [
 export interface WorkspaceItem {
   id: string;
   name: string;
+  nameEn?: string;
   category: string;
+  categoryEn?: string;
   icon: string;
   selectedChannelIds: string[];
 }
@@ -285,28 +288,36 @@ const INITIAL_PROJECTS: WorkspaceItem[] = [
   {
     id: 'ws_main',
     name: 'Main Studio',
+    nameEn: 'Main Studio',
     category: 'โปรเจกต์หลัก',
+    categoryEn: 'Primary Workspace',
     icon: 'ws-software',
     selectedChannelIds: ['acc-fb-c1-th', 'acc-ig-c1-main', 'acc-fb-c1-kw', 'acc-x-c1', 'acc-lemon-c1'],
   },
   {
     id: 'ws_creator',
     name: 'Creator Hub',
+    nameEn: 'Creator Hub',
     category: 'ครีเอเตอร์ / สตูดิโอ',
+    categoryEn: 'Creator / Studio',
     icon: 'ws-creator',
     selectedChannelIds: ['acc-ig-acme', 'acc-fb-acme', 'acc-yt-acme', 'acc-tt-acme', 'acc-x-acme'],
   },
   {
     id: 'ws_software',
     name: 'Tech & Product Studio',
+    nameEn: 'Tech & Product Studio',
     category: 'SaaS & ซอฟต์แวร์',
+    categoryEn: 'SaaS & Software',
     icon: 'ws-software',
     selectedChannelIds: ['acc-fb-retz'],
   },
   {
     id: 'ws_brand',
     name: 'Lifestyle & Brand',
+    nameEn: 'Lifestyle & Brand',
     category: 'ไลฟ์สไตล์ & แบรนด์',
+    categoryEn: 'Lifestyle & Brand',
     icon: 'ws-cafe',
     selectedChannelIds: ['acc-ig-coffee', 'acc-lemon-coffee'],
   },
@@ -317,6 +328,7 @@ interface PlatformConfig {
   name: string;
   subtitle: string;
   addButtonText: string;
+  addButtonTextEn: string;
   badgeColor: string;
   icon: (size?: number) => React.ReactNode;
 }
@@ -327,6 +339,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
     name: 'Facebook',
     subtitle: 'Meta Pages • Feed & Stories Endpoints',
     addButtonText: 'เพิ่มเพจ Facebook',
+    addButtonTextEn: 'Add Facebook Page',
     badgeColor: 'bg-blue-100 text-blue-900 border-blue-200',
     icon: (size = 20) => <FacebookLogo size={size} />,
   },
@@ -335,6 +348,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
     name: 'Instagram',
     subtitle: 'Instagram Professional • Carousels, Stories & Reels',
     addButtonText: 'เพิ่มบัญชี IG',
+    addButtonTextEn: 'Add Instagram Account',
     badgeColor: 'bg-pink-100 text-pink-900 border-pink-200',
     icon: (size = 20) => <InstagramLogo size={size} />,
   },
@@ -343,6 +357,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
     name: 'TikTok',
     subtitle: 'TikTok for Business • Direct Video Publishing (9:16)',
     addButtonText: 'เพิ่มบัญชี TikTok',
+    addButtonTextEn: 'Add TikTok Account',
     badgeColor: 'bg-stone-100 text-stone-900 border-stone-300',
     icon: (size = 20) => <TikTokLogo size={size} />,
   },
@@ -351,6 +366,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
     name: 'YouTube',
     subtitle: 'Google OAuth • Shorts & Long-Form Publishing',
     addButtonText: 'เพิ่มช่อง YouTube',
+    addButtonTextEn: 'Add YouTube Channel',
     badgeColor: 'bg-red-100 text-red-900 border-red-200',
     icon: (size = 20) => <YouTubeLogo size={size} />,
   },
@@ -359,6 +375,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
     name: 'X (Twitter)',
     subtitle: 'X API v2 • Short-Form Dispatches & Media Threads',
     addButtonText: 'เพิ่มบัญชี X',
+    addButtonTextEn: 'Add X Account',
     badgeColor: 'bg-neutral-100 text-neutral-900 border-neutral-300',
     icon: (size = 20) => <XLogo size={size} />,
   },
@@ -367,6 +384,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
     name: 'Lemon8',
     subtitle: 'ByteDance Lifestyle • Image Carousels & Editorial Guides',
     addButtonText: 'เพิ่มบัญชี Lemon8',
+    addButtonTextEn: 'Add Lemon8 Account',
     badgeColor: 'bg-amber-100 text-yellow-950 border-amber-300',
     icon: (size = 20) => <Lemon8Logo size={size} />,
   },
@@ -484,8 +502,14 @@ function ConnectedAccountsContent() {
       return next;
     });
 
-    const actionText = enableAll ? 'เปิดใช้งาน' : 'ปิดการใช้งาน';
-    showToast(`✓ ${actionText}ช่องทาง ${platformId} ทั้งหมด (${targetAccounts.length} บัญชี) สำหรับ "${activeWorkspace?.name}" เรียบร้อยแล้ว`);
+    const activeWsName = getWorkspaceDisplayName(activeWorkspace, locale);
+    if (locale === 'th') {
+      const actionText = enableAll ? 'เปิดใช้งาน' : 'ปิดการใช้งาน';
+      showToast(`✓ ${actionText}ทุกช่องทาง ${platformId} ทั้งหมด (${targetAccounts.length} ช่องทาง) ให้โปรเจกต์ "${activeWsName}" เรียบร้อยแล้ว`);
+    } else {
+      const actionText = enableAll ? 'Enabled' : 'Disabled';
+      showToast(`✓ ${actionText} all ${platformId} channels (${targetAccounts.length} channels) for "${activeWsName}"`);
+    }
   };
 
   // Modal: Test API Diagnostic
@@ -586,11 +610,20 @@ function ConnectedAccountsContent() {
 
     const targetAccount = accounts.find((a) => a.id === channelId);
     const targetWs = workspaces.find((w) => w.id === targetWsId);
+    const targetWsName = getWorkspaceDisplayName(targetWs, locale);
 
     if (willEnable) {
-      showToast(`✓ เปิดใช้งาน "${targetAccount?.displayName}" ใน ${targetWs?.name} แล้ว (พร้อมรับคิวโพสต์)`);
+      showToast(
+        locale === 'th'
+          ? `✓ เปิดใช้งาน "${targetAccount?.displayName}" ใน ${targetWsName} แล้ว (พร้อมรับคิวโพสต์)`
+          : `✓ Enabled "${targetAccount?.displayName}" in ${targetWsName} (Active)`
+      );
     } else {
-      showToast(`ปิดใช้งาน "${targetAccount?.displayName}" ใน ${targetWs?.name} (ระบบจะข้าม API ไม่เกิด Error 100%)`);
+      showToast(
+        locale === 'th'
+          ? `ปิดใช้งาน "${targetAccount?.displayName}" ใน ${targetWsName} (ระบบจะข้าม API ไม่เกิด Error 100%)`
+          : `Disabled "${targetAccount?.displayName}" in ${targetWsName} (Bypassed 100%)`
+      );
     }
   };
 
@@ -655,17 +688,30 @@ function ConnectedAccountsContent() {
     });
 
     setIsManageProjectModalOpen(false);
-    showToast(`✓ บันทึกการตั้งค่าโปรเจกต์ "${editProjectName}" และแมป ${chosenChannelIds.length} ช่องทางสำเร็จ`);
+    showToast(
+      locale === 'th'
+        ? `✓ บันทึกการตั้งค่าโปรเจกต์ "${editProjectName}" และแมป ${chosenChannelIds.length} ช่องทางสำเร็จ`
+        : `✓ Saved channel matrix for "${editProjectName}" with ${chosenChannelIds.length} channels`
+    );
   };
 
   // Delete project
   const handleDeleteProject = (wsId: string) => {
     if (workspaces.length <= 1) {
-      alert('ไม่สามารถลบโปรเจกต์สุดท้ายในระบบได้ ต้องมีอย่างน้อย 1 โปรเจกต์');
+      alert(
+        locale === 'th'
+          ? 'ไม่สามารถลบโปรเจกต์สุดท้ายในระบบได้ ต้องมีอย่างน้อย 1 โปรเจกต์'
+          : 'Cannot delete the only workspace. RetzPost requires at least one workspace.'
+      );
       return;
     }
     const target = workspaces.find((w) => w.id === wsId);
-    if (!confirm(`คุณต้องการลบโปรเจกต์ "${target?.name}" ออกจากระบบหรือไม่? ช่องทางต่างๆ จะยังคงอยู่ใน Master Hub`)) {
+    const targetName = getWorkspaceDisplayName(target, locale);
+    if (!confirm(
+      locale === 'th'
+        ? `คุณต้องการลบโปรเจกต์ "${targetName}" ออกจากระบบหรือไม่? ช่องทางต่างๆ จะยังคงอยู่ใน Master Hub`
+        : `Are you sure you want to remove project "${targetName}"? Channels will remain safe in Master Hub.`
+    )) {
       return;
     }
 
@@ -674,7 +720,11 @@ function ConnectedAccountsContent() {
       setSelectedWorkspaceId('ALL');
     }
     setIsManageProjectModalOpen(false);
-    showToast(`✓ ลบโปรเจกต์ "${target?.name}" เรียบร้อยแล้ว`);
+    showToast(
+      locale === 'th'
+        ? `✓ ลบโปรเจกต์ "${targetName}" เรียบร้อยแล้ว`
+        : `✓ Removed project "${targetName}" successfully`
+    );
   };
 
   // Re-authenticate / Refresh Token
@@ -685,7 +735,11 @@ function ConnectedAccountsContent() {
       )
     );
     setOpenDropdownId(null);
-    showToast(`✓ รีเฟรช Access Token สำหรับ "${acc.displayName}" สำเร็จ (Token Vault ปลอดภัย)`);
+    showToast(
+      locale === 'th'
+        ? `✓ รีเฟรช Access Token สำหรับ "${acc.displayName}" สำเร็จ (Token Vault ปลอดภัย)`
+        : `✓ Access Token refreshed for "${acc.displayName}" (Token Vault active)`
+    );
   };
 
   // Copy Channel ID
@@ -694,7 +748,11 @@ function ConnectedAccountsContent() {
       navigator.clipboard.writeText(acc.channelId);
     }
     setOpenDropdownId(null);
-    showToast(`✓ คัดลอก Channel ID: "${acc.channelId}" แล้ว`);
+    showToast(
+      locale === 'th'
+        ? `✓ คัดลอก Channel ID: "${acc.channelId}" แล้ว`
+        : `✓ Copied Channel ID: "${acc.channelId}"`
+    );
   };
 
   // Disconnect Channel
@@ -706,7 +764,11 @@ function ConnectedAccountsContent() {
     setAccounts((prev) => prev.filter((a) => a.id !== id));
     setDisconnectCandidate(null);
     setOpenDropdownId(null);
-    showToast(`✓ ตัดการเชื่อมต่อช่องทาง "${name}" เรียบร้อยแล้ว`);
+    showToast(
+      locale === 'th'
+        ? `✓ ตัดการเชื่อมต่อช่องทาง "${name}" เรียบร้อยแล้ว`
+        : `✓ Disconnected channel "${name}" successfully`
+    );
   };
 
   // Quick Assign Channel to Project submit
@@ -716,6 +778,8 @@ function ConnectedAccountsContent() {
 
     const targetWs = workspaces.find((w) => w.id === assignTargetWsId);
     if (!targetWs) return;
+
+    const targetWsName = getWorkspaceDisplayName(targetWs, locale);
 
     // Update account's default workspace
     setAccounts((prev) =>
@@ -733,7 +797,11 @@ function ConnectedAccountsContent() {
     }));
 
     setAssignCandidate(null);
-    showToast(`✓ กำหนดช่องทาง "${assignCandidate.displayName}" ให้โปรเจกต์ "${targetWs.name}" เรียบร้อยแล้ว`);
+    showToast(
+      locale === 'th'
+        ? `✓ กำหนดช่องทาง "${assignCandidate.displayName}" ให้โปรเจกต์ "${targetWsName}" เรียบร้อยแล้ว`
+        : `✓ Assigned channel "${assignCandidate.displayName}" to workspace "${targetWsName}" successfully`
+    );
   };
 
   // Connect New Page / Channel submit
@@ -788,7 +856,11 @@ function ConnectedAccountsContent() {
     setIsConnectModalOpen(false);
     setNewPageName('');
     setNewPageHandle('');
-    showToast(`✓ เพิ่มช่องทางจำลอง "${newAccount.displayName}" (Sandbox Demo) เรียบร้อยแล้ว`);
+    showToast(
+      locale === 'th'
+        ? `✓ เพิ่มช่องทางจำลอง "${newAccount.displayName}" (Sandbox Demo) เรียบร้อยแล้ว`
+        : `✓ Added simulated channel "${newAccount.displayName}" (Sandbox Demo) successfully`
+    );
   };
 
   // Open Connect Modal for a specific platform
@@ -813,7 +885,8 @@ function ConnectedAccountsContent() {
     const newProject: WorkspaceItem = {
       id: newWsId,
       name: newProjectName.trim(),
-      category: 'ทั่วไป',
+      category: locale === 'th' ? 'ทั่วไป' : 'General',
+      categoryEn: 'General',
       icon: 'ws-software',
       selectedChannelIds: chosenChannelIds,
     };
@@ -832,7 +905,11 @@ function ConnectedAccountsContent() {
     setSelectedWorkspaceId(newWsId);
     setIsNewProjectModalOpen(false);
     setNewProjectName('');
-    showToast(`✓ สร้างโปรเจกต์ "${newProject.name}" เรียบร้อยแล้ว (เปิดใช้งาน ${chosenChannelIds.length} ช่องทาง)`);
+    showToast(
+      locale === 'th'
+        ? `✓ สร้างโปรเจกต์ "${newProject.name}" เรียบร้อยแล้ว (เปิดใช้งาน ${chosenChannelIds.length} ช่องทาง)`
+        : `✓ Created project "${newProject.name}" successfully (${chosenChannelIds.length} channels enabled)`
+    );
   };
 
   return (
@@ -851,10 +928,14 @@ function ConnectedAccountsContent() {
                 onClick={() => {
                   loadSampleMockData();
                   setAccounts(INITIAL_MASTER_ACCOUNTS);
-                  showToast('โหลดบัญชีโซเชียลตัวอย่าง (FB, IG, YT, TT, X, Lemon8) เรียบร้อยแล้ว');
+                  showToast(
+                    locale === 'th'
+                      ? 'โหลดบัญชีโซเชียลตัวอย่าง (FB, IG, YT, TT, X, Lemon8) เรียบร้อยแล้ว'
+                      : 'Loaded sample channels (FB, IG, YT, TT, X, Lemon8) successfully'
+                  );
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title="โหลดบัญชีตัวอย่างเพื่อพรีวิว"
+                title={locale === 'th' ? 'โหลดบัญชีตัวอย่างเพื่อพรีวิว' : 'Load sample demo channels for preview'}
               >
                 <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
                 <span>{t('accounts.loadDemo')}</span>
@@ -865,10 +946,14 @@ function ConnectedAccountsContent() {
                 onClick={() => {
                   clearAllMockData();
                   setAccounts([]);
-                  showToast('ล้างบัญชีจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate)');
+                  showToast(
+                    locale === 'th'
+                      ? 'ล้างบัญชีจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate)'
+                      : 'Cleared all simulated channels (Clean Slate)'
+                  );
                 }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title="ล้างบัญชีจำลองทั้งหมด"
+                title={locale === 'th' ? 'ล้างบัญชีจำลองทั้งหมด' : 'Clear all simulated channels'}
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>{t('accounts.clearDemo')}</span>
@@ -948,14 +1033,16 @@ function ConnectedAccountsContent() {
                 <div>
                   <div className="flex items-center gap-1.5">
                     <span className="font-sans font-bold text-xs sm:text-sm text-ink-primary">
-                      {selectedWorkspaceId === 'ALL' ? 'Master Hub (รวมทุกบัญชี)' : activeWorkspace?.name}
+                      {selectedWorkspaceId === 'ALL'
+                        ? (locale === 'th' ? 'Master Hub (รวมทุกบัญชี)' : 'Master Hub (All Channels)')
+                        : getWorkspaceDisplayName(activeWorkspace, locale)}
                     </span>
                     <ChevronDown className="w-3.5 h-3.5 text-ink-secondary group-hover:text-ink-primary transition-transform duration-150 shrink-0" />
                   </div>
                   <p className="text-[10px] font-mono text-ink-secondary">
                     {selectedWorkspaceId === 'ALL'
-                      ? `${accounts.length} ช่องทางในระบบ • สรุปภาพรวม`
-                      : `${currentProjectActiveCount} ช่องทางที่เปิดใช้งาน`}
+                      ? (locale === 'th' ? `${accounts.length} ช่องทางในระบบ • สรุปภาพรวม` : `${accounts.length} system channels • Overview`)
+                      : (locale === 'th' ? `${currentProjectActiveCount} ช่องทางที่เปิดใช้งาน` : `${currentProjectActiveCount} active channels`)}
                   </p>
                 </div>
               </button>
@@ -964,7 +1051,7 @@ function ConnectedAccountsContent() {
               {isProjectDropdownOpen && (
                 <div className="absolute left-0 top-full mt-1.5 w-72 bg-paper-raised border border-border-strong rounded-editorial shadow-xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 text-xs font-mono space-y-1">
                   <div className="px-2 py-1 text-[9px] uppercase text-ink-secondary font-bold">
-                    สลับขอบเขตโปรเจกต์ (Select Project Scope):
+                    {locale === 'th' ? 'สลับขอบเขตโปรเจกต์ (Select Project Scope):' : 'Select Project Scope:'}
                   </div>
 
                   {/* Master Hub Option */}
@@ -982,8 +1069,12 @@ function ConnectedAccountsContent() {
                         <Globe className="w-3.5 h-3.5" />
                       </div>
                       <div className="truncate">
-                        <p className="font-semibold leading-tight truncate">Master Hub (รวมทุกบัญชี)</p>
-                        <p className="text-[10px] text-ink-secondary">ทุกช่องทาง ({accounts.length} endpoints)</p>
+                        <p className="font-semibold leading-tight truncate">
+                          {locale === 'th' ? 'Master Hub (รวมทุกบัญชี)' : 'Master Hub (All Channels)'}
+                        </p>
+                        <p className="text-[10px] text-ink-secondary">
+                          {locale === 'th' ? `ทุกช่องทาง (${accounts.length} endpoints)` : `All endpoints (${accounts.length} channels)`}
+                        </p>
                       </div>
                     </div>
                     {selectedWorkspaceId === 'ALL' && <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />}
@@ -1010,8 +1101,10 @@ function ConnectedAccountsContent() {
                         <div className="flex items-center gap-2 truncate">
                           <Sticker name={ws.icon} size="xs" inline />
                           <div className="truncate">
-                            <p className="font-semibold leading-tight truncate">{ws.name}</p>
-                            <p className="text-[10px] text-ink-secondary">{wsCount} ช่องทางเปิดใช้งาน</p>
+                            <p className="font-semibold leading-tight truncate">{getWorkspaceDisplayName(ws, locale)}</p>
+                            <p className="text-[10px] text-ink-secondary">
+                              {wsCount} {locale === 'th' ? 'ช่องทางเปิดใช้งาน' : 'channels active'}
+                            </p>
                           </div>
                         </div>
                         {isSelected && <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />}
@@ -1029,7 +1122,7 @@ function ConnectedAccountsContent() {
                       className="w-full flex items-center gap-2 p-1.5 rounded hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary text-left cursor-pointer text-[11px]"
                     >
                       <Sliders className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
-                      <span>จัดการโปรเจกต์ & แมปช่องทาง...</span>
+                      <span>{locale === 'th' ? 'จัดการโปรเจกต์ & แมปช่องทาง...' : 'Manage Workspace & Map Channels...'}</span>
                     </button>
                     <button
                       type="button"
@@ -1040,7 +1133,7 @@ function ConnectedAccountsContent() {
                       className="w-full flex items-center gap-2 p-1.5 rounded hover:bg-paper-subtle text-brand-indigo text-left cursor-pointer font-semibold text-[11px]"
                     >
                       <Plus className="w-3.5 h-3.5 shrink-0" />
-                      <span>สร้างโปรเจกต์ใหม่...</span>
+                      <span>{locale === 'th' ? 'สร้างโปรเจกต์ใหม่...' : 'Create New Project...'}</span>
                     </button>
                   </div>
                 </div>
@@ -1052,11 +1145,17 @@ function ConnectedAccountsContent() {
               <div className="flex flex-wrap items-center gap-2 text-xs font-mono">
                 <span className="px-2.5 py-1 rounded-full bg-paper-canvas border border-border-rule text-ink-secondary flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-semantic-success animate-pulse" />
-                  <span>{currentProjectActiveCount} จาก {accounts.length} ช่องทางเปิดใช้</span>
+                  <span>
+                    {currentProjectActiveCount} {locale === 'th' ? 'จาก' : 'of'} {accounts.length} {locale === 'th' ? 'ช่องทางเปิดใช้' : 'channels active'}
+                  </span>
                 </span>
                 <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-900 border border-emerald-200 flex items-center gap-1.5">
                   <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                  <span>Zero-Touch: {currentProjectBypassedCount} ช่องทางถูกข้าม 100%</span>
+                  <span>
+                    {locale === 'th'
+                      ? `Zero-Touch: ${currentProjectBypassedCount} ช่องทางถูกข้าม 100%`
+                      : `Zero-Touch: ${currentProjectBypassedCount} channels bypassed 100%`}
+                  </span>
                 </span>
               </div>
             )}
@@ -1069,7 +1168,7 @@ function ConnectedAccountsContent() {
                 type="button"
                 onClick={() => handleOpenManageProjectModal(selectedWorkspaceId)}
                 className="px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-sans font-medium flex items-center gap-1.5 transition-colors cursor-pointer text-ink-primary shadow-2xs"
-                title="แก้ไขชื่อ หมวดหมู่ และติ๊กแมปช่องทางของโปรเจกต์นี้"
+                title={locale === 'th' ? 'แก้ไขชื่อ หมวดหมู่ และติ๊กแมปช่องทางของโปรเจกต์นี้' : 'Edit name, category, and map channels for this workspace'}
               >
                 <Sliders className="w-3.5 h-3.5 text-brand-indigo" />
                 <span>{locale === 'th' ? 'แมปช่องทางโปรเจกต์' : 'Map Channels'}</span>
@@ -1095,8 +1194,16 @@ function ConnectedAccountsContent() {
             {[
               { id: 'ALL', label: locale === 'th' ? `ทั้งหมด (${accounts.length})` : `All (${accounts.length})` },
               ...(selectedWorkspaceId !== 'ALL' ? [
-                { id: 'ACTIVE', label: locale === 'th' ? `✓ เปิดใน ${activeWorkspace?.name} (${currentProjectActiveCount})` : `✓ Active (${currentProjectActiveCount})` },
-                { id: 'BYPASSED', label: locale === 'th' ? `ข้าม API (${currentProjectBypassedCount})` : `Bypassed (${currentProjectBypassedCount})` },
+                {
+                  id: 'ACTIVE',
+                  label: locale === 'th'
+                    ? `✓ เปิดใน ${getWorkspaceDisplayName(activeWorkspace, locale)} (${currentProjectActiveCount})`
+                    : `✓ Active in ${getWorkspaceDisplayName(activeWorkspace, locale)} (${currentProjectActiveCount})`
+                },
+                {
+                  id: 'BYPASSED',
+                  label: locale === 'th' ? `ข้าม API (${currentProjectBypassedCount})` : `Bypassed (${currentProjectBypassedCount})`
+                },
               ] : [])
             ].map((tab) => (
               <button
@@ -1177,10 +1284,10 @@ function ConnectedAccountsContent() {
         <EditorialEmptyState
           stickerName="vault-keyhole"
           badgeText={isMockCleared ? 'Social Vault • Clean Slate' : 'Zero Channels'}
-          title="ยังไม่มีช่องทางโซเชียลที่เชื่อมต่อในระบบ"
-          description="เชื่อมต่อเพจ Facebook, บัญชี Instagram Creator, ช่อง YouTube, TikTok, X และ Lemon8 เพื่อเริ่มต้นเผยแพร่ผลงานแบบ Multi-Format ได้ในคลิกเดียว"
-          tipText="RetzPost เข้ารหัส Token ด้วย AES-256 GCM ปลอดภัยตามมาตรฐาน Meta, Google และ TikTok Enterprise SLA"
-          actionLabel="+ เชื่อมต่อช่องทางแรก (Connect Channel)"
+          title={locale === 'th' ? 'ยังไม่มีช่องทางโซเชียลที่เชื่อมต่อในระบบ' : 'No social media channels connected yet'}
+          description={locale === 'th' ? 'เชื่อมต่อเพจ Facebook, บัญชี Instagram Creator, ช่อง YouTube, TikTok, X และ Lemon8 เพื่อเริ่มต้นเผยแพร่ผลงานแบบ Multi-Format ได้ในคลิกเดียว' : 'Connect Facebook pages, Instagram Creator accounts, YouTube channels, TikTok, X, and Lemon8 to unlock automated multi-format distribution.'}
+          tipText={locale === 'th' ? 'RetzPost เข้ารหัส Token ด้วย AES-256 GCM ปลอดภัยตามมาตรฐาน Meta, Google และ TikTok Enterprise SLA' : 'RetzPost encrypts all tokens with AES-256 GCM and connects directly via Meta, Google, and TikTok Enterprise APIs.'}
+          actionLabel={locale === 'th' ? '+ เชื่อมต่อช่องทางแรก (Connect Channel)' : '+ Connect First Channel'}
           onActionClick={() => handleOpenConnect('FACEBOOK')}
           onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setAccounts(INITIAL_MASTER_ACCOUNTS); } : undefined}
         />
@@ -1229,7 +1336,7 @@ function ConnectedAccountsContent() {
                         type="button"
                         onClick={() => handleBatchTogglePlatform(platform.id, true)}
                         className="px-2 py-1 rounded bg-paper-canvas hover:bg-emerald-50 text-emerald-800 border border-border-rule hover:border-emerald-300 text-xs font-sans font-medium transition-colors cursor-pointer shadow-2xs"
-                        title={locale === 'th' ? `เปิดทุกช่องทางของ ${platform.name} สำหรับ ${activeWorkspace?.name}` : `Enable all ${platform.name} for ${activeWorkspace?.name}`}
+                        title={locale === 'th' ? `เปิดทุกช่องทางของ ${platform.name} สำหรับ ${getWorkspaceDisplayName(activeWorkspace, locale)}` : `Enable all ${platform.name} for ${getWorkspaceDisplayName(activeWorkspace, locale)}`}
                       >
                         {t('accounts.openAll')}
                       </button>
@@ -1237,7 +1344,7 @@ function ConnectedAccountsContent() {
                         type="button"
                         onClick={() => handleBatchTogglePlatform(platform.id, false)}
                         className="px-2 py-1 rounded bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium transition-colors cursor-pointer shadow-2xs"
-                        title={locale === 'th' ? `ปิดทุกช่องทางของ ${platform.name} สำหรับ ${activeWorkspace?.name}` : `Disable all ${platform.name} for ${activeWorkspace?.name}`}
+                        title={locale === 'th' ? `ปิดทุกช่องทางของ ${platform.name} สำหรับ ${getWorkspaceDisplayName(activeWorkspace, locale)}` : `Disable all ${platform.name} for ${getWorkspaceDisplayName(activeWorkspace, locale)}`}
                       >
                         {t('accounts.closeAll')}
                       </button>
@@ -1255,17 +1362,7 @@ function ConnectedAccountsContent() {
                     <span className="hidden sm:inline">
                       {locale === 'th'
                         ? platform.addButtonText
-                        : platform.id === 'FACEBOOK'
-                        ? t('accounts.addFacebook')
-                        : platform.id === 'INSTAGRAM'
-                        ? t('accounts.addInstagram')
-                        : platform.id === 'TIKTOK'
-                        ? t('accounts.addTiktok')
-                        : platform.id === 'YOUTUBE'
-                        ? t('accounts.addYoutube')
-                        : platform.id === 'X'
-                        ? t('accounts.addX')
-                        : t('accounts.addLemon8')}
+                        : platform.addButtonTextEn}
                     </span>
                     <span className="sm:hidden">{locale === 'th' ? 'เพิ่ม' : 'Add'}</span>
                   </button>
@@ -1370,8 +1467,8 @@ function ConnectedAccountsContent() {
                             }`}
                             title={
                               isEnabledInCurrentWs
-                                ? (locale === 'th' ? `คลิกเพื่อปิดใช้งานใน ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name} (Bypass ข้าม API ไม่เกิด Error)` : `Click to bypass in ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name}`)
-                                : (locale === 'th' ? `คลิกเพื่อเปิดใช้งานใน ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name}` : `Click to activate in ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name}`)
+                                ? (locale === 'th' ? `คลิกเพื่อปิดใช้งานใน ${selectedWorkspaceId === 'ALL' ? getWorkspaceDisplayName(defaultWsObj, locale) : getWorkspaceDisplayName(activeWorkspace, locale)} (Bypass ข้าม API ไม่เกิด Error)` : `Click to bypass in ${selectedWorkspaceId === 'ALL' ? getWorkspaceDisplayName(defaultWsObj, locale) : getWorkspaceDisplayName(activeWorkspace, locale)}`)
+                                : (locale === 'th' ? `คลิกเพื่อเปิดใช้งานใน ${selectedWorkspaceId === 'ALL' ? getWorkspaceDisplayName(defaultWsObj, locale) : getWorkspaceDisplayName(activeWorkspace, locale)}` : `Click to activate in ${selectedWorkspaceId === 'ALL' ? getWorkspaceDisplayName(defaultWsObj, locale) : getWorkspaceDisplayName(activeWorkspace, locale)}`)
                             }
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${
@@ -1390,7 +1487,7 @@ function ConnectedAccountsContent() {
                               type="button"
                               onClick={() => setOpenDropdownId(openDropdownId === acc.id ? null : acc.id)}
                               className="w-8 h-8 rounded-editorial border border-border-rule hover:border-brand-indigo/60 bg-paper-canvas hover:bg-paper-subtle flex items-center justify-center text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer shadow-2xs"
-                              title="ตัวเลือกเพิ่มเติม (...)"
+                              title={locale === 'th' ? 'ตัวเลือกเพิ่มเติม (...)' : 'More options (...)'}
                             >
                               <MoreHorizontal className="w-4 h-4" />
                             </button>
@@ -1405,7 +1502,7 @@ function ConnectedAccountsContent() {
                               >
                                 <div className="px-2 py-1 text-[9px] font-mono uppercase text-ink-secondary font-bold border-b border-border-rule mb-1 flex items-center justify-between">
                                   <span>{acc.platform} OPTIONS</span>
-                                  <span className="text-[8px] text-brand-indigo truncate max-w-[100px]">{defaultWsObj?.name}</span>
+                                  <span className="text-[8px] text-brand-indigo truncate max-w-[100px]">{getWorkspaceDisplayName(defaultWsObj, locale)}</span>
                                 </div>
 
                                 <button
@@ -1414,7 +1511,7 @@ function ConnectedAccountsContent() {
                                   className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
                                 >
                                   <RefreshCw className="w-3.5 h-3.5 text-brand-indigo shrink-0" />
-                                  <span>รีเฟรช Token (Sync)</span>
+                                  <span>{locale === 'th' ? 'รีเฟรช Token (Sync)' : 'Refresh Token (Sync)'}</span>
                                 </button>
 
                                 <button
@@ -1426,7 +1523,7 @@ function ConnectedAccountsContent() {
                                   className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
                                 >
                                   <Activity className="w-3.5 h-3.5 text-semantic-info shrink-0" />
-                                  <span>ทดสอบ API Connection</span>
+                                  <span>{locale === 'th' ? 'ทดสอบ API Connection' : 'API Connection Diagnostic'}</span>
                                 </button>
 
                                 <button
@@ -1439,7 +1536,7 @@ function ConnectedAccountsContent() {
                                   className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
                                 >
                                   <Building2 className="w-3.5 h-3.5 text-accent-terracotta shrink-0" />
-                                  <span>กำหนดโปรเจกต์หลัก...</span>
+                                  <span>{locale === 'th' ? 'กำหนดโปรเจกต์หลัก...' : 'Assign Primary Project...'}</span>
                                 </button>
 
                                 <button
@@ -1448,7 +1545,7 @@ function ConnectedAccountsContent() {
                                   className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
                                 >
                                   <Copy className="w-3.5 h-3.5 text-ink-secondary shrink-0" />
-                                  <span>คัดลอก Channel ID</span>
+                                  <span>{locale === 'th' ? 'คัดลอก Channel ID' : 'Copy Channel ID'}</span>
                                 </button>
 
                                 {acc.url && (
@@ -1460,7 +1557,7 @@ function ConnectedAccountsContent() {
                                     className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-paper-subtle text-ink-primary text-left transition-colors cursor-pointer"
                                   >
                                     <ExternalLink className="w-3.5 h-3.5 text-ink-secondary shrink-0" />
-                                    <span>เปิดดูหน้าเพจจริง</span>
+                                    <span>{locale === 'th' ? 'เปิดดูหน้าเพจจริง' : 'View Live Channel'}</span>
                                   </a>
                                 )}
 
@@ -1474,7 +1571,7 @@ function ConnectedAccountsContent() {
                                     className="w-full flex items-center gap-2 px-2.5 py-1.5 rounded hover:bg-semantic-error/10 text-semantic-error text-left transition-colors cursor-pointer font-semibold"
                                   >
                                     <Trash2 className="w-3.5 h-3.5 shrink-0" />
-                                    <span>ยกเลิกการเชื่อมต่อ</span>
+                                    <span>{locale === 'th' ? 'ยกเลิกการเชื่อมต่อ' : 'Disconnect Channel'}</span>
                                   </button>
                                 </div>
                               </div>
@@ -1566,12 +1663,14 @@ function ConnectedAccountsContent() {
                     <span>{locale === 'th' ? `ระบบเชื่อมต่อทางการผ่าน ${connectPlatform} API` : `Official OAuth 2.0 via ${connectPlatform} API`}</span>
                   </div>
                   <p className="text-xs text-ink-secondary leading-relaxed">
-                    เมื่อกดปุ่มด้านล่าง ระบบจะส่งต่อไปยังหน้าเข้าสู่ระบบทางการของ {connectPlatform} เพื่อให้คุณเข้าสู่ระบบและอนุญาตสิทธิ์การจัดการโพสต์
+                    {locale === 'th'
+                      ? `เมื่อกดปุ่มด้านล่าง ระบบจะส่งต่อไปยังหน้าเข้าสู่ระบบทางการของ ${connectPlatform} เพื่อให้คุณเข้าสู่ระบบและอนุญาตสิทธิ์การจัดการโพสต์`
+                      : `Clicking below securely forwards you to ${connectPlatform}'s official authorization gateway to grant publishing permissions.`}
                   </p>
                   <ul className="text-[11px] font-mono text-ink-muted list-disc list-inside space-y-0.5">
-                    <li>เข้าสู่ระบบบัญชีของคุณบน {connectPlatform}</li>
-                    <li>เลือกเพจ / ช่องที่คุณมีสิทธิ์เป็นแอดมิน</li>
-                    <li>ระบบจะดึง Long-Lived Access Token จัดเก็บใน Token Vault อัตโนมัติ</li>
+                    <li>{locale === 'th' ? `เข้าสู่ระบบบัญชีของคุณบน ${connectPlatform}` : `Log in to your ${connectPlatform} account`}</li>
+                    <li>{locale === 'th' ? 'เลือกเพจ / ช่องที่คุณมีสิทธิ์เป็นแอดมิน' : 'Select pages / channels where you have Admin access'}</li>
+                    <li>{locale === 'th' ? 'ระบบจะดึง Long-Lived Access Token จัดเก็บใน Token Vault อัตโนมัติ' : 'Long-Lived Access Tokens are automatically encrypted in Token Vault'}</li>
                   </ul>
                 </div>
 
@@ -1587,7 +1686,7 @@ function ConnectedAccountsContent() {
                       className="w-full py-2.5 px-4 rounded-editorial bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
                     >
                       <FacebookLogo size={18} />
-                      <span>เข้าสู่ระบบด้วย Facebook (Log in with Facebook)</span>
+                      <span>{locale === 'th' ? 'เข้าสู่ระบบด้วย Facebook (Log in with Facebook)' : 'Log in with Facebook'}</span>
                     </button>
                   )}
 
@@ -1601,7 +1700,7 @@ function ConnectedAccountsContent() {
                       className="w-full py-2.5 px-4 rounded-editorial bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-opacity cursor-pointer"
                     >
                       <InstagramLogo size={18} />
-                      <span>เข้าสู่ระบบ Instagram ผ่าน Meta Business</span>
+                      <span>{locale === 'th' ? 'เข้าสู่ระบบ Instagram ผ่าน Meta Business' : 'Log in to Instagram via Meta Business'}</span>
                     </button>
                   )}
 
@@ -1615,7 +1714,7 @@ function ConnectedAccountsContent() {
                       className="w-full py-2.5 px-4 rounded-editorial bg-[#FF0000] hover:bg-[#e60000] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
                     >
                       <YouTubeLogo size={18} />
-                      <span>เข้าสู่ระบบด้วย Google / YouTube Account</span>
+                      <span>{locale === 'th' ? 'เข้าสู่ระบบด้วย Google / YouTube Account' : 'Log in with Google / YouTube Account'}</span>
                     </button>
                   )}
 
@@ -1629,15 +1728,17 @@ function ConnectedAccountsContent() {
                       className="w-full py-2.5 px-4 rounded-editorial bg-black hover:bg-neutral-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
                     >
                       <TikTokLogo size={18} />
-                      <span>เข้าสู่ระบบด้วย TikTok for Business</span>
+                      <span>{locale === 'th' ? 'เข้าสู่ระบบด้วย TikTok for Business' : 'Log in with TikTok for Business'}</span>
                     </button>
                   )}
 
                   {(connectPlatform === 'X' || connectPlatform === 'LEMON8') && (
                     <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-editorial text-xs text-amber-800 dark:text-amber-200">
-                      <p className="font-bold mb-1">ต้องการ Developer API Access</p>
+                      <p className="font-bold mb-1">{locale === 'th' ? 'ต้องการ Developer API Access' : 'Developer API Access Required'}</p>
                       <p className="text-[11px] leading-relaxed">
-                        แพลตฟอร์ม {connectPlatform} ต้องใช้ API Client Key & Secret เพิ่มเติมในระบบ หรือสามารถสลับไปที่แท็บ <strong>&quot;Sandbox Mode&quot;</strong> เพื่อทดสอบฟีเจอร์ได้ทันที
+                        {locale === 'th'
+                          ? `แพลตฟอร์ม ${connectPlatform} ต้องใช้ API Client Key & Secret เพิ่มเติมในระบบ หรือสามารถสลับไปที่แท็บ "Sandbox Mode" เพื่อทดสอบฟีเจอร์ได้ทันที`
+                          : `The ${connectPlatform} platform requires live developer credentials. Switch to "Sandbox Mode" to test UI interactions immediately.`}
                       </p>
                     </div>
                   )}
@@ -1648,7 +1749,7 @@ function ConnectedAccountsContent() {
                     <Lock className="w-3 h-3 text-semantic-success" />
                     <span>Envelope Encryption (AES-256)</span>
                   </span>
-                  <span>พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)</span>
+                  <span>{locale === 'th' ? 'พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)' : 'PDPA / GDPR Compliant'}</span>
                 </div>
               </div>
             )}
@@ -1662,14 +1763,16 @@ function ConnectedAccountsContent() {
                     <span>{locale === 'th' ? 'โหมดจำลองข้อมูล (Sandbox / UI Prototype)' : 'Simulation Sandbox Mode'}</span>
                   </div>
                   <p className="text-[11px] leading-relaxed">
-                    โหมดนี้เหมาะสำหรับทดลองจัดเลย์เอาต์หน้าจอ, ลองวางปฏิทิน และทดสอบผูกช่องทางเข้า Workspace โดย<strong>ไม่ต้องใช้บัญชีโซเชียลจริง</strong> (การกรอกชื่อจะสร้างการ์ดจำลองในระบบเท่านั้น)
+                    {locale === 'th'
+                      ? 'โหมดนี้เหมาะสำหรับทดลองจัดเลย์เอาต์หน้าจอ, ลองวางปฏิทิน และทดสอบผูกช่องทางเข้า Workspace โดยไม่ต้องใช้บัญชีโซเชียลจริง (การกรอกชื่อจะสร้างการ์ดจำลองในระบบเท่านั้น)'
+                      : 'Simulated sandbox mode allows previewing layouts, scheduling, and channel-to-workspace mapping without live credentials.'}
                   </p>
                 </div>
 
                 {/* Quick Preset Selector */}
                 <div className="space-y-1.5">
                   <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold block">
-                    เลือกเพจตัวอย่างสำเร็จรูป:
+                    {locale === 'th' ? 'เลือกเพจตัวอย่างสำเร็จรูป:' : 'Select sample preset page:'}
                   </span>
                   <div className="grid grid-cols-2 gap-1.5 text-xs font-mono">
                     {connectPlatform === 'FACEBOOK' ? (
@@ -1794,12 +1897,12 @@ function ConnectedAccountsContent() {
                 <form onSubmit={handleConnectSubmit} className="space-y-3 text-xs font-mono">
                   <div>
                     <label className="block text-[11px] uppercase text-ink-secondary mb-1">
-                      ชื่อเพจ / ช่องทางจำลอง (Display Name) *
+                      {locale === 'th' ? 'ชื่อเพจ / ช่องทางจำลอง (Display Name) *' : 'Display Name *'}
                     </label>
                     <input
                       type="text"
                       required
-                      placeholder="เช่น: Official Brand Lounge"
+                      placeholder={locale === 'th' ? 'เช่น: Official Brand Lounge' : 'e.g., Official Brand Lounge'}
                       value={newPageName}
                       onChange={(e) => setNewPageName(e.target.value)}
                       className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
@@ -1808,11 +1911,11 @@ function ConnectedAccountsContent() {
 
                   <div>
                     <label className="block text-[11px] uppercase text-ink-secondary mb-1">
-                      แฮนเดิล / Username จำลอง (Handle)
+                      {locale === 'th' ? 'แฮนเดิล / Username จำลอง (Handle)' : 'Handle / Username'}
                     </label>
                     <input
                       type="text"
-                      placeholder="เช่น: @bangkok_gazette"
+                      placeholder={locale === 'th' ? 'เช่น: @bangkok_gazette' : 'e.g., @bangkok_gazette'}
                       value={newPageHandle}
                       onChange={(e) => setNewPageHandle(e.target.value)}
                       className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary focus:outline-hidden focus:border-brand-indigo"
@@ -1825,14 +1928,14 @@ function ConnectedAccountsContent() {
                       onClick={() => setIsConnectModalOpen(false)}
                       className="px-3.5 py-2 border border-border-rule rounded-editorial text-ink-secondary hover:text-ink-primary cursor-pointer"
                     >
-                      ยกเลิก
+                      {locale === 'th' ? 'ยกเลิก' : 'Cancel'}
                     </button>
                     <button
                       type="submit"
                       className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors flex items-center gap-1.5"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>สร้างช่องทางจำลอง (Add Mock)</span>
+                      <span>{locale === 'th' ? 'สร้างช่องทางจำลอง (Add Mock)' : 'Create Simulated Channel'}</span>
                     </button>
                   </div>
                 </form>
@@ -1897,7 +2000,7 @@ function ConnectedAccountsContent() {
                     const wsCount = accounts.filter((a) => channelSelections[`${ws.id}_${a.id}`]).length;
                     return (
                       <option key={ws.id} value={ws.id}>
-                        {ws.name} ({wsCount} {locale === 'th' ? 'ช่องทาง' : 'channels'})
+                        {getWorkspaceDisplayName(ws, locale)} ({wsCount} {locale === 'th' ? 'ช่องทาง' : 'channels'})
                       </option>
                     );
                   })}
@@ -1926,10 +2029,10 @@ function ConnectedAccountsContent() {
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="block text-[11px] uppercase text-ink-secondary font-bold">
-                      ติ๊กเลือกช่องทางที่เปิดใช้งานในโปรเจกต์นี้:
+                      {locale === 'th' ? 'ติ๊กเลือกช่องทางที่เปิดใช้งานในโปรเจกต์นี้:' : 'Select channels enabled for this workspace:'}
                     </span>
                     <span className="text-[10px] text-ink-muted">
-                      {Object.values(editProjectChannels).filter(Boolean).length} จาก {accounts.length} ช่องทางเปิดใช้งาน
+                      {Object.values(editProjectChannels).filter(Boolean).length} {locale === 'th' ? 'จาก' : 'of'} {accounts.length} {locale === 'th' ? 'ช่องทางเปิดใช้งาน' : 'channels active'}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-[10px]">
@@ -1942,7 +2045,7 @@ function ConnectedAccountsContent() {
                       }}
                       className="text-brand-indigo hover:underline cursor-pointer"
                     >
-                      เลือกทั้งหมด
+                      {locale === 'th' ? 'เลือกทั้งหมด' : 'Select All'}
                     </button>
                     <span>|</span>
                     <button
@@ -1950,7 +2053,7 @@ function ConnectedAccountsContent() {
                       onClick={() => setEditProjectChannels({})}
                       className="text-ink-muted hover:text-ink-primary cursor-pointer"
                     >
-                      ล้างทั้งหมด
+                      {locale === 'th' ? 'ล้างทั้งหมด' : 'Deselect All'}
                     </button>
                   </div>
                 </div>
@@ -2023,7 +2126,11 @@ function ConnectedAccountsContent() {
               <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-editorial text-[11px] text-emerald-900 flex items-start gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Zero-Touch Bypass:</strong> ช่องทางที่ไม่ได้ติ๊กเลือกจะถูกกันออกจากการทำงานของระบบอย่างสิ้นเชิง ทำให้หน้าเขียนโพสต์และคิวทำงานสะอาด ไม่มี Error ข้ามโปรเจกต์
+                  {locale === 'th' ? (
+                    <><strong>Zero-Touch Bypass:</strong> ช่องทางที่ไม่ได้ติ๊กเลือกจะถูกกันออกจากการทำงานของระบบอย่างสิ้นเชิง ทำให้หน้าเขียนโพสต์และคิวทำงานสะอาด ไม่มี Error ข้ามโปรเจกต์</>
+                  ) : (
+                    <><strong>Zero-Touch Bypass:</strong> Unselected channels are strictly excluded from Composer and automated queues, preventing cross-posting errors.</>
+                  )}
                 </span>
               </div>
 
@@ -2034,7 +2141,7 @@ function ConnectedAccountsContent() {
                   onClick={() => handleDeleteProject(editingProjectId)}
                   className="px-3 py-1.5 text-semantic-error hover:bg-semantic-error/10 rounded-editorial transition-colors cursor-pointer text-xs"
                 >
-                  ลบโปรเจกต์นี้
+                  {locale === 'th' ? 'ลบโปรเจกต์นี้' : 'Delete Workspace'}
                 </button>
 
                 <div className="flex items-center gap-2">
@@ -2043,13 +2150,13 @@ function ConnectedAccountsContent() {
                     onClick={() => setIsManageProjectModalOpen(false)}
                     className="px-3.5 py-1.5 border border-border-rule rounded-editorial text-ink-secondary hover:text-ink-primary cursor-pointer text-xs"
                   >
-                    ยกเลิก
+                    {locale === 'th' ? 'ยกเลิก' : 'Cancel'}
                   </button>
                   <button
                     type="submit"
                     className="px-4 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors text-xs"
                   >
-                    บันทึกและปรับใช้
+                    {locale === 'th' ? 'บันทึกและปรับใช้' : 'Save Changes'}
                   </button>
                 </div>
               </div>
@@ -2095,7 +2202,7 @@ function ConnectedAccountsContent() {
 
             <form onSubmit={handleAssignChannelSubmit} className="space-y-3.5 text-xs font-mono">
               <span className="text-[11px] uppercase text-ink-secondary block font-bold">
-                เลือกโปรเจกต์หลักที่ต้องการผูกช่องทางนี้:
+                {locale === 'th' ? 'เลือกโปรเจกต์หลักที่ต้องการผูกช่องทางนี้:' : 'Select primary workspace for this channel:'}
               </span>
 
               <div className="space-y-1.5">
@@ -2119,8 +2226,8 @@ function ConnectedAccountsContent() {
                       />
                       <Sticker name={ws.icon} size="xs" inline />
                       <div className="truncate">
-                        <p className="font-bold text-ink-primary truncate">{ws.name}</p>
-                        <p className="text-[10px] text-ink-secondary">{ws.category}</p>
+                        <p className="font-bold text-ink-primary truncate">{getWorkspaceDisplayName(ws, locale)}</p>
+                        <p className="text-[10px] text-ink-secondary">{locale === 'th' ? ws.category : (ws.categoryEn || ws.category)}</p>
                       </div>
                     </div>
                     {assignTargetWsId === ws.id && <Check className="w-3.5 h-3.5 text-brand-indigo shrink-0" />}
@@ -2134,13 +2241,13 @@ function ConnectedAccountsContent() {
                   onClick={() => setAssignCandidate(null)}
                   className="px-3.5 py-1.5 border border-border-rule rounded-editorial text-ink-secondary hover:text-ink-primary cursor-pointer"
                 >
-                  ยกเลิก
+                  {locale === 'th' ? 'ยกเลิก' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors"
                 >
-                  บันทึกการผูกโปรเจกต์
+                  {locale === 'th' ? 'บันทึกการผูกโปรเจกต์' : 'Save Workspace Mapping'}
                 </button>
               </div>
             </form>
@@ -2193,7 +2300,9 @@ function ConnectedAccountsContent() {
                   <span>Latency: 42ms</span>
                 </div>
                 <p className="text-[11px] text-ink-secondary">
-                  Meta Graph API / Endpoints ตอบสนองปกติ พร้อมส่งข้อมูลไปยังฟีดทันที
+                  {locale === 'th'
+                    ? 'Meta Graph API / Endpoints ตอบสนองปกติ พร้อมส่งข้อมูลไปยังฟีดทันที'
+                    : 'Meta Graph API & Endpoints responsive (200 OK). Ready for dispatch.'}
                 </p>
               </div>
 
@@ -2223,7 +2332,7 @@ function ConnectedAccountsContent() {
                 onClick={() => setTestApiAccount(null)}
                 className="px-4 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial font-mono text-xs font-semibold cursor-pointer shadow-xs transition-colors"
               >
-                ปิดหน้าต่าง
+                {locale === 'th' ? 'ปิดหน้าต่าง' : 'Close'}
               </button>
             </div>
           </div>
@@ -2257,7 +2366,11 @@ function ConnectedAccountsContent() {
             </div>
 
             <p className="text-xs text-ink-secondary leading-relaxed font-sans">
-              คุณต้องการตัดการเชื่อมต่อเพจ <strong>{disconnectCandidate.displayName}</strong> ออกจากระบบ RetzPost ใช่หรือไม่? บัญชีนี้จะไม่สามารถรับคิวหรือยิงโพสต์อัตโนมัติได้จนกว่าจะเชื่อมต่อใหม่
+              {locale === 'th' ? (
+                <>คุณต้องการตัดการเชื่อมต่อเพจ <strong>{disconnectCandidate.displayName}</strong> ออกจากระบบ RetzPost ใช่หรือไม่? บัญชีนี้จะไม่สามารถรับคิวหรือยิงโพสต์อัตโนมัติได้จนกว่าจะเชื่อมต่อใหม่</>
+              ) : (
+                <>Are you sure you want to disconnect channel <strong>{disconnectCandidate.displayName}</strong> from RetzPost? Automated publishing queues will be halted until reconnected.</>
+              )}
             </p>
 
             <div className="pt-2 flex items-center justify-end gap-2 border-t border-border-rule text-xs font-mono">
@@ -2266,14 +2379,14 @@ function ConnectedAccountsContent() {
                 onClick={() => setDisconnectCandidate(null)}
                 className="px-3.5 py-2 border border-border-rule rounded-editorial text-ink-secondary hover:text-ink-primary cursor-pointer"
               >
-                ยกเลิก
+                {locale === 'th' ? 'ยกเลิก' : 'Cancel'}
               </button>
               <button
                 type="button"
                 onClick={handleConfirmDisconnect}
                 className="px-4 py-2 bg-semantic-error hover:bg-semantic-error/90 text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors"
               >
-                ตัดการเชื่อมต่อทันที
+                {locale === 'th' ? 'ตัดการเชื่อมต่อทันที' : 'Disconnect Channel'}
               </button>
             </div>
           </div>
@@ -2321,7 +2434,7 @@ function ConnectedAccountsContent() {
               {/* Project Name */}
               <div>
                 <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1">
-                  ชื่อโปรเจกต์ (Project Name) *
+                  {locale === 'th' ? 'ชื่อโปรเจกต์ (Project Name) *' : 'Project Name *'}
                 </label>
                 <input
                   type="text"
@@ -2334,13 +2447,11 @@ function ConnectedAccountsContent() {
                 />
               </div>
 
-
-
               {/* Channel Checkbox Directory */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="block font-mono text-[11px] uppercase text-ink-secondary font-bold">
-                    ติ๊กเลือกช่องทางที่ต้องการเปิดใช้งานในโปรเจกต์นี้:
+                    {locale === 'th' ? 'ติ๊กเลือกช่องทางที่ต้องการเปิดใช้งานในโปรเจกต์นี้:' : 'Select channels to enable in this workspace:'}
                   </label>
                   <div className="flex items-center gap-2 text-[10px] font-mono">
                     <button
@@ -2352,7 +2463,7 @@ function ConnectedAccountsContent() {
                       }}
                       className="text-brand-indigo hover:underline cursor-pointer"
                     >
-                      เลือกทั้งหมด
+                      {locale === 'th' ? 'เลือกทั้งหมด' : 'Select All'}
                     </button>
                     <span>|</span>
                     <button
@@ -2360,7 +2471,7 @@ function ConnectedAccountsContent() {
                       onClick={() => setNewProjectSelectedChannels({})}
                       className="text-ink-muted hover:text-ink-primary cursor-pointer"
                     >
-                      ล้างทั้งหมด
+                      {locale === 'th' ? 'ล้างทั้งหมด' : 'Deselect All'}
                     </button>
                   </div>
                 </div>
@@ -2406,7 +2517,7 @@ function ConnectedAccountsContent() {
                             ? 'bg-semantic-success/15 text-semantic-success font-bold'
                             : 'bg-paper-subtle text-ink-muted'
                         }`}>
-                          {isChecked ? 'เปิดใช้' : 'ข้าม API'}
+                          {isChecked ? (locale === 'th' ? 'เปิดใช้' : 'Active') : (locale === 'th' ? 'ข้าม API' : 'Bypassed')}
                         </span>
                       </label>
                     );
@@ -2418,7 +2529,11 @@ function ConnectedAccountsContent() {
               <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-editorial text-[11px] font-mono text-emerald-900 flex items-start gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 <span>
-                  <strong>การันตีความปลอดภัย:</strong> ช่องทางที่ไม่ได้ติ๊ก ระบบจะไม่ยุ่ง ไม่ยิง API ข้ามไป และไม่เกิด Error ใดๆ ทั้งสิ้น (Zero-Touch Bypass)
+                  {locale === 'th' ? (
+                    <><strong>การันตีความปลอดภัย:</strong> ช่องทางที่ไม่ได้ติ๊ก ระบบจะไม่ยุ่ง ไม่ยิง API ข้ามไป และไม่เกิด Error ใดๆ ทั้งสิ้น (Zero-Touch Bypass)</>
+                  ) : (
+                    <><strong>Zero-Touch Isolation:</strong> Unselected channels will never receive API dispatches, guaranteeing zero error leakage across projects.</>
+                  )}
                 </span>
               </div>
 
@@ -2429,13 +2544,13 @@ function ConnectedAccountsContent() {
                   onClick={() => setIsNewProjectModalOpen(false)}
                   className="px-4 py-2 border border-border-rule rounded-editorial font-mono text-ink-secondary hover:text-ink-primary cursor-pointer"
                 >
-                  ยกเลิก
+                  {locale === 'th' ? 'ยกเลิก' : 'Cancel'}
                 </button>
                 <button
                   type="submit"
                   className="px-5 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial font-mono font-semibold transition-colors shadow-xs cursor-pointer"
                 >
-                  สร้างโปรเจกต์และเปิดใช้งาน
+                  {locale === 'th' ? 'สร้างโปรเจกต์และเปิดใช้งาน' : 'Create Project & Enable'}
                 </button>
               </div>
             </form>

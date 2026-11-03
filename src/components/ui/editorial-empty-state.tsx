@@ -4,6 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Plus, Sparkles, ArrowRight, Lightbulb, RotateCcw } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 
 interface EditorialEmptyStateProps {
   stickerName: string;
@@ -28,10 +29,16 @@ export const EditorialEmptyState: React.FC<EditorialEmptyStateProps> = ({
   actionLabel,
   actionHref,
   onActionClick,
-  demoActionLabel = 'โหลดข้อมูลตัวอย่างสำหรับพรีวิว (Load Demo Data)',
+  demoActionLabel,
   onDemoActionClick,
   className = '',
 }) => {
+  const { locale } = useTranslation();
+  const resolvedDemoActionLabel =
+    demoActionLabel ??
+    (locale === 'th' ? 'โหลดข้อมูลตัวอย่างสำหรับพรีวิว (Load Demo Data)' : 'Load Demo Data');
+  const tipHeader = locale === 'th' ? 'คำแนะนำจาก บ.ก. (Editorial Tip):' : 'Editorial Tip:';
+  const demoTitle = locale === 'th' ? 'โหลดข้อมูลจำลองเพื่อพรีวิวการแสดงผล' : 'Load sample demo data for preview';
   return (
     <div
       className={`p-8 sm:p-12 text-center rounded-dialog bg-paper-raised border-2 border-dashed border-border-rule relative overflow-hidden transition-all ${className}`}
@@ -68,7 +75,7 @@ export const EditorialEmptyState: React.FC<EditorialEmptyStateProps> = ({
           <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule/80 text-left text-xs space-y-1">
             <span className="font-mono font-bold text-[10px] text-brand-indigo flex items-center gap-1 uppercase tracking-wider">
               <Lightbulb className="w-3.5 h-3.5 text-accent-ochre" />
-              คำแนะนำจาก บ.ก. (Editorial Tip):
+              {tipHeader}
             </span>
             <p className="text-[11px] text-ink-primary/90 font-sans leading-snug">
               {tipText}
@@ -104,10 +111,10 @@ export const EditorialEmptyState: React.FC<EditorialEmptyStateProps> = ({
               type="button"
               onClick={onDemoActionClick}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-editorial bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-ink-primary text-xs font-mono transition-colors cursor-pointer"
-              title="โหลดข้อมูลจำลองเพื่อพรีวิวการแสดงผล"
+              title={demoTitle}
             >
               <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-              <span>{demoActionLabel}</span>
+              <span>{resolvedDemoActionLabel}</span>
             </button>
           )}
         </div>

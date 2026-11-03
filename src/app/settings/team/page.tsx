@@ -110,16 +110,16 @@ export default function TeamSettingsPage() {
     const updated = members.map((m) => (m.id === memberId ? { ...m, role: newRole } : m));
     setMembers(updated);
     saveTeamMembers(updated);
-    setNotificationToast(`อัปเดตบทบาทของสมาชิกเป็น "${ROLE_DEFINITIONS[newRole].label.split(' ')[1]}" เรียบร้อยแล้ว`);
+    setNotificationToast(locale === 'en' ? `Updated member role to "${ROLE_DEFINITIONS[newRole].labelEn || newRole}".` : `อัปเดตบทบาทของสมาชิกเป็น "${ROLE_DEFINITIONS[newRole].label.split(' ')[1]}" เรียบร้อยแล้ว`);
     setTimeout(() => setNotificationToast(null), 3500);
   };
 
   const handleRemoveMember = (memberId: string, memberName: string) => {
-    if (confirm(`คุณต้องการลบ "${memberName}" ออกจากโปรเจกต์นี้หรือไม่?`)) {
+    if (confirm(locale === 'en' ? `Are you sure you want to remove "${memberName}" from this workspace?` : `คุณต้องการลบ "${memberName}" ออกจากโปรเจกต์นี้หรือไม่?`)) {
       const updated = members.filter((m) => m.id !== memberId);
       setMembers(updated);
       saveTeamMembers(updated);
-      setNotificationToast(`ลบ "${memberName}" ออกจากโปรเจกต์แล้ว`);
+      setNotificationToast(locale === 'en' ? `Removed "${memberName}" from workspace.` : `ลบ "${memberName}" ออกจากโปรเจกต์แล้ว`);
       setTimeout(() => setNotificationToast(null), 3500);
     }
   };
@@ -133,7 +133,7 @@ export default function TeamSettingsPage() {
     setIsInviteModalOpen(false);
     setInviteName('');
     setInviteEmail('');
-    setNotificationToast(`ส่งคำเชิญไปยัง "${newMbr.email}" ในบทบาท ${ROLE_DEFINITIONS[inviteRole].label.split(' ')[1]} สำเร็จแล้ว!`);
+    setNotificationToast(locale === 'en' ? `Invitation sent to "${newMbr.email}" as ${ROLE_DEFINITIONS[inviteRole].labelEn || inviteRole}!` : `ส่งคำเชิญไปยัง "${newMbr.email}" ในบทบาท ${ROLE_DEFINITIONS[inviteRole].label.split(' ')[1]} สำเร็จแล้ว!`);
     setTimeout(() => setNotificationToast(null), 4000);
   };
 
@@ -165,7 +165,7 @@ export default function TeamSettingsPage() {
                   loadSampleMockData();
                 }}
                 className="px-2.5 py-1.5 text-xs font-sans rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
-                title="โหลดข้อมูลสมาชิกทีมตัวอย่าง"
+                title={locale === 'en' ? 'Load sample team members' : 'โหลดข้อมูลสมาชิกทีมตัวอย่าง'}
               >
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>{locale === 'th' ? 'โหลดตัวอย่างทีม (Demo)' : 'Load Demo Team'}</span>
@@ -177,7 +177,7 @@ export default function TeamSettingsPage() {
                   clearAllMockData();
                 }}
                 className="px-2.5 py-1.5 text-xs font-sans rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-accent-terracotta font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
-                title="ล้างข้อมูลสมาชิกตัวอย่างทั้งหมด"
+                title={locale === 'en' ? 'Clear all team mock data' : 'ล้างข้อมูลสมาชิกตัวอย่างทั้งหมด'}
               >
                 <RefreshCw className="w-3.5 h-3.5" />
                 <span>{locale === 'th' ? 'เคลียร์ทีม (Clean)' : 'Clear Team'}</span>
@@ -216,11 +216,14 @@ export default function TeamSettingsPage() {
           </div>
           <div>
             <p className="text-xs text-ink-primary font-medium">
-              ทำงานในทีม <span className="font-semibold text-brand-indigo">{isMockCleared ? 'Main Workspace' : activeWorkspaceName}</span> ในบทบาท{' '}
-              <span className="font-bold text-semantic-info">{currentUser?.role || (isMockCleared ? 'ผู้ใช้งานทั่วไป (Guest)' : 'ผู้จัดการ (Manager)')}</span>
+              {locale === 'en' ? (
+                <>Working in <span className="font-semibold text-brand-indigo">{isMockCleared ? 'Main Workspace' : activeWorkspaceName}</span> as <span className="font-bold text-semantic-info">{currentUser?.role || (isMockCleared ? 'Guest' : 'Manager')}</span></>
+              ) : (
+                <>ทำงานในทีม <span className="font-semibold text-brand-indigo">{isMockCleared ? 'Main Workspace' : activeWorkspaceName}</span> ในบทบาท{' '}<span className="font-bold text-semantic-info">{currentUser?.role || (isMockCleared ? 'ผู้ใช้งานทั่วไป (Guest)' : 'ผู้จัดการ (Manager)')}</span></>
+              )}
             </p>
             <p className="text-[10px] font-mono text-ink-secondary mt-0.5">
-              {currentUser?.email || (isMockCleared ? 'เข้าสู่ระบบเพื่อรับสิทธิ์การอนุมัติโพสต์และจัดการทีม' : 'คุณมีสิทธิ์: อนุมัติโพสต์ทีม • เชิญสมาชิก • ยิงโพสต์ทุกช่องทาง')}
+              {currentUser?.email || (isMockCleared ? (locale === 'en' ? 'Sign in to access post approval flows and team management' : 'เข้าสู่ระบบเพื่อรับสิทธิ์การอนุมัติโพสต์และจัดการทีม') : (locale === 'en' ? 'Your permissions: Approve team posts • Invite members • Dispatch across all channels' : 'คุณมีสิทธิ์: อนุมัติโพสต์ทีม • เชิญสมาชิก • ยิงโพสต์ทุกช่องทาง'))}
             </p>
           </div>
         </div>
@@ -236,15 +239,15 @@ export default function TeamSettingsPage() {
         <div className="flex items-center gap-1.5 shrink-0">
           <span className="text-[10px] font-mono uppercase font-bold text-ink-secondary flex items-center gap-1">
             <Building2 className="w-3 h-3 text-brand-indigo" />
-            <span>โปรเจกต์:</span>
+            <span>{locale === 'en' ? 'Workspace:' : 'โปรเจกต์:'}</span>
           </span>
           {[
             ...(isMockCleared ? [
-              { id: 'ALL' as const, label: `ภาพรวมทั้งหมด (${filteredMembers.length} คน)`, sticker: null },
+              { id: 'ALL' as const, label: locale === 'en' ? `All Workspaces (${filteredMembers.length})` : `ภาพรวมทั้งหมด (${filteredMembers.length} คน)`, sticker: null },
             ] : [
-              { id: 'ws_capitalone' as const, label: 'Main Studio (5 คน)', sticker: 'ws-software' },
-              { id: 'ws_acme' as const, label: 'Creator Hub (3 คน)', sticker: 'ws-creator' },
-              { id: 'ALL' as const, label: 'ภาพรวมทั้งหมด (All Members)', sticker: null },
+              { id: 'ws_capitalone' as const, label: locale === 'en' ? 'Main Studio (5 members)' : 'Main Studio (5 คน)', sticker: 'ws-software' },
+              { id: 'ws_acme' as const, label: locale === 'en' ? 'Creator Hub (3 members)' : 'Creator Hub (3 คน)', sticker: 'ws-creator' },
+              { id: 'ALL' as const, label: locale === 'en' ? 'All Workspaces (All Members)' : 'ภาพรวมทั้งหมด (All Members)', sticker: null },
             ]),
           ].map((tab) => (
             <button
@@ -267,29 +270,29 @@ export default function TeamSettingsPage() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
           <span className="text-[10px] font-mono uppercase text-ink-secondary block font-semibold mb-1">
-            สมาชิกทั้งหมดในโปรเจกต์
+            {locale === 'en' ? 'Total Workspace Members' : 'สมาชิกทั้งหมดในโปรเจกต์'}
           </span>
           <p className="font-serif font-bold text-2xl text-ink-primary">{filteredMembers.length}</p>
           <p className="text-[10px] text-ink-secondary font-mono mt-1">
-            {filteredMembers.filter((m) => m.status === 'ACTIVE').length} ใช้งานจริง • {filteredMembers.filter((m) => m.status === 'INVITED').length} รอรับคำเชิญ
+            {filteredMembers.filter((m) => m.status === 'ACTIVE').length} {locale === 'en' ? 'Active' : 'ใช้งานจริง'} • {filteredMembers.filter((m) => m.status === 'INVITED').length} {locale === 'en' ? 'Invited' : 'รอรับคำเชิญ'}
           </p>
         </div>
 
         <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
           <span className="text-[10px] font-mono uppercase text-ink-secondary block font-semibold mb-1">
-            สิทธิ์ระดับผู้บริหาร (Admins)
+            {locale === 'en' ? 'Executives & Admins' : 'สิทธิ์ระดับผู้บริหาร (Admins)'}
           </span>
           <p className="font-serif font-bold text-2xl text-semantic-info">
             {filteredMembers.filter((m) => ['OWNER', 'MANAGER'].includes(m.role)).length}
           </p>
           <p className="text-[10px] text-ink-secondary font-mono mt-1">
-            Owner & Managers (สิทธิ์อนุมัติ)
+            {locale === 'en' ? 'Owner & Managers (Approval Authority)' : 'Owner & Managers (สิทธิ์อนุมัติ)'}
           </p>
         </div>
 
         <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
           <span className="text-[10px] font-mono uppercase text-ink-secondary block font-semibold mb-1">
-            ทีมผลิตคอนเทนต์ (Creators)
+            {locale === 'en' ? 'Content Creators' : 'ทีมผลิตคอนเทนต์ (Creators)'}
           </span>
           <p className="font-serif font-bold text-2xl text-semantic-success">
             {filteredMembers.filter((m) => ['EDITOR', 'CONTRIBUTOR'].includes(m.role)).length}
@@ -301,13 +304,13 @@ export default function TeamSettingsPage() {
 
         <div className="bg-paper-raised p-4 rounded-card border border-border-rule shadow-2xs">
           <span className="text-[10px] font-mono uppercase text-ink-secondary block font-semibold mb-1">
-            ผู้ตรวจงานภายนอก (Clients)
+            {locale === 'en' ? 'Client Reviewers' : 'ผู้ตรวจงานภายนอก (Clients)'}
           </span>
           <p className="font-serif font-bold text-2xl text-ink-secondary">
             {filteredMembers.filter((m) => m.role === 'VIEWER').length}
           </p>
           <p className="text-[10px] text-ink-secondary font-mono mt-1">
-            Read-Only (ดูปฏิทิน & พรีวิว)
+            {locale === 'en' ? 'Read-Only (Calendar & Preview)' : 'Read-Only (ดูปฏิทิน & พรีวิว)'}
           </p>
         </div>
       </div>
@@ -323,7 +326,7 @@ export default function TeamSettingsPage() {
           }`}
         >
           <Users className="w-3.5 h-3.5" />
-          <span>รายชื่อสมาชิกและการแบ่งสิทธิ์ ({filteredMembers.length})</span>
+          <span>{locale === 'en' ? `Members & Role Access (${filteredMembers.length})` : `รายชื่อสมาชิกและการแบ่งสิทธิ์ (${filteredMembers.length})`}</span>
         </button>
 
         <button
@@ -335,7 +338,7 @@ export default function TeamSettingsPage() {
           }`}
         >
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>ตารางแจกแจงสิทธิ์ 5 ระดับ (Permissions Matrix)</span>
+          <span>{locale === 'en' ? 'Permissions Matrix' : 'ตารางแจกแจงสิทธิ์ 5 ระดับ (Permissions Matrix)'}</span>
         </button>
 
         <button
@@ -347,7 +350,7 @@ export default function TeamSettingsPage() {
           }`}
         >
           <Eye className="w-3.5 h-3.5" />
-          <span>จำลองมุมมองสิทธิ์ (Role Simulator)</span>
+          <span>{locale === 'en' ? 'Role Simulator' : 'จำลองมุมมองสิทธิ์ (Role Simulator)'}</span>
         </button>
 
         <button
@@ -359,7 +362,7 @@ export default function TeamSettingsPage() {
           }`}
         >
           <Coins className="w-3.5 h-3.5 text-accent-terracotta" />
-          <span>🪙 ติดตามการใช้ Token ลูกทีม (Team Token Tracker)</span>
+          <span>{locale === 'en' ? '🪙 Team Token Tracker' : '🪙 ติดตามการใช้ Token ลูกทีม (Team Token Tracker)'}</span>
         </button>
       </div>
 
@@ -374,7 +377,7 @@ export default function TeamSettingsPage() {
               <Search className="w-3.5 h-3.5 text-ink-secondary absolute left-2.5 top-2.5" />
               <input
                 type="text"
-                placeholder="ค้นหาชื่อหรืออีเมลสมาชิก..."
+                placeholder={locale === 'en' ? 'Search members by name or email...' : 'ค้นหาชื่อหรืออีเมลสมาชิก...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-8 pr-3 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial text-xs font-mono text-ink-primary focus:outline-none focus:border-brand-indigo"
@@ -382,18 +385,18 @@ export default function TeamSettingsPage() {
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-mono text-ink-secondary uppercase">กรองบทบาท:</span>
+              <span className="text-[10px] font-mono text-ink-secondary uppercase">{locale === 'en' ? 'Filter Role:' : 'กรองบทบาท:'}</span>
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value as any)}
                 className="px-2.5 py-1.5 bg-paper-canvas border border-border-rule rounded text-xs font-mono text-ink-primary focus:outline-none focus:border-brand-indigo cursor-pointer"
               >
-                <option value="ALL">ทุกบทบาท (All Roles)</option>
-                <option value="OWNER">Owner (เจ้าของ)</option>
-                <option value="MANAGER">Manager (ผู้จัดการ)</option>
-                <option value="EDITOR">Editor (ครีเอเตอร์)</option>
-                <option value="CONTRIBUTOR">Contributor (รออนุมัติ)</option>
-                <option value="VIEWER">Viewer (ผู้ตรวจงาน)</option>
+                <option value="ALL">{locale === 'en' ? 'All Roles' : 'ทุกบทบาท (All Roles)'}</option>
+                <option value="OWNER">{locale === 'en' ? 'Owner' : 'Owner (เจ้าของ)'}</option>
+                <option value="MANAGER">{locale === 'en' ? 'Manager' : 'Manager (ผู้จัดการ)'}</option>
+                <option value="EDITOR">{locale === 'en' ? 'Editor' : 'Editor (ครีเอเตอร์)'}</option>
+                <option value="CONTRIBUTOR">{locale === 'en' ? 'Contributor' : 'Contributor (รออนุมัติ)'}</option>
+                <option value="VIEWER">{locale === 'en' ? 'Viewer' : 'Viewer (ผู้ตรวจงาน)'}</option>
               </select>
             </div>
           </div>
@@ -403,12 +406,12 @@ export default function TeamSettingsPage() {
             <EditorialEmptyState
               stickerName="role-manager"
               badgeText={isMockCleared ? "Team & RBAC • Clean State" : "Filter Empty"}
-              title="ยังไม่มีสมาชิกในโปรเจกต์นี้"
-              description="เชิญสมาชิกในทีมเพื่อร่วมวางแผน กำหนดสิทธิ์ และดูแลขั้นตอนการอนุมัติโพสต์ (5-Level RBAC)"
-              tipText="แต่ละบทบาทมีสิทธิ์จำเพาะ: Owner (คุมระบบ), Manager (อนุมัติโพสต์), Editor (ยิงตรง), Contributor (ส่งตรวจ), Viewer (ตรวจดู)"
-              actionLabel="+ เชิญสมาชิกคนแรก"
+              title={locale === 'en' ? 'No members in this workspace yet' : 'ยังไม่มีสมาชิกในโปรเจกต์นี้'}
+              description={locale === 'en' ? 'Invite team members to collaborate, assign roles, and manage approval workflows (5-Level RBAC)' : 'เชิญสมาชิกในทีมเพื่อร่วมวางแผน กำหนดสิทธิ์ และดูแลขั้นตอนการอนุมัติโพสต์ (5-Level RBAC)'}
+              tipText={locale === 'en' ? 'Each role has specific permissions: Owner (Full control), Manager (Post approval), Editor (Direct dispatch), Contributor (Submit for review), Viewer (Read only)' : 'แต่ละบทบาทมีสิทธิ์จำเพาะ: Owner (คุมระบบ), Manager (อนุมัติโพสต์), Editor (ยิงตรง), Contributor (ส่งตรวจ), Viewer (ตรวจดู)'}
+              actionLabel={locale === 'en' ? '+ Invite First Member' : '+ เชิญสมาชิกคนแรก'}
               onActionClick={() => setIsInviteModalOpen(true)}
-              demoActionLabel={isMockCleared ? "โหลดตัวอย่างทีม (Demo Members)" : undefined}
+              demoActionLabel={isMockCleared ? (locale === 'en' ? 'Load Demo Team' : 'โหลดตัวอย่างทีม (Demo Members)') : undefined}
               onDemoActionClick={isMockCleared ? () => loadSampleMockData() : undefined}
             />
           ) : (
@@ -416,11 +419,11 @@ export default function TeamSettingsPage() {
               <table className="w-full text-left text-xs">
                 <thead className="bg-paper-subtle border-b border-border-rule font-mono text-[10px] text-ink-secondary uppercase">
                   <tr>
-                    <th className="py-3 px-4">สมาชิก (User)</th>
-                    <th className="py-3 px-4">บทบาทและสิทธิ์ (Assigned Role)</th>
-                    <th className="py-3 px-4">สถานะ (Status)</th>
-                    <th className="py-3 px-4">เข้าร่วมเมื่อ</th>
-                    <th className="py-3 px-4 text-right">การจัดการ</th>
+                    <th className="py-3 px-4">{locale === 'en' ? 'Member (User)' : 'สมาชิก (User)'}</th>
+                    <th className="py-3 px-4">{locale === 'en' ? 'Role & Permissions (Assigned Role)' : 'บทบาทและสิทธิ์ (Assigned Role)'}</th>
+                    <th className="py-3 px-4">{locale === 'en' ? 'Status' : 'สถานะ (Status)'}</th>
+                    <th className="py-3 px-4">{locale === 'en' ? 'Joined At' : 'เข้าร่วมเมื่อ'}</th>
+                    <th className="py-3 px-4 text-right">{locale === 'en' ? 'Actions' : 'การจัดการ'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-rule">
@@ -466,15 +469,15 @@ export default function TeamSettingsPage() {
                                   : 'bg-paper-canvas text-ink-secondary border-border-rule hover:border-brand-indigo'
                               }`}
                             >
-                              <option value="OWNER" disabled>Owner (เจ้าของโปรเจกต์)</option>
-                              <option value="MANAGER">Manager (ผู้จัดการทีม)</option>
-                              <option value="EDITOR">Editor (ครีเอเตอร์ยิงตรง)</option>
-                              <option value="CONTRIBUTOR">Contributor (รออนุมัติ)</option>
-                              <option value="VIEWER">Viewer (ผู้ตรวจงาน/ลูกค้า)</option>
+                              <option value="OWNER" disabled>{locale === 'en' ? 'Owner (Project Owner)' : 'Owner (เจ้าของโปรเจกต์)'}</option>
+                              <option value="MANAGER">{locale === 'en' ? 'Manager (Team Manager)' : 'Manager (ผู้จัดการทีม)'}</option>
+                              <option value="EDITOR">{locale === 'en' ? 'Editor (Direct Dispatch)' : 'Editor (ครีเอเตอร์ยิงตรง)'}</option>
+                              <option value="CONTRIBUTOR">{locale === 'en' ? 'Contributor (Requires Approval)' : 'Contributor (รออนุมัติ)'}</option>
+                              <option value="VIEWER">{locale === 'en' ? 'Viewer (Reviewer/Client)' : 'Viewer (ผู้ตรวจงาน/ลูกค้า)'}</option>
                             </select>
                           </div>
                           <span className="text-[10px] text-ink-secondary font-sans block mt-1 line-clamp-1">
-                            {roleDef.descriptionTh}
+                            {locale === 'en' ? (roleDef.descriptionEn || roleDef.descriptionTh) : roleDef.descriptionTh}
                           </span>
                         </td>
 
@@ -497,7 +500,7 @@ export default function TeamSettingsPage() {
                         <td className="py-3.5 px-4 font-mono text-[11px] text-ink-secondary">
                           <span>{mbr.joinedAt}</span>
                           <span className="text-[10px] block text-accent-terracotta font-bold mt-0.5">
-                            🪙 {mbr.tokensUsedThisMonth || 0} Tokens ใช้เดือนนี้
+                            🪙 {mbr.tokensUsedThisMonth || 0} {locale === 'en' ? 'Tokens this month' : 'Tokens ใช้เดือนนี้'}
                           </span>
                         </td>
 
@@ -507,7 +510,7 @@ export default function TeamSettingsPage() {
                             <button
                               onClick={() => handleRemoveMember(mbr.id, mbr.name)}
                               className="p-1.5 text-ink-secondary hover:text-accent-terracotta hover:bg-accent-terracotta/10 rounded transition-colors cursor-pointer"
-                              title="ลบออกจากโปรเจกต์"
+                              title={locale === 'en' ? 'Remove from workspace' : 'ลบออกจากโปรเจกต์'}
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -530,10 +533,10 @@ export default function TeamSettingsPage() {
         <div className="bg-paper-raised border border-border-rule rounded-card p-5 shadow-xs space-y-4">
           <div className="pb-2 border-b border-border-rule">
             <h3 className="font-serif font-medium text-base text-ink-primary">
-              ตารางเปรียบเทียบสิทธิ์ตามบทบาท (Granular Role Permissions Matrix)
+              {locale === 'en' ? 'Granular Role Permissions Matrix' : 'ตารางเปรียบเทียบสิทธิ์ตามบทบาท (Granular Role Permissions Matrix)'}
             </h3>
             <p className="text-xs text-ink-secondary font-sans mt-0.5">
-              แจกแจงสิทธิ์ 10 ประการเพื่อความโปร่งใส ป้องกันการยิงโพสต์ผิดพลาด และรักษาความปลอดภัยของบัญชีโซเชียลองค์กร
+              {locale === 'en' ? 'Detailed breakdown of 10 permissions for governance, post error prevention, and workspace security.' : 'แจกแจงสิทธิ์ 10 ประการเพื่อความโปร่งใส ป้องกันการยิงโพสต์ผิดพลาด และรักษาความปลอดภัยของบัญชีโซเชียลองค์กร'}
             </p>
           </div>
 
@@ -542,7 +545,7 @@ export default function TeamSettingsPage() {
               <thead className="bg-paper-subtle font-mono text-[10px] text-ink-secondary uppercase">
                 <tr>
                   <th className="py-3 px-4 border-r border-border-rule min-w-[220px]">
-                    ฟังก์ชัน / สิทธิ์การใช้งาน
+                    {locale === 'en' ? 'Feature / Permission' : 'ฟังก์ชัน / สิทธิ์การใช้งาน'}
                   </th>
                   <th className="py-2.5 px-3 text-center border-r border-border-rule bg-brand-indigo/5 text-brand-indigo font-bold">
                     <div className="flex items-center justify-center gap-1.5">
@@ -580,8 +583,8 @@ export default function TeamSettingsPage() {
                 {ALL_PERMISSIONS.map((perm) => (
                   <tr key={perm.key} className="hover:bg-paper-subtle/50 transition-colors">
                     <td className="py-3 px-4 border-r border-border-rule">
-                      <p className="font-medium text-ink-primary text-xs">{perm.labelTh}</p>
-                      <span className="text-[10px] font-mono text-ink-secondary">{perm.labelEn}</span>
+                      <p className="font-medium text-ink-primary text-xs">{locale === 'en' ? perm.labelEn : perm.labelTh}</p>
+                      <span className="text-[10px] font-mono text-ink-secondary">{locale === 'en' ? perm.labelTh : perm.labelEn}</span>
                     </td>
 
                     {/* Owner */}
@@ -610,8 +613,8 @@ export default function TeamSettingsPage() {
                     {/* Contributor */}
                     <td className="py-3 px-3 text-center border-r border-border-rule">
                       {perm.key === 'PUBLISH_DISPATCH_DIRECT' ? (
-                        <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-accent-terracotta/15 text-accent-terracotta font-semibold" title="ต้องส่งให้ Manager ตรวจก่อน">
-                          รออนุมัติ
+                        <span className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-accent-terracotta/15 text-accent-terracotta font-semibold" title={locale === 'en' ? 'Must be approved by Manager' : 'ต้องส่งให้ Manager ตรวจก่อน'}>
+                          {locale === 'en' ? 'Needs Review' : 'รออนุมัติ'}
                         </span>
                       ) : hasPermission('CONTRIBUTOR', perm.key) ? (
                         <span className="text-semantic-success font-bold text-base">✓</span>
@@ -643,15 +646,15 @@ export default function TeamSettingsPage() {
         <div className="bg-paper-raised border border-border-rule rounded-card p-5 shadow-xs space-y-5">
           <div className="pb-3 border-b border-border-rule">
             <h3 className="font-serif font-medium text-base text-ink-primary">
-              จำลองประสบการณ์ผู้ใช้ตามบทบาท (Live Role Experience Simulator)
+              {locale === 'en' ? 'Live Role Experience Simulator' : 'จำลองประสบการณ์ผู้ใช้ตามบทบาท (Live Role Experience Simulator)'}
             </h3>
             <p className="text-xs text-ink-secondary font-sans mt-0.5">
-              ทดสอบดูว่าเมื่อสมาชิกแต่ละคนเข้าสู่ Studio Desk (`/create`) หน้าจอและปุ่มดำเนินการจะปรับเปลี่ยนอย่างไร
+              {locale === 'en' ? 'Simulate how Studio Desk (/create) interface and actions adapt dynamically per team role.' : 'ทดสอบดูว่าเมื่อสมาชิกแต่ละคนเข้าสู่ Studio Desk (`/create`) หน้าจอและปุ่มดำเนินการจะปรับเปลี่ยนอย่างไร'}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-xs font-mono uppercase font-bold text-ink-secondary">เลือกบทบาทจำลอง:</span>
+            <span className="text-xs font-mono uppercase font-bold text-ink-secondary">{locale === 'en' ? 'Select Role to Simulate:' : 'เลือกบทบาทจำลอง:'}</span>
             {(['MANAGER', 'EDITOR', 'CONTRIBUTOR', 'VIEWER'] as WorkspaceRole[]).map((role) => (
               <button
                 key={role}
@@ -664,7 +667,7 @@ export default function TeamSettingsPage() {
               >
                 <Sticker name={ROLE_DEFINITIONS[role].stickerName} size="xs" inline />
                 <span>
-                  {role === 'MANAGER' ? 'Manager (ผู้จัดการ)' : role === 'EDITOR' ? 'Editor (ครีเอเตอร์)' : role === 'CONTRIBUTOR' ? 'Contributor (รออนุมัติ)' : 'Viewer (ลูกค้า)'}
+                  {locale === 'en' ? (role === 'MANAGER' ? 'Manager' : role === 'EDITOR' ? 'Editor' : role === 'CONTRIBUTOR' ? 'Contributor' : 'Viewer (Client)') : (role === 'MANAGER' ? 'Manager (ผู้จัดการ)' : role === 'EDITOR' ? 'Editor (ครีเอเตอร์)' : role === 'CONTRIBUTOR' ? 'Contributor (รออนุมัติ)' : 'Viewer (ลูกค้า)')}
                 </span>
               </button>
             ))}
@@ -685,7 +688,7 @@ export default function TeamSettingsPage() {
 
             <div className="p-4 bg-paper-raised border border-border-rule rounded-card max-w-md mx-auto space-y-3 text-center">
               <p className="text-xs font-serif text-ink-primary font-medium">
-                แคมเปญ Masterclass Showcase (3 ปลายทาง: FB Thailand, IG Feed, IG Story)
+                {locale === 'en' ? 'Campaign Masterclass Showcase (3 destinations: FB Thailand, IG Feed, IG Story)' : 'แคมเปญ Masterclass Showcase (3 ปลายทาง: FB Thailand, IG Feed, IG Story)'}
               </p>
 
               {simulatedRole === 'CONTRIBUTOR' ? (
@@ -695,20 +698,20 @@ export default function TeamSettingsPage() {
                     className="w-full py-2.5 px-4 bg-accent-terracotta text-white font-mono font-semibold text-xs rounded-editorial shadow-xs flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Send className="w-4 h-4" />
-                    <span>ส่งให้ผู้จัดการตรวจสอบ (Submit for Manager Approval)</span>
+                    <span>{locale === 'en' ? 'Submit for Manager Approval' : 'ส่งให้ผู้จัดการตรวจสอบ (Submit for Manager Approval)'}</span>
                   </button>
                   <p className="text-[10px] text-accent-terracotta font-sans leading-relaxed">
-                    ⚠️ บัญชีคุณเป็น Contributor ไม่สามารถยิงโพสต์ตรงได้ เพื่อป้องกันการโพสต์ข้อมูลผิดพลาด โพสต์จะถูกส่งไปยัง Manager Queue ให้หัวหน้ากดอนุมัติก่อนขึ้นจริง
+                    {locale === 'en' ? '⚠️ Your account is a Contributor and cannot publish directly. To prevent accidental dispatches, posts are sent to the Manager Queue for approval.' : '⚠️ บัญชีคุณเป็น Contributor ไม่สามารถยิงโพสต์ตรงได้ เพื่อป้องกันการโพสต์ข้อมูลผิดพลาด โพสต์จะถูกส่งไปยัง Manager Queue ให้หัวหน้ากดอนุมัติก่อนขึ้นจริง'}
                   </p>
                 </div>
               ) : simulatedRole === 'VIEWER' ? (
                 <div className="space-y-2">
                   <div className="py-2.5 px-4 bg-paper-subtle border border-border-rule text-ink-secondary font-mono text-xs rounded-editorial flex items-center justify-center gap-2 cursor-not-allowed">
                     <Lock className="w-4 h-4" />
-                    <span>โหมดผู้ตรวจงาน (Read-Only Mode)</span>
+                    <span>{locale === 'en' ? 'Client Reviewer Mode (Read-Only)' : 'โหมดผู้ตรวจงาน (Read-Only Mode)'}</span>
                   </div>
                   <p className="text-[10px] text-ink-secondary font-sans">
-                    คุณมีสิทธิ์เปิดดู Phone Mockup และปฏิทินเท่านั้น ไม่สามารถทำการแก้ไขหรือยิงโพสต์ได้
+                    {locale === 'en' ? 'You have read-only access to view Phone Mockups and Editorial Calendar. Editing and publishing are restricted.' : 'คุณมีสิทธิ์เปิดดู Phone Mockup และปฏิทินเท่านั้น ไม่สามารถทำการแก้ไขหรือยิงโพสต์ได้'}
                   </p>
                 </div>
               ) : (
@@ -718,10 +721,10 @@ export default function TeamSettingsPage() {
                     className="w-full py-2.5 px-4 bg-brand-indigo text-white font-mono font-semibold text-xs rounded-editorial shadow-xs flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <Send className="w-4 h-4" />
-                    <span>เผยแพร่ทันที 3 ช่องทาง (Instant Multi-Dispatch)</span>
+                    <span>{locale === 'en' ? 'Instant Multi-Dispatch (3 Channels)' : 'เผยแพร่ทันที 3 ช่องทาง (Instant Multi-Dispatch)'}</span>
                   </button>
                   <p className="text-[10px] text-semantic-success font-sans leading-relaxed">
-                    ✓ คุณถือสิทธิ์ {simulatedRole} สามารถยิงโพสต์เข้าสู่ระบบ Dispatch Engine ได้โดยตรงทันที
+                    {locale === 'en' ? `✓ You hold ${simulatedRole} permissions and can dispatch posts directly via the engine.` : `✓ คุณถือสิทธิ์ ${simulatedRole} สามารถยิงโพสต์เข้าสู่ระบบ Dispatch Engine ได้โดยตรงทันที`}
                   </p>
                 </div>
               )}
@@ -739,37 +742,37 @@ export default function TeamSettingsPage() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-paper-raised border border-border-rule rounded-card p-4 shadow-2xs">
               <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold">
-                Master Wallet กองกลาง
+                {locale === 'en' ? 'Master Token Pool' : 'Master Wallet กองกลาง'}
               </span>
               <p className="font-serif font-black text-2xl text-accent-terracotta mt-1">
                 600 🪙
               </p>
               <p className="text-[10px] text-ink-secondary mt-0.5">
-                กระเป๋าแม่ของเจ้าของ ใช้ได้ทุก Workspace
+                {locale === 'en' ? 'Central owner pool shared across workspaces' : 'กระเป๋าแม่ของเจ้าของ ใช้ได้ทุก Workspace'}
               </p>
             </div>
 
             <div className="bg-paper-raised border border-border-rule rounded-card p-4 shadow-2xs">
               <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold">
-                ยอดที่ลูกทีมใช้เดือนนี้
+                {locale === 'en' ? 'Team Tokens Consumed (Month)' : 'ยอดที่ลูกทีมใช้เดือนนี้'}
               </span>
               <p className="font-serif font-black text-2xl text-brand-indigo mt-1">
                 {members.reduce((sum, m) => sum + (m.tokensUsedThisMonth || 0), 0)} 🪙
               </p>
               <p className="text-[10px] text-ink-secondary mt-0.5">
-                รวม {members.length} สมาชิกในทุกโปรเจกต์
+                {locale === 'en' ? `Across ${members.length} members in all workspaces` : `รวม ${members.length} สมาชิกในทุกโปรเจกต์`}
               </p>
             </div>
 
             <div className="bg-paper-raised border border-border-rule rounded-card p-4 shadow-2xs">
               <span className="text-[10px] font-mono uppercase text-ink-secondary font-bold">
-                นโยบายคุมงบ (Token Cap)
+                {locale === 'en' ? 'Budget Cap Policy' : 'นโยบายคุมงบ (Token Cap)'}
               </span>
               <p className="font-serif font-black text-2xl text-semantic-success mt-1">
                 Active Guard
               </p>
               <p className="text-[10px] text-ink-secondary mt-0.5">
-                จำกัดเพดานต่อคน ป้องกันลูกน้องกดผลาญเหรียญ
+                {locale === 'en' ? 'Per-member quota to avoid unintended token usage' : 'จำกัดเพดานต่อคน ป้องกันลูกน้องกดผลาญเหรียญ'}
               </p>
             </div>
           </div>
@@ -779,10 +782,10 @@ export default function TeamSettingsPage() {
             <div className="flex items-center justify-between pb-3 border-b border-border-rule">
               <div>
                 <h3 className="font-serif font-medium text-base text-ink-primary">
-                  การบริโภค Token รายบุคคล (Per-Member Token Ledger)
+                  {locale === 'en' ? 'Individual Token Ledger' : 'การบริโภค Token รายบุคคล (Per-Member Token Ledger)'}
                 </h3>
                 <p className="text-xs text-ink-secondary mt-0.5">
-                  ติดตามแบบเรียลไทม์ว่าใครใช้ Token ทำอะไร พร้อมตั้งเพดานการใช้สูงสุดต่อเดือน
+                  {locale === 'en' ? 'Real-time telemetry of member token consumption with monthly limit caps.' : 'ติดตามแบบเรียลไทม์ว่าใครใช้ Token ทำอะไร พร้อมตั้งเพดานการใช้สูงสุดต่อเดือน'}
                 </p>
               </div>
             </div>
@@ -791,11 +794,11 @@ export default function TeamSettingsPage() {
               <table className="w-full text-left text-xs font-sans">
                 <thead className="bg-paper-subtle/60 border-b border-border-rule text-[10px] font-mono uppercase text-ink-secondary">
                   <tr>
-                    <th className="py-2.5 px-3">สมาชิก & บทบาท</th>
-                    <th className="py-2.5 px-3">การใช้เหรียญเดือนนี้</th>
-                    <th className="py-2.5 px-3">เพดานต่อเดือน (Token Cap)</th>
-                    <th className="py-2.5 px-3">ประวัติกิจกรรมล่าสุด</th>
-                    <th className="py-2.5 px-3 text-right">การจัดการ</th>
+                    <th className="py-2.5 px-3">{locale === 'en' ? 'Member & Role' : 'สมาชิก & บทบาท'}</th>
+                    <th className="py-2.5 px-3">{locale === 'en' ? 'Tokens (This Month)' : 'การใช้เหรียญเดือนนี้'}</th>
+                    <th className="py-2.5 px-3">{locale === 'en' ? 'Monthly Cap' : 'เพดานต่อเดือน (Token Cap)'}</th>
+                    <th className="py-2.5 px-3">{locale === 'en' ? 'Recent Activity' : 'ประวัติกิจกรรมล่าสุด'}</th>
+                    <th className="py-2.5 px-3 text-right">{locale === 'en' ? 'Actions' : 'การจัดการ'}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border-rule/60">
@@ -828,7 +831,7 @@ export default function TeamSettingsPage() {
                             <div className="flex justify-between text-[11px] font-mono">
                               <span className="font-bold text-accent-terracotta">{used} 🪙</span>
                               <span className="text-ink-secondary text-[10px]">
-                                {limit ? `/ ${limit} 🪙` : '(ไม่จำกัด)'}
+                                {limit ? `/ ${limit} 🪙` : (locale === 'en' ? '(Unlimited)' : '(ไม่จำกัด)')}
                               </span>
                             </div>
                             {limit && (
@@ -868,7 +871,7 @@ export default function TeamSettingsPage() {
                                 }}
                                 className="px-2 py-1 rounded bg-brand-indigo text-white text-[10px] font-mono font-bold"
                               >
-                                บันทึก
+                                {locale === 'en' ? 'Save' : 'บันทึก'}
                               </button>
                               <button
                                 type="button"
@@ -881,7 +884,7 @@ export default function TeamSettingsPage() {
                           ) : (
                             <div className="flex items-center gap-2">
                               <span className="font-mono text-xs">
-                                {limit !== null ? `${limit} 🪙/ด.` : 'ไม่จำกัด (Pool)'}
+                                {limit !== null ? `${limit} 🪙/${locale === 'en' ? 'mo' : 'ด.'}` : (locale === 'en' ? 'Unlimited (Pool)' : 'ไม่จำกัด (Pool)')}
                               </span>
                               {mbr.role !== 'OWNER' && (
                                 <button
@@ -892,7 +895,7 @@ export default function TeamSettingsPage() {
                                   }}
                                   className="text-[10px] font-mono text-brand-indigo underline hover:text-brand-indigo-hover"
                                 >
-                                  แก้ไข
+                                  {locale === 'en' ? 'Edit' : 'แก้ไข'}
                                 </button>
                               )}
                             </div>
@@ -908,11 +911,11 @@ export default function TeamSettingsPage() {
                                   key={log.id}
                                   className="px-1.5 py-0.5 rounded text-[9px] font-mono bg-paper-subtle border border-border-rule text-ink-secondary"
                                 >
-                                  {log.actionLabelTh}: {log.tokens} 🪙
+                                  {(locale === 'en' ? log.actionLabelEn || log.actionLabelTh : log.actionLabelTh)}: {log.tokens} 🪙
                                 </span>
                               ))
                             ) : (
-                              <span className="text-[10px] text-ink-muted font-mono">- ยังไม่มีการใช้ -</span>
+                              <span className="text-[10px] text-ink-muted font-mono">{locale === 'en' ? '- No usage yet -' : '- ยังไม่มีการใช้ -'}</span>
                             )}
                           </div>
                         </td>
@@ -924,7 +927,7 @@ export default function TeamSettingsPage() {
                             onClick={() => setSelectedMemberForLogs(mbr)}
                             className="py-1 px-2.5 rounded bg-brand-indigo/10 text-brand-indigo hover:bg-brand-indigo/20 text-[10px] font-mono font-bold transition-colors"
                           >
-                            ดูบันทึก Log ({mbr.tokenLogs?.length || 0})
+                            {locale === 'en' ? `View Logs (${mbr.tokenLogs?.length || 0})` : `ดูบันทึก Log (${mbr.tokenLogs?.length || 0})`}
                           </button>
                         </td>
                       </tr>
@@ -944,10 +947,10 @@ export default function TeamSettingsPage() {
             <div className="flex items-center justify-between pb-3 border-b border-border-rule">
               <div>
                 <h3 className="font-serif font-bold text-base text-ink-primary">
-                  ประวัติการใช้ Token ของ {selectedMemberForLogs.name}
+                  {locale === 'en' ? `Token History for ${selectedMemberForLogs.name}` : `ประวัติการใช้ Token ของ ${selectedMemberForLogs.name}`}
                 </h3>
                 <p className="text-[11px] font-mono text-ink-secondary">
-                  {selectedMemberForLogs.email} • รวม {selectedMemberForLogs.tokensUsedThisMonth} 🪙
+                  {selectedMemberForLogs.email} • {locale === 'en' ? `Total ${selectedMemberForLogs.tokensUsedThisMonth} 🪙` : `รวม ${selectedMemberForLogs.tokensUsedThisMonth} 🪙`}
                 </p>
               </div>
               <button
@@ -964,14 +967,14 @@ export default function TeamSettingsPage() {
                 selectedMemberForLogs.tokenLogs.map((log) => (
                   <div key={log.id} className="p-2.5 rounded border border-border-rule bg-paper-canvas flex items-center justify-between text-xs font-mono">
                     <div>
-                      <p className="font-bold text-ink-primary">{log.actionLabelTh}</p>
-                      <p className="text-[10px] text-ink-secondary">{log.workspaceName} • {log.timestamp}</p>
+                      <p className="font-bold text-ink-primary">{locale === 'en' ? (log.actionLabelEn || log.actionLabelTh) : log.actionLabelTh}</p>
+                      <p className="text-[10px] text-ink-secondary">{log.workspaceName} • {locale === 'en' ? (log.timestampEn || log.timestamp) : log.timestamp}</p>
                     </div>
                     <span className="font-bold text-accent-terracotta">-{log.tokens} 🪙</span>
                   </div>
                 ))
               ) : (
-                <p className="text-center py-6 text-xs text-ink-muted font-mono">ไม่มีประวัติการใช้ Token ในเดือนนี้</p>
+                <p className="text-center py-6 text-xs text-ink-muted font-mono">{locale === 'en' ? 'No token usage history for this month' : 'ไม่มีประวัติการใช้ Token ในเดือนนี้'}</p>
               )}
             </div>
 
@@ -980,7 +983,7 @@ export default function TeamSettingsPage() {
               onClick={() => setSelectedMemberForLogs(null)}
               className="w-full py-2 bg-brand-indigo text-white text-xs font-mono font-bold rounded"
             >
-              ปิดหน้าต่าง
+              {locale === 'en' ? 'Close Window' : 'ปิดหน้าต่าง'}
             </button>
           </div>
         </div>
@@ -996,7 +999,7 @@ export default function TeamSettingsPage() {
               <div className="flex items-center gap-2">
                 <UserPlus className="w-4 h-4 text-brand-indigo" />
                 <h3 className="font-serif font-medium text-base text-ink-primary">
-                  เชิญสมาชิกใหม่เข้าสู่โปรเจกต์
+                  {locale === 'en' ? 'Invite New Member to Workspace' : 'เชิญสมาชิกใหม่เข้าสู่โปรเจกต์'}
                 </h3>
               </div>
               <button
@@ -1010,12 +1013,12 @@ export default function TeamSettingsPage() {
             <form onSubmit={handleSendInvite} className="space-y-4 text-xs">
               <div>
                 <label className="block text-[10px] font-mono uppercase text-ink-secondary mb-1">
-                  ชื่อ - นามสกุล (Full Name)
+                  {locale === 'en' ? 'Full Name' : 'ชื่อ - นามสกุล (Full Name)'}
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="เช่น: วรวิทย์ เกียรติสกุล"
+                  placeholder={locale === 'en' ? 'e.g. Alex Morgan' : 'เช่น: วรวิทย์ เกียรติสกุล'}
                   value={inviteName}
                   onChange={(e) => setInviteName(e.target.value)}
                   className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial text-ink-primary font-medium focus:outline-none focus:border-brand-indigo"
@@ -1024,7 +1027,7 @@ export default function TeamSettingsPage() {
 
               <div>
                 <label className="block text-[10px] font-mono uppercase text-ink-secondary mb-1">
-                  อีเมลสำหรับส่งคำเชิญ (Email Address)
+                  {locale === 'en' ? 'Email Address' : 'อีเมลสำหรับส่งคำเชิญ (Email Address)'}
                 </label>
                 <input
                   type="email"
@@ -1038,7 +1041,7 @@ export default function TeamSettingsPage() {
 
               <div>
                 <label className="block text-[10px] font-mono uppercase text-ink-secondary mb-1">
-                  กำหนดโปรเจกต์ (Assign Workspace)
+                  {locale === 'en' ? 'Assign Workspace' : 'กำหนดโปรเจกต์ (Assign Workspace)'}
                 </label>
                 <select
                   value={inviteWorkspaceId}
@@ -1055,7 +1058,7 @@ export default function TeamSettingsPage() {
               {/* Role Selection Cards */}
               <div>
                 <label className="block text-[10px] font-mono uppercase text-ink-secondary mb-1.5">
-                  เลือกระดับสิทธิ์และบทบาท (Assign Role & Permissions)
+                  {locale === 'en' ? 'Assign Role & Permissions' : 'เลือกระดับสิทธิ์และบทบาท (Assign Role & Permissions)'}
                 </label>
                 <div className="space-y-2">
                   {(['MANAGER', 'EDITOR', 'CONTRIBUTOR', 'VIEWER'] as WorkspaceRole[]).map((r) => {
@@ -1075,10 +1078,10 @@ export default function TeamSettingsPage() {
                         <div className="space-y-0.5 pr-2">
                           <span className="font-semibold text-xs text-ink-primary flex items-center gap-1.5">
                             <Sticker name={def.stickerName} size="xs" inline />
-                            <span>{def.label}</span>
+                            <span>{locale === 'en' ? (def.labelEn || def.label) : def.label}</span>
                           </span>
                           <span className="text-[11px] text-ink-secondary block font-sans leading-tight">
-                            {def.descriptionTh}
+                            {locale === 'en' ? (def.descriptionEn || def.descriptionTh) : def.descriptionTh}
                           </span>
                         </div>
                         <input
@@ -1100,14 +1103,14 @@ export default function TeamSettingsPage() {
                   onClick={() => setIsInviteModalOpen(false)}
                   className="px-3 py-1.5 text-ink-secondary hover:text-ink-primary text-xs font-mono cursor-pointer"
                 >
-                  ยกเลิก
+                  {locale === 'en' ? 'Cancel' : 'ยกเลิก'}
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-2xs cursor-pointer flex items-center gap-1.5"
                 >
                   <Mail className="w-3.5 h-3.5" />
-                  <span>ส่งคำเชิญเข้าร่วมโปรเจกต์</span>
+                  <span>{locale === 'en' ? 'Send Workspace Invitation' : 'ส่งคำเชิญเข้าร่วมโปรเจกต์'}</span>
                 </button>
               </div>
             </form>
