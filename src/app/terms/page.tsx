@@ -17,8 +17,10 @@ import {
 } from 'lucide-react';
 import { PublicHeader, PublicFooter, DocsSubNav } from '@/components/layout/public-nav';
 import { Sticker } from '@/components/ui/sticker';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 
 export default function TermsOfServicePage() {
+  const { t, locale } = useTranslation();
   const [activeSection, setActiveSection] = useState('term-1');
 
   const termsNav = [

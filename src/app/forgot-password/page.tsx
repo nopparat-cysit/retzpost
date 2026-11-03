@@ -21,9 +21,11 @@ import { Sticker } from '@/components/ui/sticker';
 import { EmailOtpToast } from '@/components/auth/email-otp-toast';
 import { sendEmailOtp, verifyEmailOtp } from '@/modules/auth/otp-service';
 import { resetUserPassword, isEmailRegistered } from '@/modules/auth/auth-service';
+import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
 
 export default function ForgotPasswordPage() {
   const router = useRouter();
+  const { t, locale } = useTranslation();
 
   // Step wizard: 'REQUEST_EMAIL' | 'VERIFY_OTP' | 'NEW_PASSWORD' | 'SUCCESS'
   const [step, setStep] = useState<'REQUEST_EMAIL' | 'VERIFY_OTP' | 'NEW_PASSWORD' | 'SUCCESS'>('REQUEST_EMAIL');
@@ -214,12 +216,15 @@ export default function ForgotPasswordPage() {
           </div>
         </Link>
 
-        <Link
-          href="/login"
-          className="text-xs font-semibold text-brand-indigo hover:text-brand-indigo-hover underline underline-offset-2 transition-colors"
-        >
-          ← กลับหน้าเข้าสู่ระบบ (Sign In)
-        </Link>
+        <div className="flex items-center gap-3">
+          <LanguageToggle variant="compact" />
+          <Link
+            href="/login"
+            className="text-xs font-semibold text-brand-indigo hover:text-brand-indigo-hover underline underline-offset-2 transition-colors"
+          >
+            ← {locale === 'th' ? 'กลับหน้าเข้าสู่ระบบ (Sign In)' : 'Back to Sign In'}
+          </Link>
+        </div>
       </header>
 
       {/* Main Card */}
@@ -234,20 +239,20 @@ export default function ForgotPasswordPage() {
               </span>
             </div>
             <span className="text-[10px] font-mono text-accent-terracotta bg-accent-terracotta/10 px-2 py-0.5 rounded font-bold">
-              {step === 'REQUEST_EMAIL' && 'สเต็ป 1/3'}
-              {step === 'VERIFY_OTP' && 'สเต็ป 2/3'}
-              {step === 'NEW_PASSWORD' && 'สเต็ป 3/3'}
-              {step === 'SUCCESS' && 'เสร็จสิ้น'}
+              {step === 'REQUEST_EMAIL' && (locale === 'th' ? 'สเต็ป 1/3' : 'Step 1/3')}
+              {step === 'VERIFY_OTP' && (locale === 'th' ? 'สเต็ป 2/3' : 'Step 2/3')}
+              {step === 'NEW_PASSWORD' && (locale === 'th' ? 'สเต็ป 3/3' : 'Step 3/3')}
+              {step === 'SUCCESS' && (locale === 'th' ? 'เสร็จสิ้น' : 'Done')}
             </span>
           </div>
 
           {/* Heading */}
           <div className="mb-6">
             <h1 className="font-serif text-2xl font-bold text-ink-primary mb-1 tracking-tight">
-              {step === 'REQUEST_EMAIL' && 'ลืมรหัสผ่าน?'}
-              {step === 'VERIFY_OTP' && 'กรอกรหัส OTP จาก Gmail'}
-              {step === 'NEW_PASSWORD' && 'ตั้งรหัสผ่านใหม่'}
-              {step === 'SUCCESS' && 'รีเซ็ตรหัสผ่านสำเร็จ!'}
+              {step === 'REQUEST_EMAIL' && (locale === 'th' ? 'ลืมรหัสผ่าน?' : 'Forgot Password?')}
+              {step === 'VERIFY_OTP' && (locale === 'th' ? 'กรอกรหัส OTP จาก Gmail' : 'Enter OTP Code')}
+              {step === 'NEW_PASSWORD' && (locale === 'th' ? 'ตั้งรหัสผ่านใหม่' : 'Set New Password')}
+              {step === 'SUCCESS' && (locale === 'th' ? 'รีเซ็ตรหัสผ่านสำเร็จ!' : 'Password Reset Successfully!')}
             </h1>
             <p className="text-xs text-ink-secondary leading-relaxed">
               {step === 'REQUEST_EMAIL' && 'ระบุอีเมล Gmail ที่ลงทะเบียนไว้เพื่อรับรหัส OTP สำหรับยืนยันตัวตน'}

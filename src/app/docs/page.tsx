@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { PublicHeader, PublicFooter, DocsSubNav } from '@/components/layout/public-nav';
 import { Sticker } from '@/components/ui/sticker';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 import { 
   FacebookLogo, 
   InstagramLogo, 
@@ -56,6 +57,7 @@ interface DocSection {
 }
 
 export default function DocsPage() {
+  const { t, locale } = useTranslation();
   const [searchQuery, setSearchQuery] = useState('');
   const [activeSectionId, setActiveSectionId] = useState('quickstart');
   const [copiedCode, setCopiedCode] = useState(false);
@@ -500,10 +502,10 @@ export default function DocsPage() {
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl font-medium text-ink-primary tracking-tight">
-            คู่มือการใช้งานและเอกสารระบบ RetzPost
+            {t('docs.docsHubTitle')}
           </h1>
           <p className="text-sm text-ink-secondary max-w-2xl mx-auto leading-relaxed font-sans">
-            คู่มือกองบรรณาธิการดิจิทัลฉบับสมบูรณ์: ตั้งแต่เริ่มต้นเชื่อมต่อโซเชียล, การเขียนข่าวและปล่อยคลิปสั้นข้าม 6 แพลตฟอร์ม, ไปจนถึงการวิเคราะห์ KPI ด้วย AI
+            {t('docs.docsHubSubtitle')}
           </p>
 
           {/* Search Box */}
@@ -512,7 +514,7 @@ export default function DocsPage() {
               <Search className="w-4 h-4 text-ink-secondary absolute left-3.5 top-3.5 pointer-events-none" />
               <input
                 type="text"
-                placeholder="ค้นหาคู่มือ เช่น สมัครสมาชิก, ปฏิทิน, ขนาดวิดีโอ 9:16, KPI, ลบโพสต์..."
+                placeholder={t('docs.searchPlaceholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 text-xs bg-paper-canvas border-2 border-border-rule rounded-editorial font-mono text-ink-primary placeholder:text-ink-secondary/60 focus:outline-none focus:border-brand-indigo focus:ring-2 focus:ring-brand-indigo/20 transition-all shadow-xs"
@@ -521,15 +523,15 @@ export default function DocsPage() {
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-2.5 text-xs font-mono text-ink-secondary hover:text-ink-primary px-1.5 py-0.5 rounded bg-paper-subtle"
+                  className="absolute right-3 top-2.5 text-xs font-mono text-ink-secondary hover:text-ink-primary px-1.5 py-0.5 rounded bg-paper-subtle cursor-pointer"
                 >
-                  ล้าง
+                  {t('common.close')}
                 </button>
               )}
             </div>
             {searchQuery && (
               <p className="text-[11px] font-mono text-ink-secondary text-left mt-1.5 pl-1">
-                ผลการค้นหา: พบ {filteredSections.length} หมวดหมู่ที่ตรงกัน
+                {locale === 'th' ? `ผลการค้นหา: พบ ${filteredSections.length} หมวดหมู่ที่ตรงกัน` : `Search results: ${filteredSections.length} matching sections`}
               </p>
             )}
           </div>

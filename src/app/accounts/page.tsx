@@ -59,6 +59,7 @@ import {
   subscribeToMockDataChange 
 } from '@/modules/data/mock-data-manager';
 import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 
 export interface MasterChannelAccount {
   id: string;
@@ -374,6 +375,7 @@ const PLATFORM_CONFIGS: PlatformConfig[] = [
 
 
 function ConnectedAccountsContent() {
+  const { t, locale } = useTranslation();
   const searchParams = useSearchParams();
   const successMessage = searchParams.get('success');
   const errorMessage = searchParams.get('error');
@@ -837,10 +839,10 @@ function ConnectedAccountsContent() {
     <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Masthead Header */}
       <Masthead
-        folio="PROJECT DIRECTORY / INTEGRATION MATRIX"
-        editionDate="MULTI-WORKSPACE & CHANNELS"
-        title="Connected Channels & Project Hub"
-        subtitle="Manage publication endpoints and map them into Projects with Zero-Touch API safety and flexible routing."
+        folio={locale === 'th' ? 'สารบบโครงการ / แดชบอร์ดช่องทาง' : 'PROJECT DIRECTORY / INTEGRATION MATRIX'}
+        editionDate={locale === 'th' ? 'ช่องทางและโปรเจกต์มัลติแพลตฟอร์ม' : 'MULTI-WORKSPACE & CHANNELS'}
+        title={t('accounts.pageTitle')}
+        subtitle={t('accounts.pageSubtitle')}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             {isMockCleared ? (
@@ -851,11 +853,11 @@ function ConnectedAccountsContent() {
                   setAccounts(INITIAL_MASTER_ACCOUNTS);
                   showToast('🎲 โหลดบัญชีโซเชียลตัวอย่าง (FB, IG, YT, TT, X, Lemon8) เรียบร้อยแล้ว');
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="โหลดบัญชีตัวอย่างเพื่อพรีวิว"
               >
                 <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-                <span>โหลดบัญชีตัวอย่าง (Demo Accounts)</span>
+                <span>{t('accounts.loadDemo')}</span>
               </button>
             ) : (
               <button
@@ -865,30 +867,30 @@ function ConnectedAccountsContent() {
                   setAccounts([]);
                   showToast('🗑️ ล้างบัญชีจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate)');
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="ล้างบัญชีจำลองทั้งหมด"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>ล้างบัญชีจำลอง (Clear All)</span>
+                <span>{t('accounts.clearDemo')}</span>
               </button>
             )}
 
             <button
               type="button"
               onClick={() => setIsNewProjectModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule rounded-editorial text-xs font-mono font-medium transition-colors shadow-2xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule rounded-editorial text-xs font-sans font-medium transition-colors shadow-2xs cursor-pointer"
             >
               <Building2 className="w-3.5 h-3.5 text-brand-indigo" />
-              <span>+ สร้างโปรเจกต์ใหม่</span>
+              <span>{t('accounts.createNewProject')}</span>
             </button>
 
             <button
               type="button"
               onClick={() => handleOpenConnect('FACEBOOK')}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-2xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-sans font-medium transition-colors shadow-2xs cursor-pointer active:scale-95"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>+ เชื่อมต่อช่องทางโซเชียล</span>
+              <span>{t('accounts.connectChannel')}</span>
             </button>
           </div>
         }
@@ -945,7 +947,7 @@ function ConnectedAccountsContent() {
                 )}
                 <div>
                   <div className="flex items-center gap-1.5">
-                    <span className="font-serif font-bold text-xs sm:text-sm text-ink-primary">
+                    <span className="font-sans font-bold text-xs sm:text-sm text-ink-primary">
                       {selectedWorkspaceId === 'ALL' ? 'Master Hub (รวมทุกบัญชี)' : activeWorkspace?.name}
                     </span>
                     <ChevronDown className="w-3.5 h-3.5 text-ink-secondary group-hover:text-ink-primary transition-transform duration-150 shrink-0" />
@@ -1066,35 +1068,35 @@ function ConnectedAccountsContent() {
               <button
                 type="button"
                 onClick={() => handleOpenManageProjectModal(selectedWorkspaceId)}
-                className="px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-mono font-medium flex items-center gap-1.5 transition-colors cursor-pointer text-ink-primary shadow-2xs"
+                className="px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle border border-border-rule rounded-editorial text-xs font-sans font-medium flex items-center gap-1.5 transition-colors cursor-pointer text-ink-primary shadow-2xs"
                 title="แก้ไขชื่อ หมวดหมู่ และติ๊กแมปช่องทางของโปรเจกต์นี้"
               >
                 <Sliders className="w-3.5 h-3.5 text-brand-indigo" />
-                <span>แมปช่องทางโปรเจกต์</span>
+                <span>{locale === 'th' ? 'แมปช่องทางโปรเจกต์' : 'Map Channels'}</span>
               </button>
             )}
 
             <button
               type="button"
               onClick={() => setIsNewProjectModalOpen(true)}
-              className="px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer active:scale-95"
+              className="px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-sans font-medium flex items-center gap-1.5 transition-colors shadow-2xs cursor-pointer active:scale-95"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>สร้าง Project ใหม่</span>
+              <span>{t('accounts.createNewProject')}</span>
             </button>
           </div>
         </div>
 
         {/* Bottom Row: Scope Filter (All vs Active vs Bypassed) + Search + Layout Switcher */}
-        <div className="pt-2.5 border-t border-border-rule flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-mono">
+        <div className="pt-2.5 border-t border-border-rule flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-sans">
           {/* Filter Pills when Project selected */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 md:pb-0 scrollbar-none">
-            <span className="text-[10px] uppercase text-ink-secondary mr-1 font-bold shrink-0">แสดง:</span>
+            <span className="text-[10px] uppercase text-ink-secondary mr-1 font-bold shrink-0">{locale === 'th' ? 'แสดง:' : 'Show:'}</span>
             {[
-              { id: 'ALL', label: `ทั้งหมด (${accounts.length})` },
+              { id: 'ALL', label: locale === 'th' ? `ทั้งหมด (${accounts.length})` : `All (${accounts.length})` },
               ...(selectedWorkspaceId !== 'ALL' ? [
-                { id: 'ACTIVE', label: `✓ เปิดใน ${activeWorkspace?.name} (${currentProjectActiveCount})` },
-                { id: 'BYPASSED', label: `⚪ ข้าม API (${currentProjectBypassedCount})` },
+                { id: 'ACTIVE', label: locale === 'th' ? `✓ เปิดใน ${activeWorkspace?.name} (${currentProjectActiveCount})` : `✓ Active (${currentProjectActiveCount})` },
+                { id: 'BYPASSED', label: locale === 'th' ? `⚪ ข้าม API (${currentProjectBypassedCount})` : `⚪ Bypassed (${currentProjectBypassedCount})` },
               ] : [])
             ].map((tab) => (
               <button
@@ -1119,12 +1121,12 @@ function ConnectedAccountsContent() {
               <button
                 type="button"
                 onClick={() => setViewLayout('GRID')}
-                className={`px-2.5 py-1 rounded text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded text-xs font-sans font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                   viewLayout === 'GRID'
                     ? 'bg-brand-indigo text-white font-bold shadow-2xs'
                     : 'text-ink-secondary hover:text-ink-primary'
                 }`}
-                title="มุมมองแบบตาราง 2x2 (Grid 2x2 View)"
+                title="Grid 2×2 View"
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">Grid 2×2</span>
@@ -1132,12 +1134,12 @@ function ConnectedAccountsContent() {
               <button
                 type="button"
                 onClick={() => setViewLayout('LIST')}
-                className={`px-2.5 py-1 rounded text-xs font-mono font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
+                className={`px-2.5 py-1 rounded text-xs font-sans font-medium flex items-center gap-1.5 transition-all cursor-pointer ${
                   viewLayout === 'LIST'
                     ? 'bg-brand-indigo text-white font-bold shadow-2xs'
                     : 'text-ink-secondary hover:text-ink-primary'
                 }`}
-                title="มุมมองแบบรายการยาว (Full-width List View)"
+                title="List View"
               >
                 <List className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">List</span>
@@ -1151,8 +1153,8 @@ function ConnectedAccountsContent() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="ค้นหาเพจ หรือแฮนเดิล..."
-                className="w-full pl-8 pr-7 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-mono text-xs text-ink-primary placeholder:text-ink-secondary/60 focus:outline-hidden focus:border-brand-indigo"
+                placeholder={t('accounts.searchPlaceholder')}
+                className="w-full pl-8 pr-7 py-1.5 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs text-ink-primary placeholder:text-ink-secondary/60 focus:outline-hidden focus:border-brand-indigo"
               />
               {searchQuery && (
                 <button
@@ -1206,14 +1208,14 @@ function ConnectedAccountsContent() {
                   </div>
                   <div>
                     <div className="flex items-center gap-2">
-                      <h2 className="font-serif font-bold text-base text-ink-primary">
+                      <h2 className="font-sans font-bold text-base text-ink-primary">
                         {platform.name}
                       </h2>
-                      <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full border font-semibold ${platform.badgeColor}`}>
-                        {totalInPlatform} {platform.id === 'YOUTUBE' ? 'Channels' : 'Pages'}
+                      <span className={`text-[10px] font-sans px-2 py-0.5 rounded-full border font-semibold tabular-nums lining-nums ${platform.badgeColor}`}>
+                        {totalInPlatform} {platform.id === 'YOUTUBE' ? t('accounts.channels') : t('accounts.pages')}
                       </span>
                     </div>
-                    <p className="text-[11px] font-mono text-ink-secondary">
+                    <p className="text-xs font-sans text-ink-secondary">
                       {platform.subtitle}
                     </p>
                   </div>
@@ -1226,18 +1228,18 @@ function ConnectedAccountsContent() {
                       <button
                         type="button"
                         onClick={() => handleBatchTogglePlatform(platform.id, true)}
-                        className="px-2 py-1 rounded bg-paper-canvas hover:bg-emerald-50 text-emerald-800 border border-border-rule hover:border-emerald-300 text-[11px] font-mono font-bold transition-colors cursor-pointer shadow-2xs"
-                        title={`เปิดทุกช่องทางของ ${platform.name} สำหรับ ${activeWorkspace?.name}`}
+                        className="px-2 py-1 rounded bg-paper-canvas hover:bg-emerald-50 text-emerald-800 border border-border-rule hover:border-emerald-300 text-xs font-sans font-medium transition-colors cursor-pointer shadow-2xs"
+                        title={locale === 'th' ? `เปิดทุกช่องทางของ ${platform.name} สำหรับ ${activeWorkspace?.name}` : `Enable all ${platform.name} for ${activeWorkspace?.name}`}
                       >
-                        เปิดทั้งหมด
+                        {t('accounts.openAll')}
                       </button>
                       <button
                         type="button"
                         onClick={() => handleBatchTogglePlatform(platform.id, false)}
-                        className="px-2 py-1 rounded bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-[11px] font-mono font-medium transition-colors cursor-pointer shadow-2xs"
-                        title={`ปิดทุกช่องทางของ ${platform.name} สำหรับ ${activeWorkspace?.name}`}
+                        className="px-2 py-1 rounded bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium transition-colors cursor-pointer shadow-2xs"
+                        title={locale === 'th' ? `ปิดทุกช่องทางของ ${platform.name} สำหรับ ${activeWorkspace?.name}` : `Disable all ${platform.name} for ${activeWorkspace?.name}`}
                       >
-                        ปิดทั้งหมด
+                        {t('accounts.closeAll')}
                       </button>
                     </div>
                   )}
@@ -1246,12 +1248,26 @@ function ConnectedAccountsContent() {
                   <button
                     type="button"
                     onClick={() => handleOpenConnect(platform.id)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-2xs cursor-pointer shrink-0 active:scale-95"
-                    title={`เชื่อมต่อ ${platform.name} เพิ่มเติม`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial text-xs font-sans font-medium transition-colors shadow-2xs cursor-pointer shrink-0 active:scale-95"
+                    title={locale === 'th' ? `เชื่อมต่อ ${platform.name} เพิ่มเติม` : `Connect ${platform.name}`}
                   >
                     <Plus className="w-3.5 h-3.5" />
-                    <span className="hidden sm:inline">{platform.addButtonText}</span>
-                    <span className="sm:hidden">เพิ่ม</span>
+                    <span className="hidden sm:inline">
+                      {locale === 'th'
+                        ? platform.addButtonText
+                        : platform.id === 'FACEBOOK'
+                        ? t('accounts.addFacebook')
+                        : platform.id === 'INSTAGRAM'
+                        ? t('accounts.addInstagram')
+                        : platform.id === 'TIKTOK'
+                        ? t('accounts.addTiktok')
+                        : platform.id === 'YOUTUBE'
+                        ? t('accounts.addYoutube')
+                        : platform.id === 'X'
+                        ? t('accounts.addX')
+                        : t('accounts.addLemon8')}
+                    </span>
+                    <span className="sm:hidden">{locale === 'th' ? 'เพิ่ม' : 'Add'}</span>
                   </button>
                 </div>
               </div>
@@ -1259,20 +1275,20 @@ function ConnectedAccountsContent() {
               {/* Pages / Channels List */}
               {platformAccounts.length === 0 ? (
                 <div className="p-6 text-center space-y-2 bg-paper-canvas/30 rounded-b-card">
-                  <p className="text-xs font-mono text-ink-secondary">
+                  <p className="text-xs font-sans text-ink-secondary">
                     {searchQuery
-                      ? `ไม่พบบัญชี ${platform.name} ที่ตรงกับคำค้นหา "${searchQuery}"`
+                      ? (locale === 'th' ? `ไม่พบบัญชี ${platform.name} ที่ตรงกับคำค้นหา "${searchQuery}"` : `No ${platform.name} accounts match "${searchQuery}"`)
                       : channelFilterMode !== 'ALL'
-                      ? `ไม่มีบัญชี ${platform.name} ในสถานะที่เลือก (${channelFilterMode})`
-                      : `ยังไม่มีบัญชี ${platform.name} เชื่อมต่ออยู่ในระบบ`}
+                      ? (locale === 'th' ? `ไม่มีบัญชี ${platform.name} ในสถานะที่เลือก (${channelFilterMode})` : `No ${platform.name} accounts with status ${channelFilterMode}`)
+                      : (locale === 'th' ? `ยังไม่มีบัญชี ${platform.name} เชื่อมต่ออยู่ในระบบ` : `No ${platform.name} accounts connected yet`)}
                   </p>
                   <button
                     type="button"
                     onClick={() => handleOpenConnect(platform.id)}
-                    className="text-xs font-mono text-brand-indigo hover:underline font-semibold cursor-pointer inline-flex items-center gap-1"
+                    className="text-xs font-sans text-brand-indigo hover:underline font-semibold cursor-pointer inline-flex items-center gap-1"
                   >
                     <Plus className="w-3 h-3" />
-                    <span>คลิกเพื่อเชื่อมต่อ {platform.name} ตอนนี้</span>
+                    <span>{locale === 'th' ? `คลิกเพื่อเชื่อมต่อ ${platform.name} ตอนนี้` : `Click to connect ${platform.name} now`}</span>
                   </button>
                 </div>
               ) : (
@@ -1299,7 +1315,7 @@ function ConnectedAccountsContent() {
                         <div className="flex items-start sm:items-center gap-3 min-w-0">
                           {/* Channel Avatar with Platform Sub-badge */}
                           <div className="relative shrink-0">
-                            <div className="w-10 h-10 rounded-full bg-paper-subtle border border-border-rule flex items-center justify-center font-bold font-serif text-sm text-brand-indigo shadow-2xs">
+                            <div className="w-10 h-10 rounded-full bg-paper-subtle border border-border-rule flex items-center justify-center font-bold font-sans text-sm text-brand-indigo shadow-2xs">
                               {acc.displayName.slice(0, 2).toUpperCase()}
                             </div>
                             <div className="absolute -bottom-1 -right-1 bg-paper-raised p-0.5 rounded-full shadow-2xs border border-border-rule">
@@ -1309,32 +1325,32 @@ function ConnectedAccountsContent() {
 
                           <div className="min-w-0 space-y-0.5">
                             <div className="flex flex-wrap items-center gap-2">
-                              <h3 className="font-serif font-bold text-sm text-ink-primary truncate">
+                              <h3 className="font-sans font-bold text-sm text-ink-primary truncate">
                                 {acc.displayName}
                               </h3>
-                              <span className="text-[10px] font-mono text-ink-muted">
+                              <span className="text-[10px] font-mono text-ink-muted tabular-nums">
                                 ID: {acc.channelId}
                               </span>
                               {acc.isSimulated ? (
-                                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-700 border border-amber-500/30 font-bold flex items-center gap-1">
+                                <span className="text-[9px] font-sans px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-700 border border-amber-500/30 font-bold flex items-center gap-1">
                                   <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
-                                  จำลอง (Demo)
+                                  {t('accounts.demoBadge')}
                                 </span>
                               ) : (
-                                <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 font-bold flex items-center gap-1">
+                                <span className="text-[9px] font-sans px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-700 border border-emerald-500/30 font-bold flex items-center gap-1">
                                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                  OAuth 2.0 Live
+                                  {t('accounts.liveBadge')}
                                 </span>
                               )}
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-2 text-xs font-mono text-ink-secondary">
+                            <div className="flex flex-wrap items-center gap-2 text-xs font-sans text-ink-secondary">
                               <span className="text-brand-indigo font-medium truncate">
                                 {acc.handle}
                               </span>
                               <span>•</span>
                               <span className="text-[10px] text-ink-muted">
-                                Synced {acc.lastSynced}
+                                {locale === 'th' ? `ซิงค์ ${acc.lastSynced}` : `Synced ${acc.lastSynced}`}
                               </span>
                             </div>
 
@@ -1343,7 +1359,7 @@ function ConnectedAccountsContent() {
                               {acc.capabilities.split('•').slice(0, 3).map((cap, i) => (
                                 <span
                                   key={i}
-                                  className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-paper-canvas border border-border-rule text-ink-secondary"
+                                  className="text-[10px] font-sans px-1.5 py-0.5 rounded bg-paper-canvas border border-border-rule text-ink-secondary font-medium"
                                 >
                                   {cap.trim()}
                                 </span>
@@ -1359,15 +1375,15 @@ function ConnectedAccountsContent() {
                           <button
                             type="button"
                             onClick={() => handleToggleChannelForWorkspace(acc.id, currentWsId)}
-                            className={`px-2.5 py-1 rounded-full text-[10px] font-mono font-bold border transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
+                            className={`px-2.5 py-1 rounded-full text-xs font-sans font-medium border transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs ${
                               isEnabledInCurrentWs
                                 ? 'bg-semantic-success/15 text-semantic-success border-semantic-success/30 hover:bg-semantic-success/25'
                                 : 'bg-paper-subtle text-ink-muted border-border-rule hover:bg-paper-canvas'
                             }`}
                             title={
                               isEnabledInCurrentWs
-                                ? `คลิกเพื่อปิดใช้งานใน ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name} (Bypass ข้าม API ไม่เกิด Error)`
-                                : `คลิกเพื่อเปิดใช้งานใน ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name}`
+                                ? (locale === 'th' ? `คลิกเพื่อปิดใช้งานใน ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name} (Bypass ข้าม API ไม่เกิด Error)` : `Click to bypass in ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name}`)
+                                : (locale === 'th' ? `คลิกเพื่อเปิดใช้งานใน ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name}` : `Click to activate in ${selectedWorkspaceId === 'ALL' ? defaultWsObj?.name : activeWorkspace?.name}`)
                             }
                           >
                             <span className={`w-1.5 h-1.5 rounded-full ${
@@ -1375,8 +1391,8 @@ function ConnectedAccountsContent() {
                             }`} />
                             <span>
                               {selectedWorkspaceId !== 'ALL'
-                                ? isEnabledInCurrentWs ? 'Active' : 'Bypassed'
-                                : isEnabledInCurrentWs ? 'พร้อมใช้งาน' : 'ข้าม API'}
+                                ? (isEnabledInCurrentWs ? t('accounts.statusActive') : t('accounts.statusBypassed'))
+                                : (isEnabledInCurrentWs ? t('accounts.statusActive') : t('accounts.statusBypassed'))}
                             </span>
                           </button>
 
@@ -1506,11 +1522,13 @@ function ConnectedAccountsContent() {
                   <SocialPlatformIcon platform={connectPlatform} size={20} />
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-base text-ink-primary">
-                    เชื่อมต่อ {connectPlatform === 'FACEBOOK' ? 'Facebook Page' : connectPlatform === 'INSTAGRAM' ? 'Instagram Professional' : connectPlatform === 'TIKTOK' ? 'TikTok Account' : connectPlatform === 'YOUTUBE' ? 'YouTube Channel' : connectPlatform === 'X' ? 'X (Twitter) Profile' : 'Lemon8 Profile'}
+                  <h3 className="font-sans font-bold text-base text-ink-primary">
+                    {locale === 'th'
+                      ? `เชื่อมต่อ ${connectPlatform === 'FACEBOOK' ? 'Facebook Page' : connectPlatform === 'INSTAGRAM' ? 'Instagram Professional' : connectPlatform === 'TIKTOK' ? 'TikTok Account' : connectPlatform === 'YOUTUBE' ? 'YouTube Channel' : connectPlatform === 'X' ? 'X (Twitter) Profile' : 'Lemon8 Profile'}`
+                      : `Connect ${connectPlatform === 'FACEBOOK' ? 'Facebook Page' : connectPlatform === 'INSTAGRAM' ? 'Instagram Professional' : connectPlatform === 'TIKTOK' ? 'TikTok Account' : connectPlatform === 'YOUTUBE' ? 'YouTube Channel' : connectPlatform === 'X' ? 'X (Twitter) Profile' : 'Lemon8 Profile'}`}
                   </h3>
-                  <p className="text-[11px] font-mono text-ink-secondary">
-                    เลือกวิธีการเชื่อมต่อระหว่างระบบ OAuth 2.0 ทางการ หรือโหมดจำลองเพื่อทดสอบ
+                  <p className="text-xs font-sans text-ink-secondary">
+                    {locale === 'th' ? 'เลือกวิธีการเชื่อมต่อระหว่างระบบ OAuth 2.0 ทางการ หรือโหมดจำลองเพื่อทดสอบ' : 'Choose between Official OAuth 2.0 or Simulation sandbox for testing'}
                   </p>
                 </div>
               </div>
@@ -1555,9 +1573,9 @@ function ConnectedAccountsContent() {
             {connectMode === 'OAUTH' && (
               <div className="space-y-4 pt-1">
                 <div className="p-3.5 rounded-editorial bg-brand-indigo/5 border border-brand-indigo/20 space-y-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-brand-indigo font-serif">
+                  <div className="flex items-center gap-2 text-xs font-bold text-brand-indigo font-sans">
                     <ShieldCheck className="w-4 h-4 text-semantic-success" />
-                    <span>ระบบเชื่อมต่อทางการผ่าน {connectPlatform} API</span>
+                    <span>{locale === 'th' ? `ระบบเชื่อมต่อทางการผ่าน ${connectPlatform} API` : `Official OAuth 2.0 via ${connectPlatform} API`}</span>
                   </div>
                   <p className="text-xs text-ink-secondary leading-relaxed">
                     เมื่อกดปุ่มด้านล่าง ระบบจะส่งต่อไปยังหน้าเข้าสู่ระบบทางการของ {connectPlatform} เพื่อให้คุณเข้าสู่ระบบและอนุญาตสิทธิ์การจัดการโพสต์
@@ -1651,9 +1669,9 @@ function ConnectedAccountsContent() {
             {connectMode === 'SIMULATION' && (
               <div className="space-y-3.5">
                 <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-editorial text-xs text-amber-900 dark:text-amber-200 space-y-1">
-                  <div className="flex items-center gap-1.5 font-bold font-serif text-amber-800 dark:text-amber-300">
+                  <div className="flex items-center gap-1.5 font-bold font-sans text-amber-800 dark:text-amber-300">
                     <AlertTriangle className="w-4 h-4 text-amber-600" />
-                    <span>โหมดจำลองข้อมูล (Sandbox / UI Prototype)</span>
+                    <span>{locale === 'th' ? 'โหมดจำลองข้อมูล (Sandbox / UI Prototype)' : 'Simulation Sandbox Mode'}</span>
                   </div>
                   <p className="text-[11px] leading-relaxed">
                     โหมดนี้เหมาะสำหรับทดลองจัดเลย์เอาต์หน้าจอ, ลองวางปฏิทิน และทดสอบผูกช่องทางเข้า Workspace โดย<strong>ไม่ต้องใช้บัญชีโซเชียลจริง</strong> (การกรอกชื่อจะสร้างการ์ดจำลองในระบบเท่านั้น)
@@ -1855,11 +1873,11 @@ function ConnectedAccountsContent() {
                   <Sliders className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-base text-ink-primary">
-                    จัดการโปรเจกต์ & แมปช่องทาง (Project Channel Matrix)
+                  <h3 className="font-sans font-bold text-base text-ink-primary">
+                    {locale === 'th' ? 'จัดการโปรเจกต์ & แมปช่องทาง (Project Channel Matrix)' : 'Project Channel Matrix & Routing'}
                   </h3>
-                  <p className="text-[11px] font-mono text-ink-secondary">
-                    เลือกช่องทางที่อนุญาตให้โพสต์ในโปรเจกต์นี้ (ช่องทางที่เหลือจะถูกข้าม API 100%)
+                  <p className="text-xs font-sans text-ink-secondary">
+                    {locale === 'th' ? 'เลือกช่องทางที่อนุญาตให้โพสต์ในโปรเจกต์นี้ (ช่องทางที่เหลือจะถูกข้าม API 100%)' : 'Select channels enabled for this project. Remaining channels are bypassed 100%.'}
                   </p>
                 </div>
               </div>
@@ -1876,8 +1894,8 @@ function ConnectedAccountsContent() {
             <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shrink-0">
               <div className="flex items-center gap-2 min-w-0">
                 <Sliders className="w-4 h-4 text-brand-indigo shrink-0" />
-                <label htmlFor="modal-project-selector" className="font-mono text-xs font-bold text-ink-primary uppercase shrink-0">
-                  เลือกโปรเจกต์:
+                <label htmlFor="modal-project-selector" className="font-sans text-xs font-bold text-ink-primary uppercase shrink-0">
+                  {locale === 'th' ? 'เลือกโปรเจกต์:' : 'Select Project:'}
                 </label>
               </div>
               <div className="relative flex-1 sm:max-w-xs">
@@ -1885,13 +1903,13 @@ function ConnectedAccountsContent() {
                   id="modal-project-selector"
                   value={editingProjectId}
                   onChange={(e) => handleSwitchEditingProjectInModal(e.target.value)}
-                  className="w-full px-3 py-1.5 bg-paper-raised border border-border-rule rounded-editorial font-serif text-xs font-bold text-brand-indigo focus:outline-hidden focus:border-brand-indigo cursor-pointer shadow-2xs"
+                  className="w-full px-3 py-1.5 bg-paper-raised border border-border-rule rounded-editorial font-sans text-xs font-semibold text-brand-indigo focus:outline-hidden focus:border-brand-indigo cursor-pointer shadow-2xs"
                 >
                   {workspaces.map((ws) => {
                     const wsCount = accounts.filter((a) => channelSelections[`${ws.id}_${a.id}`]).length;
                     return (
                       <option key={ws.id} value={ws.id}>
-                        {ws.name} ({wsCount} ช่องทาง)
+                        {ws.name} ({wsCount} {locale === 'th' ? 'ช่องทาง' : 'channels'})
                       </option>
                     );
                   })}
@@ -1900,18 +1918,18 @@ function ConnectedAccountsContent() {
             </div>
 
             {/* Edit Form */}
-            <form onSubmit={handleSaveManageProject} className="space-y-4 overflow-y-auto flex-1 pr-1 text-xs font-mono">
+            <form onSubmit={handleSaveManageProject} className="space-y-4 overflow-y-auto flex-1 pr-1 text-xs font-sans">
               {/* Project Name */}
               <div>
                 <label className="block text-[11px] uppercase text-ink-secondary font-bold mb-1">
-                  ชื่อโปรเจกต์ (Project Name) *
+                  {locale === 'th' ? 'ชื่อโปรเจกต์ (Project Name) *' : 'Project Name *'}
                 </label>
                 <input
                   type="text"
                   required
                   value={editProjectName}
                   onChange={(e) => setEditProjectName(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-serif text-xs font-bold text-ink-primary focus:outline-hidden focus:border-brand-indigo shadow-2xs"
+                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs font-medium text-ink-primary focus:outline-hidden focus:border-brand-indigo shadow-2xs"
                 />
               </div>
 
@@ -2070,10 +2088,10 @@ function ConnectedAccountsContent() {
                   <Building2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-base text-ink-primary">
-                    กำหนดโปรเจกต์หลัก
+                  <h3 className="font-sans font-bold text-base text-ink-primary">
+                    {locale === 'th' ? 'กำหนดโปรเจกต์หลัก' : 'Assign Primary Project'}
                   </h3>
-                  <p className="text-[11px] font-mono text-ink-secondary">
+                  <p className="text-xs font-sans text-ink-secondary">
                     {assignCandidate.displayName}
                   </p>
                 </div>
@@ -2160,10 +2178,10 @@ function ConnectedAccountsContent() {
                   <Activity className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-base text-ink-primary">
-                    ผลการทดสอบ API Connection
+                  <h3 className="font-sans font-bold text-base text-ink-primary">
+                    {locale === 'th' ? 'ผลการทดสอบ API Connection' : 'API Connection Diagnostic'}
                   </h3>
-                  <p className="text-[11px] font-mono text-ink-secondary">
+                  <p className="text-xs font-sans text-ink-secondary">
                     {testApiAccount.displayName}
                   </p>
                 </div>
@@ -2241,10 +2259,10 @@ function ConnectedAccountsContent() {
                 <AlertTriangle className="w-5 h-5 text-semantic-error" />
               </div>
               <div>
-                <h3 className="font-serif font-bold text-base text-ink-primary">
-                  ยืนยันการตัดการเชื่อมต่อ
+                <h3 className="font-sans font-bold text-base text-ink-primary">
+                  {locale === 'th' ? 'ยืนยันการตัดการเชื่อมต่อ' : 'Confirm Disconnect'}
                 </h3>
-                <p className="text-[11px] font-mono text-ink-secondary">
+                <p className="text-xs font-sans text-ink-secondary">
                   {disconnectCandidate.displayName}
                 </p>
               </div>
@@ -2293,11 +2311,11 @@ function ConnectedAccountsContent() {
                   <Building2 className="w-4 h-4" />
                 </div>
                 <div>
-                  <h3 className="font-serif font-bold text-base text-ink-primary">
-                    สร้าง Project ใหม่ พร้อมติ๊กเลือกช่องทาง
+                  <h3 className="font-sans font-bold text-base text-ink-primary">
+                    {locale === 'th' ? 'สร้าง Project ใหม่ พร้อมติ๊กเลือกช่องทาง' : 'Create New Project & Map Channels'}
                   </h3>
-                  <p className="text-[11px] font-mono text-ink-secondary">
-                    เลือกเฉพาะช่องทางและเพจที่โปรเจกต์นี้ใช้งานจริง (ช่องที่ไม่เลือกจะ Bypass 100%)
+                  <p className="text-xs font-sans text-ink-secondary">
+                    {locale === 'th' ? 'เลือกเฉพาะช่องทางและเพจที่โปรเจกต์นี้ใช้งานจริง (ช่องที่ไม่เลือกจะ Bypass 100%)' : 'Select channels for this project. Unselected channels are bypassed.'}
                   </p>
                 </div>
               </div>
@@ -2321,10 +2339,10 @@ function ConnectedAccountsContent() {
                   type="text"
                   required
                   autoFocus
-                  placeholder="เช่น: Main Studio, Marketing Campaign, Brand Channel..."
+                  placeholder={locale === 'th' ? "เช่น: Main Studio, Marketing Campaign, Brand Channel..." : "e.g., Main Studio, Campaign..."}
                   value={newProjectName}
                   onChange={(e) => setNewProjectName(e.target.value)}
-                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-serif text-sm text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"
+                  className="w-full px-3 py-2 bg-paper-canvas border border-border-rule rounded-editorial font-sans text-xs font-medium text-ink-primary placeholder:text-ink-muted focus:outline-hidden focus:border-brand-indigo"
                 />
               </div>
 
@@ -2386,7 +2404,7 @@ function ConnectedAccountsContent() {
                           />
                           <SocialPlatformIcon platform={acc.platform} size={16} />
                           <div className="min-w-0">
-                            <p className="font-serif font-bold text-xs text-ink-primary truncate">
+                            <p className="font-sans font-bold text-xs text-ink-primary truncate">
                               {acc.displayName}
                             </p>
                             <p className="text-[10px] font-mono text-ink-secondary truncate">

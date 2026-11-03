@@ -22,9 +22,11 @@ import { Sticker } from '@/components/ui/sticker';
 import { EmailOtpToast } from '@/components/auth/email-otp-toast';
 import { sendEmailOtp, verifyEmailOtp } from '@/modules/auth/otp-service';
 import { registerUser, isEmailRegistered } from '@/modules/auth/auth-service';
+import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { t, locale } = useTranslation();
 
   // Form State
   const [gmail, setGmail] = useState('');
@@ -258,14 +260,17 @@ export default function RegisterPage() {
           </div>
         </Link>
 
-        <div className="flex items-center gap-2 text-xs">
-          <span className="text-ink-secondary hidden sm:inline">มีบัญชีผู้ใช้งานอยู่แล้ว?</span>
-          <Link
-            href="/login"
-            className="font-semibold text-brand-indigo hover:text-brand-indigo-hover underline underline-offset-2 transition-colors"
-          >
-            เข้าสู่ระบบ (Sign In) →
-          </Link>
+        <div className="flex items-center gap-3 text-xs">
+          <LanguageToggle variant="compact" />
+          <div className="hidden sm:flex items-center gap-1.5">
+            <span className="text-ink-secondary">{t('auth.alreadyHaveAccount')}</span>
+            <Link
+              href="/login"
+              className="font-semibold text-brand-indigo hover:text-brand-indigo-hover underline underline-offset-2 transition-colors"
+            >
+              {t('auth.signInButton')} →
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -281,21 +286,21 @@ export default function RegisterPage() {
               </span>
             </div>
             <span className="text-[10px] font-mono text-accent-terracotta bg-accent-terracotta/10 px-2 py-0.5 rounded font-bold">
-              {step === 'DETAILS' ? 'ขั้นตอน 1/2' : step === 'OTP' ? 'ขั้นตอน 2/2' : 'เสร็จสมบูรณ์'}
+              {step === 'DETAILS' ? (locale === 'th' ? 'ขั้นตอน 1/2' : 'Step 1/2') : step === 'OTP' ? (locale === 'th' ? 'ขั้นตอน 2/2' : 'Step 2/2') : (locale === 'th' ? 'เสร็จสมบูรณ์' : 'Completed')}
             </span>
           </div>
 
           {/* Heading */}
           <div className="mb-6">
             <h1 className="font-serif text-2xl font-bold text-ink-primary mb-1 tracking-tight">
-              {step === 'DETAILS' && 'สมัครสมาชิกใหม่'}
-              {step === 'OTP' && 'ยืนยันรหัส OTP ใน Gmail'}
-              {step === 'SUCCESS' && 'ลงทะเบียนสำเร็จ!'}
+              {step === 'DETAILS' && t('auth.registerTitle')}
+              {step === 'OTP' && (locale === 'th' ? 'ยืนยันรหัส OTP ใน Gmail' : 'Verify Email OTP')}
+              {step === 'SUCCESS' && (locale === 'th' ? 'ลงทะเบียนสำเร็จ!' : 'Registration Complete!')}
             </h1>
             <p className="text-xs text-ink-secondary leading-relaxed">
-              {step === 'DETAILS' && 'สร้างบัญชี RetzPost เพื่อเชื่อมต่อและยิงโพสต์ทุกโซเชียลพร้อมกัน'}
-              {step === 'OTP' && `ระบบส่งรหัส 6 หลักไปที่ ${gmail}`}
-              {step === 'SUCCESS' && 'กำลังพาคุณเข้าสู่ Studio Dispatch Monitor...'}
+              {step === 'DETAILS' && t('auth.registerSubtitle')}
+              {step === 'OTP' && (locale === 'th' ? `ระบบส่งรหัส 6 หลักไปที่ ${gmail}` : `We sent a 6-digit verification code to ${gmail}`)}
+              {step === 'SUCCESS' && (locale === 'th' ? 'กำลังพาคุณเข้าสู่ Studio Dispatch Monitor...' : 'Redirecting to your workspace...')}
             </p>
           </div>
 

@@ -19,6 +19,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 import { StatusTag } from '@/components/ui/status-tag';
 import { 
   SocialPlatformIcon, 
@@ -183,6 +184,7 @@ const DEFAULT_SAMPLE_ITEMS: ContentItem[] = [
 ];
 
 export default function ContentLibraryPage() {
+  const { t, locale } = useTranslation();
   const [activeTab, setActiveTab] = useState<'ALL' | 'PUBLISHED' | 'SCHEDULED' | 'DRAFTS'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
@@ -215,10 +217,10 @@ export default function ContentLibraryPage() {
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <Masthead
-        folio="ARCHIVE INDEX / DISPATCH LEDGER"
-        editionDate="VOL. 24"
-        title="Content Archive & Dispatches"
-        subtitle="Curated master assets, multi-platform adaptations, and direct links to view live posts on social media."
+        folio={locale === 'th' ? 'สารบบคลังสื่อ / ทะเบียนงานพิมพ์' : 'ARCHIVE INDEX / DISPATCH LEDGER'}
+        editionDate={locale === 'th' ? 'คลังสื่อและเนื้อหาสิ่งพิมพ์' : 'VOL. 24 • ASSET VAULT'}
+        title={t('content.pageTitle')}
+        subtitle={t('content.pageSubtitle')}
         actions={
           <div className="flex flex-wrap items-center gap-2.5">
             {isMockCleared ? (
@@ -228,11 +230,11 @@ export default function ContentLibraryPage() {
                   loadSampleMockData();
                   setItems(DEFAULT_SAMPLE_ITEMS);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="โหลดชุดชิ้นงานตัวอย่างสำหรับพรีวิวคลังสื่อ"
               >
                 <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-                <span>โหลดคลังตัวอย่าง (Demo Assets)</span>
+                <span>{locale === 'th' ? 'โหลดคลังตัวอย่าง (Demo)' : 'Load Demo Assets'}</span>
               </button>
             ) : (
               <button
@@ -241,20 +243,20 @@ export default function ContentLibraryPage() {
                   clearAllMockData();
                   setItems([]);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="ล้างคลังสื่อให้ว่างเปล่า"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>ล้างคลังสื่อ (Clear All)</span>
+                <span>{locale === 'th' ? 'ล้างคลังสื่อ (Clear All)' : 'Clear All Assets'}</span>
               </button>
             )}
 
             <Link
               href="/create"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-brand-indigo text-white text-xs font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-colors shadow-xs"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-brand-indigo text-white text-xs font-sans font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-colors shadow-xs"
             >
               <Plus className="w-4 h-4" />
-              <span>Create Post</span>
+              <span>{locale === 'th' ? 'สร้างโพสต์ใหม่' : 'Create Post'}</span>
             </Link>
           </div>
         }

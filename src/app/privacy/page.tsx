@@ -24,8 +24,10 @@ import {
 } from 'lucide-react';
 import { PublicHeader, PublicFooter, DocsSubNav } from '@/components/layout/public-nav';
 import { Sticker } from '@/components/ui/sticker';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 
 export default function PrivacyPolicyPage() {
+  const { t, locale } = useTranslation();
   const [copiedEmail, setCopiedEmail] = useState(false);
   const [activeArticle, setActiveArticle] = useState('art-1');
 
@@ -79,10 +81,12 @@ export default function PrivacyPolicyPage() {
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl font-medium text-ink-primary tracking-tight">
-            นโยบายความเป็นส่วนตัว (Privacy Policy)
+            {t('legal.privacyTitle')} (Privacy Policy)
           </h1>
           <p className="text-xs sm:text-sm text-ink-secondary max-w-3xl leading-relaxed font-sans">
-            RetzPost ยึดมั่นในนโยบาย <strong>&quot;Zero Plain-Text Token & Zero Data Selling&quot;</strong> ข้อมูลบัญชีและผลงานของท่านได้รับการคุ้มครองด้วยการเข้ารหัสระดับเดียวกับสถาบันการเงิน เพื่อให้ท่านสร้างสรรค์คอนเทนต์ได้อย่างมั่นใจ 100%
+            {locale === 'th'
+              ? 'RetzPost ยึดมั่นในนโยบาย "Zero Plain-Text Token & Zero Data Selling" ข้อมูลบัญชีและผลงานของท่านได้รับการคุ้มครองด้วยการเข้ารหัสระดับเดียวกับสถาบันการเงิน เพื่อให้ท่านสร้างสรรค์คอนเทนต์ได้อย่างมั่นใจ 100%'
+              : 'RetzPost is committed to "Zero Plain-Text Token & Zero Data Selling". Your account tokens and creative works are protected by banking-grade envelope encryption.'}
           </p>
 
           <div className="flex flex-wrap items-center gap-2 pt-1 font-mono text-[11px] text-ink-secondary">

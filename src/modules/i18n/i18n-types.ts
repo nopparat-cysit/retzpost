@@ -199,6 +199,161 @@ export interface AdminTranslations {
   backToDesk: string;
 }
 
+export interface DeskTranslations {
+  pageTitle: string;
+  pageSubtitle: string;
+  quickCompose: string;
+  quickComposePlaceholder: string;
+  publishNow: string;
+  schedule: string;
+  liveTelemetry: string;
+  forceSync: string;
+  tokenBalance: string;
+  topUpTokens: string;
+  kpiGrade: string;
+  kpiCoaching: string;
+  postDiagnosis: string;
+  recentDispatches: string;
+  emergencyRecall: string;
+  channelsActive: string;
+  viewAllDispatches: string;
+  emptyDispatches: string;
+  operationsTab: string;
+  trackingTab: string;
+  teamKpiTab: string;
+}
+
+export interface CreateTranslations {
+  pageTitle: string;
+  pageSubtitle: string;
+  tabFeed: string;
+  tabStory: string;
+  tabReel: string;
+  tabShort: string;
+  captionLabel: string;
+  captionPlaceholder: string;
+  mediaLabel: string;
+  uploadDropzone: string;
+  autoFrameLabel: string;
+  autoFrameDesc: string;
+  channelSelector: string;
+  schedulePicker: string;
+  scheduleNow: string;
+  scheduleLater: string;
+  publishing: string;
+  publishSuccess: string;
+  draftSaved: string;
+  saveDraft: string;
+}
+
+export interface CalendarTranslations {
+  pageTitle: string;
+  pageSubtitle: string;
+  viewMonth: string;
+  viewWeek: string;
+  viewDay: string;
+  today: string;
+  filterChannels: string;
+  newSchedule: string;
+  scheduledPostsCount: string;
+  emptySlot: string;
+}
+
+export interface ContentTranslations {
+  pageTitle: string;
+  pageSubtitle: string;
+  tabAll: string;
+  tabImages: string;
+  tabVideos: string;
+  tabTemplates: string;
+  uploadMedia: string;
+  searchPlaceholder: string;
+  useTemplate: string;
+  deleteMedia: string;
+}
+
+export interface QueueTranslations {
+  pageTitle: string;
+  pageSubtitle: string;
+  statusAll: string;
+  statusScheduled: string;
+  statusPublishing: string;
+  statusCompleted: string;
+  statusFailed: string;
+  emergencyRevoke: string;
+  retryDispatch: string;
+  queueEmpty: string;
+}
+
+export interface TeamTranslations {
+  pageTitle: string;
+  pageSubtitle: string;
+  tabMembers: string;
+  tabTokenTracker: string;
+  inviteMember: string;
+  roleOwner: string;
+  roleEditor: string;
+  roleDispatcher: string;
+  roleViewer: string;
+  tokenCap: string;
+  tokenConsumed: string;
+  topConsumer: string;
+}
+
+export interface AuthTranslations {
+  loginTitle: string;
+  loginSubtitle: string;
+  registerTitle: string;
+  registerSubtitle: string;
+  emailLabel: string;
+  passwordLabel: string;
+  confirmPasswordLabel: string;
+  nameLabel: string;
+  rememberMe: string;
+  forgotPasswordLink: string;
+  signInButton: string;
+  signUpButton: string;
+  quickDemoLogin: string;
+  noAccountYet: string;
+  alreadyHaveAccount: string;
+  termsNotice: string;
+}
+
+export interface AccountsTranslations {
+  pageTitle: string;
+  pageSubtitle: string;
+  allChannels: string;
+  connectNew: string;
+  projectMapping: string;
+  statusActive: string;
+  statusBypassed: string;
+  demoBadge: string;
+  liveBadge: string;
+  addFacebook: string;
+  addInstagram: string;
+  addTiktok: string;
+  addYoutube: string;
+  addX: string;
+  addLemon8: string;
+  searchPlaceholder: string;
+  openAll: string;
+  closeAll: string;
+  createNewProject: string;
+  connectChannel: string;
+  loadDemo: string;
+  clearDemo: string;
+  channels: string;
+  pages: string;
+}
+
+export interface LegalTranslations {
+  privacyTitle: string;
+  termsTitle: string;
+  lastUpdated: string;
+  ccaNotice: string;
+  pdpaNotice: string;
+}
+
 export interface TranslationSchema {
   nav: NavTranslations;
   common: CommonTranslations;
@@ -208,4 +363,13 @@ export interface TranslationSchema {
   settings: SettingsTranslations;
   docs: DocsTranslations;
   admin: AdminTranslations;
+  desk: DeskTranslations;
+  create: CreateTranslations;
+  calendar: CalendarTranslations;
+  content: ContentTranslations;
+  queue: QueueTranslations;
+  team: TeamTranslations;
+  auth: AuthTranslations;
+  accounts: AccountsTranslations;
+  legal: LegalTranslations;
 }

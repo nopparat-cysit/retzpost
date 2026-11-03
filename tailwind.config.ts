@@ -45,9 +45,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ['Newsreader', 'var(--font-newsreader)', 'Georgia', 'serif'],
-        sans: ['"IBM Plex Sans Thai"', '"Plus Jakarta Sans"', 'var(--font-geist)', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-        mono: ['"JetBrains Mono"', 'var(--font-jetbrains-mono)', 'monospace'],
+        display: ['Newsreader', 'Georgia', '"IBM Plex Sans Thai"', 'serif'],
+        serif: ['Newsreader', 'Georgia', '"IBM Plex Sans Thai"', 'serif'],
+        sans: ['"IBM Plex Sans Thai"', '"Plus Jakarta Sans"', 'var(--font-geist)', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', '"IBM Plex Sans Thai"', 'monospace'],
       },
       borderRadius: {
         editorial: '6px',

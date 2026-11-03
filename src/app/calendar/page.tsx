@@ -39,6 +39,7 @@ import {
   BarChart3
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 import { Sticker } from '@/components/ui/sticker';
 import { CustomDatePicker } from '@/components/ui/custom-date-picker';
 import { CustomTimePicker } from '@/components/ui/custom-time-picker';
@@ -573,6 +574,7 @@ const SAMPLE_EVENTS: CalendarEventItem[] = [
 ];
 
 export default function EditorialCalendarPage() {
+  const { t, locale } = useTranslation();
   const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
   const [events, setEvents] = useState<CalendarEventItem[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>('MONTH');
@@ -877,10 +879,10 @@ export default function EditorialCalendarPage() {
 
       {/* Masthead */}
       <Masthead
-        folio="EDITORIAL CADENCE & INTELLIGENT DISPATCH DESK"
-        editionDate="OCTOBER 2026 • ASIA/BANGKOK (UTC+7)"
-        title="Editorial Calendar & Cadence"
-        subtitle="Unified multi-workspace calendar for Feed Posts, 24h Stories with Link Stickers, and 9:16 Video Releases across Meta, YouTube, and TikTok."
+        folio={locale === 'th' ? 'สายพานงานเผยแพร่ & ตารางบรรณาธิการ' : 'EDITORIAL CADENCE & INTELLIGENT DISPATCH DESK'}
+        editionDate={locale === 'th' ? 'ปฏิทินงาน • เอเชีย/กรุงเทพฯ (UTC+7)' : 'OCTOBER 2026 • ASIA/BANGKOK (UTC+7)'}
+        title={t('calendar.pageTitle')}
+        subtitle={t('calendar.pageSubtitle')}
         actions={
           <div className="flex flex-wrap items-center gap-2.5">
             {isMockCleared ? (
@@ -891,11 +893,11 @@ export default function EditorialCalendarPage() {
                   setEvents(SAMPLE_EVENTS);
                   showToast('🎲 โหลดตารางงานปฏิทินตัวอย่างเรียบร้อยแล้ว');
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="โหลดกำหนดการจำลองสำหรับทดสอบระบบ"
               >
                 <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-                <span>โหลดปฏิทินตัวอย่าง (Demo Events)</span>
+                <span>{locale === 'th' ? 'โหลดปฏิทินตัวอย่าง (Demo)' : 'Load Demo Events'}</span>
               </button>
             ) : (
               <button
@@ -905,20 +907,20 @@ export default function EditorialCalendarPage() {
                   setEvents([]);
                   showToast('🗑️ ล้างกำหนดการจำลองในปฏิทินเรียบร้อยแล้ว (Clean Slate)');
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="ล้างปฏิทินให้ว่างเปล่า"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>ล้างปฏิทิน (Clear All)</span>
+                <span>{locale === 'th' ? 'ล้างปฏิทิน (Clear All)' : 'Clear All Events'}</span>
               </button>
             )}
 
             <Link
               href="/create"
-              className="inline-flex items-center gap-2 px-4 py-2 bg-brand-indigo text-white text-xs font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-all shadow-xs active:scale-[0.98]"
+              className="inline-flex items-center gap-2 px-4 py-2 bg-brand-indigo text-white text-xs font-sans font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-all shadow-xs active:scale-[0.98]"
             >
               <Plus className="w-4 h-4" />
-              <span>Studio Desk</span>
+              <span>{locale === 'th' ? 'สร้างโพสต์ใหม่' : 'Studio Desk'}</span>
             </Link>
             <button
               onClick={() => {

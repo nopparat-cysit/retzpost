@@ -53,6 +53,7 @@ import {
   Disc
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 import { Sticker } from '@/components/ui/sticker';
 import { CustomDatePicker } from '@/components/ui/custom-date-picker';
 import { CustomTimePicker } from '@/components/ui/custom-time-picker';
@@ -641,6 +642,7 @@ const AI_MEDIA_LIBRARY_ASSETS = [
 ];
 
 export default function CreatePostPage() {
+  const { t, locale } = useTranslation();
   // Active Project Workspace Context
   const [activeWorkspaceId, setActiveWorkspaceId] = useState('ws_acme');
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
@@ -1447,10 +1449,10 @@ export default function CreatePostPage() {
     <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-5">
       {/* Masthead Header */}
       <Masthead
-        folio="STUDIO DESK / 3-COLUMN WORKBENCH"
-        editionDate="MULTI-PROJECT & PRESETS READY"
-        title="Universal Content Studio"
-        subtitle="Publish seamlessly across multiple projects. 1-click presets adapt instantly to your project's channels."
+        folio={locale === 'th' ? 'แท่นพิมพ์สตูดิโอ / โต๊ะประพันธ์ 3 คอลัมน์' : 'STUDIO DESK / 3-COLUMN WORKBENCH'}
+        editionDate={locale === 'th' ? 'รองรับหลายโครงการและพรีเซ็ตพร้อมใช้งาน' : 'MULTI-PROJECT & PRESETS READY'}
+        title={t('create.pageTitle')}
+        subtitle={t('create.pageSubtitle')}
         actions={
           <div className="flex flex-wrap items-center gap-2.5">
             {/* Identity & Role Tester */}
@@ -1459,7 +1461,7 @@ export default function CreatePostPage() {
                 NC
               </div>
               <span className="text-ink-secondary text-[11px] font-sans">
-                บทบาท:
+                {locale === 'th' ? 'บทบาท:' : 'Role:'}
               </span>
 
               <CustomDropdown

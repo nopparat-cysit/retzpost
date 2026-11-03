@@ -24,6 +24,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 import { Sticker } from '@/components/ui/sticker';
 import { StatusTag } from '@/components/ui/status-tag';
 import { 
@@ -229,6 +230,7 @@ const INITIAL_QUEUE_JOBS: QueueJobItem[] = [
 ];
 
 export default function PublishingQueuePage() {
+  const { t, locale } = useTranslation();
   const [filterTab, setFilterTab] = useState<'ALL' | 'REVIEW' | 'IN_FLIGHT' | 'COMPLETED' | 'FAILED'>('ALL');
   const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
   const [jobs, setJobs] = useState<QueueJobItem[]>([]);
@@ -332,10 +334,10 @@ export default function PublishingQueuePage() {
   return (
     <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       <Masthead
-        folio="OPERATIONAL QUEUE / TELEMETRY DESK"
-        editionDate="DISPATCH FEED"
-        title="Publishing Queue & Job Telemetry"
-        subtitle="Inspect active multi-placement dispatches across Feed, Stories, and Reels/Shorts with real-time retry engine and error auditing."
+        folio={locale === 'th' ? 'สายพานคิวเผยแพร่ / ศูนย์ตรวจจับสถานะ' : 'OPERATIONAL QUEUE / TELEMETRY DESK'}
+        editionDate={locale === 'th' ? 'ฟีดงานส่งออกสด' : 'DISPATCH FEED'}
+        title={t('queue.pageTitle')}
+        subtitle={t('queue.pageSubtitle')}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             {isMockCleared ? (
@@ -347,11 +349,11 @@ export default function PublishingQueuePage() {
                   setDownloadNotice('🎲 โหลดคิวงานตัวอย่าง 8 รายการเรียบร้อยแล้ว');
                   setTimeout(() => setDownloadNotice(null), 3500);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="โหลดคิวงานจำลองเพื่อทดสอบการทำงาน"
               >
                 <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-                <span>โหลดคิวตัวอย่าง (Demo Queue)</span>
+                <span>{locale === 'th' ? 'โหลดคิวตัวอย่าง (Demo)' : 'Load Demo Queue'}</span>
               </button>
             ) : (
               <button
@@ -362,18 +364,18 @@ export default function PublishingQueuePage() {
                   setDownloadNotice('🗑️ ล้างคิวงานจำลองทั้งหมดเรียบร้อยแล้ว');
                   setTimeout(() => setDownloadNotice(null), 3500);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="ล้างคิวงานให้ว่างเปล่าสำหรับใช้งานจริง"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>ล้างคิวงาน (Clear Queue)</span>
+                <span>{locale === 'th' ? 'ล้างคิวงาน (Clear All)' : 'Clear Queue'}</span>
               </button>
             )}
 
             {!isMockCleared && failedJobsCount > 0 && (
               <button
                 onClick={handleExportErrorCsv}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-terracotta/10 hover:bg-accent-terracotta/20 text-accent-terracotta border border-accent-terracotta/30 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-terracotta/10 hover:bg-accent-terracotta/20 text-accent-terracotta border border-accent-terracotta/30 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Export Error Log (CSV)</span>
@@ -384,7 +386,7 @@ export default function PublishingQueuePage() {
             )}
             <button
               onClick={handleExportAllCsv}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-subtle hover:bg-paper-canvas text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
             >
               <FileSpreadsheet className="w-3.5 h-3.5 text-ink-secondary" />
               <span>Export All Jobs</span>

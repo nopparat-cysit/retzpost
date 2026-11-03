@@ -47,8 +47,14 @@ src/modules/i18n/
 >   -webkit-font-feature-settings: "lnum" 1, "tnum" 1;
 >   font-feature-settings: "lnum" 1, "tnum" 1;
 >   ```
-> - **Primary Thai Font**: Use **`IBM Plex Sans Thai`** paired with **`Plus Jakarta Sans`** for body/UI text to ensure beautiful Thai glyphs with modern, clean Latin numerals.
-> - **Editorial Serif Display**: Use **`Newsreader`** for masthead titles only, with lining numerals explicitly enabled.
+> - **Primary Thai & Latin UI Font**: Use **`IBM Plex Sans Thai`** paired with **`Plus Jakarta Sans`** for all body, card, button, and interface text.
+> - **Editorial Serif Display (`font-display` / `Newsreader`)**: Reserved EXCLUSIVELY for broadsheet masthead hero titles.
+>
+> **STRICT FONT CLASS USAGE RULES**:
+> 1. **DO NOT use `font-serif` on UI components**: Account cards, channel titles ("Facebook", "No boring Station"), buttons, inputs, modal dialogs, and table rows must NEVER use `font-serif`. Use `font-sans font-bold` or `font-semibold`.
+> 2. **DO NOT use `font-mono` on Thai text, buttons, or status pills**: Monospace fonts (JetBrains Mono) contain NO Thai glyphs. Placing `font-mono` on Thai strings like "+ เพิ่มเพจ Facebook" or "พร้อมใช้งาน" triggers ugly Windows typewriter / Angsana serif fallbacks.
+> 3. **`font-mono` is strictly for technical IDs**: Only use `font-mono` for pure alphanumeric IDs (e.g. `ID: facebook_409689`), hashes, API keys, or code snippets, combined with `tabular-nums`.
+> 4. **Tailwind Fallback Invariant**: `tailwind.config.ts` must maintain `'"IBM Plex Sans Thai"'` across `sans`, `serif`, and `mono` font stacks so no glyph ever falls back to legacy Windows serif.
 
 ---
 

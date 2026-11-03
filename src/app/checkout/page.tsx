@@ -28,10 +28,12 @@ import {
   BillingCycle,
   PromoType,
 } from '@/modules/billing/pricing-plans';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 
 function CheckoutContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { t, locale } = useTranslation();
 
   // URL Params
   const planParam = (searchParams.get('plan') as PlanTier) || null;
@@ -189,17 +191,23 @@ function CheckoutContent() {
         {/* Breadcrumb & Title */}
         <div className="mb-8">
           <div className="flex items-center gap-2 text-xs text-ink-secondary mb-2 font-mono">
-            <Link href="/pricing" className="hover:text-brand-indigo underline">ราคาและแผน (Pricing)</Link>
+            <Link href="/pricing" className="hover:text-brand-indigo underline">
+              {locale === 'th' ? 'ราคาและแผน (Pricing)' : 'Pricing Plans'}
+            </Link>
             <span>/</span>
-            <span className="text-ink-primary font-bold">เช็คเอาท์และเปิดใช้งาน (Checkout)</span>
+            <span className="text-ink-primary font-bold">
+              {locale === 'th' ? 'เช็คเอาท์และเปิดใช้งาน (Checkout)' : 'Order Checkout'}
+            </span>
           </div>
           <h1 className="font-serif font-black text-2xl sm:text-4xl text-ink-primary">
-            {isTrialActive ? 'เปิดใช้งานสิทธิ์ทดลองฟรี 7 วัน' : 'ตรวจสอบคำสั่งซื้อและชำระเงิน'}
+            {isTrialActive 
+              ? (locale === 'th' ? 'เปิดใช้งานสิทธิ์ทดลองฟรี 7 วัน' : 'Start Your 7-Day Free Trial') 
+              : t('checkout.title')}
           </h1>
           <p className="text-sm text-ink-secondary mt-1">
             {isTrialActive 
-              ? 'เปิดสิทธิ์ใช้งานระบบแท่นพิมพ์ทันที 7 วัน โดยไม่มีการตัดเงินในวันนี้ พร้อมรับ 150 Master Tokens' 
-              : 'เปิดใช้งานระบบแท่นพิมพ์และรับ Master Token อัตโนมัติ พร้อมใบกำกับภาษี e-Tax ถูกต้องตามระเบียบกรมสรรพากร'}
+              ? (locale === 'th' ? 'เปิดสิทธิ์ใช้งานระบบแท่นพิมพ์ทันที 7 วัน โดยไม่มีการตัดเงินในวันนี้ พร้อมรับ 150 Master Tokens' : 'Get instant 7-day full access with 150 Master Tokens. No charge today.')
+              : t('checkout.subtitle')}
           </p>
         </div>
 
@@ -582,17 +590,17 @@ function CheckoutContent() {
                 {/* Price Breakdown with VAT 7% */}
                 <div className="py-4 border-b border-border-rule space-y-2 text-xs font-mono">
                   <div className="flex justify-between text-ink-secondary">
-                    <span>มูลค่าสินค้าก่อนภาษี (Subtotal):</span>
-                    <span>฿{vatCalc.subtotal.toLocaleString()}</span>
+                    <span>{t('checkout.planSubtotal')}:</span>
+                    <span className="tabular-nums lining-nums">฿{vatCalc.subtotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-ink-secondary">
-                    <span>ภาษีมูลค่าเพิ่ม (VAT 7%):</span>
-                    <span>฿{vatCalc.vat.toLocaleString()}</span>
+                    <span>{t('checkout.vat7')}:</span>
+                    <span className="tabular-nums lining-nums">฿{vatCalc.vat.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-base font-bold text-ink-primary pt-2 border-t border-border-rule/60">
-                    <span>ยอดรวมที่ต้องชำระวันนี้:</span>
-                    <span className="text-brand-indigo font-black">
-                      {isTrialActive ? '฿0.00 (ฟรี 7 วัน)' : `฿${vatCalc.total.toLocaleString()} THB`}
+                    <span>{t('checkout.totalDueToday')}:</span>
+                    <span className="text-brand-indigo font-black tabular-nums lining-nums">
+                      {isTrialActive ? (locale === 'th' ? '฿0.00 (ฟรี 7 วัน)' : '฿0.00 (7-Day Free)') : `฿${vatCalc.total.toLocaleString()} THB`}
                     </span>
                   </div>
                 </div>
@@ -612,15 +620,15 @@ function CheckoutContent() {
                   className="w-full mt-6 py-3 px-4 rounded-btn bg-brand-indigo hover:bg-brand-indigo-hover text-white text-sm font-bold transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-50 cursor-pointer"
                 >
                   {isSubmitting ? (
-                    <span>กำลังดำเนินการ...</span>
+                    <span>{t('common.loading')}</span>
                   ) : isTrialActive ? (
                     <>
-                      <span>ยืนยันเริ่มทดลองใช้ฟรี 7 วัน (฿0)</span>
+                      <span>{t('checkout.startTrialCta')}</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   ) : (
                     <>
-                      <span>ยืนยันการชำระเงิน (฿{vatCalc.total.toLocaleString()})</span>
+                      <span>{t('checkout.confirmPaymentCta')} (฿{vatCalc.total.toLocaleString()})</span>
                       <ArrowRight className="w-4 h-4" />
                     </>
                   )}

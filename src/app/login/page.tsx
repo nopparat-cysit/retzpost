@@ -17,9 +17,11 @@ import {
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
 import { loginUser } from '@/modules/auth/auth-service';
+import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { t, locale } = useTranslation();
 
   // Form State
   const [identifier, setIdentifier] = useState('');
@@ -38,12 +40,12 @@ export default function LoginPage() {
     setSuccessMessage('');
 
     if (!identifier.trim()) {
-      setErrorMessage('กรุณากรอก Gmail หรือชื่อผู้ใช้งาน (Username)');
+      setErrorMessage(locale === 'th' ? 'กรุณากรอก Gmail หรือชื่อผู้ใช้งาน (Username)' : 'Please enter your email or username');
       return;
     }
 
     if (!password) {
-      setErrorMessage('กรุณากรอกรหัสผ่าน');
+      setErrorMessage(locale === 'th' ? 'กรุณากรอกรหัสผ่าน' : 'Please enter your password');
       return;
     }
 
@@ -52,15 +54,15 @@ export default function LoginPage() {
     try {
       const res = loginUser(identifier, password);
       if (res.success && res.user) {
-        setSuccessMessage(`ยินดีต้อนรับกลับ, ${res.user.name}! กำลังเข้าสู่ระบบ...`);
+        setSuccessMessage(locale === 'th' ? `ยินดีต้อนรับกลับ, ${res.user.name}! กำลังเข้าสู่ระบบ...` : `Welcome back, ${res.user.name}! Redirecting...`);
         setTimeout(() => {
           router.push('/desk');
         }, 1200);
       } else {
-        setErrorMessage(res.message || 'อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+        setErrorMessage(res.message || (locale === 'th' ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' : 'Invalid email or password'));
       }
     } catch {
-      setErrorMessage('เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง');
+      setErrorMessage(locale === 'th' ? 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง' : 'Connection error, please try again');
     } finally {
       setIsSubmitting(false);
     }
@@ -73,7 +75,7 @@ export default function LoginPage() {
     setErrorMessage('');
     const res = loginUser(email, pass);
     if (res.success && res.user) {
-      setSuccessMessage(`เข้าสู่ระบบด้วยบัญชีทดสอบ ${res.user.name} เรียบร้อยแล้ว`);
+      setSuccessMessage(locale === 'th' ? `เข้าสู่ระบบด้วยบัญชีทดสอบ ${res.user.name} เรียบร้อยแล้ว` : `Signed in as test account ${res.user.name}`);
       setTimeout(() => {
         router.push('/desk');
       }, 1000);
@@ -98,14 +100,17 @@ export default function LoginPage() {
           </div>
         </Link>
 
-        <div className="flex items-center gap-2 text-xs">
-          <span className="text-ink-secondary hidden sm:inline">ยังไม่มีบัญชีผู้ใช้งาน?</span>
-          <Link
-            href="/register"
-            className="font-semibold text-brand-indigo hover:text-brand-indigo-hover underline underline-offset-2 transition-colors"
-          >
-            สมัครสมาชิกใหม่ (Register) →
-          </Link>
+        <div className="flex items-center gap-3 text-xs">
+          <LanguageToggle variant="compact" />
+          <div className="hidden sm:flex items-center gap-1.5">
+            <span className="text-ink-secondary">{t('auth.noAccountYet')}</span>
+            <Link
+              href="/register"
+              className="font-semibold text-brand-indigo hover:text-brand-indigo-hover underline underline-offset-2 transition-colors"
+            >
+              {t('auth.signUpButton')} →
+            </Link>
+          </div>
         </div>
       </header>
 
@@ -128,10 +133,10 @@ export default function LoginPage() {
           {/* Heading */}
           <div className="mb-6">
             <h1 className="font-serif text-2xl font-bold text-ink-primary mb-1 tracking-tight">
-              เข้าสู่ระบบ RetzPost
+              {t('auth.loginTitle')}
             </h1>
             <p className="text-xs text-ink-secondary leading-relaxed">
-              ระบุ Gmail หรือชื่อผู้ใช้เพื่อเข้าจัดการคอนเทนต์และมอนิเตอร์การกระจายโพสต์
+              {t('auth.loginSubtitle')}
             </p>
           </div>
 
@@ -155,14 +160,14 @@ export default function LoginPage() {
             {/* 1. Gmail / Username Input */}
             <div className="space-y-1">
               <label className="block text-xs font-semibold text-ink-primary font-mono">
-                Gmail หรือ ชื่อผู้ใช้ (Username)
+                {t('auth.emailLabel')}
               </label>
               <div className="relative">
                 <Mail className="w-4 h-4 text-ink-secondary absolute left-3 top-3 pointer-events-none" />
                 <input
                   type="text"
                   required
-                  placeholder="เช่น demo.manager@gmail.com หรือ demo_manager"
+                  placeholder={locale === 'th' ? "เช่น demo.manager@gmail.com หรือ demo_manager" : "e.g. demo.manager@gmail.com or demo_manager"}
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 text-xs bg-paper-canvas border border-border-rule rounded-editorial font-mono text-ink-primary placeholder:text-ink-secondary/50 focus:outline-none focus:border-brand-indigo focus:ring-1 focus:ring-brand-indigo transition-all"
@@ -174,13 +179,13 @@ export default function LoginPage() {
             <div className="space-y-1">
               <div className="flex items-center justify-between">
                 <label className="block text-xs font-semibold text-ink-primary font-mono">
-                  รหัสผ่าน (Password)
+                  {t('auth.passwordLabel')}
                 </label>
                 <Link
                   href="/forgot-password"
                   className="text-[11px] font-mono text-brand-indigo hover:underline font-medium"
                 >
-                  ลืมรหัสผ่าน?
+                  {t('auth.forgotPasswordLink')}
                 </Link>
               </div>
               <div className="relative">
@@ -188,7 +193,7 @@ export default function LoginPage() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
-                  placeholder="กรอกรหัสผ่านของคุณ"
+                  placeholder={locale === 'th' ? "กรอกรหัสผ่านของคุณ" : "Enter your password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full pl-9 pr-10 py-2 text-xs bg-paper-canvas border border-border-rule rounded-editorial font-mono text-ink-primary placeholder:text-ink-secondary/50 focus:outline-none focus:border-brand-indigo focus:ring-1 focus:ring-brand-indigo transition-all"
@@ -213,7 +218,7 @@ export default function LoginPage() {
                   onChange={(e) => setRememberMe(e.target.checked)}
                   className="rounded text-brand-indigo focus:ring-brand-indigo"
                 />
-                <span>จดจำการเข้าสู่ระบบไว้ในอุปกรณ์นี้</span>
+                <span>{t('auth.rememberMe')}</span>
               </label>
             </div>
 
@@ -224,11 +229,11 @@ export default function LoginPage() {
               className="w-full py-2.5 px-4 bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-bold rounded-editorial shadow-xs flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50 mt-2"
             >
               {isSubmitting ? (
-                <span>กำลังตรวจสอบ...</span>
+                <span>{t('common.loading')}</span>
               ) : (
                 <>
                   <ShieldCheck className="w-4 h-4" />
-                  <span>เข้าสู่ระบบ (Sign In)</span>
+                  <span>{t('auth.signInButton')}</span>
                 </>
               )}
             </button>
@@ -239,7 +244,7 @@ export default function LoginPage() {
             <div className="flex items-center justify-between text-[10px] font-mono text-ink-secondary mb-2">
               <span className="flex items-center gap-1 font-semibold uppercase tracking-wider">
                 <UserCheck className="w-3 h-3 text-accent-terracotta" />
-                คลิกเลือกบัญชีทดสอบด่วน (1-Click Demo)
+                {t('auth.quickDemoLogin')}
               </span>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">

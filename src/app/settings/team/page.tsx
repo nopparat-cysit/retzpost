@@ -28,6 +28,7 @@ import {
   Coins
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 import { Sticker } from '@/components/ui/sticker';
 import { getCurrentUser, subscribeToAuthChange } from '@/modules/auth/auth-service';
 import { AuthUser } from '@/modules/auth/auth-types';
@@ -52,6 +53,7 @@ import {
 } from '@/modules/workspaces/team-roles';
 
 export default function TeamSettingsPage() {
+  const { t, locale } = useTranslation();
   const [members, setMembers] = useState<TeamMember[]>(() => getInitialTeamMembers());
   const [selectedWorkspace, setSelectedWorkspace] = useState<'ALL' | 'ws_capitalone' | 'ws_acme' | 'ws_retzpost' | 'ws_coffee'>('ALL');
   const [activeTab, setActiveTab] = useState<'MEMBERS' | 'MATRIX' | 'SIMULATOR' | 'TOKEN_TRACKER'>('MEMBERS');
@@ -150,10 +152,10 @@ export default function TeamSettingsPage() {
     <div className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* MASTHEAD */}
       <Masthead
-        folio="WORKSPACE GOVERNANCE & ACCESS CONTROL"
-        editionDate="RBAC V2.4 ENGINE"
-        title="Team Members & Project Permissions"
-        subtitle="Invite team members, assign granular roles (Owner, Manager, Editor, Contributor, Client Viewer), and govern multi-platform publishing authority."
+        folio={locale === 'th' ? 'การกำกับดูแลพื้นที่ทำงาน & สิทธิ์การเข้าถึง' : 'WORKSPACE GOVERNANCE & ACCESS CONTROL'}
+        editionDate={locale === 'th' ? 'ระบบจัดการบทบาท RBAC V2.4' : 'RBAC V2.4 ENGINE'}
+        title={t('team.pageTitle')}
+        subtitle={t('team.pageSubtitle')}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             {isMockCleared ? (
@@ -162,11 +164,11 @@ export default function TeamSettingsPage() {
                 onClick={() => {
                   loadSampleMockData();
                 }}
-                className="px-2.5 py-1.5 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 text-xs font-sans rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
                 title="โหลดข้อมูลสมาชิกทีมตัวอย่าง"
               >
                 <Sparkles className="w-3.5 h-3.5" />
-                <span>โหลดตัวอย่างทีม (Demo)</span>
+                <span>{locale === 'th' ? 'โหลดตัวอย่างทีม (Demo)' : 'Load Demo Team'}</span>
               </button>
             ) : (
               <button
@@ -174,11 +176,11 @@ export default function TeamSettingsPage() {
                 onClick={() => {
                   clearAllMockData();
                 }}
-                className="px-2.5 py-1.5 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-accent-terracotta font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 text-xs font-sans rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-accent-terracotta font-medium flex items-center gap-1.5 transition-colors cursor-pointer"
                 title="ล้างข้อมูลสมาชิกตัวอย่างทั้งหมด"
               >
                 <RefreshCw className="w-3.5 h-3.5" />
-                <span>เคลียร์ทีม (Clean)</span>
+                <span>{locale === 'th' ? 'เคลียร์ทีม (Clean)' : 'Clear Team'}</span>
               </button>
             )}
 
@@ -187,7 +189,7 @@ export default function TeamSettingsPage() {
               className="inline-flex items-center gap-2 px-3.5 py-2 bg-brand-indigo text-white text-xs font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-colors shadow-xs cursor-pointer"
             >
               <UserPlus className="w-4 h-4" />
-              <span>เชิญสมาชิกเข้าโปรเจกต์</span>
+              <span>{t('team.inviteMember')}</span>
             </button>
           </div>
         }

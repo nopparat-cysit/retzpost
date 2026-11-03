@@ -11,6 +11,7 @@ import {
 import { 
   SmartFilterBar 
 } from '@/components/ui/smart-filter-bar';
+import { useTranslation } from '@/modules/i18n/i18n-context';
 import { 
   ArrowRight, 
   Plus, 
@@ -712,6 +713,7 @@ const SAMPLE_PERFORMANCE_POSTS: PostPerformanceData[] = [
 ];
 
 export default function HomePage() {
+  const { t, locale } = useTranslation();
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
 
   useEffect(() => {
@@ -1208,10 +1210,10 @@ export default function HomePage() {
     <main className="w-full px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* EXECUTIVE MASTHEAD & QUICK CONTROLS */}
       <Masthead
-        title="Editorial Command & Publishing Desk"
-        subtitle="Centralized Operations: Upload once. Adapt and publish everywhere across Feed Posts, 24h Stories, and Reels/Shorts."
-        folio="SYSTEM DESK / EXECUTIVE COMMAND"
-        editionDate="ALL-IN-ONE ENTERPRISE SUITE"
+        title={t('desk.pageTitle')}
+        subtitle={t('desk.pageSubtitle')}
+        folio={locale === 'th' ? 'โต๊ะทำงานส่วนกลาง / ศูนย์ควบคุมผู้บริหาร' : 'SYSTEM DESK / EXECUTIVE COMMAND'}
+        editionDate={locale === 'th' ? 'ชุดเครื่องมือเผยแพร่มัลติแพลตฟอร์ม' : 'ALL-IN-ONE ENTERPRISE SUITE'}
         actions={
           <div className="flex flex-wrap items-center gap-2">
             {isMockCleared ? (
@@ -1222,11 +1224,11 @@ export default function HomePage() {
                   setDownloadToast('🎲 โหลดข้อมูลตัวอย่างสำหรับการพรีวิวและทดสอบระบบเรียบร้อยแล้ว');
                   setTimeout(() => setDownloadToast(null), 3500);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre hover:text-accent-ochre/90 border border-accent-ochre/40 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre hover:text-accent-ochre/90 border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="โหลดชุดข้อมูลตัวอย่าง (Dispatches, Telemetry, KPIs) เพื่อพรีวิวการแสดงผล"
               >
                 <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-                <span>โหลดข้อมูลตัวอย่าง (Demo)</span>
+                <span>{locale === 'th' ? 'โหลดข้อมูลตัวอย่าง (Demo)' : 'Load Demo Data'}</span>
               </button>
             ) : (
               <button
@@ -1236,18 +1238,18 @@ export default function HomePage() {
                   setDownloadToast('🗑️ เคลียร์ข้อมูลจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate / Zero Data)');
                   setTimeout(() => setDownloadToast(null), 3500);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
                 title="เคลียร์ข้อมูลจำลองทั้งหมด ให้ระบบกลับสู่ Zero State สำหรับใช้งานจริง"
               >
                 <RotateCcw className="w-3.5 h-3.5 text-ink-secondary" />
-                <span>ล้างข้อมูลจำลอง (Clear All)</span>
+                <span>{locale === 'th' ? 'ล้างข้อมูลจำลอง (Clear All)' : 'Clear All Mock Data'}</span>
               </button>
             )}
 
             {!isMockCleared && (
               <button
                 onClick={handleExportErrorLog}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-terracotta/10 hover:bg-accent-terracotta/20 text-accent-terracotta border border-accent-terracotta/30 text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-accent-terracotta/10 hover:bg-accent-terracotta/20 text-accent-terracotta border border-accent-terracotta/30 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 <span>Export Error Log</span>
@@ -1258,7 +1260,7 @@ export default function HomePage() {
             )}
             <Link
               href="/landing"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-brand-indigo border border-brand-indigo/30 text-xs font-mono font-semibold rounded-editorial transition-colors shadow-2xs"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-brand-indigo border border-brand-indigo/30 text-xs font-sans font-semibold rounded-editorial transition-colors shadow-2xs"
               title="เปิดดูหน้า Dream Press Landing Page สาธารณะ"
             >
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
@@ -1266,17 +1268,17 @@ export default function HomePage() {
             </Link>
             <button
               onClick={handleExportAllJobs}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule text-xs font-mono font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
             >
               <FileSpreadsheet className="w-3.5 h-3.5 text-brand-indigo" />
               <span>Export Dispatches</span>
             </button>
             <Link
               href="/create"
-              className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-brand-indigo text-white text-xs font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-colors shadow-xs"
+              className="inline-flex items-center gap-2 px-3.5 py-1.5 bg-brand-indigo text-white text-xs font-sans font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-colors shadow-xs"
             >
               <Plus className="w-4 h-4" />
-              <span>Compose Dispatch</span>
+              <span>{locale === 'th' ? 'สร้างโพสต์ใหม่' : 'Compose Dispatch'}</span>
             </Link>
           </div>
         }
@@ -1284,7 +1286,7 @@ export default function HomePage() {
 
       {/* TOAST DOWNLOAD NOTIFICATION */}
       {downloadToast && (
-        <div className="bg-semantic-success/10 border border-semantic-success/30 text-semantic-success px-4 py-2.5 rounded-editorial flex items-center justify-between text-xs font-mono animate-in fade-in duration-200">
+        <div className="bg-semantic-success/10 border border-semantic-success/30 text-semantic-success px-4 py-2.5 rounded-editorial flex items-center justify-between text-xs font-sans animate-in fade-in duration-200">
           <div className="flex items-center gap-2">
             <CheckCircle2 className="w-4 h-4 shrink-0" />
             <span>{downloadToast}</span>
@@ -1297,7 +1299,7 @@ export default function HomePage() {
 
       {/* TRIPLE-MODE MASTER SWITCHER (OPERATIONS VS CONTENT TRACKING VS STAFF KPI) */}
       <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-3 p-2 bg-paper-raised border border-border-rule rounded-card shadow-xs">
-        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-paper-subtle rounded-editorial font-mono text-xs">
+        <div className="flex flex-wrap items-center gap-1.5 p-1 bg-paper-subtle rounded-editorial font-sans text-xs">
           <button
             onClick={() => handleSwitchDashboardMode('OPERATIONS')}
             className={`flex items-center gap-2 px-3.5 py-2 rounded transition-all font-semibold cursor-pointer ${
@@ -1307,7 +1309,7 @@ export default function HomePage() {
             }`}
           >
             <Activity className="w-3.5 h-3.5" />
-            <span>Operations & Dispatch Ledger</span>
+            <span>{t('desk.operationsTab')}</span>
           </button>
 
           <button
@@ -1319,7 +1321,7 @@ export default function HomePage() {
             }`}
           >
             <BarChart3 className="w-3.5 h-3.5 text-accent-terracotta" />
-            <span>Content Telemetry (คนดู • ไลค์ • คลิกลิงก์)</span>
+            <span>{t('desk.trackingTab')}</span>
             <span className="px-1.5 py-0.2 rounded bg-accent-terracotta text-white text-[9px] font-bold">
               LIVE
             </span>
@@ -1334,7 +1336,7 @@ export default function HomePage() {
             }`}
           >
             <Users className="w-3.5 h-3.5 text-emerald-700" />
-            <span>Staff & Creator KPI (วัดผลพนักงาน)</span>
+            <span>{t('desk.teamKpiTab')}</span>
             <span className="px-1.5 py-0.2 rounded bg-emerald-700 text-white text-[9px] font-bold">
               KPI
             </span>
