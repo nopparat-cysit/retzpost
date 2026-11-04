@@ -836,6 +836,70 @@ export default function HomePage() {
   const [kpiEvaluationNotice, setKpiEvaluationNotice] = useState<string | null>(null);
   const [isEvaluationSlipOpen, setIsEvaluationSlipOpen] = useState<boolean>(false);
   const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
+  const [realBatches, setRealBatches] = useState<DispatchBatch[]>([]);
+
+  const activeWorkspaceId = 'dfec755f-256c-4182-813f-a69266c7b6f0';
+
+  useEffect(() => {
+    async function loadDeskBatches() {
+      try {
+        const res = await fetch(`/api/publish-batches?workspaceId=${activeWorkspaceId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.batches)) {
+            const mapped: DispatchBatch[] = data.batches.map((b: any) => {
+              const placements: DispatchPlacement[] = (b.jobs || []).map((j: any) => {
+                let badgeBg = 'bg-brand-indigo';
+                if (j.platform === 'INSTAGRAM') badgeBg = 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]';
+                else if (j.platform === 'FACEBOOK') badgeBg = 'bg-[#1877F2]';
+                else if (j.platform === 'YOUTUBE') badgeBg = 'bg-[#FF0000]';
+                else if (j.platform === 'TIKTOK') badgeBg = 'bg-ink-primary';
+
+                let placementStatus: DispatchPlacement['status'] = 'PENDING';
+                if (j.status === 'PUBLISHED') placementStatus = 'PUBLISHED';
+                else if (['FAILED_RETRYABLE', 'FAILED_FINAL'].includes(j.status)) placementStatus = 'FAILED';
+
+                let format: DispatchPlacement['format'] = 'FEED';
+                if (j.targetFormat === 'STORY') format = 'STORY';
+                else if (j.targetFormat === 'VIDEO_REEL') format = 'REEL';
+
+                return {
+                  platform: j.platform,
+                  format,
+                  label: `${j.platformAccount?.handle || j.platform} (${format})`,
+                  badgeBg,
+                  status: placementStatus,
+                  liveUrl: j.publication?.remotePermalink,
+                };
+              });
+
+              let batchStatus: DispatchBatch['status'] = 'SCHEDULED';
+              if (b.aggregateStatus === 'PUBLISHED') batchStatus = 'PUBLISHED';
+              else if (b.aggregateStatus === 'PARTIALLY_PUBLISHED') batchStatus = 'PARTIALLY_PUBLISHED';
+              else if (b.aggregateStatus === 'FAILED') batchStatus = 'FAILED_FINAL';
+
+              const firstLiveUrl = placements.find((p) => p.liveUrl)?.liveUrl;
+
+              return {
+                id: b.id.slice(0, 8).toUpperCase(),
+                workspaceId: b.workspaceId,
+                workspaceName: 'RetzPost Studio',
+                title: b.content?.workingTitle || 'Untitled Story',
+                timestamp: new Date(b.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                status: batchStatus,
+                placements,
+                liveUrl: firstLiveUrl,
+              };
+            });
+            setRealBatches(mapped);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load desk publish batches:', err);
+      }
+    }
+    loadDeskBatches();
+  }, []);
 
   // Subscribe to mock data clean / demo toggle
   useEffect(() => {
@@ -1002,15 +1066,13 @@ export default function HomePage() {
 
   // Filtered batches for Operational View
   const filteredBatches = useMemo(() => {
-    if (isMockCleared) return [];
-    return SAMPLE_BATCHES.filter((b) => {
+    return realBatches.filter((b) => {
       if (workspaceFilter !== 'ALL' && b.workspaceId !== workspaceFilter) return false;
-      if (batchTab === 'MAIN_STUDIO') return b.workspaceId === 'ws_main' || b.workspaceId === 'ws_capitalone';
-      if (batchTab === 'CREATOR_HUB') return b.workspaceId === 'ws_creator' || b.workspaceId === 'ws_acme';
+      if (batchTab === 'MAIN_STUDIO') return true;
       if (batchTab === 'NEEDS_ATTENTION') return ['PARTIALLY_PUBLISHED', 'FAILED_RETRYABLE', 'FAILED_FINAL'].includes(b.status);
       return true;
     });
-  }, [isMockCleared, workspaceFilter, batchTab]);
+  }, [realBatches, workspaceFilter, batchTab]);
 
   // Filtered & Sorted Performance Posts for Tracking View
   const filteredPerformancePosts = useMemo(() => {
@@ -1649,7 +1711,7 @@ export default function HomePage() {
 
                 <div className="pt-3 border-t border-border-rule flex items-center justify-between text-xs font-mono">
                   <span className="text-ink-secondary text-[11px]">
-                    Showing {filteredBatches.length} of {isMockCleared ? 0 : SAMPLE_BATCHES.length} batches
+                    Showing {filteredBatches.length} of {realBatches.length} batches
                   </span>
                   <Link
                     href="/publishing/queue"

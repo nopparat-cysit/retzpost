@@ -409,11 +409,65 @@ function ConnectedAccountsContent() {
   const [viewLayout, setViewLayout] = useState<'GRID' | 'LIST'>('GRID');
   const [channelFilterMode, setChannelFilterMode] = useState<'ALL' | 'ACTIVE' | 'BYPASSED'>('ALL');
 
+  const targetWsId =
+    selectedWorkspaceId &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(selectedWorkspaceId)
+      ? selectedWorkspaceId
+      : 'dfec755f-256c-4182-813f-a69266c7b6f0';
+
+  const fetchAccounts = async () => {
+    try {
+      const res = await fetch(`/api/connections/accounts?workspaceId=${targetWsId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.accounts)) {
+          const mapped: MasterChannelAccount[] = data.accounts.map((acc: any) => ({
+            id: acc.id,
+            platform: acc.platform,
+            displayName: acc.displayName,
+            handle: acc.handle,
+            channelId: acc.providerAccountId,
+            defaultWorkspaceId: acc.workspaceId,
+            defaultWorkspaceName: 'RetzPost Studio',
+            scopes: ['content_publish', 'insights_read'],
+            expiresIn: 'Permanent Access Token (Active)',
+            capabilities:
+              acc.platform === 'FACEBOOK'
+                ? 'Page Timeline • Feed Albums • Stories'
+                : acc.platform === 'INSTAGRAM'
+                ? 'Feed Carousel • Stories • Reels'
+                : acc.platform === 'TIKTOK'
+                ? 'Vertical Video (9:16) • Direct Post'
+                : acc.platform === 'YOUTUBE'
+                ? 'Shorts & Long Videos'
+                : 'Feed & Media Dispatches',
+            lastSynced: 'Just now',
+            url:
+              acc.platform === 'FACEBOOK'
+                ? `https://facebook.com/${acc.handle.replace('@', '')}`
+                : acc.platform === 'INSTAGRAM'
+                ? `https://instagram.com/${acc.handle.replace('@', '')}`
+                : acc.platform === 'YOUTUBE'
+                ? `https://youtube.com/${acc.handle}`
+                : `https://tiktok.com/${acc.handle}`,
+            isSimulated: false,
+          }));
+          setAccounts(mapped);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch platform accounts:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchAccounts();
+  }, [targetWsId]);
+
   // Sync mock data clean / demo state
   useEffect(() => {
     const cleared = isMockDataCleared();
     setIsMockCleared(cleared);
-    setAccounts(cleared ? [] : INITIAL_MASTER_ACCOUNTS);
     setWorkspaces(cleared ? [] : INITIAL_PROJECTS);
     if (cleared) {
       setChannelSelections({});
@@ -429,7 +483,6 @@ function ConnectedAccountsContent() {
 
     const unsub = subscribeToMockDataChange((newCleared) => {
       setIsMockCleared(newCleared);
-      setAccounts(newCleared ? [] : INITIAL_MASTER_ACCOUNTS);
       setWorkspaces(newCleared ? [] : INITIAL_PROJECTS);
       if (newCleared) {
         setChannelSelections({});
@@ -756,17 +809,25 @@ function ConnectedAccountsContent() {
   };
 
   // Disconnect Channel
-  const handleConfirmDisconnect = () => {
+  const handleConfirmDisconnect = async () => {
     if (!disconnectCandidate) return;
     const id = disconnectCandidate.id;
     const name = disconnectCandidate.displayName;
 
-    setAccounts((prev) => prev.filter((a) => a.id !== id));
+    try {
+      await fetch(`/api/connections/accounts?accountId=${id}`, {
+        method: 'DELETE',
+      });
+      await fetchAccounts();
+    } catch {
+      setAccounts((prev) => prev.filter((a) => a.id !== id));
+    }
+
     setDisconnectCandidate(null);
     setOpenDropdownId(null);
     showToast(
       locale === 'th'
-        ? `✓ ตัดการเชื่อมต่อช่องทาง "${name}" เรียบร้อยแล้ว`
+        ? `✓ ยกเลิกการเชื่อมต่อช่องทาง "${name}" เรียบร้อยแล้ว`
         : `✓ Disconnected channel "${name}" successfully`
     );
   };
@@ -805,62 +866,40 @@ function ConnectedAccountsContent() {
   };
 
   // Connect New Page / Channel submit
-  const handleConnectSubmit = (e: React.FormEvent) => {
+  const handleConnectSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPageName.trim()) return;
 
-    const newId = `acc-${connectPlatform.toLowerCase()}-${Date.now().toString().slice(-4)}`;
-    const newAccount: MasterChannelAccount = {
-      id: newId,
-      platform: connectPlatform,
-      displayName: newPageName.trim(),
-      handle: newPageHandle.trim() || `@${newPageName.toLowerCase().replace(/\s+/g, '')}`,
-      channelId: `${connectPlatform.toLowerCase()}_${Date.now().toString().slice(-6)}`,
-      defaultWorkspaceId: selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId,
-      defaultWorkspaceName: activeWorkspace ? activeWorkspace.name : 'Main Studio',
-      scopes:
-        connectPlatform === 'FACEBOOK'
-          ? ['pages_show_list', 'pages_manage_posts']
-          : connectPlatform === 'X'
-          ? ['tweet.read', 'tweet.write', 'users.read']
-          : connectPlatform === 'LEMON8'
-          ? ['content.publish', 'user.profile']
-          : ['content_publish'],
-      expiresIn: 'Permanent Access Token (Active)',
-      capabilities:
-        connectPlatform === 'FACEBOOK'
-          ? 'Page Timeline • Feed Albums • Stories'
-          : connectPlatform === 'INSTAGRAM'
-          ? 'Feed Carousel • Stories • Reels'
-          : connectPlatform === 'TIKTOK'
-          ? 'Vertical Video (9:16) • Direct Post'
-          : connectPlatform === 'YOUTUBE'
-          ? 'Shorts & Long Videos'
-          : connectPlatform === 'X'
-          ? 'Short-Form Dispatches • Media Threads'
-          : 'Lifestyle Carousels & Editorial Guides',
-      lastSynced: 'Just now',
-      url: '#',
-      isSimulated: true,
-    };
+    try {
+      const res = await fetch('/api/connections/accounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workspaceId: targetWsId,
+          platform: connectPlatform,
+          displayName: newPageName.trim(),
+          handle: newPageHandle.trim() || `@${newPageName.toLowerCase().replace(/\s+/g, '')}`,
+        }),
+      });
 
-    setAccounts((prev) => [newAccount, ...prev]);
-
-    // Enable in current workspace
-    const wsId = selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
-    setChannelSelections((prev) => ({
-      ...prev,
-      [`${wsId}_${newId}`]: true,
-    }));
-
-    setIsConnectModalOpen(false);
-    setNewPageName('');
-    setNewPageHandle('');
-    showToast(
-      locale === 'th'
-        ? `✓ เพิ่มช่องทางจำลอง "${newAccount.displayName}" (Sandbox Demo) เรียบร้อยแล้ว`
-        : `✓ Added simulated channel "${newAccount.displayName}" (Sandbox Demo) successfully`
-    );
+      if (res.ok) {
+        await fetchAccounts();
+        setIsConnectModalOpen(false);
+        setNewPageName('');
+        setNewPageHandle('');
+        showToast(
+          locale === 'th'
+            ? `✓ เชื่อมต่อช่องทาง "${newPageName.trim()}" สำเร็จแล้ว`
+            : `✓ Connected channel "${newPageName.trim()}" successfully`
+        );
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        showToast(`Error: ${errData.message || errData.error || 'Failed to connect channel'}`);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      showToast(`Error: ${msg}`);
+    }
   };
 
   // Open Connect Modal for a specific platform
@@ -1245,13 +1284,12 @@ function ConnectedAccountsContent() {
       {accounts.length === 0 && (
         <EditorialEmptyState
           stickerName="vault-keyhole"
-          badgeText={isMockCleared ? 'Social Vault • Clean Slate' : 'Zero Channels'}
+          badgeText="Social Vault • Active Workspace"
           title={locale === 'th' ? 'ยังไม่มีช่องทางโซเชียลที่เชื่อมต่อในระบบ' : 'No social media channels connected yet'}
           description={locale === 'th' ? 'เชื่อมต่อเพจ Facebook, บัญชี Instagram Creator, ช่อง YouTube, TikTok, X และ Lemon8 เพื่อเริ่มต้นเผยแพร่ผลงานแบบ Multi-Format ได้ในคลิกเดียว' : 'Connect Facebook pages, Instagram Creator accounts, YouTube channels, TikTok, X, and Lemon8 to unlock automated multi-format distribution.'}
           tipText={locale === 'th' ? 'RetzPost เข้ารหัส Token ด้วย AES-256 GCM ปลอดภัยตามมาตรฐาน Meta, Google และ TikTok Enterprise SLA' : 'RetzPost encrypts all tokens with AES-256 GCM and connects directly via Meta, Google, and TikTok Enterprise APIs.'}
-          actionLabel={locale === 'th' ? '+ เชื่อมต่อช่องทางแรก ' : '+ Connect First Channel'}
+          actionLabel={locale === 'th' ? '+ เชื่อมต่อช่องทางแรก' : '+ Connect First Channel'}
           onActionClick={() => handleOpenConnect('FACEBOOK')}
-          onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setAccounts(INITIAL_MASTER_ACCOUNTS); } : undefined}
         />
       )}
 

@@ -2,6 +2,7 @@
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { 
   UploadCloud, 
   CheckCircle2, 
@@ -644,6 +645,9 @@ const AI_MEDIA_LIBRARY_ASSETS = [
 
 export default function CreatePostPage() {
   const { t, locale } = useTranslation();
+  const router = useRouter();
+  const [realAccounts, setRealAccounts] = useState<DestinationAccount[]>([]);
+  const [isPublishing, setIsPublishing] = useState<boolean>(false);
   // Active Project Workspace Context
   const [activeWorkspaceId, setActiveWorkspaceId] = useState('ws_acme');
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
@@ -820,11 +824,172 @@ export default function CreatePostPage() {
   // Active Workspace Entity
   const activeWorkspace = WORKSPACES_DATA.find(w => w.id === activeWorkspaceId) || WORKSPACES_DATA[0];
 
+  const targetWsId =
+    activeWorkspaceId &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(activeWorkspaceId)
+      ? activeWorkspaceId
+      : 'dfec755f-256c-4182-813f-a69266c7b6f0';
+
+  useEffect(() => {
+    async function loadRealAccounts() {
+      try {
+        const res = await fetch(`/api/connections/accounts?workspaceId=${targetWsId}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data.accounts) && data.accounts.length > 0) {
+            const mapped: DestinationAccount[] = data.accounts.map((acc: any) => {
+              const platform = acc.platform as 'INSTAGRAM' | 'FACEBOOK' | 'YOUTUBE' | 'TIKTOK';
+              let platformGroup: DestinationAccount['platformGroup'] = 'Other';
+              if (platform === 'INSTAGRAM') platformGroup = 'Instagram';
+              else if (platform === 'FACEBOOK') platformGroup = 'Facebook';
+              else if (platform === 'YOUTUBE') platformGroup = 'YouTube';
+              else if (platform === 'TIKTOK') platformGroup = 'TikTok';
+
+              const avatarBg =
+                platform === 'INSTAGRAM'
+                  ? 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]'
+                  : platform === 'FACEBOOK'
+                  ? 'bg-[#1877F2]'
+                  : platform === 'YOUTUBE'
+                  ? 'bg-[#FF0000]'
+                  : 'bg-ink-primary';
+
+              const avatarText =
+                platform === 'INSTAGRAM'
+                  ? 'IG'
+                  : platform === 'FACEBOOK'
+                  ? 'FB'
+                  : platform === 'YOUTUBE'
+                  ? 'YT'
+                  : 'TT';
+
+              return {
+                id: acc.id,
+                workspaceId: acc.workspaceId,
+                platform,
+                platformGroup,
+                name: acc.displayName,
+                handle: acc.handle,
+                badge: platform === 'YOUTUBE' ? 'Shorts/Long' : `${platformGroup} Page`,
+                avatarBg,
+                avatarText,
+                capabilities: {
+                  feed: { supported: true, label: platform === 'YOUTUBE' ? 'Full Video (16:9)' : 'Feed' },
+                  story: { supported: platform === 'FACEBOOK' || platform === 'INSTAGRAM', label: platform === 'FACEBOOK' || platform === 'INSTAGRAM' ? 'Story' : '—' },
+                  reel: { supported: true, label: platform === 'YOUTUBE' ? 'Shorts (9:16)' : 'Reel' },
+                },
+              };
+            });
+            setRealAccounts(mapped);
+
+            setPlacements((prev) => {
+              const next = { ...prev };
+              const hasAny = Object.values(next).some(Boolean);
+              if (!hasAny) {
+                mapped.forEach((acc) => {
+                  next[`${acc.id}_feed`] = true;
+                });
+              }
+              return next;
+            });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to load real accounts for composer:', err);
+      }
+    }
+    loadRealAccounts();
+  }, [targetWsId]);
+
   // Active Channels Filtered by Workspace
   const workspaceChannels = useMemo(() => {
+    if (realAccounts.length > 0) {
+      return realAccounts;
+    }
     if (isMockCleared) return [];
     return CHANNELS_BY_WORKSPACE.filter(ch => ch.workspaceId === activeWorkspaceId);
-  }, [activeWorkspaceId, isMockCleared]);
+  }, [realAccounts, activeWorkspaceId, isMockCleared]);
+
+  const handlePublishDispatch = async () => {
+    const activeAccountIds = Array.from(
+      new Set(
+        Object.entries(placements)
+          .filter(([key, val]) => {
+            if (!val) return false;
+            const [accId, format] = key.split('_') as [string, 'feed' | 'story' | 'reel'];
+            const acc = workspaceChannels.find((a) => a.id === accId);
+            if (!acc) return false;
+            return getFormatValidation(format, acc).eligible;
+          })
+          .map(([key]) => key.split('_')[0])
+      )
+    );
+
+    if (activeAccountIds.length === 0) {
+      alert(locale === 'th' ? 'กรุณาเลือกช่องทางปลายทางอย่างน้อย 1 ช่องทาง' : 'Please select at least one target channel');
+      return;
+    }
+
+    if (!workingTitle.trim()) {
+      alert(locale === 'th' ? 'กรุณาระบุหัวข้อเรื่องก่อนดำเนินการเผยแพร่' : 'Please provide a story title before publishing');
+      return;
+    }
+
+    setIsPublishing(true);
+    try {
+      // 1. Create content draft
+      const contentRes = await fetch('/api/contents', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workspaceId: targetWsId,
+          workingTitle: workingTitle.trim(),
+          sharedCaption: sharedCaption.trim() || undefined,
+          sharedTags: sharedTags ? sharedTags.split(',').map((t) => t.trim()).filter(Boolean) : [],
+        }),
+      });
+
+      if (!contentRes.ok) {
+        const err = await contentRes.json().catch(() => ({}));
+        throw new Error(err.message || err.error || 'Failed to create content');
+      }
+
+      const { content } = await contentRes.json();
+
+      // 2. Prepare scheduled date if in SCHEDULED mode
+      let scheduledForUtc: string | null = null;
+      if (publishMode === 'SCHEDULED') {
+        const scheduledDateTime = new Date(`${scheduledDate}T${scheduledTime}:00+07:00`);
+        scheduledForUtc = scheduledDateTime.toISOString();
+      }
+
+      // 3. Create publish batch
+      const batchRes = await fetch('/api/publish-batches', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workspaceId: targetWsId,
+          contentId: content.id,
+          targetAccountIds: activeAccountIds,
+          mode: publishMode === 'NOW' ? 'PUBLISH_NOW' : 'SCHEDULED',
+          scheduledForUtc,
+        }),
+      });
+
+      if (!batchRes.ok) {
+        const err = await batchRes.json().catch(() => ({}));
+        throw new Error(err.message || err.error || 'Failed to dispatch publish batch');
+      }
+
+      // 4. Navigate to queue
+      router.push('/publishing/queue');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      alert(locale === 'th' ? `เกิดข้อผิดพลาดในการเผยแพร่: ${msg}` : `Dispatch error: ${msg}`);
+    } finally {
+      setIsPublishing(false);
+    }
+  };
 
   // Active Account for Live Proof Preview (Graceful fallback to workspace-branded account if not connected)
   const previewAccount = useMemo(() => {
@@ -3504,19 +3669,33 @@ export default function CreatePostPage() {
           ) : (
             <button
               type="button"
-              disabled={totalActivePlacements === 0}
+              disabled={totalActivePlacements === 0 || isPublishing}
+              onClick={handlePublishDispatch}
               className={`w-full py-2.5 px-4 text-xs font-semibold rounded-editorial flex items-center justify-center gap-2 shadow-xs transition-all ${
-                totalActivePlacements > 0
+                totalActivePlacements > 0 && !isPublishing
                   ? 'bg-brand-indigo hover:bg-brand-indigo-hover text-white cursor-pointer active:scale-[0.98]'
                   : 'bg-paper-subtle text-ink-secondary border border-border-rule cursor-not-allowed opacity-60'
               }`}
             >
-              <span>
-                {publishMode === 'NOW'
-                  ? `Publish to ${totalActivePlacements} Destinations`
-                  : `Schedule Dispatch (${totalActivePlacements} Destinations)`}
-              </span>
-              <ArrowRight className="w-4 h-4" />
+              {isPublishing ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  <span>{locale === 'th' ? 'กำลังส่งข้อมูลการเผยแพร่...' : 'Dispatching to Queue...'}</span>
+                </>
+              ) : (
+                <>
+                  <span>
+                    {publishMode === 'NOW'
+                      ? (locale === 'th'
+                          ? `เผยแพร่ไปยัง ${totalActivePlacements} ช่องทาง`
+                          : `Publish to ${totalActivePlacements} Destinations`)
+                      : (locale === 'th'
+                          ? `กำหนดเวลาเผยแพร่ (${totalActivePlacements} ช่องทาง)`
+                          : `Schedule Dispatch (${totalActivePlacements} Destinations)`)}
+                  </span>
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           )}
         </section>

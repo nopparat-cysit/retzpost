@@ -52,12 +52,13 @@ import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
 
 interface QueueJobItem extends ExportableJob {
   id: string;
+  batchId?: string;
   platform: 'YOUTUBE' | 'TIKTOK' | 'INSTAGRAM' | 'FACEBOOK';
   format: 'FEED_POST' | 'STORY' | 'VIDEO_REEL';
   handle: string;
   storyTitle: string;
   durationOrFormatText: string;
-  status: JobStatus | 'PENDING_REVIEW' | 'NEEDS_REVISION';
+  status: JobStatus | 'PENDING_REVIEW' | 'NEEDS_REVISION' | 'CANCELLED';
   attemptCount: number;
   maxAttempts: number;
   scheduledOrExecutedAt: string;
@@ -241,20 +242,77 @@ export default function PublishingQueuePage() {
   const [copiedNotification, setCopiedNotification] = useState(false);
   const [downloadNotice, setDownloadNotice] = useState<string | null>(null);
 
-  // Sync with Mock Data Clean / Demo Mode
-  useEffect(() => {
-    const cleared = isMockDataCleared();
-    setIsMockCleared(cleared);
-    setJobs(cleared ? [] : INITIAL_QUEUE_JOBS);
+  const activeWorkspaceId = 'dfec755f-256c-4182-813f-a69266c7b6f0';
 
-    const unsub = subscribeToMockDataChange((newCleared) => {
-      setIsMockCleared(newCleared);
-      setJobs(newCleared ? [] : INITIAL_QUEUE_JOBS);
-    });
-    return unsub;
+  const fetchBatches = async () => {
+    try {
+      const res = await fetch(`/api/publish-batches?workspaceId=${activeWorkspaceId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.batches)) {
+          const mappedJobs: QueueJobItem[] = [];
+          for (const batch of data.batches) {
+            if (Array.isArray(batch.jobs)) {
+              for (const job of batch.jobs) {
+                const publishedAt = job.publication?.publishedAt;
+                const scheduledAt = job.scheduledForUtc || batch.scheduledForUtc;
+                const timeDisplay = publishedAt
+                  ? new Date(publishedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                  : scheduledAt
+                  ? `Scheduled ${new Date(scheduledAt).toLocaleDateString([], { month: 'short', day: 'numeric' })} ${new Date(scheduledAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`
+                  : new Date(job.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+                mappedJobs.push({
+                  id: job.id,
+                  batchId: batch.id,
+                  platform: job.platform,
+                  format: job.targetFormat || 'FEED_POST',
+                  handle: job.platformAccount?.handle || job.platform,
+                  storyTitle: batch.content?.workingTitle || 'Untitled Story',
+                  durationOrFormatText:
+                    job.targetFormat === 'VIDEO_REEL'
+                      ? 'Reels / Shorts (9:16)'
+                      : job.targetFormat === 'STORY'
+                      ? '24h Ephemeral Story'
+                      : 'Feed Post',
+                  status: job.status,
+                  attemptCount: job.attemptCount || 0,
+                  maxAttempts: job.maxAttempts || 4,
+                  scheduledOrExecutedAt: timeDisplay,
+                  liveUrl: job.publication?.remotePermalink,
+                  errorCode: job.lastErrorCode || undefined,
+                  errorSafeMessage: job.lastErrorSafeMessage || undefined,
+                  submittedBy: 'Studio Member',
+                });
+              }
+            }
+          }
+          setJobs(mappedJobs);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch publish batches:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchBatches();
   }, []);
 
-  const handleRetry = (jobId: string) => {
+  const handleRetry = async (jobId: string, batchId?: string) => {
+    if (batchId) {
+      try {
+        await fetch(`/api/publish-batches/${batchId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jobId }),
+        });
+        await fetchBatches();
+        return;
+      } catch (err) {
+        console.error('Failed to retry batch job:', err);
+      }
+    }
     setJobs((prev) =>
       prev.map((j) => (j.id === jobId ? { ...j, status: 'QUEUED', attemptCount: j.attemptCount + 1 } : j))
     );
@@ -268,6 +326,39 @@ export default function PublishingQueuePage() {
           : j
       )
     );
+  };
+
+  const handleEmergencyRevoke = async (batchId: string) => {
+    if (
+      !confirm(
+        locale === 'th'
+          ? 'คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการเผยแพร่คิวนี้ทันที?'
+          : 'Are you sure you want to emergency revoke this publish batch?'
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/publish-batches/${batchId}`, {
+        method: 'DELETE',
+      });
+      if (res.ok) {
+        await fetchBatches();
+        setManagerActionNotice(
+          locale === 'th'
+            ? '✓ ดำเนินการระงับคิวเผยแพร่ด่วนเรียบร้อยแล้ว'
+            : '✓ Emergency Revoke successfully executed for batch'
+        );
+        setTimeout(() => setManagerActionNotice(null), 4000);
+      } else {
+        const err = await res.json().catch(() => ({}));
+        alert(`Error: ${err.message || err.error || 'Failed to revoke batch'}`);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      alert(`Error: ${msg}`);
+    }
   };
 
   const handleApproveJob = (jobId: string) => {
@@ -492,13 +583,12 @@ export default function PublishingQueuePage() {
                   <td colSpan={6} className="p-8">
                     <EditorialEmptyState
                       stickerName="approved-seal"
-                      badgeText={isMockCleared ? 'Publishing Queue • Clean' : 'Filter Empty'}
-                      title="คิวการส่งโพสต์ว่างเปล่า"
-                      description="ไม่มีรายการงานค้างท่อ ทุกชิ้นงานได้รับการประมวลผลและส่งขึ้นแพลตฟอร์มปลายทางเรียบร้อยแล้ว หรือยังไม่มีการจัดคิวใหม่"
-                      tipText="คุณสามารถสร้างโพสต์และตั้งเวลาเผยแพร่ล่วงหน้าได้จากหน้า Universal Composer ชิ้นงานจะมาจัดเรียงในคิวนี้โดยอัตโนมัติ"
-                      actionLabel="สร้างโพสต์ใหม่"
+                      badgeText="Publishing Queue • Active Workspace"
+                      title={locale === 'th' ? 'คิวการส่งโพสต์ว่างเปล่า' : 'Publishing Queue is Empty'}
+                      description={locale === 'th' ? 'ไม่มีรายการงานค้างท่อ ทุกชิ้นงานได้รับการประมวลผลและส่งขึ้นแพลตฟอร์มปลายทางเรียบร้อยแล้ว หรือยังไม่มีการจัดคิวใหม่' : 'No jobs in queue. All dispatches have been processed and published or no new queue has been scheduled.'}
+                      tipText={locale === 'th' ? 'คุณสามารถสร้างโพสต์และตั้งเวลาเผยแพร่ล่วงหน้าได้จากหน้า Universal Composer ชิ้นงานจะมาจัดเรียงในคิวนี้โดยอัตโนมัติ' : 'Create new posts or schedule dispatches from Universal Composer to see live jobs here.'}
+                      actionLabel={locale === 'th' ? 'สร้างโพสต์ใหม่' : 'Create New Post'}
                       actionHref="/create"
-                      onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setJobs(INITIAL_QUEUE_JOBS); } : undefined}
                     />
                   </td>
                 </tr>
@@ -635,7 +725,7 @@ export default function PublishingQueuePage() {
 
                         {job.status === 'FAILED_RETRYABLE' && (
                           <button
-                            onClick={() => handleRetry(job.id)}
+                            onClick={() => handleRetry(job.id, job.batchId)}
                             className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-mono font-medium text-accent-terracotta hover:bg-accent-terracotta/10 rounded border border-accent-terracotta/30 transition-colors shadow-2xs cursor-pointer"
                           >
                             <RefreshCw className="w-3 h-3" />
@@ -654,8 +744,26 @@ export default function PublishingQueuePage() {
                         )}
 
                         {job.status === 'SCHEDULED' && (
-                          <span className="font-mono text-ink-secondary text-[11px]">
-                            Pending Clock
+                          <div className="flex flex-col items-end gap-1">
+                            <span className="font-mono text-ink-secondary text-[11px]">
+                              {locale === 'th' ? 'รอเวลาเผยแพร่' : 'Pending Clock'}
+                            </span>
+                            {job.batchId && (
+                              <button
+                                onClick={() => handleEmergencyRevoke(job.batchId!)}
+                                className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-mono text-accent-terracotta hover:bg-accent-terracotta/10 rounded border border-accent-terracotta/30 transition-colors cursor-pointer"
+                                title="Emergency Revoke Batch"
+                              >
+                                <ShieldAlert className="w-3 h-3" />
+                                <span>{locale === 'th' ? 'ยกเลิกด่วน' : 'Revoke'}</span>
+                              </button>
+                            )}
+                          </div>
+                        )}
+
+                        {job.status === 'CANCELLED' && (
+                          <span className="font-mono text-accent-terracotta text-[11px] font-semibold">
+                            {locale === 'th' ? 'ยกเลิกแล้ว' : 'Cancelled'}
                           </span>
                         )}
 

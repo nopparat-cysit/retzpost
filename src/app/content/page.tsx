@@ -190,17 +190,65 @@ export default function ContentLibraryPage() {
   const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
   const [items, setItems] = useState<ContentItem[]>([]);
 
-  // Sync mock data clean / demo state
-  useEffect(() => {
-    const cleared = isMockDataCleared();
-    setIsMockCleared(cleared);
-    setItems(cleared ? [] : DEFAULT_SAMPLE_ITEMS);
+  const activeWorkspaceId = 'dfec755f-256c-4182-813f-a69266c7b6f0';
 
-    const unsub = subscribeToMockDataChange((newCleared) => {
-      setIsMockCleared(newCleared);
-      setItems(newCleared ? [] : DEFAULT_SAMPLE_ITEMS);
-    });
-    return unsub;
+  const fetchContents = async () => {
+    try {
+      const res = await fetch(`/api/contents?workspaceId=${activeWorkspaceId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.contents)) {
+          const mapped: ContentItem[] = data.contents.map((c: any) => {
+            const latestBatch = c.publishBatches?.[0];
+            const rawStatus = latestBatch?.aggregateStatus || c.status || 'DRAFT';
+            let status: ContentItem['status'] = 'DRAFT';
+            if (rawStatus === 'PUBLISHED') status = 'PUBLISHED';
+            else if (rawStatus === 'PARTIALLY_PUBLISHED') status = 'PARTIALLY_PUBLISHED';
+            else if (rawStatus === 'READY' || rawStatus === 'PENDING') status = 'READY';
+            else if (rawStatus === 'FAILED') status = 'FAILED';
+
+            const channels: ContentChannel[] = [];
+            if (latestBatch?.jobs) {
+              for (const j of latestBatch.jobs) {
+                channels.push({
+                  platform: j.platform,
+                  status: j.status,
+                  liveUrl: j.publication?.remotePermalink,
+                });
+              }
+            }
+
+            const liveUrl = channels.find((ch) => ch.liveUrl)?.liveUrl;
+
+            return {
+              id: c.id,
+              workingTitle: c.workingTitle || 'Untitled Story',
+              status,
+              assetId: c.primaryAsset?.id ? c.primaryAsset.id.slice(0, 8).toUpperCase() : undefined,
+              duration: c.primaryAsset?.durationSec ? `${c.primaryAsset.durationSec}s` : 'Editorial Dispatch',
+              aspectRatio: c.primaryAsset?.aspectRatio || '1:1 / 9:16',
+              channels,
+              dateText: new Date(c.updatedAt).toLocaleDateString([], {
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+              }),
+              actionLabel: status === 'PUBLISHED' ? 'View Details' : 'Edit Adaptations',
+              actionHref: `/create?id=${c.id}`,
+              liveUrl,
+            };
+          });
+          setItems(mapped);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch contents:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchContents();
   }, []);
 
   const filteredItems = items.filter((item) => {

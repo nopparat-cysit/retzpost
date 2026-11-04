@@ -588,17 +588,60 @@ export default function EditorialCalendarPage() {
   const [viewMode, setViewMode] = useState<ViewMode>('MONTH');
   const [selectedWorkspace, setSelectedWorkspace] = useState<WorkspaceType>('ALL');
 
-  // Sync with mock data clean / demo state
-  useEffect(() => {
-    const cleared = isMockDataCleared();
-    setIsMockCleared(cleared);
-    setEvents(cleared ? [] : SAMPLE_EVENTS);
+  const activeWorkspaceId = 'dfec755f-256c-4182-813f-a69266c7b6f0';
 
-    const unsub = subscribeToMockDataChange((newCleared) => {
-      setIsMockCleared(newCleared);
-      setEvents(newCleared ? [] : SAMPLE_EVENTS);
-    });
-    return unsub;
+  const fetchBatches = async () => {
+    try {
+      const res = await fetch(`/api/publish-batches?workspaceId=${activeWorkspaceId}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.batches)) {
+          const mappedEvents: CalendarEventItem[] = [];
+          for (const batch of data.batches) {
+            if (Array.isArray(batch.jobs)) {
+              for (const job of batch.jobs) {
+                const targetDate = job.scheduledForUtc ? new Date(job.scheduledForUtc) : new Date(job.createdAt);
+                const dateStr = targetDate.toISOString().slice(0, 10);
+                const dayOfMonth = targetDate.getDate();
+                const hour = targetDate.getHours() + targetDate.getMinutes() / 60;
+                const timeStr = targetDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const status: CalendarEventItem['status'] = job.status === 'PUBLISHED' ? 'PUBLISHED' : 'SCHEDULED';
+
+                mappedEvents.push({
+                  id: job.id,
+                  dayOfMonth,
+                  dateStr,
+                  timeStr,
+                  hour,
+                  title: batch.content?.workingTitle || 'Untitled Story',
+                  platform: job.platform,
+                  format: job.targetFormat || 'FEED_POST',
+                  workspace: 'CAPITAL_ONE',
+                  workspaceName: 'RetzPost Studio',
+                  handle: job.platformAccount?.handle || job.platform,
+                  durationOrPhotos:
+                    job.targetFormat === 'VIDEO_REEL'
+                      ? '00:58 Reel'
+                      : job.targetFormat === 'STORY'
+                      ? '24h Story'
+                      : 'Feed Dispatch',
+                  status,
+                  caption: batch.content?.sharedCaption || '',
+                  liveUrl: job.publication?.remotePermalink,
+                });
+              }
+            }
+          }
+          setEvents(mappedEvents);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch calendar batches:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchBatches();
   }, []);
 
   // Global active workspace sync
@@ -1079,13 +1122,12 @@ export default function EditorialCalendarPage() {
       {filteredEvents.length === 0 && (
         <EditorialEmptyState
           stickerName="calendar-deadline"
-          badgeText={isMockCleared ? 'Editorial Calendar • Clean Slate' : 'No Events in View'}
+          badgeText="Editorial Calendar • Active Workspace"
           title={locale === 'en' ? 'No scheduled dispatches in calendar yet' : 'ยังไม่มีกำหนดการเผยแพร่ในปฏิทิน'}
           description={locale === 'en' ? 'Schedule dispatches in advance within Golden Peak Slots, or click any calendar day to set a publishing time.' : 'จัดตารางเวลาเผยแพร่คอนเทนต์ล่วงหน้าในช่อง Golden Peak Slots หรือคลิกที่แต่ละวันในปฏิทินเพื่อตั้งเวลาปล่อยโพสต์ทันที'}
           tipText={locale === 'en' ? 'RetzPost calculates Bangkok Golden Peak Slots (08:30 AM and 07:30 PM) to maximize organic reach.' : 'RetzPost มีระบบคำนวณ Bangkok Golden Peak Slots (เวลาทองของคนไทย: 08:30 น. และ 19:30 น.) เพื่อเพิ่ม Organic Reach'}
           actionLabel={locale === 'en' ? '+ Schedule New Dispatch (Compose Dispatch)' : '+ จัดตารางโพสต์ใหม่'}
           actionHref="/create"
-          onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setEvents(SAMPLE_EVENTS); } : undefined}
         />
       )}
 
