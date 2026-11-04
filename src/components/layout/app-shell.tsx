@@ -21,9 +21,7 @@ import {
   Shield,
   LogOut,
   BookOpen,
-  Coins,
   ShieldAlert,
-  Palette
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
 import { getCurrentUser, logoutUser, subscribeToAuthChange } from '@/modules/auth/auth-service';
@@ -262,7 +260,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           </div>
 
           {/* Navigation Links */}
-          <nav className="p-3 space-y-5">
+          <nav className="p-3 space-y-5 pb-8">
             {navItems.map((section) => (
               <div key={section.group}>
                 <div className="px-3 mb-1 text-[11px] font-mono uppercase tracking-wider text-ink-secondary/90 font-bold">
@@ -303,43 +301,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
               </div>
             ))}
           </nav>
-        </div>
-
-        {/* Bottom Section: Press Token Widget & User profile (Admin moved to UserProfileMenu) */}
-        <div className="shrink-0 space-y-2 border-t border-border-rule bg-paper-subtle/50 p-3 text-xs">
-          {/* Token & Plan Badge */}
-          <div className="p-2.5 bg-paper-card border border-border-rule rounded-md space-y-1.5">
-            <div className="flex items-center justify-between">
-              <span className="flex items-center gap-1.5 text-xs font-mono font-bold text-accent-terracotta">
-                <Coins className="w-3.5 h-3.5" />
-                <span>{tokenBalance} 🪙 Tokens</span>
-              </span>
-              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-brand-indigo/10 text-brand-indigo">
-                {planTier}
-              </span>
-            </div>
-            <div className="flex items-center justify-between text-[11px] pt-1 border-t border-border-rule/60">
-              <Link href="/pricing" className="text-brand-indigo font-semibold hover:underline">
-                {locale === 'th' ? 'เติมเหรียญ / เปลี่ยนแผน →' : 'Top up / Upgrade plan →'}
-              </Link>
-              <Link href="/settings" className="text-ink-secondary hover:text-ink-primary" title="เปลี่ยนธีม">
-                <Palette className="w-3.5 h-3.5" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Language Switcher Bar */}
-          <div className="py-2 border-y border-border-rule/60 flex items-center justify-between">
-            <span className="text-[10px] font-mono text-ink-secondary uppercase tracking-wider font-semibold">
-              {t('common.switchLanguage')}
-            </span>
-            <LanguageToggle />
-          </div>
-
-          {/* Interactive User Profile Menu */}
-          <div className="pt-2">
-            <UserProfileMenu variant="sidebar-row" />
-          </div>
         </div>
       </aside>
 
