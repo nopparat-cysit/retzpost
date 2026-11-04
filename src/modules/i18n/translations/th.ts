@@ -298,6 +298,9 @@ export const th: TranslationSchema = {
     noAccountYet: 'ยังไม่มีบัญชี?',
     alreadyHaveAccount: 'มีบัญชีอยู่แล้ว?',
     termsNotice: 'การเข้าสู่ระบบถือว่ายอมรับเงื่อนไขและนโยบายความเป็นส่วนตัว',
+    signInWithGoogle: 'เข้าสู่ระบบด้วย Google',
+    signUpWithGoogle: 'ลงทะเบียนด้วย Google',
+    orDivider: 'หรือ',
   },
   accounts: {
     pageTitle: 'ศูนย์เชื่อมต่อช่องทางและโครงการ',

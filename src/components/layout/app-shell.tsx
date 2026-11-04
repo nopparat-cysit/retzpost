@@ -24,7 +24,7 @@ import {
   ShieldAlert,
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
-import { getCurrentUser, logoutUser, subscribeToAuthChange } from '@/modules/auth/auth-service';
+import { getCurrentUser, logoutUser, subscribeToAuthChange, syncSessionFromNextAuth } from '@/modules/auth/auth-service';
 import { AuthUser } from '@/modules/auth/auth-types';
 import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
 import { UserProfileMenu } from '@/components/layout/user-profile-menu';
@@ -80,6 +80,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
 
   useEffect(() => {
     setCurrentUser(getCurrentUser());
+    syncSessionFromNextAuth();
     setIsMockCleared(isMockDataCleared());
 
     const unsubscribe = subscribeToAuthChange((user) => {

@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { 
   Mail, 
   Lock, 
@@ -13,6 +14,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
+import { GoogleLogo } from '@/components/ui/social-icons';
 import { loginUserAsync } from '@/modules/auth/auth-service';
 import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
 
@@ -28,8 +30,36 @@ export default function LoginPage() {
 
   // Status & Error
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  // Handle OAuth callback errors
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get('error');
+    if (err) {
+      if (err === 'AccessDenied') {
+        setErrorMessage(locale === 'th' ? 'การเข้าสู่ระบบถูกปฏิเสธ หรือบัญชีถูกระงับ' : 'Access denied or account suspended');
+      } else if (err === 'OAuthSignin' || err === 'OAuthCallback') {
+        setErrorMessage(locale === 'th' ? 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ Google กรุณาลองใหม่อีกครั้ง' : 'Error connecting with Google, please try again');
+      } else {
+        setErrorMessage(locale === 'th' ? 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ' : 'Authentication error occurred');
+      }
+    }
+  }, [locale]);
+
+  const handleGoogleSignIn = async () => {
+    setErrorMessage('');
+    setIsGoogleSubmitting(true);
+    try {
+      await signIn('google', { callbackUrl: '/desk' });
+    } catch {
+      setIsGoogleSubmitting(false);
+      setErrorMessage(locale === 'th' ? 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ Google กรุณาลองใหม่อีกครั้ง' : 'Failed to connect with Google, please try again');
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -138,6 +168,33 @@ export default function LoginPage() {
               <span className="leading-snug">{successMessage}</span>
             </div>
           )}
+
+          {/* Google Sign-in Option */}
+          <div className="space-y-4 mb-4">
+            <button
+              type="button"
+              onClick={handleGoogleSignIn}
+              disabled={isGoogleSubmitting || isSubmitting}
+              className="w-full py-2.5 px-4 bg-paper-canvas hover:bg-paper-subtle text-ink-primary text-xs font-semibold rounded-editorial border border-border-rule hover:border-ink-secondary/40 shadow-2xs flex items-center justify-center gap-2.5 transition-all cursor-pointer disabled:opacity-50 active:scale-[0.99]"
+            >
+              <GoogleLogo className="w-4 h-4 shrink-0" size={16} />
+              <span className="font-sans">
+                {isGoogleSubmitting
+                  ? (locale === 'th' ? 'กำลังเชื่อมต่อกับ Google...' : 'Connecting to Google...')
+                  : t('auth.signInWithGoogle')}
+              </span>
+            </button>
+
+            {/* Divider */}
+            <div className="relative flex items-center justify-center">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-border-rule" />
+              </div>
+              <span className="relative bg-paper-raised px-3 text-[11px] font-sans font-medium uppercase tracking-wider text-ink-secondary">
+                {t('auth.orDivider')}
+              </span>
+            </div>
+          </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
             {/* 1. Gmail / Username Input */}

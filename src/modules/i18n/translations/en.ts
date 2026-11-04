@@ -298,6 +298,9 @@ export const en: TranslationSchema = {
     noAccountYet: "Don't have an account?",
     alreadyHaveAccount: 'Already have an account?',
     termsNotice: 'By signing in, you agree to our Terms of Service and Privacy Policy.',
+    signInWithGoogle: 'Sign in with Google',
+    signUpWithGoogle: 'Sign up with Google',
+    orDivider: 'or',
   },
   accounts: {
     pageTitle: 'Connected Channels & Project Hub',

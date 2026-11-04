@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { 
   Mail, 
   User, 
@@ -19,6 +20,7 @@ import {
   RotateCcw
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
+import { GoogleLogo } from '@/components/ui/social-icons';
 import { EmailOtpToast } from '@/components/auth/email-otp-toast';
 import { sendEmailOtp, verifyEmailOtp } from '@/modules/auth/otp-service';
 import { registerUser, isEmailRegistered } from '@/modules/auth/auth-service';
@@ -42,8 +44,36 @@ export default function RegisterPage() {
   const [otpDigits, setOtpDigits] = useState(['', '', '', '', '', '']);
   const [cooldown, setCooldown] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGoogleSubmitting, setIsGoogleSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  // Handle OAuth callback errors
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const params = new URLSearchParams(window.location.search);
+    const err = params.get('error');
+    if (err) {
+      if (err === 'AccessDenied') {
+        setErrorMessage(locale === 'en' ? 'Access denied or account suspended' : 'การเข้าสู่ระบบถูกปฏิเสธ หรือบัญชีถูกระงับ');
+      } else if (err === 'OAuthSignin' || err === 'OAuthCallback') {
+        setErrorMessage(locale === 'en' ? 'Error connecting with Google, please try again' : 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ Google กรุณาลองใหม่อีกครั้ง');
+      } else {
+        setErrorMessage(locale === 'en' ? 'Registration error occurred' : 'เกิดข้อผิดพลาดในการลงทะเบียน');
+      }
+    }
+  }, [locale]);
+
+  const handleGoogleSignUp = async () => {
+    setErrorMessage('');
+    setIsGoogleSubmitting(true);
+    try {
+      await signIn('google', { callbackUrl: '/desk' });
+    } catch {
+      setIsGoogleSubmitting(false);
+      setErrorMessage(locale === 'en' ? 'Failed to connect with Google, please try again' : 'เกิดข้อผิดพลาดในการเชื่อมต่อกับ Google กรุณาลองใหม่อีกครั้ง');
+    }
+  };
 
   // OTP Input refs
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
@@ -322,7 +352,33 @@ export default function RegisterPage() {
 
           {/* STEP 1: ACCOUNT DETAILS (Gmail, Username, Pass) */}
           {step === 'DETAILS' && (
-            <form onSubmit={handleRequestOtp} className="space-y-4">
+            <div className="space-y-4">
+              {/* Google 1-Click Registration */}
+              <button
+                type="button"
+                onClick={handleGoogleSignUp}
+                disabled={isGoogleSubmitting || isSubmitting}
+                className="w-full py-2.5 px-4 bg-paper-canvas hover:bg-paper-subtle text-ink-primary text-xs font-semibold rounded-editorial border border-border-rule hover:border-ink-secondary/40 shadow-2xs flex items-center justify-center gap-2.5 transition-all cursor-pointer disabled:opacity-50 active:scale-[0.99]"
+              >
+                <GoogleLogo className="w-4 h-4 shrink-0" size={16} />
+                <span className="font-sans">
+                  {isGoogleSubmitting
+                    ? (locale === 'en' ? 'Connecting to Google...' : 'กำลังเชื่อมต่อกับ Google...')
+                    : t('auth.signUpWithGoogle')}
+                </span>
+              </button>
+
+              {/* Divider */}
+              <div className="relative flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-border-rule" />
+                </div>
+                <span className="relative bg-paper-raised px-3 text-[11px] font-sans font-medium uppercase tracking-wider text-ink-secondary">
+                  {t('auth.orDivider')}
+                </span>
+              </div>
+
+              <form onSubmit={handleRequestOtp} className="space-y-4">
               {/* 1. Gmail Input */}
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-ink-primary font-mono">
@@ -472,6 +528,7 @@ export default function RegisterPage() {
                 )}
               </button>
             </form>
+            </div>
           )}
 
           {/* STEP 2: OTP VERIFICATION */}

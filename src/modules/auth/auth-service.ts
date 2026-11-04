@@ -348,4 +348,49 @@ export function isEmailRegistered(email: string): boolean {
  */
 export function logoutUser(): void {
   setCurrentUser(null);
+  if (typeof window !== 'undefined') {
+    fetch('/api/auth/signout', { method: 'POST' }).catch(() => null);
+  }
 }
+
+/**
+ * Synchronize session from NextAuth (e.g. Google OAuth sign-in) into client session state
+ */
+export async function syncSessionFromNextAuth(): Promise<AuthUser | null> {
+  if (typeof window === 'undefined') return null;
+  try {
+    const res = await fetch('/api/auth/session');
+    if (!res.ok) return null;
+    const session = await res.json();
+    if (session?.user?.email) {
+      const u = session.user;
+      const displayName = u.name || u.email.split('@')[0];
+      const current = getCurrentUser();
+      if (current && current.email.toLowerCase() === u.email.toLowerCase()) {
+        return current;
+      }
+      const roleMap: Record<string, 'Owner' | 'Manager' | 'Creator'> = {
+        SUPER_ADMIN: 'Owner',
+        ADMIN: 'Manager',
+        USER: 'Creator',
+      };
+      const authUser: AuthUser = {
+        id: u.id || `usr_${Date.now()}`,
+        email: u.email,
+        username: u.email.split('@')[0],
+        name: displayName,
+        role: roleMap[u.systemRole] || 'Creator',
+        avatarBg: 'bg-brand-indigo',
+        avatarText: (displayName.slice(0, 2) || 'RP').toUpperCase(),
+        activeWorkspaceId: u.workspaceId || 'ws_main',
+        createdAt: new Date().toISOString(),
+      };
+      setCurrentUser(authUser);
+      return authUser;
+    }
+  } catch {
+    // network or offline fallback
+  }
+  return null;
+}
+

@@ -317,6 +317,9 @@ export interface AuthTranslations {
   noAccountYet: string;
   alreadyHaveAccount: string;
   termsNotice: string;
+  signInWithGoogle: string;
+  signUpWithGoogle: string;
+  orDivider: string;
 }
 
 export interface AccountsTranslations {
