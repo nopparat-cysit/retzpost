@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { resolveEmergencyDeleteAction } from '@/modules/publishing/platform-capabilities';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,7 +50,8 @@ export async function GET(
 
 /**
  * DELETE: Emergency Revoke
- * Cancels non-published jobs and marks batch as CANCELLED, logging an auditEvent.
+ * Cancels non-published jobs, resolves emergency delete actions (API vs deep links)
+ * for already published jobs, updates batch status, and logs an audit event.
  */
 export async function DELETE(
   req: NextRequest,
@@ -60,33 +62,69 @@ export async function DELETE(
   try {
     const batch = await prisma.publishBatch.findUnique({
       where: { id: batchId },
-      include: { jobs: true },
+      include: {
+        jobs: {
+          include: {
+            platformAccount: true,
+            publication: true,
+          },
+        },
+      },
     });
 
     if (!batch) {
       return NextResponse.json({ error: 'Publish batch not found' }, { status: 404 });
     }
 
+    // 1. Identify jobs that have already been published
+    const publishedJobs = batch.jobs.filter(
+      (job) => job.status === 'PUBLISHED' || batch.aggregateStatus === 'PUBLISHED'
+    );
+
+    // 2. Resolve emergency delete actions for published jobs
+    const emergencyActions = publishedJobs.map((job) => {
+      const externalPostId = job.publication?.remotePostId || '';
+      const handle = job.platformAccount?.handle;
+      const resolution = resolveEmergencyDeleteAction(
+        job.platformAccount.platform,
+        externalPostId,
+        handle
+      );
+
+      return {
+        jobId: job.id,
+        platform: job.platformAccount.platform,
+        accountHandle: handle,
+        externalPostId,
+        ...resolution,
+      };
+    });
+
+    const nonPublishedJobs = batch.jobs.filter((j) => j.status !== 'PUBLISHED');
+
+    // 3. Atomically cancel non-published jobs and log audit event
     await prisma.$transaction(
       async (tx) => {
-        // 1. Mark batch as CANCELLED
+        // Mark batch as CANCELLED
         await tx.publishBatch.update({
           where: { id: batchId },
           data: { aggregateStatus: 'CANCELLED' },
         });
 
-        // 2. Mark non-published jobs as CANCELLED
-        await tx.publishJob.updateMany({
-          where: {
-            batchId,
-            status: { not: 'PUBLISHED' },
-          },
-          data: {
-            status: 'CANCELLED',
-          },
-        });
+        // Mark non-published jobs as CANCELLED
+        if (nonPublishedJobs.length > 0) {
+          await tx.publishJob.updateMany({
+            where: {
+              batchId,
+              status: { not: 'PUBLISHED' },
+            },
+            data: {
+              status: 'CANCELLED',
+            },
+          });
+        }
 
-        // 3. Log audit event
+        // Log audit event with revocation forensics
         await tx.auditEvent.create({
           data: {
             workspaceId: batch.workspaceId,
@@ -95,6 +133,9 @@ export async function DELETE(
             details: {
               revokedAt: new Date().toISOString(),
               batchId: batch.id,
+              cancelledJobsCount: nonPublishedJobs.length,
+              publishedJobsCount: publishedJobs.length,
+              emergencyActions,
               reason: 'Emergency dispatch revocation by operator',
             },
           },
@@ -103,7 +144,13 @@ export async function DELETE(
       { maxWait: 15000, timeout: 30000 }
     );
 
-    return NextResponse.json({ success: true, message: 'Batch successfully revoked' });
+    return NextResponse.json({
+      success: true,
+      message: 'Batch successfully revoked',
+      cancelledJobsCount: nonPublishedJobs.length,
+      publishedJobsCount: publishedJobs.length,
+      emergencyActions,
+    });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     return NextResponse.json({ error: 'Failed to revoke publish batch', message }, { status: 500 });
