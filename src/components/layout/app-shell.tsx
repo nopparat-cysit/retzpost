@@ -198,7 +198,7 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row bg-paper-canvas text-ink-primary">
+    <div className="min-h-screen md:h-screen md:overflow-hidden flex flex-col md:flex-row bg-paper-canvas text-ink-primary">
       {/* Mobile Top Header */}
       <div className="md:hidden flex items-center justify-between p-4 bg-paper-raised border-b border-border-rule sticky top-0 z-30 shadow-xs">
         <Link href="/" className="flex items-center gap-2">
@@ -344,9 +344,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 min-w-0 w-full overflow-y-auto flex flex-col">
+      <div className="flex-1 min-w-0 w-full md:h-screen md:overflow-y-auto flex flex-col relative">
         {/* Desktop Editorial Topbar Header */}
-        <header className="hidden md:flex h-12 shrink-0 items-center justify-between px-6 border-b border-border-rule/80 bg-paper-raised/90 backdrop-blur-md sticky top-0 z-30 shadow-2xs">
+        <header className="hidden md:flex h-12 shrink-0 items-center justify-between px-6 border-b border-border-rule/80 bg-paper-raised/95 backdrop-blur-md sticky top-0 z-30 shadow-2xs">
           {/* Left: Active Workspace Indicator */}
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-2">
