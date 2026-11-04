@@ -96,7 +96,7 @@ export default function SettingsPage() {
     const isErasure = requestType === 'ERASURE_DELETE';
     const confirmMsg = isErasure
       ? 'คุณแน่ใจหรือไม่ว่าต้องการยื่นคำร้องขอลบทำลายข้อมูลบัญชีถาวรตามกฎหมาย PDPA? เมื่อดำเนินการแล้วจะไม่สามารถย้อนคืนได้'
-      : 'คุณต้องการยื่นคำร้องขอรับสำเนาข้อมูลส่วนบุคคล (PDPA Data Export) หรือไม่?';
+      : 'คุณต้องการยื่นคำร้องขอรับสำเนาข้อมูลส่วนบุคคล หรือไม่?';
     
     if (!window.confirm(confirmMsg)) return;
 
@@ -107,7 +107,7 @@ export default function SettingsPage() {
         body: JSON.stringify({
           dsarRequest: {
             requestType,
-            reason: isErasure ? 'ขอลบทำลายข้อมูลบัญชีถาวร (Right to Erasure)' : 'ขอรับสำเนาไฟล์ข้อมูลส่วนบุคคล (Right of Access)',
+            reason: isErasure ? 'ขอลบทำลายข้อมูลบัญชีถาวร' : 'ขอรับสำเนาไฟล์ข้อมูลส่วนบุคคล',
           },
         }),
       });
@@ -218,7 +218,7 @@ export default function SettingsPage() {
               <div className="flex items-center gap-2.5">
                 <span className="text-xl">🇹🇭</span>
                 <div>
-                  <p className="font-bold text-xs text-ink-primary">ภาษาไทย (Thai)</p>
+                  <p className="font-bold text-xs text-ink-primary">ภาษาไทย</p>
                   <p className="text-[10px] font-mono text-ink-secondary">ค่าเริ่มต้นสำหรับตลาดไทย</p>
                 </div>
               </div>

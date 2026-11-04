@@ -20,6 +20,17 @@ export function verifyPassword(password: string, hash: string): boolean {
 // Built-in Seed fallback users for development and testing
 export const BUILTIN_USERS = [
   {
+    id: 'usr_losstary',
+    email: 'losstary@gmail.com',
+    name: 'Nopparat Losstary',
+    systemRole: 'SUPER_ADMIN' as const,
+    passwordHash: '123123123',
+    status: 'ACTIVE' as const,
+    activeWorkspaceId: 'ws_main',
+    planTier: 'STUDIO_PRO' as const,
+    tokenBalance: 2000,
+  },
+  {
     id: '00000000-0000-0000-0000-000000000001',
     email: 'superadmin@retzpost.io',
     name: 'RetzPost Super Admin',

@@ -43,7 +43,7 @@ export function getCategoryLabel(category: string, locale?: string): string {
 export const BUILT_IN_TEMPLATES: PostTemplate[] = [
   {
     id: 'tpl-c1-luxury-space',
-    name: '🏢 สตูดิโอโปรดักชัน & สเปซใจกลางเมือง (Studio Space)',
+    name: '🏢 สตูดิโอโปรดักชัน & สเปซใจกลางเมือง',
     nameEn: '🏢 Urban Production Studio & Media Space',
     category: 'REAL_ESTATE',
     categoryLabel: 'สตูดิโอ & มีเดียสเปซ',
@@ -110,7 +110,7 @@ export const BUILT_IN_TEMPLATES: PostTemplate[] = [
     categoryLabelEn: 'Market Insights',
     title: '📊 Weekly Dispatch: Social Platform Algorithm Shifts in 2026',
     titleEn: '📊 Weekly Dispatch: Social Platform Algorithm Shifts in 2026',
-    caption: `สรุป 3 การเปลี่ยนแปลงสำคัญของ Social Algorithms สัปดาห์นี้ ที่ครีเอเตอร์และแบรนด์ควรรู้:\n\n1. การให้ค่าน้ำหนักกับ 24h Stories ที่มี Link Sticker ปฏิสัมพันธ์สูงขึ้น\n2. อัตรา Re-watch ของวิดีโอสั้น Reels/Shorts ภายใต้ความยาว 45 วินาที\n3. โครงสร้างอัลบั้มภาพแบบ Mixed Carousel ที่เพิ่มการบันทึก (Saves)\n\nคุณคิดเห็นอย่างไรกับทิศทางนี้? แลกเปลี่ยนกันได้ในคอมเมนต์ด้านล่างครับ 👇`,
+    caption: `สรุป 3 การเปลี่ยนแปลงสำคัญของ Social Algorithms สัปดาห์นี้ ที่ครีเอเตอร์และแบรนด์ควรรู้:\n\n1. การให้ค่าน้ำหนักกับ 24h Stories ที่มี Link Sticker ปฏิสัมพันธ์สูงขึ้น\n2. อัตรา Re-watch ของวิดีโอสั้น Reels/Shorts ภายใต้ความยาว 45 วินาที\n3. โครงสร้างอัลบั้มภาพแบบ Mixed Carousel ที่เพิ่มการบันทึก\n\nคุณคิดเห็นอย่างไรกับทิศทางนี้? แลกเปลี่ยนกันได้ในคอมเมนต์ด้านล่างครับ 👇`,
     captionEn: `Summary of 3 key social algorithm changes this week every creator should know:\n\n1. Higher weighting for 24h Stories with interactive link stickers\n2. Re-watch rates for short-form Reels/Shorts under 45 seconds\n3. Mixed Carousel album structures boosting bookmark/save actions\n\nWhat are your thoughts on this trend? Let us know in the comments below 👇`,
     tags: 'WeeklyBrief, MarketTrends, SocialMediaStrategy, ContentGrowth',
     storyLink: 'https://retzpost.io/insights/2026-algorithms',

@@ -292,7 +292,7 @@ export default function PricingPage() {
               </h3>
               <p className="text-xs sm:text-sm text-ink-secondary leading-relaxed">
                 {locale === 'th'
-                  ? 'เหรียญทั้งหมดจะถูกผูกไว้ที่บัญชีหลักของคุณ (Owner Master Pool) ไม่ว่าคุณจะสร้างกี่ร้านค้า (เช่น ร้านเสื้อผ้า, ร้านกาแฟ, เพจส่วนตัว) ทั้งหมดสามารถดึงเหรียญจากกระเป๋าเดียวกันไปใช้รัน AI หรือ Force Sync ได้ทันที พร้อมระบบติดตามการใช้เหรียญของลูกทีมรายบุคคลในหน้า '
+                  ? 'เหรียญทั้งหมดจะถูกผูกไว้ที่บัญชีหลักของคุณ ไม่ว่าคุณจะสร้างกี่ร้านค้า (เช่น ร้านเสื้อผ้า, ร้านกาแฟ, เพจส่วนตัว) ทั้งหมดสามารถดึงเหรียญจากกระเป๋าเดียวกันไปใช้รัน AI หรือ Force Sync ได้ทันที พร้อมระบบติดตามการใช้เหรียญของลูกทีมรายบุคคลในหน้า '
                   : 'All tokens are tied to your primary account (Owner Master Pool). No matter how many workspaces you manage, all can pull tokens from the same wallet for AI runs or force syncs, with per-member usage auditing in '}
                 <Link href="/settings/team" className="text-brand-indigo font-bold underline">
                   {locale === 'th' ? 'การตั้งค่าทีมงาน' : 'Team Settings'}
@@ -507,7 +507,7 @@ export default function PricingPage() {
               <Receipt className="w-8 h-8 text-brand-indigo shrink-0 mt-1" />
               <div>
                 <h4 className="font-serif font-bold text-base text-ink-primary">
-                  ใบกำกับภาษีเต็มรูปแบบ (e-Tax)
+                  ใบกำกับภาษีเต็มรูปแบบ
                 </h4>
                 <p className="text-xs text-ink-secondary mt-1 leading-relaxed">
                   ออกใบกำกับภาษีมูลค่าเพิ่ม 7% ถูกต้องตามระเบียบกรมสรรพากร รองรับนิติบุคคลและบุคคลธรรมดา กรอกเลขนิติบุคคล 13 หลักตอนชำระเงินได้ทันที

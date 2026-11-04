@@ -546,7 +546,7 @@ export default function SuperAdminPage() {
             className="w-full py-2 px-3 rounded-md bg-accent-terracotta hover:bg-accent-terracotta/90 text-white text-xs font-bold font-mono flex items-center justify-center gap-2 transition-colors shadow-xs"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
-            <span>{locale === 'th' ? 'กลับโต๊ะปฏิบัติการ (Desk)' : 'Return to Operations Desk'}</span>
+            <span>{locale === 'th' ? 'กลับโต๊ะปฏิบัติการ ' : 'Return to Operations Desk'}</span>
           </Link>
 
           <div className="flex items-center justify-between pt-1">
@@ -603,7 +603,7 @@ export default function SuperAdminPage() {
         {globalFreeze && (
           <div className="bg-semantic-error text-white px-4 py-2.5 text-xs font-bold flex items-center justify-center gap-2 animate-pulse">
             <ShieldAlert className="w-4 h-4" />
-            <span>{locale === 'en' ? 'Warning: Emergency circuit breaker active (Global Freeze Active). All publishing is suspended.' : 'คำเตือน: ระบบตัดไฟฉุกเฉินเปิดใช้งานอยู่ (Global Freeze Active) การโพสต์ทั้งหมดถูกระงับชั่วคราว'}</span>
+            <span>{locale === 'en' ? 'Warning: Emergency circuit breaker active . All publishing is suspended.' : 'คำเตือน: ระบบตัดไฟฉุกเฉินเปิดใช้งานอยู่  การโพสต์ทั้งหมดถูกระงับชั่วคราว'}</span>
           </div>
         )}
 
@@ -631,7 +631,7 @@ export default function SuperAdminPage() {
                     ฿{data?.metrics?.mrrThb?.toLocaleString() || '0'}
                   </p>
                   <p className="text-[11px] text-ink-muted mt-1 font-mono">
-                    {locale === 'en' ? 'Estimated monthly recurring revenue (THB)' : 'ประมาณการรายได้ประจำต่อเดือน (THB)'}
+                    {locale === 'en' ? 'Estimated monthly recurring revenue (THB)' : 'ประมาณการรายได้ประจำต่อเดือน'}
                   </p>
                 </div>
 
@@ -677,7 +677,7 @@ export default function SuperAdminPage() {
               {/* Plan Tier Distribution */}
               <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs">
                 <h3 className="font-serif font-bold text-lg text-ink-primary mb-4">
-                  {locale === 'en' ? 'Plan Distribution by User Tier' : 'สัดส่วนผู้ใช้งานแยกตามแพ็กเกจแท่นพิมพ์ (Plan Distribution)'}
+                  {locale === 'en' ? 'Plan Distribution by User Tier' : 'สัดส่วนผู้ใช้งานแยกตามแพ็กเกจแท่นพิมพ์ '}
                 </h3>
                 <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                   <div className="p-3.5 rounded-md bg-paper-raised border border-border-rule text-center">
@@ -935,7 +935,7 @@ export default function SuperAdminPage() {
                     </h3>
                   </div>
                   <p className="text-xs text-ink-secondary mt-1 max-w-3xl leading-relaxed">
-                    {locale === 'en' ? 'RETZPOST continuously logs and retains computer traffic data (Log Retention) for not less than 90 days to identify users, timestamps, and network access points in full compliance with the Ministry of Digital Economy and Society regulations.' : 'ระบบ RETZPOST บันทึกข้อมูลจราจรคอมพิวเตอร์ (Log Retention) ต่อเนื่องไม่น้อยกว่า 90 วัน เพื่อให้ระบุตัวบุคคล วัน เวลา และสถานที่ใช้งานได้ตามข้อกำหนดของกระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม'}
+                    {locale === 'en' ? 'RETZPOST continuously logs and retains computer traffic data  for not less than 90 days to identify users, timestamps, and network access points in full compliance with the Ministry of Digital Economy and Society regulations.' : 'ระบบ RETZPOST บันทึกข้อมูลจราจรคอมพิวเตอร์  ต่อเนื่องไม่น้อยกว่า 90 วัน เพื่อให้ระบุตัวบุคคล วัน เวลา และสถานที่ใช้งานได้ตามข้อกำหนดของกระทรวงดิจิทัลเพื่อเศรษฐกิจและสังคม'}
                   </p>
                 </div>
 
@@ -945,7 +945,7 @@ export default function SuperAdminPage() {
                   className="py-2.5 px-4 rounded-btn bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-bold font-mono transition-colors flex items-center gap-2 shrink-0 shadow-xs"
                 >
                   <FileDown className="w-4 h-4" />
-                  <span>{locale === 'en' ? 'Download 90-Day Audit Log (CSV)' : 'ดาวน์โหลด Log Audit 90 วัน (CSV)'}</span>
+                  <span>{locale === 'en' ? 'Download 90-Day Audit Log (CSV)' : 'ดาวน์โหลด Log Audit 90 วัน'}</span>
                 </button>
               </div>
 
@@ -953,10 +953,10 @@ export default function SuperAdminPage() {
               <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs">
                 <h3 className="font-serif font-bold text-lg text-ink-primary mb-2 flex items-center gap-2">
                   <ShieldCheck className="w-5 h-5 text-semantic-success" />
-                  <span>{locale === 'en' ? 'PDPA Data Subject Access Request Queue (DSAR)' : 'คิวคำร้องขอใช้สิทธิ์เจ้าของข้อมูลส่วนบุคคล (PDPA DSAR Queue)'}</span>
+                  <span>{locale === 'en' ? 'PDPA Data Subject Access Request Queue (DSAR)' : 'คิวคำร้องขอใช้สิทธิ์เจ้าของข้อมูลส่วนบุคคล '}</span>
                 </h3>
                 <p className="text-xs text-ink-secondary mb-4">
-                  {locale === 'en' ? 'Right of Access, Right to Erasure, and Right to Rectification requests under Thailand PDPA.' : 'สิทธิ์ในการเข้าถึงและขอรับสำเนา (Right of Access), สิทธิ์ในการลบทำลาย (Right to Erasure), และสิทธิ์ในการแก้ไข (Right to Rectification)'}
+                  {locale === 'en' ? 'Right of Access, Right to Erasure, and Right to Rectification requests under Thailand PDPA.' : 'สิทธิ์ในการเข้าถึงและขอรับสำเนา , สิทธิ์ในการลบทำลาย , และสิทธิ์ในการแก้ไข '}
                 </p>
 
                 <div className="overflow-x-auto">
@@ -1024,7 +1024,7 @@ export default function SuperAdminPage() {
               {/* Audit Logs Sample Table */}
               <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs">
                 <h3 className="font-serif font-bold text-lg text-ink-primary mb-3">
-                  {locale === 'en' ? 'Recent Computer Operations & Audit Trail' : 'ตัวอย่างประวัติการปฏิบัติการคอมพิวเตอร์ล่าสุด (Recent Audit Trail)'}
+                  {locale === 'en' ? 'Recent Computer Operations & Audit Trail' : 'ตัวอย่างประวัติการปฏิบัติการคอมพิวเตอร์ล่าสุด '}
                 </h3>
                 <div className="overflow-x-auto max-h-80 overflow-y-auto">
                   <table className="w-full text-left text-xs font-mono">
@@ -1067,7 +1067,7 @@ export default function SuperAdminPage() {
                 <div className="flex items-center gap-2 mb-2 text-accent-terracotta">
                   <Flame className="w-5 h-5" />
                   <h3 className="font-serif font-bold text-lg text-ink-primary">
-                    {locale === 'en' ? 'Platform Emergency Circuit Breakers' : 'ระบบตัดไฟฉุกเฉินระดับแพลตฟอร์ม (Emergency Circuit Breakers)'}
+                    {locale === 'en' ? 'Platform Emergency Circuit Breakers' : 'ระบบตัดไฟฉุกเฉินระดับแพลตฟอร์ม '}
                   </h3>
                 </div>
                 <p className="text-xs text-ink-secondary mb-6 leading-relaxed">
@@ -1078,7 +1078,7 @@ export default function SuperAdminPage() {
                 <div className="p-4 mb-6 rounded-editorial border-2 border-red-500/40 bg-red-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <span className="font-serif font-bold text-sm text-red-900 block">
-                      {locale === 'en' ? 'Global Publishing Freeze Switch' : 'สวิตช์แช่แข็งการเผยแพร่ทั้งแพลตฟอร์ม (Global Publishing Freeze)'}
+                      {locale === 'en' ? 'Global Publishing Freeze Switch' : 'สวิตช์แช่แข็งการเผยแพร่ทั้งแพลตฟอร์ม '}
                     </span>
                     <span className="text-xs text-red-700">
                       {locale === 'en' ? 'Immediately suspend dispatch queues across all channels platform-wide. Recommended for high-severity emergency situations.' : 'หยุดคิวเผยแพร่ทุกช่องทางทั่วทั้งระบบทันที เหมาะสำหรับกรณีฉุกเฉินระดับวิกฤต'}
@@ -1171,7 +1171,7 @@ export default function SuperAdminPage() {
                 <div>
                   <h3 className="font-serif font-bold text-xl text-ink-primary flex items-center gap-2">
                     <SlidersHorizontal className="w-5 h-5 text-accent-terracotta" />
-                    <span>{locale === 'en' ? 'Platform Engine Settings & Token Economy' : 'การตั้งค่าแพลตฟอร์ม แท่นพิมพ์ & โทเคน (Platform Engine Settings)'}</span>
+                    <span>{locale === 'en' ? 'Platform Engine Settings & Token Economy' : 'การตั้งค่าแพลตฟอร์ม แท่นพิมพ์ & โทเคน '}</span>
                   </h3>
                   <p className="text-xs text-ink-secondary mt-1">
                     {locale === 'en' ? 'Configure 7-day free trial terms, promotion ladders, token consumption rates, and VAT (7%) calculation.' : 'ปรับแต่งเงื่อนไขการทดลองใช้ฟรี 7 วัน โปรโมชั่นลดพิเศษ อัตราสิ้นเปลืองโทเคน และการคำนวณภาษีมูลค่าเพิ่ม (VAT 7%)'}
@@ -1203,7 +1203,7 @@ export default function SuperAdminPage() {
                 <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs space-y-4">
                   <div className="flex items-center justify-between border-b border-border-rule pb-3">
                     <h4 className="font-serif font-bold text-base text-ink-primary flex items-center gap-2">
-                      <span>{locale === 'en' ? 'Free Trial System' : 'ระบบทดลองใช้งานฟรี (Free Trial)'}</span>
+                      <span>{locale === 'en' ? 'Free Trial System' : 'ระบบทดลองใช้งานฟรี '}</span>
                     </h4>
                     <label className="relative inline-flex items-center cursor-pointer">
                       <input
@@ -1219,7 +1219,7 @@ export default function SuperAdminPage() {
                   <div className="space-y-3">
                     <div>
                       <label className="block text-xs font-mono font-bold text-ink-secondary mb-1">
-                        {locale === 'en' ? 'Trial Duration (Trial Days)' : 'จำนวนวันทดลองใช้งานฟรี (Trial Days)'}
+                        {locale === 'en' ? 'Trial Duration ' : 'จำนวนวันทดลองใช้งานฟรี '}
                       </label>
                       <div className="flex items-center gap-2">
                         <input
@@ -1247,7 +1247,7 @@ export default function SuperAdminPage() {
                 <div className="bg-paper-card border border-border-rule rounded-editorial p-6 shadow-xs space-y-4">
                   <div className="border-b border-border-rule pb-3">
                     <h4 className="font-serif font-bold text-base text-ink-primary flex items-center gap-2">
-                      <span>{locale === 'en' ? 'Post-Trial Promotion Ladder (Promo Ladder)' : 'บันไดส่วนลดหลังหมดทดลอง (Promo Ladder)'}</span>
+                      <span>{locale === 'en' ? 'Post-Trial Promotion Ladder ' : 'บันไดส่วนลดหลังหมดทดลอง '}</span>
                     </h4>
                   </div>
 
@@ -1290,7 +1290,7 @@ export default function SuperAdminPage() {
 
                     <div className="flex items-center justify-between gap-4 pt-2 border-t border-border-rule/60">
                       <div>
-                        <p className="text-xs font-bold text-ink-primary">{locale === 'en' ? 'Standard Annual Discount (Standard Yearly)' : 'ส่วนลดรายปีมาตรฐาน (Standard Yearly)'}</p>
+                        <p className="text-xs font-bold text-ink-primary">{locale === 'en' ? 'Standard Annual Discount ' : 'ส่วนลดรายปีมาตรฐาน '}</p>
                         <p className="text-[10px] text-ink-muted">{locale === 'en' ? 'Pay 9 months, get 12 months access' : 'เทียบเท่าจ่าย 9 เดือน ใช้ได้ 12 เดือน'}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -1318,7 +1318,7 @@ export default function SuperAdminPage() {
 
                   <div className="space-y-2.5 text-xs">
                     <div className="flex items-center justify-between py-1 border-b border-border-rule/40">
-                      <span className="text-ink-secondary">{locale === 'en' ? 'Welcome Bonus (New Users)' : 'เหรียญต้อนรับผู้ใช้ใหม่ (Welcome Bonus)'}</span>
+                      <span className="text-ink-secondary">{locale === 'en' ? 'Welcome Bonus (New Users)' : 'เหรียญต้อนรับผู้ใช้ใหม่ '}</span>
                       <div className="flex items-center gap-1">
                         <input
                           type="number"
@@ -1363,7 +1363,7 @@ export default function SuperAdminPage() {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between gap-4">
                       <div>
-                        <p className="text-xs font-bold text-ink-primary">{locale === 'en' ? 'Value Added Tax (VAT Rate)' : 'อัตราภาษีมูลค่าเพิ่ม (VAT)'}</p>
+                        <p className="text-xs font-bold text-ink-primary">{locale === 'en' ? 'Value Added Tax (VAT Rate)' : 'อัตราภาษีมูลค่าเพิ่ม'}</p>
                         <p className="text-[10px] text-ink-muted">{locale === 'en' ? 'Calculated and itemized on e-Tax Invoice' : 'คำนวณแยกแสดงใน e-Tax Invoice'}</p>
                       </div>
                       <div className="flex items-center gap-1.5">
@@ -1390,7 +1390,7 @@ export default function SuperAdminPage() {
                       </div>
                       <div className="flex justify-between">
                         <span className="text-ink-secondary">{locale === 'en' ? 'CCA Sec. 26 Traffic Log:' : 'Log พ.ร.บ. คอมฯ ม.26:'}</span>
-                        <span className="text-semantic-success font-bold font-mono">{locale === 'en' ? '90 Days Automated (Compliant)' : '90 วันอัตโนมัติ (Compliant)'}</span>
+                        <span className="text-semantic-success font-bold font-mono">{locale === 'en' ? '90 Days Automated (Compliant)' : '90 วันอัตโนมัติ'}</span>
                       </div>
                     </div>
                   </div>
@@ -1414,7 +1414,7 @@ export default function SuperAdminPage() {
 
             <div>
               <label className="block text-xs font-bold text-ink-secondary mb-1">
-                {locale === 'en' ? 'Tokens to Add (+) or Deduct (-)' : 'จำนวนเหรียญที่ต้องการเพิ่ม (+) หรือลด (-)'}
+                {locale === 'en' ? 'Tokens to Add (+) or Deduct (-)' : 'จำนวนเหรียญที่ต้องการเพิ่ม (+) หรือลด'}
               </label>
               <input
                 type="number"
@@ -1426,7 +1426,7 @@ export default function SuperAdminPage() {
 
             <div>
               <label className="block text-xs font-bold text-ink-secondary mb-1">
-                {locale === 'en' ? 'Audit Log Reason' : 'เหตุผลในการปรับยอด (Audit Log Reason)'}
+                {locale === 'en' ? 'Audit Log Reason' : 'เหตุผลในการปรับยอด'}
               </label>
               <input
                 type="text"
@@ -1469,7 +1469,7 @@ export default function SuperAdminPage() {
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-paper-card border border-border-rule rounded-editorial max-w-sm w-full p-6 shadow-xl space-y-4 text-center">
             <h3 className="font-serif font-bold text-base text-ink-primary">
-              {locale === 'en' ? 'PromptPay Payment Slip Evidence' : 'หลักฐานสลิปการโอนเงิน (PromptPay Slip)'}
+              {locale === 'en' ? 'PromptPay Payment Slip Evidence' : 'หลักฐานสลิปการโอนเงิน'}
             </h3>
             <div className="p-2 bg-paper-canvas rounded border border-border-rule flex items-center justify-center min-h-[200px]">
               {previewSlipUrl.startsWith('data:image') || previewSlipUrl.startsWith('http') ? (

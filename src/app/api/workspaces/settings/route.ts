@@ -157,7 +157,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      message: 'บันทึกการตั้งค่าสำเร็จ (Local fallback)',
+      message: 'บันทึกการตั้งค่าสำเร็จ',
     });
   } catch (err: any) {
     console.error('Workspace settings POST error:', err);

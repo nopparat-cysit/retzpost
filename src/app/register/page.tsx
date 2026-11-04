@@ -118,7 +118,7 @@ export default function RegisterPage() {
     }
 
     if (!cleanUsername || cleanUsername.length < 3) {
-      setErrorMessage(locale === 'en' ? 'Username must be at least 3 characters' : 'ชื่อผู้ใช้ (Username) ต้องมีความยาวอย่างน้อย 3 ตัวอักษร');
+      setErrorMessage(locale === 'en' ? 'Username must be at least 3 characters' : 'ชื่อผู้ใช้ ต้องมีความยาวอย่างน้อย 3 ตัวอักษร');
       return;
     }
 
@@ -347,7 +347,7 @@ export default function RegisterPage() {
               {/* 2. Username Input */}
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-ink-primary font-mono">
-                  {locale === 'en' ? 'Username' : 'ชื่อผู้ใช้ (Username)'} <span className="text-accent-terracotta">*</span>
+                  {locale === 'en' ? 'Username' : 'ชื่อผู้ใช้'} <span className="text-accent-terracotta">*</span>
                 </label>
                 <div className="relative">
                   <User className="w-4 h-4 text-ink-secondary absolute left-3 top-3 pointer-events-none" />
@@ -365,7 +365,7 @@ export default function RegisterPage() {
               {/* 3. Password Input */}
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-ink-primary font-mono">
-                  {locale === 'en' ? 'Password' : 'รหัสผ่าน (Password)'} <span className="text-accent-terracotta">*</span>
+                  {locale === 'en' ? 'Password' : 'รหัสผ่าน'} <span className="text-accent-terracotta">*</span>
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-ink-secondary absolute left-3 top-3 pointer-events-none" />
@@ -450,7 +450,7 @@ export default function RegisterPage() {
                   </Link>
                   {locale === 'en' ? ' and ' : ' และ '}
                   <Link href="/privacy" target="_blank" className="text-brand-indigo font-semibold underline underline-offset-1 hover:text-brand-indigo-hover">
-                    {locale === 'en' ? 'Privacy Policy' : 'นโยบายความเป็นส่วนตัว (Privacy Policy)'}
+                    {locale === 'en' ? 'Privacy Policy' : 'นโยบายความเป็นส่วนตัว'}
                   </Link>
                   {locale === 'en' ? ' of RetzPost' : ' ของ RetzPost'}
                 </label>
@@ -495,7 +495,7 @@ export default function RegisterPage() {
               {/* 6 Digits Boxes */}
               <div className="space-y-2">
                 <label className="block text-xs font-semibold text-ink-primary font-mono text-center">
-                  {locale === 'en' ? 'Enter 6-Digit OTP (OTP Verification Code)' : 'กรอกรหัส 6 หลัก (OTP Verification Code)'}
+                  {locale === 'en' ? 'Enter 6-Digit OTP (OTP Verification Code)' : 'กรอกรหัส 6 หลัก'}
                 </label>
                 <div className="flex items-center justify-between gap-1.5 sm:gap-2">
                   {otpDigits.map((digit, index) => (
@@ -535,7 +535,7 @@ export default function RegisterPage() {
                   className="text-xs font-semibold font-mono text-brand-indigo hover:underline disabled:opacity-40 disabled:no-underline cursor-pointer flex items-center gap-1"
                 >
                   <RotateCcw className="w-3 h-3" />
-                  <span>{locale === 'en' ? 'Resend Code' : 'ขอรหัสใหม่ (Resend)'}</span>
+                  <span>{locale === 'en' ? 'Resend Code' : 'ขอรหัสใหม่'}</span>
                 </button>
               </div>
 
@@ -594,15 +594,15 @@ export default function RegisterPage() {
       <footer className="max-w-5xl mx-auto w-full pt-6 border-t border-border-rule/60 text-center text-[11px] font-mono text-ink-secondary space-y-2">
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-medium">
           <Link href="/docs" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            📖 {locale === 'en' ? 'Docs & Guides' : 'คู่มือใช้งาน (Docs & Guide)'}
+            📖 {locale === 'en' ? 'Docs & Guides' : 'คู่มือใช้งาน'}
           </Link>
           <span>•</span>
           <Link href="/privacy" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            🔒 {locale === 'en' ? 'Privacy Policy' : 'นโยบายความเป็นส่วนตัว (Privacy Policy)'}
+            🔒 {locale === 'en' ? 'Privacy Policy' : 'นโยบายความเป็นส่วนตัว'}
           </Link>
           <span>•</span>
           <Link href="/terms" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            📜 {locale === 'en' ? 'Terms of Service' : 'ข้อกำหนดการใช้งาน (Terms of Service)'}
+            📜 {locale === 'en' ? 'Terms of Service' : 'ข้อกำหนดการใช้งาน'}
           </Link>
         </div>
         <p>RETZPOST — Dream Press Publishing Desk &copy; {new Date().getFullYear()} RetzPost SaaS. All rights reserved.</p>

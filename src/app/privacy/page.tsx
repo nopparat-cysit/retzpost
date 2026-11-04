@@ -150,7 +150,7 @@ export default function PrivacyPolicyPage() {
           <aside className="lg:col-span-4 sticky top-28 space-y-4">
             <div className="p-4 bg-paper-raised border-2 border-border-rule rounded-dialog shadow-xs">
               <span className="text-xs font-mono font-bold text-ink-primary uppercase tracking-wider block pb-3 mb-3 border-b border-border-rule/80">
-                มาตราและหัวข้อนโยบาย (Sections)
+                มาตราและหัวข้อนโยบาย
               </span>
 
               <nav className="space-y-1">
@@ -183,7 +183,7 @@ export default function PrivacyPolicyPage() {
               <div className="flex items-center gap-2">
                 <Sticker name="approved-seal" size="xs" />
                 <span className="font-mono font-bold text-ink-primary text-[11px] uppercase tracking-wider">
-                  เจ้าหน้าที่คุ้มครองข้อมูล (DPO)
+                  เจ้าหน้าที่คุ้มครองข้อมูล
                 </span>
               </div>
               <p className="text-[11px] text-ink-secondary font-sans leading-relaxed">
@@ -212,14 +212,14 @@ export default function PrivacyPolicyPage() {
                   ARTICLE 01
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  1. บทนำและขอบเขตการบังคับใช้ (Introduction & Scope)
+                  1. บทนำและขอบเขตการบังคับใช้
                 </h2>
               </div>
 
               {/* TL;DR Box */}
               <div className="p-3.5 rounded-editorial bg-brand-indigo/5 border-l-3 border-brand-indigo text-xs space-y-1">
                 <strong className="text-brand-indigo font-mono block text-[11px]">
-                  💡 สรุปภาษาคนเข้าใจง่าย (Plain Summary):
+                  💡 สรุปภาษาคนเข้าใจง่าย:
                 </strong>
                 <p className="text-ink-primary/90 font-sans leading-relaxed">
                   นโยบายนี้บอกว่า RetzPost จัดเก็บข้อมูลอะไรบ้างเมื่อคุณใช้บริการ และเรานำข้อมูลไปทำอะไร โดยหัวใจหลักคือเราใช้ข้อมูลเพื่อส่งโพสต์ตามที่คุณสั่งเท่านั้น
@@ -243,13 +243,13 @@ export default function PrivacyPolicyPage() {
                   ARTICLE 02
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  2. ข้อมูลส่วนบุคคลที่เราจัดเก็บ (Personal Data We Collect)
+                  2. ข้อมูลส่วนบุคคลที่เราจัดเก็บ
                 </h2>
               </div>
 
               <div className="p-3.5 rounded-editorial bg-semantic-success-bg/40 border-l-3 border-semantic-success text-xs space-y-1">
                 <strong className="text-semantic-success font-mono block text-[11px]">
-                  💡 สรุปภาษาคนเข้าใจง่าย (Plain Summary):
+                  💡 สรุปภาษาคนเข้าใจง่าย:
                 </strong>
                 <p className="text-ink-primary/90 font-sans leading-relaxed">
                   เราเก็บเฉพาะ Gmail ที่ใช้สมัคร, ชื่อผู้ใช้, และ Token ที่ได้จากการที่คุณกดยินยอมเชื่อมต่อ Facebook/YouTube/TikTok เท่านั้น เราไม่เคยเก็บรหัสผ่านจริงของโซเชียลของคุณ
@@ -262,7 +262,7 @@ export default function PrivacyPolicyPage() {
                   <div className="p-3 rounded bg-paper-canvas border border-border-rule space-y-1">
                     <strong className="text-ink-primary block">ก. ข้อมูลบัญชี:</strong>
                     <span className="text-ink-secondary block font-sans">
-                      Gmail, Username, รหัสผ่านที่เข้ารหัสแล้ว (One-Way Hashed)
+                      Gmail, Username, รหัสผ่านที่เข้ารหัสแล้ว
                     </span>
                   </div>
                   <div className="p-3 rounded bg-paper-canvas border border-border-rule space-y-1">
@@ -288,13 +288,13 @@ export default function PrivacyPolicyPage() {
                   ARTICLE 03
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  3. วัตถุประสงค์ในการประมวลผลข้อมูล (Purpose of Processing)
+                  3. วัตถุประสงค์ในการประมวลผลข้อมูล
                 </h2>
               </div>
 
               <div className="p-3.5 rounded-editorial bg-brand-indigo/5 border-l-3 border-brand-indigo text-xs space-y-1">
                 <strong className="text-brand-indigo font-mono block text-[11px]">
-                  💡 สรุปภาษาคนเข้าใจง่าย (Plain Summary):
+                  💡 สรุปภาษาคนเข้าใจง่าย:
                 </strong>
                 <p className="text-ink-primary/90 font-sans leading-relaxed">
                   เราใช้ข้อมูลเพื่อ 1) ส่งรหัส OTP ทางอีเมล 2) ยิงโพสต์และคลิปลงเพจของคุณตามเวลาที่ตั้งไว้ 3) ดึงตัวเลขยอดวิวมาคิดคะแนน KPI ให้ทีมของคุณ
@@ -305,7 +305,7 @@ export default function PrivacyPolicyPage() {
                 <p>เราประมวลผลข้อมูลของท่านตามฐานความยินยอมและฐานสัญญาในการให้บริการ:</p>
                 <ul className="list-disc list-inside space-y-1 pl-2">
                   <li>ส่งคำสั่ง API เพื่อสร้างโพสต์, วิดีโอ Reels, Shorts หรือทวีตตามที่ท่านกดสั่ง</li>
-                  <li>คำนวณสถิติและประสิทธิภาพการทำงาน (Team KPI & Scorecard) รายบุคคล</li>
+                  <li>คำนวณสถิติและประสิทธิภาพการทำงาน รายบุคคล</li>
                   <li>ส่งรหัสยืนยันตัวตน OTP 6 หลักเพื่อความปลอดภัยในการเข้าใช้งานและกู้คืนรหัสผ่าน</li>
                 </ul>
               </div>
@@ -318,7 +318,7 @@ export default function PrivacyPolicyPage() {
                   ARTICLE 04
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  4. การรักษาความมั่นคงปลอดภัยของข้อมูล (Token Vault & Encryption)
+                  4. การรักษาความมั่นคงปลอดภัยของข้อมูล
                 </h2>
               </div>
 
@@ -350,7 +350,7 @@ export default function PrivacyPolicyPage() {
                   ARTICLE 05
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  5. การปฏิบัติตามนโยบายแพลตฟอร์มพันธมิตร (Platform API Compliance)
+                  5. การปฏิบัติตามนโยบายแพลตฟอร์มพันธมิตร
                 </h2>
               </div>
 
@@ -373,7 +373,7 @@ export default function PrivacyPolicyPage() {
                   ARTICLE 06
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  6. สิทธิของผู้ใช้ & การขอลบข้อมูลอย่างถาวร (User Rights & Data Erasure)
+                  6. สิทธิของผู้ใช้ & การขอลบข้อมูลอย่างถาวร
                 </h2>
               </div>
 
@@ -390,14 +390,14 @@ export default function PrivacyPolicyPage() {
                       href="/accounts"
                       className="px-3 py-1.5 rounded-editorial bg-paper-subtle hover:bg-paper-raised border border-border-rule text-brand-indigo font-mono text-[11px] font-semibold transition-colors"
                     >
-                      จัดการตัดการเชื่อมต่อเพจ (Disconnect Channels) →
+                      จัดการตัดการเชื่อมต่อเพจ →
                     </Link>
                     <button
                       type="button"
                       onClick={() => alert('หากต้องการลบบัญชีผู้ใช้ RetzPost ถาวร โปรดส่งคำร้องมาที่ privacy@retzpost.com โดยระบุ Gmail ที่ลงทะเบียนไว้ ระบบจะดำเนินการลบข้อมูลทั้งหมดภายใน 48 ชั่วโมง')}
                       className="px-3 py-1.5 rounded-editorial bg-semantic-error-bg hover:bg-semantic-error/15 text-semantic-error font-mono text-[11px] font-semibold transition-colors cursor-pointer"
                     >
-                      ขอลบข้อมูลบัญชีถาวร (Delete Account)
+                      ขอลบข้อมูลบัญชีถาวร
                     </button>
                   </div>
                 </div>
@@ -411,7 +411,7 @@ export default function PrivacyPolicyPage() {
                   ARTICLE 07
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  7. ช่องทางการติดต่อเจ้าหน้าที่คุ้มครองข้อมูล (DPO Contact)
+                  7. ช่องทางการติดต่อเจ้าหน้าที่คุ้มครองข้อมูล
                 </h2>
               </div>
 
@@ -452,14 +452,14 @@ export default function PrivacyPolicyPage() {
                   className="text-brand-indigo hover:underline flex items-center gap-1 font-semibold"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>กลับสู่หน้าสมัครสมาชิก (Register)</span>
+                  <span>กลับสู่หน้าสมัครสมาชิก</span>
                 </Link>
 
                 <Link
                   href="/terms"
                   className="text-brand-indigo hover:underline font-semibold flex items-center gap-1"
                 >
-                  <span>อ่านข้อกำหนดการให้บริการ (Terms)</span>
+                  <span>อ่านข้อกำหนดการให้บริการ</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

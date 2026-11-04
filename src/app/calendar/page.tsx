@@ -893,36 +893,6 @@ export default function EditorialCalendarPage() {
         subtitle={t('calendar.pageSubtitle')}
         actions={
           <div className="flex flex-wrap items-center gap-2.5">
-            {isMockCleared ? (
-              <button
-                type="button"
-                onClick={() => {
-                  loadSampleMockData();
-                  setEvents(SAMPLE_EVENTS);
-                  showToast(locale === 'en' ? 'Loaded demo calendar schedule.' : 'โหลดตารางงานปฏิทินตัวอย่างเรียบร้อยแล้ว');
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title={locale === 'en' ? 'Load mock schedule for calendar testing' : 'โหลดกำหนดการจำลองสำหรับทดสอบระบบ'}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-                <span>{locale === 'th' ? 'โหลดปฏิทินตัวอย่าง (Demo)' : 'Load Demo Events'}</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  clearAllMockData();
-                  setEvents([]);
-                  showToast(locale === 'en' ? 'Cleared all calendar events (Clean Slate).' : 'ล้างกำหนดการจำลองในปฏิทินเรียบร้อยแล้ว (Clean Slate)');
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title={locale === 'en' ? 'Clear calendar to zero state' : 'ล้างปฏิทินให้ว่างเปล่า'}
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>{locale === 'th' ? 'ล้างปฏิทิน (Clear All)' : 'Clear All Events'}</span>
-              </button>
-            )}
-
             <Link
               href="/create"
               className="inline-flex items-center gap-2 px-4 py-2 bg-brand-indigo text-white text-xs font-sans font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-all shadow-xs active:scale-[0.98]"
@@ -997,7 +967,7 @@ export default function EditorialCalendarPage() {
             className="px-2.5 py-1 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold transition-colors flex items-center gap-1 cursor-pointer"
           >
             <BarChart3 className="w-3 h-3" />
-            <span>{showStatsOverview ? (locale === 'en' ? 'Collapse Stats ▲' : 'ย่อสรุป ▲') : (locale === 'en' ? 'Full KPI Stats ▼' : 'ดูสถิติเต็ม (KPI) ▼')}</span>
+            <span>{showStatsOverview ? (locale === 'en' ? 'Collapse Stats ▲' : 'ย่อสรุป ▲') : (locale === 'en' ? 'Full KPI Stats ▼' : 'ดูสถิติเต็ม ▼')}</span>
           </button>
         </div>
       </div>
@@ -1113,7 +1083,7 @@ export default function EditorialCalendarPage() {
           title={locale === 'en' ? 'No scheduled dispatches in calendar yet' : 'ยังไม่มีกำหนดการเผยแพร่ในปฏิทิน'}
           description={locale === 'en' ? 'Schedule dispatches in advance within Golden Peak Slots, or click any calendar day to set a publishing time.' : 'จัดตารางเวลาเผยแพร่คอนเทนต์ล่วงหน้าในช่อง Golden Peak Slots หรือคลิกที่แต่ละวันในปฏิทินเพื่อตั้งเวลาปล่อยโพสต์ทันที'}
           tipText={locale === 'en' ? 'RetzPost calculates Bangkok Golden Peak Slots (08:30 AM and 07:30 PM) to maximize organic reach.' : 'RetzPost มีระบบคำนวณ Bangkok Golden Peak Slots (เวลาทองของคนไทย: 08:30 น. และ 19:30 น.) เพื่อเพิ่ม Organic Reach'}
-          actionLabel={locale === 'en' ? '+ Schedule New Dispatch (Compose Dispatch)' : '+ จัดตารางโพสต์ใหม่ (Compose Dispatch)'}
+          actionLabel={locale === 'en' ? '+ Schedule New Dispatch (Compose Dispatch)' : '+ จัดตารางโพสต์ใหม่'}
           actionHref="/create"
           onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setEvents(SAMPLE_EVENTS); } : undefined}
         />
@@ -1443,7 +1413,7 @@ export default function EditorialCalendarPage() {
                               title={locale === 'en' ? `Open modal to view remaining ${remainingCount} dispatches for day ${day}` : `คลิกเพื่อเปิด Modal ดูรายการโพสต์ทั้งหมดอีก ${remainingCount} รายการของวันที่ ${day}`}
                             >
                               <Layers className="w-3 h-3 shrink-0" />
-                              <span>{locale === 'en' ? `+${remainingCount} more (Modal)` : `ดูอีก ${remainingCount} โพสต์ (Modal)`}</span>
+                              <span>{locale === 'en' ? `+${remainingCount} more (Modal)` : `ดูอีก ${remainingCount} โพสต์`}</span>
                             </button>
                           )}
                         </div>
@@ -1808,7 +1778,7 @@ export default function EditorialCalendarPage() {
                   title={locale === 'en' ? 'Quickly edit title, caption and schedule in this modal' : 'แก้ไขหัวข้อ, แคปชัน และกำหนดเวลาด่วนในหน้าต่างนี้'}
                 >
                   <Edit3 className="w-3.5 h-3.5" />
-                  <span>{isQuickEditing ? (locale === 'en' ? 'Preview Mode' : 'โหมดพรีวิว (Preview)') : (locale === 'en' ? 'Quick Edit' : 'แก้ไขด่วน (Quick Edit)')}</span>
+                  <span>{isQuickEditing ? (locale === 'en' ? 'Preview Mode' : 'โหมดพรีวิว') : (locale === 'en' ? 'Quick Edit' : 'แก้ไขด่วน')}</span>
                 </button>
                 <span className="text-[10px] font-mono text-ink-muted border border-border-rule px-1.5 py-0.5 rounded hidden sm:inline-block">
                   ESC
@@ -1883,7 +1853,7 @@ export default function EditorialCalendarPage() {
                       showPresets={true}
                     />
                     <CustomTimePicker
-                      label={locale === 'en' ? 'Publishing Time (Peak Slots)' : 'เวลาเผยแพร่ (Peak Slots)'}
+                      label={locale === 'en' ? 'Publishing Time (Peak Slots)' : 'เวลาเผยแพร่'}
                       value={rescheduleTime}
                       onChange={(t) => setRescheduleTime(t)}
                       size="sm"
@@ -1900,7 +1870,7 @@ export default function EditorialCalendarPage() {
                     className="flex-1 py-2.5 bg-brand-indigo hover:bg-brand-indigo-hover text-white font-mono text-xs font-semibold rounded-editorial transition-all shadow-xs flex items-center justify-center gap-1.5 cursor-pointer"
                   >
                     <Check className="w-4 h-4" />
-                    <span>{locale === 'en' ? 'Save Changes' : 'บันทึกการแก้ไข (Save Changes)'}</span>
+                    <span>{locale === 'en' ? 'Save Changes' : 'บันทึกการแก้ไข'}</span>
                   </button>
                   <button
                     type="button"

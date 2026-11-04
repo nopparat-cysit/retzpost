@@ -922,44 +922,6 @@ function ConnectedAccountsContent() {
         subtitle={t('accounts.pageSubtitle')}
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            {isMockCleared ? (
-              <button
-                type="button"
-                onClick={() => {
-                  loadSampleMockData();
-                  setAccounts(INITIAL_MASTER_ACCOUNTS);
-                  showToast(
-                    locale === 'th'
-                      ? 'โหลดบัญชีโซเชียลตัวอย่าง (FB, IG, YT, TT, X, Lemon8) เรียบร้อยแล้ว'
-                      : 'Loaded sample channels (FB, IG, YT, TT, X, Lemon8) successfully'
-                  );
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title={locale === 'th' ? 'โหลดบัญชีตัวอย่างเพื่อพรีวิว' : 'Load sample demo channels for preview'}
-              >
-                <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-                <span>{t('accounts.loadDemo')}</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  clearAllMockData();
-                  setAccounts([]);
-                  showToast(
-                    locale === 'th'
-                      ? 'ล้างบัญชีจำลองทั้งหมดเรียบร้อยแล้ว (Clean Slate)'
-                      : 'Cleared all simulated channels (Clean Slate)'
-                  );
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title={locale === 'th' ? 'ล้างบัญชีจำลองทั้งหมด' : 'Clear all simulated channels'}
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>{t('accounts.clearDemo')}</span>
-              </button>
-            )}
-
             <button
               type="button"
               onClick={() => setIsNewProjectModalOpen(true)}
@@ -1051,7 +1013,7 @@ function ConnectedAccountsContent() {
               {isProjectDropdownOpen && (
                 <div className="absolute left-0 top-full mt-1.5 w-72 bg-paper-raised border border-border-strong rounded-editorial shadow-xl p-1.5 z-50 animate-in fade-in zoom-in-95 duration-100 text-xs font-mono space-y-1">
                   <div className="px-2 py-1 text-[9px] uppercase text-ink-secondary font-bold">
-                    {locale === 'th' ? 'สลับขอบเขตโปรเจกต์ (Select Project Scope):' : 'Select Project Scope:'}
+                    {locale === 'th' ? 'สลับขอบเขตโปรเจกต์ :' : 'Select Project Scope:'}
                   </div>
 
                   {/* Master Hub Option */}
@@ -1287,7 +1249,7 @@ function ConnectedAccountsContent() {
           title={locale === 'th' ? 'ยังไม่มีช่องทางโซเชียลที่เชื่อมต่อในระบบ' : 'No social media channels connected yet'}
           description={locale === 'th' ? 'เชื่อมต่อเพจ Facebook, บัญชี Instagram Creator, ช่อง YouTube, TikTok, X และ Lemon8 เพื่อเริ่มต้นเผยแพร่ผลงานแบบ Multi-Format ได้ในคลิกเดียว' : 'Connect Facebook pages, Instagram Creator accounts, YouTube channels, TikTok, X, and Lemon8 to unlock automated multi-format distribution.'}
           tipText={locale === 'th' ? 'RetzPost เข้ารหัส Token ด้วย AES-256 GCM ปลอดภัยตามมาตรฐาน Meta, Google และ TikTok Enterprise SLA' : 'RetzPost encrypts all tokens with AES-256 GCM and connects directly via Meta, Google, and TikTok Enterprise APIs.'}
-          actionLabel={locale === 'th' ? '+ เชื่อมต่อช่องทางแรก (Connect Channel)' : '+ Connect First Channel'}
+          actionLabel={locale === 'th' ? '+ เชื่อมต่อช่องทางแรก ' : '+ Connect First Channel'}
           onActionClick={() => handleOpenConnect('FACEBOOK')}
           onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setAccounts(INITIAL_MASTER_ACCOUNTS); } : undefined}
         />
@@ -1487,7 +1449,7 @@ function ConnectedAccountsContent() {
                               type="button"
                               onClick={() => setOpenDropdownId(openDropdownId === acc.id ? null : acc.id)}
                               className="w-8 h-8 rounded-editorial border border-border-rule hover:border-brand-indigo/60 bg-paper-canvas hover:bg-paper-subtle flex items-center justify-center text-ink-secondary hover:text-ink-primary transition-colors cursor-pointer shadow-2xs"
-                              title={locale === 'th' ? 'ตัวเลือกเพิ่มเติม (...)' : 'More options (...)'}
+                              title={locale === 'th' ? 'ตัวเลือกเพิ่มเติม' : 'More options (...)'}
                             >
                               <MoreHorizontal className="w-4 h-4" />
                             </button>
@@ -1749,7 +1711,7 @@ function ConnectedAccountsContent() {
                     <Lock className="w-3 h-3 text-semantic-success" />
                     <span>Envelope Encryption (AES-256)</span>
                   </span>
-                  <span>{locale === 'th' ? 'พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล (PDPA)' : 'PDPA / GDPR Compliant'}</span>
+                  <span>{locale === 'th' ? 'พ.ร.บ. คุ้มครองข้อมูลส่วนบุคคล' : 'PDPA / GDPR Compliant'}</span>
                 </div>
               </div>
             )}
@@ -1760,7 +1722,7 @@ function ConnectedAccountsContent() {
                 <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-editorial text-xs text-amber-900 dark:text-amber-200 space-y-1">
                   <div className="flex items-center gap-1.5 font-bold font-sans text-amber-800 dark:text-amber-300">
                     <AlertTriangle className="w-4 h-4 text-amber-600" />
-                    <span>{locale === 'th' ? 'โหมดจำลองข้อมูล (Sandbox / UI Prototype)' : 'Simulation Sandbox Mode'}</span>
+                    <span>{locale === 'th' ? 'โหมดจำลองข้อมูล ' : 'Simulation Sandbox Mode'}</span>
                   </div>
                   <p className="text-[11px] leading-relaxed">
                     {locale === 'th'
@@ -1897,7 +1859,7 @@ function ConnectedAccountsContent() {
                 <form onSubmit={handleConnectSubmit} className="space-y-3 text-xs font-mono">
                   <div>
                     <label className="block text-[11px] uppercase text-ink-secondary mb-1">
-                      {locale === 'th' ? 'ชื่อเพจ / ช่องทางจำลอง (Display Name) *' : 'Display Name *'}
+                      {locale === 'th' ? 'ชื่อเพจ / ช่องทางจำลอง  *' : 'Display Name *'}
                     </label>
                     <input
                       type="text"
@@ -1911,7 +1873,7 @@ function ConnectedAccountsContent() {
 
                   <div>
                     <label className="block text-[11px] uppercase text-ink-secondary mb-1">
-                      {locale === 'th' ? 'แฮนเดิล / Username จำลอง (Handle)' : 'Handle / Username'}
+                      {locale === 'th' ? 'แฮนเดิล / Username จำลอง ' : 'Handle / Username'}
                     </label>
                     <input
                       type="text"
@@ -1935,7 +1897,7 @@ function ConnectedAccountsContent() {
                       className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-editorial font-semibold cursor-pointer shadow-xs transition-colors flex items-center gap-1.5"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>{locale === 'th' ? 'สร้างช่องทางจำลอง (Add Mock)' : 'Create Simulated Channel'}</span>
+                      <span>{locale === 'th' ? 'สร้างช่องทางจำลอง ' : 'Create Simulated Channel'}</span>
                     </button>
                   </div>
                 </form>
@@ -1965,7 +1927,7 @@ function ConnectedAccountsContent() {
                 </div>
                 <div>
                   <h3 className="font-sans font-bold text-base text-ink-primary">
-                    {locale === 'th' ? 'จัดการโปรเจกต์ & แมปช่องทาง (Project Channel Matrix)' : 'Project Channel Matrix & Routing'}
+                    {locale === 'th' ? 'จัดการโปรเจกต์ & แมปช่องทาง ' : 'Project Channel Matrix & Routing'}
                   </h3>
                   <p className="text-xs font-sans text-ink-secondary">
                     {locale === 'th' ? 'เลือกช่องทางที่อนุญาตให้โพสต์ในโปรเจกต์นี้ (ช่องทางที่เหลือจะถูกข้าม API 100%)' : 'Select channels enabled for this project. Remaining channels are bypassed 100%.'}
@@ -2013,7 +1975,7 @@ function ConnectedAccountsContent() {
               {/* Project Name */}
               <div>
                 <label className="block text-[11px] uppercase text-ink-secondary font-bold mb-1">
-                  {locale === 'th' ? 'ชื่อโปรเจกต์ (Project Name) *' : 'Project Name *'}
+                  {locale === 'th' ? 'ชื่อโปรเจกต์  *' : 'Project Name *'}
                 </label>
                 <input
                   type="text"
@@ -2434,7 +2396,7 @@ function ConnectedAccountsContent() {
               {/* Project Name */}
               <div>
                 <label className="block font-mono text-[11px] uppercase text-ink-secondary mb-1">
-                  {locale === 'th' ? 'ชื่อโปรเจกต์ (Project Name) *' : 'Project Name *'}
+                  {locale === 'th' ? 'ชื่อโปรเจกต์  *' : 'Project Name *'}
                 </label>
                 <input
                   type="text"
@@ -2530,7 +2492,7 @@ function ConnectedAccountsContent() {
                 <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0 mt-0.5" />
                 <span>
                   {locale === 'th' ? (
-                    <><strong>การันตีความปลอดภัย:</strong> ช่องทางที่ไม่ได้ติ๊ก ระบบจะไม่ยุ่ง ไม่ยิง API ข้ามไป และไม่เกิด Error ใดๆ ทั้งสิ้น (Zero-Touch Bypass)</>
+                    <><strong>การันตีความปลอดภัย:</strong> ช่องทางที่ไม่ได้ติ๊ก ระบบจะไม่ยุ่ง ไม่ยิง API ข้ามไป และไม่เกิด Error ใดๆ ทั้งสิ้น </>
                   ) : (
                     <><strong>Zero-Touch Isolation:</strong> Unselected channels will never receive API dispatches, guaranteeing zero error leakage across projects.</>
                   )}

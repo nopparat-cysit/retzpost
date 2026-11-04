@@ -100,7 +100,7 @@ describe('AI Employee KPI Coaching Synthesis & Evaluation Persistence', () => {
 
     expect(aiResult).toBeDefined();
     expect(aiResult.coachingNotesTh).toContain('ต่ำกว่าเป้าหมาย');
-    expect(aiResult.coachingNotesTh).toContain('Auto-Schedule');
+    expect(aiResult.coachingNotesTh).toContain('ตั้งเวลาอัตโนมัติ');
     expect(aiResult.focusTags).toContain('⚠️ Volume Gap');
   });
 

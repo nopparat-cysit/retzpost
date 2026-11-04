@@ -223,34 +223,6 @@ export default function ContentLibraryPage() {
         subtitle={t('content.pageSubtitle')}
         actions={
           <div className="flex flex-wrap items-center gap-2.5">
-            {isMockCleared ? (
-              <button
-                type="button"
-                onClick={() => {
-                  loadSampleMockData();
-                  setItems(DEFAULT_SAMPLE_ITEMS);
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title="โหลดชุดชิ้นงานตัวอย่างสำหรับพรีวิวคลังสื่อ"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-                <span>{locale === 'th' ? 'โหลดคลังตัวอย่าง (Demo)' : 'Load Demo Assets'}</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  clearAllMockData();
-                  setItems([]);
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title="ล้างคลังสื่อให้ว่างเปล่า"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>{locale === 'th' ? 'ล้างคลังสื่อ (Clear All)' : 'Clear All Assets'}</span>
-              </button>
-            )}
-
             <Link
               href="/create"
               className="inline-flex items-center gap-2 px-4 py-2 bg-brand-indigo text-white text-xs font-sans font-semibold rounded-editorial hover:bg-brand-indigo-hover transition-colors shadow-xs"
@@ -326,12 +298,11 @@ export default function ContentLibraryPage() {
           <EditorialEmptyState
             stickerName="camera-reel"
             badgeText={isMockCleared ? 'Media Archive • Clean Slate' : 'Filter Empty'}
-            title="คลังสื่อยังไม่มีชิ้นงาน (Content Library Empty)"
+            title={locale === 'th' ? 'คลังสื่อยังไม่มีชิ้นงาน' : 'Content Library Empty'}
             description="คลังสื่อเป็นศูนย์กลางเก็บรวบรวมไฟล์ต้นฉบับ ชิ้นงานวิดีโอ 9:16 สตอรี่ และอัลบั้มภาพ พร้อมประวัติการเผยแพร่และ Direct Live Links"
             tipText="อัปโหลดไฟล์ครั้งเดียว ระบบจะแปลงสัดส่วนและจัดเตรียมให้พร้อมส่งขึ้นทุกแพลตฟอร์ม"
-            actionLabel="สร้างและอัปโหลดชิ้นงานแรก (Create Post)"
+            actionLabel={locale === 'th' ? 'สร้างและอัปโหลดชิ้นงานแรก' : 'Create Post'}
             actionHref="/create"
-            onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setItems(DEFAULT_SAMPLE_ITEMS); } : undefined}
           />
         ) : (
           filteredItems.map((item) => (
@@ -398,7 +369,7 @@ export default function ContentLibraryPage() {
                     className="inline-flex items-center gap-1.5 font-mono text-[11px] bg-emerald-50 text-emerald-900 px-2.5 py-1 rounded border border-emerald-200 hover:underline font-medium cursor-pointer shadow-2xs"
                   >
                     <WebsiteLogo size={14} />
-                    <span>ลิงก์ปลายทาง (Website)</span>
+                    <span>ลิงก์ปลายทาง </span>
                     <ExternalLink className="w-2.5 h-2.5 text-emerald-700" />
                   </a>
                 )}

@@ -27,7 +27,7 @@ export interface RoleDefinition {
 export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   OWNER: {
     id: 'OWNER',
-    label: 'เจ้าของโปรเจกต์ (Workspace Owner)',
+    label: 'เจ้าของโปรเจกต์',
     labelEn: 'Workspace Owner',
     stickerName: 'role-owner',
     badgeBg: 'bg-brand-indigo',
@@ -49,7 +49,7 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   },
   MANAGER: {
     id: 'MANAGER',
-    label: 'ผู้จัดการ (Team Manager)',
+    label: 'ผู้จัดการ',
     labelEn: 'Team Manager',
     stickerName: 'role-manager',
     badgeBg: 'bg-semantic-info',
@@ -70,7 +70,7 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   },
   EDITOR: {
     id: 'EDITOR',
-    label: 'ครีเอเตอร์ / บรรณาธิการ (Editor & Creator)',
+    label: 'ครีเอเตอร์ / บรรณาธิการ',
     labelEn: 'Content Editor',
     stickerName: 'role-editor',
     badgeBg: 'bg-semantic-success',
@@ -88,12 +88,12 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   },
   CONTRIBUTOR: {
     id: 'CONTRIBUTOR',
-    label: 'ผู้ช่วยเขียน / รออนุมัติ (Contributor - Needs Approval)',
+    label: 'ผู้ช่วยเขียน / รออนุมัติ',
     labelEn: 'Contributor (Needs Approval)',
     stickerName: 'role-contributor',
     badgeBg: 'bg-accent-terracotta',
     badgeTextColor: 'text-white',
-    descriptionTh: 'เขียนแบบร่าง, เลือกรูปและเทมเพลตได้ แต่ยิงโพสต์ตรงไม่ได้ ต้องส่งให้ Manager อนุมัติก่อน (Approval Flow)',
+    descriptionTh: 'เขียนแบบร่าง, เลือกรูปและเทมเพลตได้ แต่ยิงโพสต์ตรงไม่ได้ ต้องส่งให้ Manager อนุมัติก่อน',
     descriptionEn: 'Draft creator: can draft copy & attach media, but requires Manager approval before dispatch.',
     allowedPermissions: [
       'CREATE_EDIT_DRAFT',
@@ -103,7 +103,7 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
   },
   VIEWER: {
     id: 'VIEWER',
-    label: 'ผู้ตรวจงาน / ลูกค้าภายนอก (Client Viewer - Read Only)',
+    label: 'ผู้ตรวจงาน / ลูกค้าภายนอก',
     labelEn: 'Client Reviewer (Read-Only)',
     stickerName: 'role-viewer',
     badgeBg: 'bg-paper-subtle border border-border-rule',
@@ -118,11 +118,11 @@ export const ROLE_DEFINITIONS: Record<WorkspaceRole, RoleDefinition> = {
 
 export const ALL_PERMISSIONS: Array<{ key: PermissionKey; labelTh: string; labelEn: string; category: string }> = [
   { key: 'PUBLISH_DISPATCH_DIRECT', labelTh: 'ยิงโพสต์ได้ทันที (Feed, Story, Reels)', labelEn: 'Direct Multi-Format Publishing', category: 'Publishing' },
-  { key: 'APPROVE_DISPATCH', labelTh: 'อนุมัติโพสต์ของทีม (Post Approval)', labelEn: 'Approve Pending Dispatches', category: 'Publishing' },
+  { key: 'APPROVE_DISPATCH', labelTh: 'อนุมัติโพสต์ของทีม', labelEn: 'Approve Pending Dispatches', category: 'Publishing' },
   { key: 'CREATE_EDIT_DRAFT', labelTh: 'เขียนและแก้ไขเนื้อหา / แบบร่าง', labelEn: 'Compose & Edit Drafts', category: 'Content' },
   { key: 'USE_TEMPLATES_AI_HUB', labelTh: 'ใช้งานเทมเพลต & คลังภาพ AI', labelEn: 'Use Templates & AI Hub', category: 'Content' },
   { key: 'MANAGE_PRESETS_TEMPLATES', labelTh: 'บันทึกและจัดการ Presets & Templates', labelEn: 'Manage Presets & Templates', category: 'Content' },
-  { key: 'CONNECT_DISCONNECT_ACCOUNTS', labelTh: 'เชื่อมต่อ / ถอดถอนบัญชีโซเชียล (OAuth)', labelEn: 'Manage Social Account Tokens', category: 'Security' },
+  { key: 'CONNECT_DISCONNECT_ACCOUNTS', labelTh: 'เชื่อมต่อ / ถอดถอนบัญชีโซเชียล', labelEn: 'Manage Social Account Tokens', category: 'Security' },
   { key: 'INVITE_MANAGE_MEMBERS', labelTh: 'เชิญสมาชิก & ปรับเปลี่ยนระดับสิทธิ์', labelEn: 'Invite & Manage Team Roles', category: 'Administration' },
   { key: 'EXPORT_ERROR_LOG_CSV', labelTh: 'ส่งออกรายงาน Error Log & Telemetry CSV', labelEn: 'Export Error Log & Reports', category: 'Audit' },
   { key: 'VIEW_ANALYTICS_CALENDAR', labelTh: 'ดู Dashboard, ปฏิทิน & Live Phone Mockup', labelEn: 'View Analytics & Calendar', category: 'Read-Only' },

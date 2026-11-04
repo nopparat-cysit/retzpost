@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
     // Group consumption by actorName
     const memberConsumptionMap: Record<string, { actorName: string; totalConsumed: number; actionsCount: number }> = {};
     transactions.forEach((tx) => {
-      const actor = tx.actorName || 'ระบบหลัก (System)';
+      const actor = tx.actorName || 'ระบบหลัก';
       if (!memberConsumptionMap[actor]) {
         memberConsumptionMap[actor] = { actorName: actor, totalConsumed: 0, actionsCount: 0 };
       }
@@ -93,7 +93,7 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const {
       userId,
-      actorName = 'แอดมิน (Team Member)',
+      actorName = 'แอดมิน',
       actionKey, // 'AI_POST_DIAGNOSIS' | 'AI_KPI_COACHING' | 'FORCE_SYNC_NOW' | 'SMART_AUTOFRAME'
       description,
       workspaceName = 'Main Studio',
@@ -101,7 +101,7 @@ export async function POST(req: NextRequest) {
 
     if (!actionKey || !TOKEN_RATES[actionKey as keyof typeof TOKEN_RATES]) {
       return NextResponse.json(
-        { success: false, message: 'รหัสกิจกรรม (Action Key) ไม่ถูกต้อง' },
+        { success: false, message: 'รหัสกิจกรรม ไม่ถูกต้อง' },
         { status: 400 }
       );
     }

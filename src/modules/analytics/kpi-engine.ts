@@ -203,7 +203,7 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
     rank: 3,
     strengthsTh: 'ขยันร่างคอนเทนต์ล่วงหน้าใน Studio Desk เสนอไอเดียโปรโมชั่นใหม่ๆ สม่ำเสมอ',
     strengthsEn: 'Diligent in drafting content in Studio Desk early; consistently pitches innovative promotional ideas.',
-    coachingNotesTh: 'ปรับปรุงการตรวจทานลิงก์ Story Sticker ให้ครบถ้วนก่อนส่งให้ผู้จัดการอนุมัติ (Approval Flow)',
+    coachingNotesTh: 'ปรับปรุงการตรวจทานลิงก์ Story Sticker ให้ครบถ้วนก่อนส่งให้ผู้จัดการอนุมัติ',
     coachingNotesEn: 'Refine verification of Story Sticker links prior to submitting for managerial approval flow.',
     focusTags: ['✍️ Fast Ideation', '📈 Good Engagement', '📝 Story Specialist'],
     evaluatedBy: 'AI สังเคราะห์ร่วมกับหัวหน้างาน',
@@ -304,7 +304,7 @@ export const MOCK_EMPLOYEE_KPIS: EmployeeKPI[] = [
     coachingNotesTh: '⚠️ ยอดโพสต์ยังไม่ถึงเป้าหมาย (ทำได้ 7/10 งาน) และปล่อยโพสต์เลทกว่าเวลา Peak แนะนำให้ใช้ฟีเจอร์ AI Schedule แนะนำเวลาทอง',
     coachingNotesEn: '⚠️ Target not yet reached (7/10 posts) and posted later than peak hours. Recommend using AI Schedule.',
     focusTags: ['📸 Aesthetic Mood', '⚠️ Volume Gap', '⏳ Schedule Adherence'],
-    evaluatedBy: 'หัวหน้างาน (Lead Editor)',
+    evaluatedBy: 'หัวหน้างาน',
     evaluatedByEn: 'Lead Editor',
     isAiGenerated: false,
     isMockData: true,
@@ -379,7 +379,7 @@ export function generateAiKpiCoaching(kpi: EmployeeKPI): AiCoachingResult {
     strengths.push(`การเผยแพร่ตรงเวลาอยู่ในเกณฑ์ดี (${kpi.onTimePublishingRate}%)`);
     strengthsEnArr.push(`Punctual publishing performance is good (${kpi.onTimePublishingRate}%).`);
   } else {
-    coaching.push(`อัตราการปล่อยโพสต์ตรงเวลายังต่ำกว่ามาตรฐาน (${kpi.onTimePublishingRate}%) แนะนำให้ตั้งเวลาอัตโนมัติ (Auto-Schedule) ล่วงหน้าอย่างน้อย 48 ชั่วโมงเพื่อลดการสะดุด`);
+    coaching.push(`อัตราการปล่อยโพสต์ตรงเวลายังต่ำกว่ามาตรฐาน (${kpi.onTimePublishingRate}%) แนะนำให้ตั้งเวลาอัตโนมัติ ล่วงหน้าอย่างน้อย 48 ชั่วโมงเพื่อลดการสะดุด`);
     coachingEnArr.push(`On-time publishing adherence is below standard (${kpi.onTimePublishingRate}%). Recommend auto-scheduling at least 48h in advance.`);
     tags.push('⏳ Schedule Adherence');
   }
@@ -480,7 +480,7 @@ export function saveEmployeeKpiEvaluation(
       coachingNotesEn,
       focusTags,
       lastEvaluatedAt: new Date().toISOString(),
-      evaluatedBy: isAiGenerated ? 'AI สังเคราะห์ร่วมกับหัวหน้างาน' : 'หัวหน้างาน (Lead Editor)',
+      evaluatedBy: isAiGenerated ? 'AI สังเคราะห์ร่วมกับหัวหน้างาน' : 'หัวหน้างาน',
       evaluatedByEn: evaluatedByEn || (isAiGenerated ? 'AI Synthesized with Lead Manager' : 'Lead Editor'),
       isAiGenerated,
     };

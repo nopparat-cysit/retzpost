@@ -1047,7 +1047,7 @@ export default function LandingPage() {
                 problemViewMode === 'CASES' ? 'bg-[#364165] text-white shadow-xs' : 'text-stone-600 hover:text-black'
               }`}
             >
-              {locale === 'en' ? '5 Deep Cases (Interactive Case Explorer)' : '5 เคสเจาะลึก (Interactive Case Explorer)'}
+              {locale === 'en' ? '5 Deep Cases (Interactive Case Explorer)' : '5 เคสเจาะลึก'}
             </button>
             <button
               onClick={() => {
@@ -1058,7 +1058,7 @@ export default function LandingPage() {
                 problemViewMode === 'SUMMARY' ? 'bg-[#A24836] text-white shadow-xs' : 'text-stone-600 hover:text-black'
               }`}
             >
-              {locale === 'en' ? 'Side-by-Side Summary' : 'เปรียบเทียบภาพรวม (Side-by-Side Summary)'}
+              {locale === 'en' ? 'Side-by-Side Summary' : 'เปรียบเทียบภาพรวม'}
             </button>
           </div>
         </div>
@@ -1076,7 +1076,7 @@ export default function LandingPage() {
                   tabLabel: 'สัดส่วน 16:9 vs 9:16 โดนปุ่มระบบบดบัง',
                   badgeText: 'ASPECT RATIO COLLISION',
                   accentColor: '#A24836',
-                  headline: 'วิกฤตสัดส่วนภาพชนอินเทอร์เฟซ (Aspect Ratio Collision)',
+                  headline: 'วิกฤตสัดส่วนภาพชนอินเทอร์เฟซ',
                   metricBadge: 'Zero Overlay Clipping',
                   bottleneckTag: 'ความสูญเสียเดิม',
                   quote: 'คลิปแนวนอน 16:9 พอครอปเป็น 9:16 ซับไตเติลและโลโก้โดนปุ่ม Like และชื่อช่องใน Reels/TikTok บังมิด',
@@ -1090,7 +1090,7 @@ export default function LandingPage() {
                   solutionPoints: [
                     'อัปโหลด Master 4K เพียงไฟล์เดียว ระบบคำนวณ Center-Weighted Crop ให้อัตโนมัติ',
                     'ซ้อนกรอบ Safe-Zone จริงของ Instagram Reels, TikTok, และ YouTube Shorts ทันที',
-                    'แจ้งเตือนตำแหน่งเสี่ยงของข้อความ (Boundary Collision Warning) ก่อนส่งสัญญาณ',
+                    'แจ้งเตือนตำแหน่งเสี่ยงของข้อความ ก่อนส่งสัญญาณ',
                   ],
                   consoleTitle: 'REAL-TIME BROADCAST SAFE-ZONE CALIBRATION',
                   consoleSubtitle: 'Active Telemetry • Engine: Probe v4.2',
@@ -1102,7 +1102,7 @@ export default function LandingPage() {
                   tabLabel: 'สลับ 5 แท็บบราวเซอร์ ก๊อปวางแคปชันซ้ำซ้อน',
                   badgeText: 'MULTI-TAB HOPPING FATIGUE',
                   accentColor: '#364165',
-                  headline: 'ความสูญเปล่าจากการสลับหน้าจอ (Multi-Tab Hopping)',
+                  headline: 'ความสูญเปล่าจากการสลับหน้าจอ',
                   metricBadge: 'ประหยัด 15+ ชม./สัปดาห์',
                   bottleneckTag: 'ความสูญเสียเดิม',
                   quote: 'เปิด 5 แท็บบราวเซอร์ ก๊อปปี้แคปชัน วางแฮชแท็กทีละช่อง เกิดความผิดพลาดและเนื้อหาตกหล่น',
@@ -1116,7 +1116,7 @@ export default function LandingPage() {
                   solutionPoints: [
                     'เขียนแคปชันหลักเพียงจุดเดียว ระบบจัดส่งเนื้อหาไปยังทุกช่องทางที่กำหนดพร้อมกัน',
                     'ตัวแปลงภาษาและแฮชแท็กเฉพาะช่องทางปรับจูนความยาวให้อัตโนมัติในหน้าเดียว',
-                    'ระบบจัดคิวส่งคู่ขนาน (Concurrent Ingestion) เสร็จสิ้นในคลิกเดียว',
+                    'ระบบจัดคิวส่งคู่ขนาน เสร็จสิ้นในคลิกเดียว',
                   ],
                   consoleTitle: 'UNIFIED 4-CHANNEL DISPATCH STREAM',
                   consoleSubtitle: 'All Endpoints Armed • Transit Delay: 240ms',
@@ -1140,7 +1140,7 @@ export default function LandingPage() {
                   solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Isolated Worker Queues & Exponential Auto-Retry',
                   solutionPoints: [
-                    'ท่อส่งสัญญาณของแต่ละแพลตฟอร์มแยกขาดจากกัน (Fault Isolation Protocol)',
+                    'ท่อส่งสัญญาณของแต่ละแพลตฟอร์มแยกขาดจากกัน',
                     'ระบบเฝ้าระวังตรวจจับ Rate Limit และพยายามกู้คืนอัตโนมัติด้วย Exponential Backoff',
                     'แจ้งเตือนสถานะโปร่งใสทันทีผ่านแดชบอร์ดและช่องทางสื่อสารของทีม',
                   ],
@@ -1154,7 +1154,7 @@ export default function LandingPage() {
                   tabLabel: 'ข้อจำกัดและแฮชแท็กแต่ละช่องทางหลุดบริบท',
                   badgeText: 'PLATFORM NUANCE DRIFT',
                   accentColor: '#1D6F42',
-                  headline: 'ความคลาดเคลื่อนของวัฒนธรรมแพลตฟอร์ม (Platform Nuance Drift)',
+                  headline: 'ความคลาดเคลื่อนของวัฒนธรรมแพลตฟอร์ม',
                   metricBadge: 'Tailored Per Network',
                   bottleneckTag: 'ความสูญเสียเดิม',
                   quote: 'ก๊อปปี้แคปชันยาวพร้อม 30 แฮชแท็กจาก IG ไปแปะใน X ข้อความขาดครึ่ง หรือลง YouTube ไร้ Chapters',
@@ -1168,7 +1168,7 @@ export default function LandingPage() {
                   solutionPoints: [
                     'ตัวควบคุมหน้าเดียวแยกปรับ Character Count, ป้ายแท็ก และคีย์เวิร์ด SEO รายช่องทาง',
                     'แยกช่อง First Comment สำหรับแฮชแท็กใน Instagram โดยไม่รกแคปชันหลัก',
-                    'ตรวจสอบข้อกำหนดของแต่ละแพลตฟอร์มก่อนกดส่งสัญญาณ (Pre-Flight Validation)',
+                    'ตรวจสอบข้อกำหนดของแต่ละแพลตฟอร์มก่อนกดส่งสัญญาณ',
                   ],
                   consoleTitle: 'PLATFORM FORMAT RULES ENGINE & VALIDATION',
                   consoleSubtitle: 'Real-Time Character & Metadata Guard',
@@ -1180,7 +1180,7 @@ export default function LandingPage() {
                   tabLabel: 'ปล่อยคลิปผิดจังหวะ ยอดวิวจมช่วงคนหลับ',
                   badgeText: 'PEAK HOUR BLINDNESS',
                   accentColor: '#6B46C1',
-                  headline: 'การพลาดช่วงเวลาทองคำ (Peak Hour Misses)',
+                  headline: 'การพลาดช่วงเวลาทองคำ',
                   metricBadge: 'Bangkok Prime Peak (UTC+7)',
                   bottleneckTag: 'ความสูญเสียเดิม',
                   quote: 'ตัดต่อคลิปเสร็จตอนดึก เผลอกด Publish ทันที ผลคือยอดวิวเงียบสนิทเพราะคนหลับหมดแล้ว',
@@ -1194,7 +1194,7 @@ export default function LandingPage() {
                   solutionPoints: [
                     'คลิกเดียวล็อกช่วงเวลาทองคำที่คนไทยออนไลน์มากที่สุด (19:30 น. ICT / UTC+7)',
                     'จัดตั้งปฏิทินล่วงหน้าข้ามสัปดาห์ ส่งสัญญาณตรงเวลาวินาทีต่อวินาที',
-                    'มีตัวชี้วัดประมาณการผลกระทบ (Audience Reach Multiplier) ประกอบการตัดสินใจ',
+                    'มีตัวชี้วัดประมาณการผลกระทบ ประกอบการตัดสินใจ',
                   ],
                   consoleTitle: 'BANGKOK PEAK BROADCAST SCHEDULER & TRAFFIC PROJECTION',
                   consoleSubtitle: 'Optimal Audience Window • UTC+7 Dedicated',
@@ -1257,7 +1257,7 @@ export default function LandingPage() {
                 {
                   id: 'asymmetric-ratio',
                   refCode: 'ENG-RATIO-01',
-                  headline: 'วิกฤตสัดส่วนภาพชนอินเทอร์เฟซ (Aspect Ratio Collision)',
+                  headline: 'วิกฤตสัดส่วนภาพชนอินเทอร์เฟซ',
                   metricBadge: 'Zero Overlay Clipping',
                   accentColor: '#A24836',
                   bottleneckTag: 'ความสูญเสียเดิม',
@@ -1272,7 +1272,7 @@ export default function LandingPage() {
                   solutionPoints: [
                     'อัปโหลด Master 4K เพียงไฟล์เดียว ระบบคำนวณ Center-Weighted Crop ให้อัตโนมัติ',
                     'ซ้อนกรอบ Safe-Zone จริงของ Instagram Reels, TikTok, และ YouTube Shorts ทันที',
-                    'แจ้งเตือนตำแหน่งเสี่ยงของข้อความ (Boundary Collision Warning) ก่อนส่งสัญญาณ',
+                    'แจ้งเตือนตำแหน่งเสี่ยงของข้อความ ก่อนส่งสัญญาณ',
                   ],
                   consoleTitle: 'REAL-TIME BROADCAST SAFE-ZONE CALIBRATION',
                   consoleSubtitle: 'Active Telemetry • Engine: Probe v4.2',
@@ -1280,7 +1280,7 @@ export default function LandingPage() {
                 {
                   id: 'app-hopping',
                   refCode: 'ENG-SYNC-02',
-                  headline: 'ความสูญเปล่าจากการสลับหน้าจอ (Multi-Tab Hopping)',
+                  headline: 'ความสูญเปล่าจากการสลับหน้าจอ',
                   metricBadge: 'ประหยัด 15+ ชม./สัปดาห์',
                   accentColor: '#364165',
                   bottleneckTag: 'ความสูญเสียเดิม',
@@ -1295,7 +1295,7 @@ export default function LandingPage() {
                   solutionPoints: [
                     'เขียนแคปชันหลักเพียงจุดเดียว ระบบจัดส่งเนื้อหาไปยังทุกช่องทางที่กำหนดพร้อมกัน',
                     'ตัวแปลงภาษาและแฮชแท็กเฉพาะช่องทางปรับจูนความยาวให้อัตโนมัติในหน้าเดียว',
-                    'ระบบจัดคิวส่งคู่ขนาน (Concurrent Ingestion) เสร็จสิ้นในคลิกเดียว',
+                    'ระบบจัดคิวส่งคู่ขนาน เสร็จสิ้นในคลิกเดียว',
                   ],
                   consoleTitle: 'UNIFIED 4-CHANNEL DISPATCH STREAM',
                   consoleSubtitle: 'All Endpoints Armed • Transit Delay: 240ms',
@@ -1316,7 +1316,7 @@ export default function LandingPage() {
                   solutionTag: 'RETZPOST RESOLUTION',
                   solutionTitle: 'Isolated Worker Queues & Exponential Auto-Retry',
                   solutionPoints: [
-                    'ท่อส่งสัญญาณของแต่ละแพลตฟอร์มแยกขาดจากกัน (Fault Isolation Protocol)',
+                    'ท่อส่งสัญญาณของแต่ละแพลตฟอร์มแยกขาดจากกัน',
                     'ระบบเฝ้าระวังตรวจจับ Rate Limit และพยายามกู้คืนอัตโนมัติด้วย Exponential Backoff',
                     'แจ้งเตือนสถานะโปร่งใสทันทีผ่านแดชบอร์ดและช่องทางสื่อสารของทีม',
                   ],
@@ -1326,7 +1326,7 @@ export default function LandingPage() {
                 {
                   id: 'platform-nuance',
                   refCode: 'ENG-RULES-04',
-                  headline: 'ความคลาดเคลื่อนของวัฒนธรรมแพลตฟอร์ม (Platform Nuance Drift)',
+                  headline: 'ความคลาดเคลื่อนของวัฒนธรรมแพลตฟอร์ม',
                   metricBadge: 'Tailored Per Network',
                   accentColor: '#1D6F42',
                   bottleneckTag: 'ความสูญเสียเดิม',
@@ -1341,7 +1341,7 @@ export default function LandingPage() {
                   solutionPoints: [
                     'ตัวควบคุมหน้าเดียวแยกปรับ Character Count, ป้ายแท็ก และคีย์เวิร์ด SEO รายช่องทาง',
                     'แยกช่อง First Comment สำหรับแฮชแท็กใน Instagram โดยไม่รกแคปชันหลัก',
-                    'ตรวจสอบข้อกำหนดของแต่ละแพลตฟอร์มก่อนกดส่งสัญญาณ (Pre-Flight Validation)',
+                    'ตรวจสอบข้อกำหนดของแต่ละแพลตฟอร์มก่อนกดส่งสัญญาณ',
                   ],
                   consoleTitle: 'PLATFORM FORMAT RULES ENGINE & VALIDATION',
                   consoleSubtitle: 'Real-Time Character & Metadata Guard',
@@ -1349,7 +1349,7 @@ export default function LandingPage() {
                 {
                   id: 'timezone-blindness',
                   refCode: 'ENG-SCHED-05',
-                  headline: 'การพลาดช่วงเวลาทองคำ (Peak Hour Misses)',
+                  headline: 'การพลาดช่วงเวลาทองคำ',
                   metricBadge: 'Bangkok Prime Peak (UTC+7)',
                   accentColor: '#6B46C1',
                   bottleneckTag: 'ความสูญเสียเดิม',
@@ -1364,7 +1364,7 @@ export default function LandingPage() {
                   solutionPoints: [
                     'คลิกเดียวล็อกช่วงเวลาทองคำที่คนไทยออนไลน์มากที่สุด (19:30 น. ICT / UTC+7)',
                     'จัดตั้งปฏิทินล่วงหน้าข้ามสัปดาห์ ส่งสัญญาณตรงเวลาวินาทีต่อวินาที',
-                    'มีตัวชี้วัดประมาณการผลกระทบ (Audience Reach Multiplier) ประกอบการตัดสินใจ',
+                    'มีตัวชี้วัดประมาณการผลกระทบ ประกอบการตัดสินใจ',
                   ],
                   consoleTitle: 'BANGKOK PEAK BROADCAST SCHEDULER & TRAFFIC PROJECTION',
                   consoleSubtitle: 'Optimal Audience Window • UTC+7 Dedicated',
@@ -2496,7 +2496,7 @@ export default function LandingPage() {
                 href="#press-coins"
                 className="py-3 px-6 rounded-xl bg-stone-900 hover:bg-black text-white font-mono text-xs font-bold flex items-center gap-2 shadow-md transition-all cursor-pointer active:scale-95"
               >
-                <span>{locale === 'en' ? 'Inspect Coin Ledger (Press Coins) ↓' : 'ตรวจดูสมุดเหรียญ (Press Coins) ↓'}</span>
+                <span>{locale === 'en' ? 'Inspect Coin Ledger (Press Coins) ↓' : 'ตรวจดูสมุดเหรียญ ↓'}</span>
               </a>
             ) : (
               <button
@@ -3103,7 +3103,7 @@ export default function LandingPage() {
 
                       <div className="p-2.5 rounded-xl bg-amber-50 border border-amber-200 text-[10px] text-amber-900 font-sans leading-relaxed flex items-start gap-1.5">
                         <EditorialStar size={12} className="shrink-0 mt-0.5" />
-                        <span>{locale === 'en' ? <><b>Bangkok Prime Peak (19:30 ICT):</b> Boosts reach multiplier by an average of <b>+2.4x</b> during Thai peak engagement hours.</> : <><b>Bangkok Prime Peak (19:30 ICT):</b> ช่วยเพิ่มอัตราการมองเห็นและการเข้าถึง (Reach Multiplier) ขึ้นเฉลี่ย <b>+2.4 เท่า</b> สำหรับคอนเทนต์ภาษาไทย</>}</span>
+                        <span>{locale === 'en' ? <><b>Bangkok Prime Peak (19:30 ICT):</b> Boosts reach multiplier by an average of <b>+2.4x</b> during Thai peak engagement hours.</> : <><b>Bangkok Prime Peak (19:30 ICT):</b> ช่วยเพิ่มอัตราการมองเห็นและการเข้าถึง ขึ้นเฉลี่ย <b>+2.4 เท่า</b> สำหรับคอนเทนต์ภาษาไทย</>}</span>
                       </div>
                     </div>
                   </div>
@@ -3656,7 +3656,7 @@ export default function LandingPage() {
                     <span>Active Telemetry Verification</span>
                   </div>
                   <p className="text-stone-400 text-[10px] font-sans leading-relaxed">
-                    {locale === 'en' ? 'Calculates safe margins to prevent viewers scrolling past due to unreadable captions.' : 'ระบบคำนวณระยะขอบจอ (Safe Margin) ป้องกันผู้ชมเลื่อนผ่านคลิปเพราะอ่านซับไตเติลไม่เห็น'}
+                    {locale === 'en' ? 'Calculates safe margins to prevent viewers scrolling past due to unreadable captions.' : 'ระบบคำนวณระยะขอบจอ ป้องกันผู้ชมเลื่อนผ่านคลิปเพราะอ่านซับไตเติลไม่เห็น'}
                   </p>
                   <span className="inline-block px-2 py-0.5 rounded bg-white/10 text-amber-200 text-[9px] font-mono">
                     Supported: Reels, Shorts & TikTok
@@ -4532,7 +4532,7 @@ export default function LandingPage() {
             ) : (
               <span className="px-3 py-1.5 rounded-xl bg-emerald-100 text-emerald-800 font-bold border border-emerald-300 flex items-center gap-1.5">
                 <CheckCircle2 className="w-4 h-4 text-emerald-700" />
-                <span>{locale === 'en' ? 'TICKET UNLOCKED' : 'ตั๋วปลดล็อกแล้ว (UNLOCKED)'}</span>
+                <span>{locale === 'en' ? 'TICKET UNLOCKED' : 'ตั๋วปลดล็อกแล้ว'}</span>
               </span>
             )}
           </div>
@@ -4702,7 +4702,7 @@ export default function LandingPage() {
                     href="/docs"
                     className="py-3 px-4 rounded-xl bg-white hover:bg-stone-50 border border-black/10 text-[#1A1A18] font-semibold flex items-center justify-center"
                   >
-                    <span>{locale === 'en' ? 'Read Documentation (Docs)' : 'อ่านคู่มือระบบ (Docs)'}</span>
+                    <span>{locale === 'en' ? 'Read Documentation (Docs)' : 'อ่านคู่มือระบบ'}</span>
                   </Link>
                 </div>
               </div>

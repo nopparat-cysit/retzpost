@@ -221,17 +221,17 @@ export const PublicFooter: React.FC = () => {
             <ul className="space-y-1.5 text-[11px]">
               <li>
                 <Link href="/docs#quickstart" className="hover:text-brand-indigo hover:underline transition-colors">
-                  • เริ่มต้นใช้งานด่วน (Quickstart)
+                  • เริ่มต้นใช้งานด่วน
                 </Link>
               </li>
               <li>
                 <Link href="/docs#composer" className="hover:text-brand-indigo hover:underline transition-colors">
-                  • ห้องเขียนข่าว (Universal Composer)
+                  • ห้องเขียนข่าว
                 </Link>
               </li>
               <li>
                 <Link href="/docs#calendar" className="hover:text-brand-indigo hover:underline transition-colors">
-                  • ปฏิทินและเวลานาทีทอง (Peak Slots)
+                  • ปฏิทินและเวลานาทีทอง
                 </Link>
               </li>
               <li>
@@ -261,12 +261,12 @@ export const PublicFooter: React.FC = () => {
             <ul className="space-y-1.5 text-[11px]">
               <li>
                 <Link href="/privacy" className="hover:text-brand-indigo hover:underline transition-colors">
-                  • นโยบายความเป็นส่วนตัว (PDPA / GDPR)
+                  • นโยบายความเป็นส่วนตัว
                 </Link>
               </li>
               <li>
                 <Link href="/terms" className="hover:text-brand-indigo hover:underline transition-colors">
-                  • ข้อกำหนดการให้บริการ (Terms of Service)
+                  • ข้อกำหนดการให้บริการ
                 </Link>
               </li>
               <li>

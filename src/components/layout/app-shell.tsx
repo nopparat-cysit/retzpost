@@ -30,6 +30,9 @@ import { getCurrentUser, logoutUser, subscribeToAuthChange } from '@/modules/aut
 import { AuthUser } from '@/modules/auth/auth-types';
 import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
 import { UserProfileMenu } from '@/components/layout/user-profile-menu';
+import { ThemeSelector } from '@/components/layout/theme-selector';
+import { HelpGuideMenu } from '@/components/layout/help-guide-menu';
+import { NotificationMenu } from '@/components/layout/notification-menu';
 import { 
   isMockDataCleared, 
   subscribeToMockDataChange 
@@ -228,9 +231,9 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       <aside
         className={`${
           isMobileMenuOpen ? 'block fixed inset-0 z-40 bg-paper-raised/95 backdrop-blur-md pt-16 md:pt-0' : 'hidden'
-        } md:block w-full md:w-64 shrink-0 bg-paper-raised border-r border-border-rule flex flex-col justify-between md:sticky md:top-0 md:h-screen md:overflow-y-auto`}
+        } md:block w-full md:w-64 shrink-0 bg-paper-raised border-r border-border-rule flex flex-col justify-between md:sticky md:top-0 md:h-screen`}
       >
-        <div>
+        <div className="flex-1 min-h-0 overflow-y-auto">
           {/* Masthead Brand */}
           <div className="p-4 border-b border-border-rule relative">
             <Link href="/" className="block">
@@ -302,8 +305,8 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
           </nav>
         </div>
 
-        {/* Bottom Section: Press Token Widget & Super Admin link & User profile */}
-        <div className="space-y-2 border-t border-border-rule bg-paper-subtle/50 p-3 text-xs">
+        {/* Bottom Section: Press Token Widget & User profile (Admin moved to UserProfileMenu) */}
+        <div className="shrink-0 space-y-2 border-t border-border-rule bg-paper-subtle/50 p-3 text-xs">
           {/* Token & Plan Badge */}
           <div className="p-2.5 bg-paper-card border border-border-rule rounded-md space-y-1.5">
             <div className="flex items-center justify-between">
@@ -325,15 +328,6 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
             </div>
           </div>
 
-          {/* Super Admin Quick Link */}
-          <Link
-            href="/admin"
-            className="w-full flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-md bg-purple-100 hover:bg-purple-200 text-purple-900 text-[11px] font-bold font-mono transition-colors"
-          >
-            <ShieldAlert className="w-3.5 h-3.5" />
-            <span>🛡️ Super Admin Console</span>
-          </Link>
-
           {/* Language Switcher Bar */}
           <div className="py-2 border-y border-border-rule/60 flex items-center justify-between">
             <span className="text-[10px] font-mono text-ink-secondary uppercase tracking-wider font-semibold">
@@ -350,8 +344,60 @@ export const AppShell: React.FC<AppShellProps> = ({ children }) => {
       </aside>
 
       {/* Main Content Area */}
-      <div className="flex-1 min-w-0 w-full overflow-y-auto">
-        {children}
+      <div className="flex-1 min-w-0 w-full overflow-y-auto flex flex-col">
+        {/* Desktop Editorial Topbar Header */}
+        <header className="hidden md:flex h-12 shrink-0 items-center justify-between px-6 border-b border-border-rule/80 bg-paper-raised/90 backdrop-blur-md sticky top-0 z-30 shadow-2xs">
+          {/* Left: Active Workspace Indicator */}
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className={`w-2 h-2 rounded-full ${activeWorkspace.dotColor}`} />
+              <span className="font-serif font-bold text-sm text-ink-primary">
+                {activeWorkspace.name}
+              </span>
+              <span className="text-[10px] font-mono text-ink-secondary bg-paper-subtle px-1.5 py-0.5 rounded border border-border-rule">
+                {activeWorkspace.category}
+              </span>
+            </div>
+            <span className="text-border-rule">•</span>
+            <span className="text-[11px] font-mono text-ink-secondary">
+              {tokenBalance} 🪙 Tokens ({planTier})
+            </span>
+          </div>
+
+          {/* Right: Topbar Utility Controls */}
+          <div className="flex items-center gap-2">
+            {/* 1. Theme Selector */}
+            <ThemeSelector />
+
+            {/* 2. Language Switcher */}
+            <LanguageToggle variant="compact" />
+
+            {/* 3. Help & Guide Menu (?) */}
+            <HelpGuideMenu />
+
+            {/* 4. Notification Menu */}
+            <NotificationMenu />
+
+            {/* 5. Settings Quick Link */}
+            <Link
+              href="/settings"
+              className="w-8 h-8 rounded-editorial border border-border-rule bg-paper-raised hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary flex items-center justify-center shadow-2xs transition-all cursor-pointer"
+              title={locale === 'th' ? 'การตั้งค่าระบบ' : 'Settings'}
+              aria-label="Settings"
+            >
+              <Settings className="w-4 h-4" />
+            </Link>
+
+            {/* 6. User Profile Dropdown */}
+            <div className="ml-1 pl-2 border-l border-border-rule/70">
+              <UserProfileMenu variant="header-compact" />
+            </div>
+          </div>
+        </header>
+
+        <div className="flex-1">
+          {children}
+        </div>
       </div>
     </div>
   );

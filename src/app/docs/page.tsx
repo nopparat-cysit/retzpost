@@ -78,7 +78,7 @@ export default function DocsPage() {
     {
       id: 'quickstart',
       category: '01 — GETTING STARTED',
-      title: locale === 'en' ? 'Quickstart & Account Onboarding' : 'เริ่มต้นใช้งานและตั้งค่าบัญชีด่วน (Quickstart & Onboarding)',
+      title: locale === 'en' ? 'Quickstart & Account Onboarding' : 'เริ่มต้นใช้งานและตั้งค่าบัญชีด่วน',
       badge: locale === 'en' ? 'Start Here' : 'เริ่มที่นี่',
       icon: Rocket,
       summary: locale === 'en' ? 'Registration, OTP verification via Gmail, and workspace selection' : 'การสมัครสมาชิก, ยืนยันรหัส OTP ทาง Gmail, และการเลือกโปรเจกต์',
@@ -151,7 +151,7 @@ export default function DocsPage() {
     {
       id: 'composer',
       category: '02 — PUBLISHING STUDIO',
-      title: locale === 'en' ? 'Universal Studio Composer & Multi-Platform Adaptation' : 'ห้องเขียนข่าวและปรับแต่งข้ามแพลตฟอร์ม (Universal Studio Composer)',
+      title: locale === 'en' ? 'Universal Studio Composer & Multi-Platform Adaptation' : 'ห้องเขียนข่าวและปรับแต่งข้ามแพลตฟอร์ม',
       badge: locale === 'en' ? 'Core Feature' : 'ฟีเจอร์หลัก',
       icon: PenSquare,
       summary: locale === 'en' ? '3 media modes, Live Phone Preview 9:16, and channel selection' : 'สลับ 3 โหมดสื่อ, Live Phone Preview 9:16, และการเลือกปลายทาง',
@@ -192,7 +192,7 @@ export default function DocsPage() {
                     </td>
                     <td className="p-2.5">Reels, Feed, Photos</td>
                     <td className="p-2.5">9:16 / 1:1 / 4:5</td>
-                    <td className="p-2.5">{locale === 'en' ? 'Under 90s (Reels)' : 'ไม่เกิน 90 วินาที (Reels)'}</td>
+                    <td className="p-2.5">{locale === 'en' ? 'Under 90s (Reels)' : 'ไม่เกิน 90 วินาที'}</td>
                     <td className="p-2.5 text-right text-semantic-success font-bold">{locale === 'en' ? '⚡ Instant Deletion' : '⚡ สั่งลบได้ทันที'}</td>
                   </tr>
                   <tr className="hover:bg-paper-subtle/30">
@@ -210,7 +210,7 @@ export default function DocsPage() {
                     </td>
                     <td className="p-2.5">Shorts, VOD</td>
                     <td className="p-2.5">9:16 (Shorts) / 16:9</td>
-                    <td className="p-2.5">{locale === 'en' ? 'Under 60s (Shorts)' : 'ไม่เกิน 60 วินาที (Shorts)'}</td>
+                    <td className="p-2.5">{locale === 'en' ? 'Under 60s (Shorts)' : 'ไม่เกิน 60 วินาที'}</td>
                     <td className="p-2.5 text-right text-semantic-success font-bold">{locale === 'en' ? '⚡ Instant Deletion' : '⚡ สั่งลบได้ทันที'}</td>
                   </tr>
                   <tr className="hover:bg-paper-subtle/30">
@@ -263,7 +263,7 @@ export default function DocsPage() {
     {
       id: 'calendar',
       category: '03 — PLANNING & SCHEDULING',
-      title: locale === 'en' ? 'Editorial Calendar & Peak Slots' : 'ปฏิทินกองบรรณาธิการและเวลานาทีทอง (Editorial Calendar)',
+      title: locale === 'en' ? 'Editorial Calendar & Peak Slots' : 'ปฏิทินกองบรรณาธิการและเวลานาทีทอง',
       badge: locale === 'en' ? 'Scheduling' : 'การจัดตาราง',
       icon: Calendar,
       summary: locale === 'en' ? 'Content queue planning and Bangkok Golden Peak Slots' : 'การจัดคิวคอนเทนต์ล่วงหน้า และเวลานาทีทอง Bangkok Golden Peak Slots',
@@ -289,7 +289,7 @@ export default function DocsPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
               <div className="p-3 rounded-editorial bg-paper-subtle border border-border-rule space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-brand-indigo font-mono">{locale === 'en' ? '☀️ Lunch Break (Lunch Hour)' : '☀️ ช่วงพักกลางวัน (Lunch Hour)'}</span>
+                  <span className="font-bold text-brand-indigo font-mono">{locale === 'en' ? '☀️ Lunch Break (Lunch Hour)' : '☀️ ช่วงพักกลางวัน'}</span>
                   <span className="font-mono text-[10px] text-ink-secondary">{locale === 'en' ? '11:30 AM - 1:30 PM' : '11:30 - 13:30 น.'}</span>
                 </div>
                 <p className="text-[11px] text-ink-secondary font-sans">
@@ -299,7 +299,7 @@ export default function DocsPage() {
 
               <div className="p-3 rounded-editorial bg-paper-subtle border border-border-rule space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-accent-terracotta font-mono">{locale === 'en' ? '🌙 Evening Prime Time' : '🌙 ช่วงหัวค่ำผ่อนคลาย (Prime Time)'}</span>
+                  <span className="font-bold text-accent-terracotta font-mono">{locale === 'en' ? '🌙 Evening Prime Time' : '🌙 ช่วงหัวค่ำผ่อนคลาย'}</span>
                   <span className="font-mono text-[10px] text-ink-secondary">{locale === 'en' ? '6:30 PM - 9:30 PM' : '18:30 - 21:30 น.'}</span>
                 </div>
                 <p className="text-[11px] text-ink-secondary font-sans">
@@ -314,7 +314,7 @@ export default function DocsPage() {
     {
       id: 'roles',
       category: '04 — GOVERNANCE & TEAMS',
-      title: locale === 'en' ? '5-Level Roles & Review Approval Flow' : 'สิทธิ์ 5 ระดับและขั้นตอนการอนุมัติงาน (Team Roles & Review Flow)',
+      title: locale === 'en' ? '5-Level Roles & Review Approval Flow' : 'สิทธิ์ 5 ระดับและขั้นตอนการอนุมัติงาน',
       badge: locale === 'en' ? 'Quality Governance' : 'การควบคุมคุณภาพ',
       icon: Users,
       summary: locale === 'en' ? 'Permission structure for Owner, Manager, Editor, Creator with Approved / Needs Revision stamps' : 'โครงสร้างสิทธิ์ Owner, Manager, Editor, Creator พร้อมตรายาง Approved / Needs Revision',
@@ -394,7 +394,7 @@ export default function DocsPage() {
             <div className="p-3 rounded-editorial bg-paper-canvas border border-border-rule space-y-1">
               <span className="font-bold font-mono text-ink-primary block">2. On-Time Accuracy (%)</span>
               <p className="text-[11px] text-ink-secondary font-sans">
-                {locale === 'en' ? 'Accuracy of publishing strictly within Bangkok Golden Peak Slots.' : 'ความแม่นยำในการปล่อยโพสต์ตรงตามเวลานาทีทอง (Golden Peak Slots)'}
+                {locale === 'en' ? 'Accuracy of publishing strictly within Bangkok Golden Peak Slots.' : 'ความแม่นยำในการปล่อยโพสต์ตรงตามเวลานาทีทอง'}
               </p>
             </div>
 
@@ -416,12 +416,12 @@ export default function DocsPage() {
           <div className="p-4 rounded-editorial bg-paper-canvas border border-border-rule space-y-2">
             <h4 className="font-bold text-ink-primary flex items-center gap-1.5 font-mono">
               <Sparkles className="w-3.5 h-3.5 text-brand-indigo" />
-              <span>{locale === 'en' ? '[📄 Print Evaluation Slip] Feature' : 'ปุ่ม [📄 พิมพ์ใบประเมิน (Slip)]'}</span>
+              <span>{locale === 'en' ? '[📄 Print Evaluation Slip] Feature' : 'ปุ่ม [📄 พิมพ์ใบประเมิน]'}</span>
             </h4>
             <p className="text-[11px] text-ink-secondary font-sans">
               {locale === 'en'
                 ? <>In each employee Scorecard modal, managers can click <em>[📄 Print Evaluation Slip]</em> to open a standardized slip, ready for printing (<code>window.print()</code>) or sharing with HR leadership.</>
-                : <>ในหน้าต่าง Scorecard รายบุคคล ผู้จัดการสามารถคลิกปุ่ม <em>[📄 พิมพ์ใบประเมิน (Slip)]</em> เพื่อเปิดเอกสารขนาดมาตรฐาน พร้อมสั่งพิมพ์ (<code>window.print()</code>) หรือคัดลอกข้อความสรุปส่งต่อให้ฝ่ายบริหารและ HR ได้ทันที</>}
+                : <>ในหน้าต่าง Scorecard รายบุคคล ผู้จัดการสามารถคลิกปุ่ม <em>[📄 พิมพ์ใบประเมิน]</em> เพื่อเปิดเอกสารขนาดมาตรฐาน พร้อมสั่งพิมพ์ (<code>window.print()</code>) หรือคัดลอกข้อความสรุปส่งต่อให้ฝ่ายบริหารและ HR ได้ทันที</>}
             </p>
           </div>
         </div>
@@ -588,7 +588,7 @@ export default function DocsPage() {
               <div className="flex items-center justify-between pb-3 mb-3 border-b border-border-rule/80">
                 <span className="text-xs font-mono font-bold text-ink-primary uppercase tracking-wider flex items-center gap-1.5">
                   <Layers className="w-3.5 h-3.5 text-accent-terracotta" />
-                  {locale === 'en' ? 'Table of Contents' : 'สารบัญคู่มือ (Table of Contents)'}
+                  {locale === 'en' ? 'Table of Contents' : 'สารบัญคู่มือ'}
                 </span>
                 <span className="text-[10px] font-mono text-ink-secondary">
                   {locale === 'en' ? `${filteredSections.length} sections` : `${filteredSections.length} หัวข้อ`}
@@ -635,14 +635,14 @@ export default function DocsPage() {
                   className="flex items-center gap-1.5 text-brand-indigo hover:underline font-semibold"
                 >
                   <ShieldCheck className="w-3.5 h-3.5 text-semantic-success" />
-                  <span>{locale === 'en' ? 'Privacy Policy →' : 'นโยบายความเป็นส่วนตัว (Privacy Policy) →'}</span>
+                  <span>{locale === 'en' ? 'Privacy Policy →' : 'นโยบายความเป็นส่วนตัว →'}</span>
                 </Link>
                 <Link
                   href="/terms"
                   className="flex items-center gap-1.5 text-brand-indigo hover:underline font-semibold"
                 >
                   <FileText className="w-3.5 h-3.5 text-brand-indigo" />
-                  <span>{locale === 'en' ? 'Terms of Service →' : 'ข้อกำหนดการให้บริการ (Terms of Service) →'}</span>
+                  <span>{locale === 'en' ? 'Terms of Service →' : 'ข้อกำหนดการให้บริการ →'}</span>
                 </Link>
               </div>
             </div>

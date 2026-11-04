@@ -8,15 +8,12 @@ import {
   Lock, 
   Eye, 
   EyeOff, 
-  ArrowRight, 
   CheckCircle2, 
   AlertCircle,
-  Sparkles,
   ShieldCheck,
-  UserCheck
 } from 'lucide-react';
 import { Sticker } from '@/components/ui/sticker';
-import { loginUser } from '@/modules/auth/auth-service';
+import { loginUserAsync } from '@/modules/auth/auth-service';
 import { useTranslation, LanguageToggle } from '@/modules/i18n/i18n-context';
 
 export default function LoginPage() {
@@ -34,13 +31,13 @@ export default function LoginPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage('');
     setSuccessMessage('');
 
     if (!identifier.trim()) {
-      setErrorMessage(locale === 'th' ? 'กรุณากรอก Gmail หรือชื่อผู้ใช้งาน (Username)' : 'Please enter your email or username');
+      setErrorMessage(locale === 'th' ? 'กรุณากรอก Gmail หรือชื่อผู้ใช้งาน' : 'Please enter your email or username');
       return;
     }
 
@@ -52,12 +49,12 @@ export default function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      const res = loginUser(identifier, password);
+      const res = await loginUserAsync(identifier, password, locale);
       if (res.success && res.user) {
         setSuccessMessage(locale === 'th' ? `ยินดีต้อนรับกลับ, ${res.user.name}! กำลังเข้าสู่ระบบ...` : `Welcome back, ${res.user.name}! Redirecting...`);
         setTimeout(() => {
           router.push('/desk');
-        }, 1200);
+        }, 800);
       } else {
         setErrorMessage(res.message || (locale === 'th' ? 'อีเมลหรือรหัสผ่านไม่ถูกต้อง' : 'Invalid email or password'));
       }
@@ -65,20 +62,6 @@ export default function LoginPage() {
       setErrorMessage(locale === 'th' ? 'เกิดข้อผิดพลาดในการเชื่อมต่อ กรุณาลองใหม่อีกครั้ง' : 'Connection error, please try again');
     } finally {
       setIsSubmitting(false);
-    }
-  };
-
-  // Quick Demo Fast-Login
-  const handleQuickDemoLogin = (email: string, pass: string) => {
-    setIdentifier(email);
-    setPassword(pass);
-    setErrorMessage('');
-    const res = loginUser(email, pass);
-    if (res.success && res.user) {
-      setSuccessMessage(locale === 'th' ? `เข้าสู่ระบบด้วยบัญชีทดสอบ ${res.user.name} เรียบร้อยแล้ว` : `Signed in as test account ${res.user.name}`);
-      setTimeout(() => {
-        router.push('/desk');
-      }, 1000);
     }
   };
 
@@ -167,7 +150,7 @@ export default function LoginPage() {
                 <input
                   type="text"
                   required
-                  placeholder={locale === 'th' ? "เช่น demo.manager@gmail.com หรือ demo_manager" : "e.g. demo.manager@gmail.com or demo_manager"}
+                  placeholder={locale === 'th' ? "เช่น losstary@gmail.com หรือชื่อผู้ใช้" : "e.g. losstary@gmail.com or username"}
                   value={identifier}
                   onChange={(e) => setIdentifier(e.target.value)}
                   className="w-full pl-9 pr-3 py-2 text-xs bg-paper-canvas border border-border-rule rounded-editorial font-mono text-ink-primary placeholder:text-ink-secondary/50 focus:outline-none focus:border-brand-indigo focus:ring-1 focus:ring-brand-indigo transition-all"
@@ -238,71 +221,6 @@ export default function LoginPage() {
               )}
             </button>
           </form>
-
-          {/* Quick Demo Accounts Helper */}
-          <div className="mt-6 pt-5 border-t border-border-rule/70">
-            <div className="flex items-center justify-between text-[10px] font-mono text-ink-secondary mb-2">
-              <span className="flex items-center gap-1 font-semibold uppercase tracking-wider">
-                <UserCheck className="w-3 h-3 text-accent-terracotta" />
-                {t('auth.quickDemoLogin')}
-              </span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin('demo.manager@gmail.com', 'Password123!')}
-                className="p-2 rounded-editorial bg-paper-subtle/80 hover:bg-paper-canvas border border-border-rule text-left transition-all group cursor-pointer"
-              >
-                <div className="flex items-center gap-1.5 mb-1">
-                  <div className="w-4 h-4 rounded-full bg-brand-indigo text-white flex items-center justify-center text-[9px] font-bold">
-                    DM
-                  </div>
-                  <span className="font-semibold text-xs text-ink-primary group-hover:text-brand-indigo transition-colors truncate">
-                    Manager
-                  </span>
-                </div>
-                <p className="text-[9px] font-mono text-ink-secondary truncate">
-                  Main Studio
-                </p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin('demo.owner@gmail.com', 'Password123!')}
-                className="p-2 rounded-editorial bg-paper-subtle/80 hover:bg-paper-canvas border border-border-rule text-left transition-all group cursor-pointer"
-              >
-                <div className="flex items-center gap-1.5 mb-1">
-                  <div className="w-4 h-4 rounded-full bg-accent-terracotta text-white flex items-center justify-center text-[9px] font-bold">
-                    DO
-                  </div>
-                  <span className="font-semibold text-xs text-ink-primary group-hover:text-brand-indigo transition-colors truncate">
-                    Owner
-                  </span>
-                </div>
-                <p className="text-[9px] font-mono text-ink-secondary truncate">
-                  Creator Hub
-                </p>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickDemoLogin('superadmin@retzpost.io', 'SuperAdmin2026!')}
-                className="p-2 rounded-editorial bg-purple-950/10 hover:bg-purple-950/20 border border-purple-900/30 text-left transition-all group cursor-pointer"
-              >
-                <div className="flex items-center gap-1.5 mb-1">
-                  <div className="w-4 h-4 rounded-full bg-purple-900 text-white flex items-center justify-center text-[9px] font-bold">
-                    SA
-                  </div>
-                  <span className="font-semibold text-xs text-purple-900 group-hover:text-purple-700 transition-colors truncate">
-                    Super Admin
-                  </span>
-                </div>
-                <p className="text-[9px] font-mono text-purple-800/80 truncate">
-                  Admin & Tax
-                </p>
-              </button>
-            </div>
-          </div>
         </div>
       </main>
 
@@ -310,15 +228,15 @@ export default function LoginPage() {
       <footer className="max-w-5xl mx-auto w-full pt-6 border-t border-border-rule/60 text-center text-[11px] font-mono text-ink-secondary space-y-2">
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-medium">
           <Link href="/docs" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            📖 {locale === 'en' ? 'Docs & Guides' : 'คู่มือใช้งาน (Docs & Guide)'}
+            📖 {locale === 'en' ? 'Docs & Guides' : 'คู่มือการใช้งาน'}
           </Link>
           <span>•</span>
           <Link href="/privacy" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            🔒 {locale === 'en' ? 'Privacy Policy' : 'นโยบายความเป็นส่วนตัว (Privacy Policy)'}
+            🔒 {locale === 'en' ? 'Privacy Policy' : 'นโยบายความเป็นส่วนตัว'}
           </Link>
           <span>•</span>
           <Link href="/terms" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            📜 {locale === 'en' ? 'Terms of Service' : 'ข้อกำหนดการใช้งาน (Terms of Service)'}
+            📜 {locale === 'en' ? 'Terms of Service' : 'ข้อกำหนดการใช้งาน'}
           </Link>
         </div>
         <p>RETZPOST — Dream Press Publishing Desk &copy; {new Date().getFullYear()} RetzPost SaaS. All rights reserved.</p>

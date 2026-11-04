@@ -340,38 +340,6 @@ export default function PublishingQueuePage() {
         subtitle={t('queue.pageSubtitle')}
         actions={
           <div className="flex flex-wrap items-center gap-2">
-            {isMockCleared ? (
-              <button
-                type="button"
-                onClick={() => {
-                  loadSampleMockData();
-                  setJobs(INITIAL_QUEUE_JOBS);
-                  setDownloadNotice('🎲 โหลดคิวงานตัวอย่าง 8 รายการเรียบร้อยแล้ว');
-                  setTimeout(() => setDownloadNotice(null), 3500);
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-accent-ochre border border-accent-ochre/40 text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title="โหลดคิวงานจำลองเพื่อทดสอบการทำงาน"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-                <span>{locale === 'th' ? 'โหลดคิวตัวอย่าง (Demo)' : 'Load Demo Queue'}</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  clearAllMockData();
-                  setJobs([]);
-                  setDownloadNotice('🗑️ ล้างคิวงานจำลองทั้งหมดเรียบร้อยแล้ว');
-                  setTimeout(() => setDownloadNotice(null), 3500);
-                }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-paper-canvas hover:bg-paper-subtle text-ink-secondary hover:text-ink-primary border border-border-rule text-xs font-sans font-medium rounded-editorial transition-colors shadow-2xs cursor-pointer"
-                title="ล้างคิวงานให้ว่างเปล่าสำหรับใช้งานจริง"
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>{locale === 'th' ? 'ล้างคิวงาน (Clear All)' : 'Clear Queue'}</span>
-              </button>
-            )}
-
             {!isMockCleared && failedJobsCount > 0 && (
               <button
                 onClick={handleExportErrorCsv}
@@ -525,10 +493,10 @@ export default function PublishingQueuePage() {
                     <EditorialEmptyState
                       stickerName="approved-seal"
                       badgeText={isMockCleared ? 'Publishing Queue • Clean' : 'Filter Empty'}
-                      title="คิวการส่งโพสต์ว่างเปล่า (Publishing Queue Empty)"
+                      title="คิวการส่งโพสต์ว่างเปล่า"
                       description="ไม่มีรายการงานค้างท่อ ทุกชิ้นงานได้รับการประมวลผลและส่งขึ้นแพลตฟอร์มปลายทางเรียบร้อยแล้ว หรือยังไม่มีการจัดคิวใหม่"
                       tipText="คุณสามารถสร้างโพสต์และตั้งเวลาเผยแพร่ล่วงหน้าได้จากหน้า Universal Composer ชิ้นงานจะมาจัดเรียงในคิวนี้โดยอัตโนมัติ"
-                      actionLabel="สร้างโพสต์ใหม่ (Compose Dispatch)"
+                      actionLabel="สร้างโพสต์ใหม่"
                       actionHref="/create"
                       onDemoActionClick={isMockCleared ? () => { loadSampleMockData(); setJobs(INITIAL_QUEUE_JOBS); } : undefined}
                     />
@@ -635,7 +603,7 @@ export default function PublishingQueuePage() {
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono font-semibold bg-brand-indigo hover:bg-brand-indigo-hover text-white rounded-editorial transition-all shadow-2xs cursor-pointer whitespace-nowrap"
                             >
                               <Eye className="w-3.5 h-3.5" />
-                              <span>ตรวจงาน (Review)</span>
+                              <span>ตรวจงาน</span>
                             </button>
                             {job.submittedBy && (
                               <span className="text-[9px] font-mono text-ink-secondary whitespace-nowrap">
@@ -916,7 +884,7 @@ export default function PublishingQueuePage() {
                   className="px-4 py-2 bg-paper-canvas hover:bg-semantic-warning/10 text-semantic-warning border border-semantic-warning/40 rounded-editorial text-xs font-mono font-semibold transition-colors flex items-center gap-1.5 cursor-pointer"
                 >
                   <Sticker name="needs-revision-stamp" size="xs" inline />
-                  <span>ส่งกลับแก้ไข (Request Changes)</span>
+                  <span>ส่งกลับแก้ไข</span>
                 </button>
                 <button
                   type="button"
@@ -924,7 +892,7 @@ export default function PublishingQueuePage() {
                   className="px-5 py-2 bg-semantic-success hover:bg-semantic-success/90 text-white rounded-editorial text-xs font-mono font-semibold transition-colors shadow-xs flex items-center gap-1.5 cursor-pointer"
                 >
                   <Sticker name="approved-seal" size="xs" inline />
-                  <span>อนุมัติ & จัดคิว (Approve)</span>
+                  <span>อนุมัติ & จัดคิว</span>
                 </button>
               </div>
             </div>

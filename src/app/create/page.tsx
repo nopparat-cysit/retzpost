@@ -1522,32 +1522,6 @@ export default function CreatePostPage() {
             <span className="text-xs font-mono text-brand-indigo font-semibold px-2.5 py-1.5 bg-brand-indigo/10 rounded-editorial border border-brand-indigo/20">
               {totalActivePlacements} Active Placements
             </span>
-
-            {isMockCleared ? (
-              <button
-                type="button"
-                onClick={() => {
-                  loadSampleMockData();
-                }}
-                className="px-2.5 py-1.5 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                title={locale === 'en' ? 'Load sample draft for composer testing' : 'โหลดข้อมูลตัวอย่างสำหรับทดสอบเขียนโพสต์'}
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>{locale === 'en' ? 'Load Demo' : 'โหลดตัวอย่าง (Demo)'}</span>
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => {
-                  clearAllMockData();
-                }}
-                className="px-2.5 py-1.5 text-[11px] font-mono rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-accent-terracotta font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
-                title={locale === 'en' ? 'Clear all draft data to start from clean slate' : 'ล้างข้อมูลตัวอย่างทั้งหมด เริ่มต้นเขียนจากศูนย์'}
-              >
-                <RefreshCw className="w-3.5 h-3.5" />
-                <span>{locale === 'en' ? 'Clear Draft' : 'เคลียร์แบบร่าง (Clean)'}</span>
-              </button>
-            )}
           </div>
         }
       />
@@ -2289,7 +2263,7 @@ export default function CreatePostPage() {
                 <div className="border-2 border-dashed border-border-rule rounded-editorial p-6 text-center bg-paper-canvas hover:border-brand-indigo/50 transition-colors">
                   <Film className="w-8 h-8 mx-auto text-brand-indigo/50 mb-2" />
                   <p className="text-xs font-semibold text-ink-primary">
-                    {locale === 'en' ? 'Click or drag video file (MP4/MOV) here' : 'คลิกหรือลากไฟล์วิดีโอ (MP4/MOV) มาวางที่นี่'}
+                    {locale === 'en' ? 'Click or drag video file (MP4/MOV) here' : 'คลิกหรือลากไฟล์วิดีโอ มาวางที่นี่'}
                   </p>
                   <p className="text-[10px] font-mono text-ink-secondary mt-1">
                     {locale === 'en' ? 'Supports 9:16 vertical ratio (Reels/Shorts/TikTok) up to 1080x1920' : 'รองรับอัตราส่วน 9:16 (Reels/Shorts/TikTok) ความละเอียดสูงสุด 1080x1920'}
@@ -2410,7 +2384,7 @@ export default function CreatePostPage() {
                         className="py-2 px-3 border border-brand-indigo/40 hover:border-brand-indigo rounded text-center text-xs bg-brand-indigo/5 text-brand-indigo transition-colors flex items-center justify-center gap-1.5"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span className="text-[11px] font-medium">{locale === 'en' ? 'Auto-Extract Frame (AI)' : 'สุ่มตัดปกจากวิดีโอ (AI)'}</span>
+                        <span className="text-[11px] font-medium">{locale === 'en' ? 'Auto-Extract Frame (AI)' : 'สุ่มตัดปกจากวิดีโอ'}</span>
                       </button>
                     </div>
                   )}
@@ -2428,7 +2402,7 @@ export default function CreatePostPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <div>
                       <label className="text-[10px] font-mono text-ink-secondary uppercase block mb-1 font-semibold">
-                        {locale === 'en' ? 'Visibility:' : 'ระดับการมองเห็น (Visibility):'}
+                        {locale === 'en' ? 'Visibility:' : 'ระดับการมองเห็น:'}
                       </label>
                       <div className="grid grid-cols-3 gap-1">
                         {(['PUBLIC', 'UNLISTED', 'PRIVATE'] as const).map((vis) => (
@@ -2450,7 +2424,7 @@ export default function CreatePostPage() {
 
                     <div>
                       <label className="text-[10px] font-mono text-ink-secondary uppercase block mb-1 font-semibold">
-                        {locale === 'en' ? 'Category:' : 'หมวดหมู่วิดีโอ (Category):'}
+                        {locale === 'en' ? 'Category:' : 'หมวดหมู่วิดีโอ:'}
                       </label>
                       <select
                         value={youtubeCategory}
@@ -2469,7 +2443,7 @@ export default function CreatePostPage() {
 
                   <div className="flex items-center gap-2 pt-1 border-t border-border-rule/60 text-[10px] text-ink-secondary font-mono">
                     <span className="w-1.5 h-1.5 rounded-full bg-semantic-success"></span>
-                    <span>{locale === 'en' ? 'COPPA: Not Made for Kids' : 'COPPA: ไม่ได้สร้างมาเพื่อเด็กโดยเฉพาะ (Not Made for Kids)'}</span>
+                    <span>{locale === 'en' ? 'COPPA: Not Made for Kids' : 'COPPA: ไม่ได้สร้างมาเพื่อเด็กโดยเฉพาะ'}</span>
                   </div>
                 </div>
               </div>
@@ -2518,7 +2492,7 @@ export default function CreatePostPage() {
                     onClick={handleClearDraft}
                     className="text-[10px] font-mono text-ink-secondary hover:text-semantic-error underline cursor-pointer"
                   >
-                    {locale === 'en' ? 'Reset Draft' : 'ล้างแบบร่าง (Reset)'}
+                    {locale === 'en' ? 'Reset Draft' : 'ล้างแบบร่าง'}
                   </button>
                   <button
                     type="button"
@@ -3498,7 +3472,7 @@ export default function CreatePostPage() {
                 type="button"
                 disabled={totalActivePlacements === 0}
                 onClick={() => {
-                  setSubmittedForApprovalNotice(locale === 'en' ? `Submitted "${workingTitle}" for Manager review (Pending Review).` : `ส่งโพสต์ "${workingTitle}" ให้ Manager ตรวจสอบและอนุมัติเรียบร้อยแล้ว (Pending Review)`);
+                  setSubmittedForApprovalNotice(locale === 'en' ? `Submitted "${workingTitle}" for Manager review (Pending Review).` : `ส่งโพสต์ "${workingTitle}" ให้ Manager ตรวจสอบและอนุมัติเรียบร้อยแล้ว`);
                   setTimeout(() => setSubmittedForApprovalNotice(null), 4500);
                 }}
                 className={`w-full py-2.5 px-4 text-xs font-semibold rounded-editorial flex items-center justify-center gap-2 shadow-xs transition-all ${
@@ -3521,7 +3495,7 @@ export default function CreatePostPage() {
             <div className="space-y-1.5">
               <div className="w-full py-2.5 px-4 text-xs font-semibold rounded-editorial flex items-center justify-center gap-2 bg-paper-subtle border border-border-rule text-ink-secondary cursor-not-allowed">
                 <Lock className="w-4 h-4" />
-                <span>{locale === 'en' ? 'Reviewer / Client Mode (Read-Only)' : 'โหมดผู้ตรวจงาน / ลูกค้า (Read-Only)'}</span>
+                <span>{locale === 'en' ? 'Reviewer / Client Mode (Read-Only)' : 'โหมดผู้ตรวจงาน / ลูกค้า'}</span>
               </div>
               <p className="text-[10px] text-ink-secondary font-sans text-center leading-tight">
                 {locale === 'en' ? 'Preview Live Phone Mockup and schedule only' : 'สามารถดู Live Phone Mockup และกำหนดการได้เท่านั้น'}

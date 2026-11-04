@@ -222,7 +222,7 @@ export default function ForgotPasswordPage() {
             href="/login"
             className="text-xs font-semibold text-brand-indigo hover:text-brand-indigo-hover underline underline-offset-2 transition-colors"
           >
-            ← {locale === 'th' ? 'กลับหน้าเข้าสู่ระบบ (Sign In)' : 'Back to Sign In'}
+            ← {locale === 'th' ? 'กลับหน้าเข้าสู่ระบบ' : 'Back to Sign In'}
           </Link>
         </div>
       </header>
@@ -335,7 +335,7 @@ export default function ForgotPasswordPage() {
 
               <div className="space-y-2">
                 <label className="block text-xs font-semibold text-ink-primary font-mono text-center">
-                  กรอกรหัส 6 หลัก (OTP Verification Code)
+                  กรอกรหัส 6 หลัก
                 </label>
                 <div className="flex items-center justify-between gap-1.5 sm:gap-2">
                   {otpDigits.map((digit, index) => (
@@ -399,7 +399,7 @@ export default function ForgotPasswordPage() {
             <form onSubmit={handleSetNewPassword} className="space-y-4 animate-in fade-in duration-200">
               <div className="space-y-1">
                 <label className="block text-xs font-semibold text-ink-primary font-mono">
-                  รหัสผ่านใหม่ (New Password)
+                  รหัสผ่านใหม่
                 </label>
                 <div className="relative">
                   <Lock className="w-4 h-4 text-ink-secondary absolute left-3 top-3 pointer-events-none" />
@@ -483,7 +483,7 @@ export default function ForgotPasswordPage() {
                   href="/login"
                   className="inline-flex items-center justify-center gap-2 w-full py-2.5 px-4 bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-bold rounded-editorial shadow-xs transition-colors"
                 >
-                  <span>ไปที่หน้าเข้าสู่ระบบ (Sign In)</span>
+                  <span>ไปที่หน้าเข้าสู่ระบบ</span>
                   <ArrowRight className="w-4 h-4" />
                 </Link>
               </div>
@@ -496,15 +496,15 @@ export default function ForgotPasswordPage() {
       <footer className="max-w-5xl mx-auto w-full pt-6 border-t border-border-rule/60 text-center text-[11px] font-mono text-ink-secondary space-y-2">
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs font-medium">
           <Link href="/docs" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            📖 คู่มือใช้งาน (Docs & Guide)
+            📖 คู่มือใช้งาน
           </Link>
           <span>•</span>
           <Link href="/privacy" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            🔒 นโยบายความเป็นส่วนตัว (Privacy Policy)
+            🔒 นโยบายความเป็นส่วนตัว
           </Link>
           <span>•</span>
           <Link href="/terms" target="_blank" className="hover:text-brand-indigo underline underline-offset-2 transition-colors">
-            📜 ข้อกำหนดการใช้งาน (Terms of Service)
+            📜 ข้อกำหนดการใช้งาน
           </Link>
         </div>
         <p>RETZPOST — Dream Press Publishing Desk &copy; {new Date().getFullYear()} RetzPost SaaS. All rights reserved.</p>

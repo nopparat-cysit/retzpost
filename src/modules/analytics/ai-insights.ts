@@ -74,7 +74,7 @@ export const MOCK_POST_DIAGNOSES: Record<string, PostDiagnosisInsight> = {
     attributionDrivers: [
       {
         category: 'TIMING',
-        categoryLabelTh: 'ช่วงเวลาทอง (Peak Timing)',
+        categoryLabelTh: 'ช่วงเวลาทอง',
         categoryLabelEn: 'Peak Timing Window',
         icon: '⏰',
         titleTh: 'ปล่อยตรงหน้าต่างเวลา Lunch Swipes (12:15 PM)',
@@ -86,19 +86,19 @@ export const MOCK_POST_DIAGNOSES: Record<string, PostDiagnosisInsight> = {
       },
       {
         category: 'VISUAL',
-        categoryLabelTh: 'จุดดึงดูดสายตา (Thumb-Stop Visual)',
+        categoryLabelTh: 'จุดดึงดูดสายตา',
         categoryLabelEn: 'Thumb-Stop Visuals',
         icon: '📸',
         titleTh: 'ภาพปก Studio Master Suite มี Contrast แสงจัดจ้านสะดุดตา',
         titleEn: 'Studio Master Suite cover features high-contrast cinematic lighting',
-        descriptionTh: 'การจัดแสง Cinematic Lighting ระดับ 4K พร้อมเงาสะท้อนระดับสตูดิโอ มีอัตราหยุดดู (Thumb-stop Dwell Time) นาน 4.2 วินาที ซึ่งสูงกว่าค่าเฉลี่ยมาตรฐานอุตสาหกรรม (2.1 วินาที) ถึง 2 เท่า',
+        descriptionTh: 'การจัดแสง Cinematic Lighting ระดับ 4K พร้อมเงาสะท้อนระดับสตูดิโอ มีอัตราหยุดดู นาน 4.2 วินาที ซึ่งสูงกว่าค่าเฉลี่ยมาตรฐานอุตสาหกรรม (2.1 วินาที) ถึง 2 เท่า',
         descriptionEn: '4K cinematic lighting setup and reflections yielded a 4.2-second dwell time, 2x above industry benchmark (2.1s).',
         impactScore: 98,
         metricHighlight: 'Dwell Time 4.2s (Benchmark 2.1s)',
       },
       {
         category: 'COPYWRITING',
-        categoryLabelTh: 'จิตวิทยาแคปชัน (Copywriting & Angle)',
+        categoryLabelTh: 'จิตวิทยาแคปชัน',
         categoryLabelEn: 'Copywriting Psychology',
         icon: '✍️',
         titleTh: 'ใช้กรอบความคิด Exclusivity & Scarcity',
@@ -110,7 +110,7 @@ export const MOCK_POST_DIAGNOSES: Record<string, PostDiagnosisInsight> = {
       },
       {
         category: 'PLACEMENT',
-        categoryLabelTh: 'โครงสร้างลิงก์ (Placement & CTA)',
+        categoryLabelTh: 'โครงสร้างลิงก์',
         categoryLabelEn: 'Link Structure & Placement',
         icon: '🔗',
         titleTh: 'แนบ Direct Link เว็บเป้าหมายและ Story Link Sticker',
@@ -147,7 +147,7 @@ export const MOCK_POST_DIAGNOSES: Record<string, PostDiagnosisInsight> = {
         type: 'CADENCE',
         titleTh: 'ตั้งคิวโพสต์ Follow-up ในวันพฤหัสบดีหน้า เวลา 19:30 PM',
         titleEn: 'Schedule Follow-up dispatch for next Thursday at 7:30 PM',
-        actionTh: 'ปล่อยภาพบรรยากาศยามค่ำคืน (Twilight Sunset) ของยูนิตนี้ต่อเนื่อง เพื่อรักษาโมเมนตัมอัลกอริทึมของเพจ',
+        actionTh: 'ปล่อยภาพบรรยากาศยามค่ำคืน ของยูนิตนี้ต่อเนื่อง เพื่อรักษาโมเมนตัมอัลกอริทึมของเพจ',
         actionEn: 'Publish Twilight Sunset sequence photos to maintain organic algorithm distribution momentum.',
         expectedOutcomeTh: 'รักษาอัตรา Engagement Rate ให้อยู่เหนือ 7.5% ต่อเนื่อง',
         expectedOutcomeEn: 'Sustained engagement rate above 7.5%.',
@@ -294,7 +294,7 @@ export function getPostDiagnosis(postId: string, fallbackTitle?: string): PostDi
   }
 
   // Fallback dynamic generator for any post
-  const title = fallbackTitle || 'คอนเทนต์เผยแพร่สด (Live Content Dispatch)';
+  const title = fallbackTitle || 'คอนเทนต์เผยแพร่สด';
   return {
     postId,
     postTitle: title,
@@ -317,7 +317,7 @@ export function getPostDiagnosis(postId: string, fallbackTitle?: string): PostDi
         categoryLabelTh: 'ช่วงเวลาที่เหมาะสม',
         categoryLabelEn: 'Optimal Timing Window',
         icon: '⏰',
-        titleTh: 'ตรงกับพฤติกรรมกลุ่มเป้าหมาย (Active Peak)',
+        titleTh: 'ตรงกับพฤติกรรมกลุ่มเป้าหมาย',
         titleEn: 'Aligned with Audience Active Peak',
         descriptionTh: 'ส่งโพสต์ในช่วงเวลาที่มีอัตราการเปิดอ่านสูง ส่งผลให้อัลกอริทึมกระจายโพสต์ได้อย่างมีประสิทธิภาพ',
         descriptionEn: 'Dispatched during peak active engagement window, maximizing algorithmic feed distribution.',

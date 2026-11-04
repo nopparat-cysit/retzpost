@@ -373,7 +373,7 @@ export function CustomDatePicker({
                 onClick={() => handleQuickPreset('WEEKEND')}
                 className="px-2 py-0.5 rounded bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-brand-indigo font-semibold whitespace-nowrap transition-colors cursor-pointer"
               >
-                {activeLocale === 'th' ? 'สุดสัปดาห์ (Peak)' : 'Weekend (Peak)'}
+                {activeLocale === 'th' ? 'สุดสัปดาห์' : 'Weekend (Peak)'}
               </button>
               <button
                 type="button"

@@ -77,7 +77,10 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
     );
   }
 
-  const isSuperAdmin = currentUser.role === 'Owner' || currentUser.email === 'superadmin@retzpost.io';
+  const isSuperAdmin = 
+    currentUser.role === 'Owner' || 
+    currentUser.email === 'superadmin@retzpost.io' ||
+    currentUser.email === 'losstary@gmail.com';
 
   return (
     <div className={`relative ${className}`} ref={menuRef}>
@@ -243,7 +246,7 @@ export const UserProfileMenu: React.FC<UserProfileMenuProps> = ({
               className="flex items-center gap-2.5 px-2.5 py-2 rounded-editorial hover:bg-paper-raised text-ink-secondary hover:text-ink-primary font-medium transition-colors"
             >
               <BookOpen className="w-4 h-4 text-ink-secondary shrink-0" />
-              <span>{locale === 'th' ? 'คู่มือการใช้งาน (Docs)' : 'Documentation (Docs)'}</span>
+              <span>{locale === 'th' ? 'คู่มือการใช้งาน' : 'Documentation'}</span>
             </Link>
           </div>
 

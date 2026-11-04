@@ -20,6 +20,20 @@ interface StoredAccount {
 const DEFAULT_ACCOUNTS: StoredAccount[] = [
   {
     user: {
+      id: 'usr_losstary',
+      email: 'losstary@gmail.com',
+      username: 'losstary',
+      name: 'Nopparat Losstary',
+      role: 'Owner',
+      avatarBg: 'bg-brand-indigo',
+      avatarText: 'NL',
+      activeWorkspaceId: 'ws_main',
+      createdAt: '2026-01-01T00:00:00Z',
+    },
+    passwordHash: '123123123',
+  },
+  {
+    user: {
       id: 'usr_superadmin',
       email: 'superadmin@retzpost.io',
       username: 'superadmin',
@@ -77,11 +91,28 @@ export function getStoredAccounts(): StoredAccount[] {
   if (typeof window === 'undefined') return memoryAccounts;
   try {
     const raw = window.localStorage.getItem(REGISTERED_USERS_KEY);
+    let accounts: StoredAccount[] = [];
     if (!raw) {
-      window.localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(DEFAULT_ACCOUNTS));
-      return DEFAULT_ACCOUNTS;
+      accounts = [...DEFAULT_ACCOUNTS];
+      window.localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(accounts));
+      return accounts;
     }
-    return JSON.parse(raw);
+    accounts = JSON.parse(raw);
+    if (!Array.isArray(accounts)) accounts = [];
+
+    // Ensure losstary@gmail.com exists and has password 123123123
+    const losstaryAcc = DEFAULT_ACCOUNTS.find(a => a.user.email.toLowerCase() === 'losstary@gmail.com');
+    if (losstaryAcc) {
+      const idx = accounts.findIndex(a => a.user.email.toLowerCase() === 'losstary@gmail.com');
+      if (idx === -1) {
+        accounts.unshift(losstaryAcc);
+        window.localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(accounts));
+      } else if (accounts[idx].passwordHash !== '123123123') {
+        accounts[idx].passwordHash = '123123123';
+        window.localStorage.setItem(REGISTERED_USERS_KEY, JSON.stringify(accounts));
+      }
+    }
+    return accounts;
   } catch {
     return memoryAccounts;
   }
@@ -189,6 +220,30 @@ export function loginUser(identifier: string, password: string, locale?: string)
     messageEn: `Welcome back, ${found.user.name}!`,
     user: found.user,
   };
+}
+
+/**
+ * Log in asynchronously using server-side endpoint with local fallback
+ */
+export async function loginUserAsync(identifier: string, password: string, locale?: string): Promise<AuthResponse> {
+  try {
+    const res = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, password }),
+    });
+    const data = await res.json();
+    if (data.success && data.user) {
+      setCurrentUser(data.user);
+      return data;
+    }
+    if (res.status === 401 || res.status === 403) {
+      return data;
+    }
+  } catch {
+    // network or offline fallback
+  }
+  return loginUser(identifier, password, locale);
 }
 
 /**

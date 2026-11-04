@@ -66,7 +66,7 @@ export default function TermsOfServicePage() {
           </div>
 
           <h1 className="font-serif text-3xl sm:text-5xl font-medium text-ink-primary tracking-tight">
-            ข้อกำหนดและเงื่อนไขการให้บริการ (Terms of Service)
+            ข้อกำหนดและเงื่อนไขการให้บริการ
           </h1>
           <p className="text-xs sm:text-sm text-ink-secondary max-w-3xl leading-relaxed font-sans">
             สัญญาผูกพันทางกฎหมายระหว่างท่านและ RetzPost เพื่อกำหนดสิทธิ หน้าที่ และความรับผิดชอบในการใช้งานแพลตฟอร์มกองบรรณาธิการ RETZPOST
@@ -93,7 +93,7 @@ export default function TermsOfServicePage() {
               </div>
               <div>
                 <h3 className="font-serif font-bold text-sm text-ink-primary">
-                  คำมั่นสัญญาในลิขสิทธิ์เนื้อหา (Creator Ownership Pledge)
+                  คำมั่นสัญญาในลิขสิทธิ์เนื้อหา
                 </h3>
                 <p className="text-[11px] text-ink-secondary font-sans leading-snug">
                   ท่านยังคงเป็นเจ้าของลิขสิทธิ์ในรูปภาพ วิดีโอสั้น และข้อความแคปชันทั้งหมด 100% RetzPost ไม่มีสิทธิ์นำผลงานของท่านไปดัดแปลง ขาย หรือเคลมความเป็นเจ้าของเด็ดขาด
@@ -112,7 +112,7 @@ export default function TermsOfServicePage() {
           <aside className="lg:col-span-4 sticky top-28 space-y-4">
             <div className="p-4 bg-paper-raised border-2 border-border-rule rounded-dialog shadow-xs">
               <span className="text-xs font-mono font-bold text-ink-primary uppercase tracking-wider block pb-3 mb-3 border-b border-border-rule/80">
-                หัวข้อสัญญา (Articles)
+                หัวข้อสัญญา
               </span>
 
               <nav className="space-y-1">
@@ -149,7 +149,7 @@ export default function TermsOfServicePage() {
                 className="flex items-center gap-1.5 text-brand-indigo hover:underline font-mono text-[11px] font-semibold"
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-semantic-success" />
-                <span>นโยบายความเป็นส่วนตัว (Privacy Policy) →</span>
+                <span>นโยบายความเป็นส่วนตัว →</span>
               </Link>
             </div>
           </aside>
@@ -163,7 +163,7 @@ export default function TermsOfServicePage() {
                   SECTION 01
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  1. การยอมรับข้อกำหนด (Acceptance of Terms)
+                  1. การยอมรับข้อกำหนด
                 </h2>
               </div>
 
@@ -178,7 +178,7 @@ export default function TermsOfServicePage() {
 
               <div className="space-y-3 text-xs leading-relaxed text-ink-secondary font-sans pt-1">
                 <p>
-                  การเข้าถึงและใช้งานบริการ RETZPOST ถือว่าท่านตกลงที่จะปฏิบัติตามข้อกำหนดและเงื่อนไขการให้บริการฉบับนี้ รวมถึงนโยบายความเป็นส่วนตัว (Privacy Policy) ซึ่งถือเป็นสัญญาที่มีผลผูกพันตามกฎหมายระหว่างท่านและ RetzPost
+                  การเข้าถึงและใช้งานบริการ RETZPOST ถือว่าท่านตกลงที่จะปฏิบัติตามข้อกำหนดและเงื่อนไขการให้บริการฉบับนี้ รวมถึงนโยบายความเป็นส่วนตัว ซึ่งถือเป็นสัญญาที่มีผลผูกพันตามกฎหมายระหว่างท่านและ RetzPost
                 </p>
               </div>
             </article>
@@ -217,7 +217,7 @@ export default function TermsOfServicePage() {
                   SECTION 03
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  3. กฎการใช้งานที่ยอมรับได้ (Acceptable Use Policy)
+                  3. กฎการใช้งานที่ยอมรับได้
                 </h2>
               </div>
 
@@ -238,7 +238,7 @@ export default function TermsOfServicePage() {
                   SECTION 04
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  4. ความรับผิดชอบต่อความปลอดภัยของบัญชี (Account Security)
+                  4. ความรับผิดชอบต่อความปลอดภัยของบัญชี
                 </h2>
               </div>
 
@@ -256,7 +256,7 @@ export default function TermsOfServicePage() {
                   SECTION 05 - 07
                 </span>
                 <h2 className="font-serif text-2xl font-bold text-ink-primary tracking-tight">
-                  5 - 7. ข้อจำกัดความรับผิดชอบและกฎหมายที่ใช้บังคับ (Legal Governance)
+                  5 - 7. ข้อจำกัดความรับผิดชอบและกฎหมายที่ใช้บังคับ
                 </h2>
               </div>
 
@@ -276,14 +276,14 @@ export default function TermsOfServicePage() {
                   className="text-brand-indigo hover:underline flex items-center gap-1 font-semibold"
                 >
                   <ArrowLeft className="w-3.5 h-3.5" />
-                  <span>อ่านนโยบายความเป็นส่วนตัว (Privacy Policy)</span>
+                  <span>อ่านนโยบายความเป็นส่วนตัว</span>
                 </Link>
 
                 <Link
                   href="/docs"
                   className="text-brand-indigo hover:underline font-semibold flex items-center gap-1"
                 >
-                  <span>อ่านคู่มือการใช้งานระบบ (Docs & Guide)</span>
+                  <span>อ่านคู่มือการใช้งานระบบ</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

@@ -36,8 +36,8 @@ export const EditorialEmptyState: React.FC<EditorialEmptyStateProps> = ({
   const { locale } = useTranslation();
   const resolvedDemoActionLabel =
     demoActionLabel ??
-    (locale === 'th' ? 'โหลดข้อมูลตัวอย่างสำหรับพรีวิว (Load Demo Data)' : 'Load Demo Data');
-  const tipHeader = locale === 'th' ? 'คำแนะนำจาก บ.ก. (Editorial Tip):' : 'Editorial Tip:';
+    (locale === 'th' ? 'โหลดข้อมูลตัวอย่างสำหรับพรีวิว' : 'Load Demo Data');
+  const tipHeader = locale === 'th' ? 'คำแนะนำจาก บ.ก.:' : 'Editorial Tip:';
   const demoTitle = locale === 'th' ? 'โหลดข้อมูลจำลองเพื่อพรีวิวการแสดงผล' : 'Load sample demo data for preview';
   return (
     <div
@@ -104,18 +104,6 @@ export const EditorialEmptyState: React.FC<EditorialEmptyStateProps> = ({
                 <span>{actionLabel}</span>
               </button>
             )
-          )}
-
-          {onDemoActionClick && (
-            <button
-              type="button"
-              onClick={onDemoActionClick}
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 py-2 px-3.5 rounded-editorial bg-paper-canvas hover:bg-paper-subtle border border-border-rule text-ink-secondary hover:text-ink-primary text-xs font-mono transition-colors cursor-pointer"
-              title={demoTitle}
-            >
-              <Sparkles className="w-3.5 h-3.5 text-accent-ochre" />
-              <span>{resolvedDemoActionLabel}</span>
-            </button>
           )}
         </div>
       </div>

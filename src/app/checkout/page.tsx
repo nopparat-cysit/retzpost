@@ -192,11 +192,11 @@ function CheckoutContent() {
         <div className="mb-8">
           <div className="flex items-center gap-2 text-xs text-ink-secondary mb-2 font-mono">
             <Link href="/pricing" className="hover:text-brand-indigo underline">
-              {locale === 'th' ? 'ราคาและแผน (Pricing)' : 'Pricing Plans'}
+              {locale === 'th' ? 'ราคาและแผน ' : 'Pricing Plans'}
             </Link>
             <span>/</span>
             <span className="text-ink-primary font-bold">
-              {locale === 'th' ? 'เช็คเอาท์และเปิดใช้งาน (Checkout)' : 'Order Checkout'}
+              {locale === 'th' ? 'เช็คเอาท์และเปิดใช้งาน ' : 'Order Checkout'}
             </span>
           </div>
           <h1 className="font-serif font-black text-2xl sm:text-4xl text-ink-primary">
@@ -217,7 +217,7 @@ function CheckoutContent() {
             <Gift className="w-8 h-8 text-accent-terracotta shrink-0 mt-0.5" />
             <div>
               <h3 className="font-serif font-bold text-base text-ink-primary">
-                สิทธิ์ทดลองใช้งานฟรี 7 วัน (7-Day Risk-Free Trial)
+                สิทธิ์ทดลองใช้งานฟรี 7 วัน 
               </h3>
               <p className="text-xs text-ink-secondary mt-1 leading-relaxed">
                 ยอดเรียกเก็บวันนี้คือ <strong>฿0.00 บาท</strong> คุณจะได้ทดลองใช้งานฟีเจอร์ของ Solo Press ครบทุกฟังก์ชัน เมื่อครบ 7 วัน ระบบจะเสนอโปรโมชั่นสุดพิเศษ: <strong>ลด 25% นาน 3 เดือนแรก</strong> หรือ <strong>ลด 35% สำหรับปีแรก</strong>
@@ -244,11 +244,11 @@ function CheckoutContent() {
                 {/* Receipt Details Box */}
                 <div className="bg-paper-canvas border border-border-rule rounded-md p-4 mt-4 text-xs font-mono space-y-1.5 max-w-xl">
                   <div className="flex justify-between">
-                    <span className="text-ink-secondary">รหัสอ้างอิง (Reference ID):</span>
+                    <span className="text-ink-secondary">รหัสอ้างอิง :</span>
                     <span className="font-bold text-ink-primary">{successResult.invoice.id}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-ink-secondary">ยอดรวมสุทธิ (Total):</span>
+                    <span className="text-ink-secondary">ยอดรวมสุทธิ :</span>
                     <span className="font-bold text-brand-indigo">฿{successResult.invoice.totalThb?.toLocaleString()} THB</span>
                   </div>
                   <div className="flex justify-between">
@@ -266,7 +266,7 @@ function CheckoutContent() {
                     href="/desk"
                     className="py-2.5 px-6 rounded-btn bg-brand-indigo hover:bg-brand-indigo-hover text-white text-xs font-bold transition-all shadow-xs flex items-center gap-2"
                   >
-                    <span>เข้าสู่หน้าควบคุมหลัก (Go to Dashboard)</span>
+                    <span>เข้าสู่หน้าควบคุมหลัก </span>
                     <ArrowRight className="w-4 h-4" />
                   </Link>
                   <Link
@@ -312,7 +312,7 @@ function CheckoutContent() {
                   >
                     <QrCode className="w-5 h-5 text-accent-terracotta shrink-0" />
                     <div>
-                      <p className="text-xs font-bold">พร้อมเพย์ (PromptPay QR)</p>
+                      <p className="text-xs font-bold">พร้อมเพย์ PromptPay</p>
                       <p className="text-[10px] text-ink-muted">สแกนจ่ายได้ทุกธนาคารไทย</p>
                     </div>
                   </button>
@@ -362,12 +362,12 @@ function CheckoutContent() {
                         {/* Slip Uploader */}
                         <div className="pt-3 border-t border-border-rule text-left">
                           <label className="block text-xs font-bold text-ink-primary mb-1">
-                            แนบหลักฐานสลิปโอนเงิน (Slip Upload)
+                            แนบหลักฐานสลิปโอนเงิน 
                           </label>
                           <div className="flex items-center gap-3">
                             <label className="cursor-pointer py-2 px-3 rounded-btn border border-dashed border-brand-indigo/60 hover:bg-brand-indigo/5 text-brand-indigo text-xs font-medium flex items-center gap-1.5 transition-colors">
                               <Upload className="w-3.5 h-3.5" />
-                              <span>เลือกไฟล์สลิป (PNG/JPG)</span>
+                              <span>เลือกไฟล์สลิป</span>
                               <input
                                 type="file"
                                 accept="image/*"
@@ -407,7 +407,7 @@ function CheckoutContent() {
                   <div className="space-y-3">
                     <div>
                       <label className="block text-xs font-bold text-ink-secondary mb-1">
-                        หมายเลขบัตร (Card Number)
+                        หมายเลขบัตร
                       </label>
                       <input
                         type="text"
@@ -420,7 +420,7 @@ function CheckoutContent() {
 
                     <div>
                       <label className="block text-xs font-bold text-ink-secondary mb-1">
-                        ชื่อบนบัตร (Cardholder Name)
+                        ชื่อบนบัตร
                       </label>
                       <input
                         type="text"
@@ -434,7 +434,7 @@ function CheckoutContent() {
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <label className="block text-xs font-bold text-ink-secondary mb-1">
-                          วันหมดอายุ (MM/YY)
+                          วันหมดอายุ
                         </label>
                         <input
                           type="text"
@@ -470,7 +470,7 @@ function CheckoutContent() {
                       <Receipt className="w-5 h-5 text-accent-terracotta" />
                       <div>
                         <h3 className="font-serif font-bold text-base text-ink-primary">
-                          ใบกำกับภาษีเต็มรูปแบบ (e-Tax Invoice / Receipt)
+                          ใบกำกับภาษีเต็มรูปแบบ
                         </h3>
                         <p className="text-[11px] text-ink-secondary">
                           ถูกต้องตามประมวลรัษฎากร กรมสรรพากร สามารถนำไปหักภาษีได้
@@ -521,7 +521,7 @@ function CheckoutContent() {
 
                         <div>
                           <label className="block text-xs font-bold text-ink-secondary mb-1">
-                            รหัสสาขา (Branch ID)
+                            รหัสสาขา 
                           </label>
                           <input
                             type="text"
