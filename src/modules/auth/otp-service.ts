@@ -95,6 +95,20 @@ export function sendEmailOtp(
 
     // Also store last sent email for persistent toast display across fast renders
     window.sessionStorage.setItem('retzpost_last_email_otp', JSON.stringify(payload));
+
+    // Dispatch real email via Gmail SMTP API asynchronously
+    fetch('/api/auth/otp/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: normalizedEmail,
+        code,
+        purpose,
+        locale: locale || 'th',
+      }),
+    }).catch((err) => {
+      console.warn('[OTP Service] Real SMTP dispatch error (fallback to in-app OTP active):', err);
+    });
   }
 
   return {
