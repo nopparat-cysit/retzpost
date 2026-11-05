@@ -1,0 +1,17 @@
+name: Scheduled Publishing Dispatcher
+
+on:
+  schedule:
+    # Trigger every 5 minutes
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger RetzPost Publishing Engine
+        run: |
+          curl -s -X POST https://retzpost.vercel.app/api/cron/publish \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            -H "User-Agent: GitHub-Actions-Scheduler"

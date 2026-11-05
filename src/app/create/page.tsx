@@ -836,9 +836,17 @@ export default function CreatePostPage() {
 
   // Active Workspace Entity
   const activeWorkspace = useMemo(() => {
+    const user = typeof window !== 'undefined' ? getCurrentUser() : null;
+    if (user?.activeWorkspaceId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.activeWorkspaceId)) {
+      return {
+        id: user.activeWorkspaceId,
+        name: user.name ? `${user.name} Studio` : 'My Studio',
+        category: 'Personal Studio',
+        badgeColor: 'bg-brand-indigo',
+      };
+    }
     const matched = WORKSPACES_DATA.find((w) => w.id === activeWorkspaceId);
     if (matched) return matched;
-    const user = typeof window !== 'undefined' ? getCurrentUser() : null;
     return {
       id: activeWorkspaceId || 'my-studio',
       name: user?.name ? `${user.name} Studio` : 'My Studio',
@@ -846,6 +854,21 @@ export default function CreatePostPage() {
       badgeColor: 'bg-brand-indigo',
     };
   }, [activeWorkspaceId]);
+
+  const workspacesList = useMemo(() => {
+    const user = typeof window !== 'undefined' ? getCurrentUser() : null;
+    if (user?.activeWorkspaceId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.activeWorkspaceId)) {
+      return [
+        {
+          id: user.activeWorkspaceId,
+          name: user.name ? `${user.name} Studio` : 'My Studio',
+          category: 'Personal Studio',
+          badgeColor: 'bg-brand-indigo',
+        }
+      ];
+    }
+    return WORKSPACES_DATA;
+  }, []);
 
   const targetWsId =
     activeWorkspaceId &&
@@ -859,6 +882,9 @@ export default function CreatePostPage() {
       localStorage.removeItem('retzpost_draft_ws_creator');
       localStorage.removeItem('retzpost_draft_ws_main');
       localStorage.removeItem('retzpost_draft_ws_brand');
+      localStorage.removeItem('retzpost_draft_ws_capitalone');
+      localStorage.removeItem('retzpost_draft_ws_coffee');
+      localStorage.removeItem('retzpost_draft_ws_software');
 
       const user = getCurrentUser();
       if (
@@ -1034,14 +1060,15 @@ export default function CreatePostPage() {
     const matched = workspaceChannels.find((ch) => ch.platform === previewPlatform);
     if (matched) return matched;
     const cleanHandle = activeWorkspace.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+    const defaultHandle = cleanHandle ? `@${cleanHandle}` : '@your_channel';
     const fallbacks: Record<string, DestinationAccount> = {
       INSTAGRAM: {
         id: `mock_ig_${activeWorkspaceId}`,
         workspaceId: activeWorkspaceId,
         platform: 'INSTAGRAM',
         platformGroup: 'Instagram',
-        name: `${activeWorkspace.name}`,
-        handle: `@${cleanHandle}_official`,
+        name: activeWorkspace.name,
+        handle: defaultHandle,
         badge: 'Instagram',
         avatarBg: 'bg-gradient-to-tr from-[#F58529] via-[#DD2A7B] to-[#8134AF]',
         avatarText: 'IG',
@@ -1053,7 +1080,7 @@ export default function CreatePostPage() {
         platform: 'FACEBOOK',
         platformGroup: 'Facebook',
         name: `${activeWorkspace.name} Page`,
-        handle: `${activeWorkspace.name} Official`,
+        handle: defaultHandle,
         badge: 'Facebook Page',
         avatarBg: 'bg-[#1877F2]',
         avatarText: 'FB',
@@ -1065,7 +1092,7 @@ export default function CreatePostPage() {
         platform: 'YOUTUBE',
         platformGroup: 'YouTube',
         name: `${activeWorkspace.name} Studio`,
-        handle: `@${cleanHandle}Studio`,
+        handle: defaultHandle,
         badge: 'YouTube Channel',
         avatarBg: 'bg-[#FF0000]',
         avatarText: 'YT',
@@ -1076,8 +1103,8 @@ export default function CreatePostPage() {
         workspaceId: activeWorkspaceId,
         platform: 'TIKTOK',
         platformGroup: 'TikTok',
-        name: `${activeWorkspace.name}`,
-        handle: `@${cleanHandle}`,
+        name: activeWorkspace.name,
+        handle: defaultHandle,
         badge: 'TikTok',
         avatarBg: 'bg-ink-primary',
         avatarText: 'TT',
@@ -1829,7 +1856,7 @@ export default function CreatePostPage() {
                     <div className="px-2 py-0.5 text-[9px] font-mono uppercase text-ink-secondary font-bold">
                       Switch Project:
                     </div>
-                    {WORKSPACES_DATA.map((ws) => (
+                    {workspacesList.map((ws) => (
                       <button
                         key={ws.id}
                         type="button"
