@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { 
@@ -109,6 +109,38 @@ export interface PresetRecipe {
   description: string;
   icon: string;
   targetPlacements: Record<string, boolean>;
+}
+
+export interface ImageMediaItem {
+  id: string;
+  name: string;
+  size: string;
+  previewUrl?: string;
+  storageKey?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface VideoMediaItem {
+  id?: string;
+  name: string;
+  size: string;
+  duration: string;
+  resolution: string;
+  previewUrl?: string;
+  storageKey?: string;
+  width?: number;
+  height?: number;
+}
+
+export interface ThumbnailMediaItem {
+  id: string;
+  name: string;
+  size: string;
+  previewUrl?: string;
+  storageKey?: string;
+  width?: number;
+  height?: number;
 }
 
 // -------------------------------------------------------------
@@ -693,112 +725,427 @@ export default function CreatePostPage() {
   // Mock Data Clean / Demo Mode State
   const [isMockCleared, setIsMockCleared] = useState<boolean>(true);
 
-  // Sample Photos (Demo Mode)
-  const SAMPLE_PHOTOS = useMemo(() => [
-    { id: 'img-1', name: 'editorial_hero_cover_01.jpg', size: '3.8 MB' },
-    { id: 'img-2', name: 'diagram_architecture_flow_02.png', size: '2.4 MB' },
-  ], []);
+  // Real Upload Media States (Empty by default)
+  const [images, setImages] = useState<ImageMediaItem[]>([]);
+  const [videoAsset, setVideoAsset] = useState<VideoMediaItem | null>(null);
+  const [customThumbnail, setCustomThumbnail] = useState<ThumbnailMediaItem | null>(null);
 
-  // Sample Video (Demo Mode)
-  const SAMPLE_VIDEO = useMemo(() => ({
-    name: 'teaser_multi_format_architecture_9x16.mp4',
-    size: '42.6 MB',
-    duration: '00:48',
-    resolution: '1080x1920 (9:16 Vertical)',
-  }), []);
+  // Live Upload Progress & Error States
+  const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadProgress, setUploadProgress] = useState<number | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
-  // Sample Placements (Demo Mode)
-  const SAMPLE_PLACEMENTS: Record<string, boolean> = useMemo(() => ({
-    'acme_ig_feed': true,
-    'acme_ig_story': true,
-    'acme_fb_feed': true,
-  }), []);
-
-  const SAMPLE_WORKING_TITLE = 'Omni-Format Publishing: Simultaneous Feed, Story & Reels';
-  const SAMPLE_SHARED_CAPTION = 'Architecture over aesthetics. In this issue we break down our modular publishing pipeline designed for simultaneous Feed Posts, 24h Stories, and Reels/Shorts.\n\nSwipe to explore the full stack diagrams.';
-  const SAMPLE_SHARED_TAGS = 'architecture, publishing, tech, design-system';
-  const SAMPLE_STORY_LINK_URL = 'https://retzpost.com/announcement';
-
-  // Sample Photos
-  const [images, setImages] = useState<Array<{ id: string; name: string; size: string }>>(() =>
-    isMockDataCleared() ? [] : [
-      { id: 'img-1', name: 'editorial_hero_cover_01.jpg', size: '3.8 MB' },
-      { id: 'img-2', name: 'diagram_architecture_flow_02.png', size: '2.4 MB' },
-    ]
-  );
-
-  // Sample Video
-  const [videoAsset, setVideoAsset] = useState<{
-    name: string;
-    size: string;
-    duration: string;
-    resolution: string;
-  } | null>(() =>
-    isMockDataCleared() ? null : {
-      name: 'teaser_multi_format_architecture_9x16.mp4',
-      size: '42.6 MB',
-      duration: '00:48',
-      resolution: '1080x1920 (9:16 Vertical)',
-    }
-  );
+  // Hidden File Input References
+  const fullVideoInputRef = useRef<HTMLInputElement>(null);
+  const shortsVideoInputRef = useRef<HTMLInputElement>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+  const thumbnailInputRef = useRef<HTMLInputElement>(null);
 
   // Placements State Dictionary: [accountId_format]: boolean
-  const [placements, setPlacements] = useState<Record<string, boolean>>(() =>
-    isMockDataCleared() ? {} : ({
-      'acme_ig_feed': true,
-      'acme_ig_story': true,
-      'acme_fb_feed': true,
-    } as Record<string, boolean>)
-  );
+  const [placements, setPlacements] = useState<Record<string, boolean>>({});
 
   // Content Fields (Column 2)
-  const [workingTitle, setWorkingTitle] = useState(() =>
-    isMockDataCleared() ? '' : 'Omni-Format Publishing: Simultaneous Feed, Story & Reels'
-  );
-  const [sharedCaption, setSharedCaption] = useState(() =>
-    isMockDataCleared() ? '' : 'Architecture over aesthetics. In this issue we break down our modular publishing pipeline designed for simultaneous Feed Posts, 24h Stories, and Reels/Shorts.\n\nSwipe to explore the full stack diagrams.'
-  );
-  const [sharedTags, setSharedTags] = useState(() =>
-    isMockDataCleared() ? '' : 'architecture, publishing, tech, design-system'
-  );
-  const [storyLinkUrl, setStoryLinkUrl] = useState(() =>
-    isMockDataCleared() ? '' : 'https://retzpost.com/announcement'
-  );
+  const [workingTitle, setWorkingTitle] = useState('');
+  const [sharedCaption, setSharedCaption] = useState('');
+  const [sharedTags, setSharedTags] = useState('');
+  const [storyLinkUrl, setStoryLinkUrl] = useState('');
 
   // YouTube Full Video Specific Settings
-  const [customThumbnail, setCustomThumbnail] = useState<{ id: string; name: string; size: string } | null>(null);
   const [youtubeVisibility, setYoutubeVisibility] = useState<'PUBLIC' | 'UNLISTED' | 'PRIVATE'>('PUBLIC');
   const [youtubeCategory, setYoutubeCategory] = useState<string>('HOUSING');
 
-  // Sync with Global Mock Data Clean / Demo Switcher
-  useEffect(() => {
-    const cleared = isMockDataCleared();
-    setIsMockCleared(cleared);
+  // Format Helper Utilities
+  const formatBytes = (bytes: number, decimals = 1): string => {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+  };
 
-    const unsubscribe = subscribeToMockDataChange((newCleared) => {
-      setIsMockCleared(newCleared);
-      if (newCleared) {
-        setImages([]);
-        setVideoAsset(null);
-        setCustomThumbnail(null);
-        setPlacements({});
-        setWorkingTitle('');
-        setSharedCaption('');
-        setSharedTags('');
-        setStoryLinkUrl('');
-      } else {
-        setImages(SAMPLE_PHOTOS);
-        setVideoAsset(SAMPLE_VIDEO);
-        setPlacements(SAMPLE_PLACEMENTS);
-        setWorkingTitle(SAMPLE_WORKING_TITLE);
-        setSharedCaption(SAMPLE_SHARED_CAPTION);
-        setSharedTags(SAMPLE_SHARED_TAGS);
-        setStoryLinkUrl(SAMPLE_STORY_LINK_URL);
-      }
+  const formatDuration = (seconds: number): string => {
+    if (!seconds || isNaN(seconds)) return '00:00';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
+
+  const probeVideoMetadata = (file: File): Promise<{
+    width: number;
+    height: number;
+    duration: number;
+    resolution: string;
+    previewUrl: string;
+  }> => {
+    return new Promise((resolve) => {
+      const blobUrl = URL.createObjectURL(file);
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      video.muted = true;
+      video.playsInline = true;
+      video.src = blobUrl;
+
+      const timeout = setTimeout(() => {
+        cleanup();
+        resolve({
+          width: 1920,
+          height: 1080,
+          duration: 0,
+          resolution: '1920x1080 (HD)',
+          previewUrl: blobUrl,
+        });
+      }, 10000);
+
+      const cleanup = () => {
+        clearTimeout(timeout);
+        video.removeAttribute('src');
+        video.load();
+      };
+
+      video.onloadeddata = () => {
+        const width = video.videoWidth || 1920;
+        const height = video.videoHeight || 1080;
+        const duration = video.duration || 0;
+
+        let resolution = `${width}x${height}`;
+        if (width >= 3840 && width > height) {
+          resolution = `${width}x${height} (4K UHD 16:9)`;
+        } else if (height >= 3840 && height > width) {
+          resolution = `${width}x${height} (4K UHD 9:16 Vertical)`;
+        } else if (width > height) {
+          resolution = `${width}x${height} (16:9 Landscape)`;
+        } else if (height > width) {
+          resolution = `${width}x${height} (9:16 Vertical)`;
+        } else {
+          resolution = `${width}x${height} (1:1 Square)`;
+        }
+
+        let frameUrl = blobUrl;
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = Math.min(width, 1280);
+          canvas.height = Math.round((canvas.width * height) / width);
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            frameUrl = canvas.toDataURL('image/jpeg', 0.85);
+          }
+        } catch (e) {
+          console.warn('Canvas frame extraction failed:', e);
+        }
+
+        cleanup();
+        resolve({ width, height, duration, resolution, previewUrl: frameUrl });
+      };
+
+      video.onerror = () => {
+        cleanup();
+        resolve({
+          width: 1920,
+          height: 1080,
+          duration: 0,
+          resolution: '1920x1080 (HD)',
+          previewUrl: blobUrl,
+        });
+      };
     });
+  };
 
-    return unsubscribe;
-  }, [SAMPLE_PHOTOS, SAMPLE_VIDEO, SAMPLE_PLACEMENTS]);
+  const uploadToPresignedUrl = (
+    uploadUrl: string,
+    file: File,
+    mimeType: string,
+    onProgress?: (percent: number) => void
+  ): Promise<void> => {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', uploadUrl, true);
+      xhr.setRequestHeader('Content-Type', mimeType);
+
+      if (xhr.upload && onProgress) {
+        xhr.upload.onprogress = (event) => {
+          if (event.lengthComputable) {
+            const pct = Math.round((event.loaded / event.total) * 100);
+            onProgress(pct);
+          }
+        };
+      }
+
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          resolve();
+        } else {
+          reject(new Error(`Storage PUT failed with status ${xhr.status}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        reject(new Error('Network connection error during file upload'));
+      };
+
+      xhr.ontimeout = () => {
+        reject(new Error('File upload timed out'));
+      };
+
+      xhr.send(file);
+    });
+  };
+
+  const handleVideoUpload = async (file: File, mode: 'VIDEO' | 'VIDEO_LANDSCAPE') => {
+    if (!targetWsId) {
+      alert(
+        locale === 'th'
+          ? 'ไม่พบ Workspace ID ที่ถูกต้อง กรุณาเลือก Workspace หรือเข้าสู่ระบบใหม่'
+          : 'Please select a workspace before uploading.'
+      );
+      return;
+    }
+
+    const MAX_VIDEO_BYTES = 2 * 1024 * 1024 * 1024;
+    if (file.size > MAX_VIDEO_BYTES) {
+      setUploadError(
+        locale === 'th'
+          ? 'ขนาดไฟล์วิดีโอเกินขีดจำกัดสูงสุด 2GB'
+          : 'Video file size exceeds maximum 2GB limit.'
+      );
+      return;
+    }
+
+    setUploadError(null);
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      const probed = await probeVideoMetadata(file);
+      const mimeType = file.type || 'video/mp4';
+
+      const initRes = await fetch('/api/media/uploads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workspaceId: targetWsId,
+          filename: file.name,
+          mimeType,
+          sizeBytes: file.size,
+        }),
+      });
+
+      if (!initRes.ok) {
+        const errData = await initRes.json().catch(() => ({}));
+        throw new Error(errData.error || errData.message || 'Failed to initiate video upload session');
+      }
+
+      const { assetId, uploadUrl, storageKey } = await initRes.json();
+
+      await uploadToPresignedUrl(uploadUrl, file, mimeType, (pct) => {
+        setUploadProgress(pct);
+      });
+
+      await fetch(`/api/media/${assetId}/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          width: probed.width,
+          height: probed.height,
+          durationSeconds: Math.round(probed.duration),
+        }),
+      }).catch((e) => console.warn('Complete media warning:', e));
+
+      setVideoAsset({
+        id: assetId,
+        name: file.name,
+        size: formatBytes(file.size),
+        resolution: probed.resolution,
+        duration: formatDuration(probed.duration),
+        previewUrl: probed.previewUrl,
+        storageKey,
+        width: probed.width,
+        height: probed.height,
+      });
+
+      if (mediaMode !== mode) {
+        handleSwitchMediaMode(mode);
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error('Video upload failed:', err);
+      setUploadError(
+        locale === 'th'
+          ? `การอัปโหลดวิดีโอล้มเหลว: ${msg}`
+          : `Video upload failed: ${msg}`
+      );
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(null);
+    }
+  };
+
+  const handlePhotoUpload = async (files: File[]) => {
+    if (!targetWsId) {
+      alert(
+        locale === 'th'
+          ? 'ไม่พบ Workspace ID ที่ถูกต้อง กรุณาเลือก Workspace หรือเข้าสู่ระบบใหม่'
+          : 'Please select a workspace before uploading.'
+      );
+      return;
+    }
+
+    const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
+    setUploadError(null);
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    const newUploadedImages: ImageMediaItem[] = [];
+
+    try {
+      const totalFiles = files.length;
+      for (let i = 0; i < totalFiles; i++) {
+        const file = files[i];
+
+        if (file.size > MAX_IMAGE_BYTES) {
+          throw new Error(
+            locale === 'th'
+              ? `ไฟล์รูปภาพ "${file.name}" มีขนาดเกิน 25MB`
+              : `Image file "${file.name}" exceeds 25MB limit.`
+          );
+        }
+
+        const mimeType = file.type || 'image/jpeg';
+        const previewUrl = URL.createObjectURL(file);
+
+        const initRes = await fetch('/api/media/uploads', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            workspaceId: targetWsId,
+            filename: file.name,
+            mimeType,
+            sizeBytes: file.size,
+          }),
+        });
+
+        if (!initRes.ok) {
+          const errData = await initRes.json().catch(() => ({}));
+          throw new Error(errData.error || errData.message || `Failed to initiate upload for ${file.name}`);
+        }
+
+        const { assetId, uploadUrl, storageKey } = await initRes.json();
+
+        await uploadToPresignedUrl(uploadUrl, file, mimeType, (pct) => {
+          const overallPct = Math.round(((i + pct / 100) / totalFiles) * 100);
+          setUploadProgress(overallPct);
+        });
+
+        await fetch(`/api/media/${assetId}/complete`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        }).catch((e) => console.warn('Complete media warning:', e));
+
+        newUploadedImages.push({
+          id: assetId,
+          name: file.name,
+          size: formatBytes(file.size),
+          previewUrl,
+          storageKey,
+        });
+      }
+
+      setImages((prev) => [...prev, ...newUploadedImages].slice(0, 10));
+      if (mediaMode !== 'PHOTOS') {
+        handleSwitchMediaMode('PHOTOS');
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error('Photo upload failed:', err);
+      setUploadError(
+        locale === 'th'
+          ? `การอัปโหลดรูปภาพล้มเหลว: ${msg}`
+          : `Photo upload failed: ${msg}`
+      );
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(null);
+    }
+  };
+
+  const handleThumbnailUpload = async (file: File) => {
+    if (!targetWsId) {
+      alert(
+        locale === 'th'
+          ? 'ไม่พบ Workspace ID ที่ถูกต้อง กรุณาเลือก Workspace หรือเข้าสู่ระบบใหม่'
+          : 'Please select a workspace before uploading.'
+      );
+      return;
+    }
+
+    const MAX_IMAGE_BYTES = 25 * 1024 * 1024;
+    if (file.size > MAX_IMAGE_BYTES) {
+      setUploadError(
+        locale === 'th'
+          ? 'ไฟล์ภาพปกมีขนาดเกิน 25MB'
+          : 'Thumbnail file exceeds 25MB limit.'
+      );
+      return;
+    }
+
+    setUploadError(null);
+    setIsUploading(true);
+    setUploadProgress(0);
+
+    try {
+      const mimeType = file.type || 'image/jpeg';
+      const previewUrl = URL.createObjectURL(file);
+
+      const initRes = await fetch('/api/media/uploads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          workspaceId: targetWsId,
+          filename: file.name,
+          mimeType,
+          sizeBytes: file.size,
+        }),
+      });
+
+      if (!initRes.ok) {
+        const errData = await initRes.json().catch(() => ({}));
+        throw new Error(errData.error || errData.message || 'Failed to initiate thumbnail upload');
+      }
+
+      const { assetId, uploadUrl, storageKey } = await initRes.json();
+
+      await uploadToPresignedUrl(uploadUrl, file, mimeType, (pct) => {
+        setUploadProgress(pct);
+      });
+
+      await fetch(`/api/media/${assetId}/complete`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      }).catch((e) => console.warn('Complete thumbnail warning:', e));
+
+      setCustomThumbnail({
+        id: assetId,
+        name: file.name,
+        size: formatBytes(file.size),
+        previewUrl,
+        storageKey,
+      });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error('Thumbnail upload failed:', err);
+      setUploadError(
+        locale === 'th'
+          ? `การอัปโหลดภาพปกล้มเหลว: ${msg}`
+          : `Thumbnail upload failed: ${msg}`
+      );
+    } finally {
+      setIsUploading(false);
+      setUploadProgress(null);
+    }
+  };
 
   // Auto-Save Draft & Recovery Engine
   const [lastSavedDraftTime, setLastSavedDraftTime] = useState<string | null>(null);
@@ -975,6 +1322,15 @@ export default function CreatePostPage() {
   }, [realAccounts]);
 
   const handlePublishDispatch = async () => {
+    if (isUploading) {
+      alert(
+        locale === 'th'
+          ? 'กรุณารอการอัปโหลดไฟล์สื่อให้เสร็จสิ้นก่อนเผยแพร่'
+          : 'Please wait for media upload to complete before publishing.'
+      );
+      return;
+    }
+
     const activeAccountIds = Array.from(
       new Set(
         Object.entries(placements)
@@ -990,7 +1346,11 @@ export default function CreatePostPage() {
     );
 
     if (activeAccountIds.length === 0) {
-      alert(locale === 'th' ? 'กรุณาเลือกช่องทางปลายทางอย่างน้อย 1 ช่องทาง' : 'Please select at least one target channel');
+      alert(
+        locale === 'th'
+          ? 'กรุณาเชื่อมต่อและเลือกช่องทางเผยแพร่ (เช่น YouTube) ในหน้า /accounts ก่อนเผยแพร่'
+          : 'Please connect and select a target channel (e.g. YouTube) in /accounts before publishing.'
+      );
       return;
     }
 
@@ -1001,12 +1361,20 @@ export default function CreatePostPage() {
 
     setIsPublishing(true);
     try {
+      const primaryAssetId =
+        (mediaMode === 'VIDEO' || mediaMode === 'VIDEO_LANDSCAPE') && videoAsset?.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(videoAsset.id)
+          ? videoAsset.id
+          : images.length > 0 && images[0]?.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(images[0].id)
+          ? images[0].id
+          : undefined;
+
       // 1. Create content draft
       const contentRes = await fetch('/api/contents', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           workspaceId: targetWsId,
+          primaryAssetId,
           workingTitle: workingTitle.trim(),
           sharedCaption: sharedCaption.trim() || undefined,
           sharedTags: sharedTags ? sharedTags.split(',').map((t) => t.trim()).filter(Boolean) : [],
@@ -2350,6 +2718,53 @@ export default function CreatePostPage() {
             mobileTab !== 'CANVAS' ? 'hidden xl:block' : 'block'
           }`}
         >
+          {/* Real Media File Inputs */}
+          <input
+            ref={fullVideoInputRef}
+            type="file"
+            accept="video/mp4,video/quicktime,video/webm"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleVideoUpload(file, 'VIDEO_LANDSCAPE');
+              e.target.value = '';
+            }}
+          />
+          <input
+            ref={shortsVideoInputRef}
+            type="file"
+            accept="video/mp4,video/quicktime,video/webm"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleVideoUpload(file, 'VIDEO');
+              e.target.value = '';
+            }}
+          />
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            multiple
+            className="hidden"
+            onChange={(e) => {
+              const files = e.target.files;
+              if (files && files.length > 0) handlePhotoUpload(Array.from(files));
+              e.target.value = '';
+            }}
+          />
+          <input
+            ref={thumbnailInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleThumbnailUpload(file);
+              e.target.value = '';
+            }}
+          />
+
           {/* MEDIA INGESTION DOCK (Top of Canvas) */}
           <div className="bg-paper-raised border border-border-rule rounded-card p-4 shadow-xs space-y-3">
             <div className="flex items-center justify-between pb-2 border-b border-border-rule">
@@ -2419,6 +2834,42 @@ export default function CreatePostPage() {
               </button>
             </div>
 
+            {/* Live Upload Progress Indicator */}
+            {isUploading && (
+              <div className="p-3 bg-brand-indigo/10 border border-brand-indigo/30 rounded-editorial space-y-1.5 animate-in fade-in">
+                <div className="flex items-center justify-between text-xs font-mono">
+                  <span className="flex items-center gap-2 text-brand-indigo font-semibold">
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>{locale === 'th' ? 'กำลังอัปโหลดไฟล์สื่อไปยัง Cloudflare R2...' : 'Uploading media to Cloudflare R2...'}</span>
+                  </span>
+                  <span className="font-bold text-brand-indigo">{uploadProgress ?? 0}%</span>
+                </div>
+                <div className="w-full h-1.5 bg-paper-canvas rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-brand-indigo transition-all duration-200 rounded-full"
+                    style={{ width: `${uploadProgress ?? 0}%` }}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Upload Error Banner */}
+            {uploadError && (
+              <div className="p-3 bg-semantic-error/10 border border-semantic-error/30 rounded-editorial flex items-center justify-between text-xs text-semantic-error">
+                <div className="flex items-center gap-2">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>{uploadError}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setUploadError(null)}
+                  className="text-semantic-error/70 hover:text-semantic-error font-mono text-xs cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
+
             {/* Photos Gallery */}
             {mediaMode === 'PHOTOS' && (
               <div className="grid grid-cols-3 gap-2.5 pt-1">
@@ -2427,30 +2878,50 @@ export default function CreatePostPage() {
                     key={img.id}
                     className="relative aspect-square bg-paper-subtle border border-border-rule rounded-editorial p-2 flex flex-col justify-between group overflow-hidden"
                   >
-                    <div className="flex items-center justify-between">
-                      <span className="w-4 h-4 rounded-full bg-brand-indigo text-white flex items-center justify-center font-mono text-[9px] font-bold">
+                    {img.previewUrl ? (
+                      <div className="absolute inset-0 z-0">
+                        <img
+                          src={img.previewUrl}
+                          alt={img.name}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-black/25 group-hover:bg-black/40 transition-colors" />
+                      </div>
+                    ) : null}
+                    <div className="relative z-10 flex items-center justify-between">
+                      <span className="w-4 h-4 rounded-full bg-brand-indigo text-white flex items-center justify-center font-mono text-[9px] font-bold shadow-xs">
                         {idx + 1}
                       </span>
                       <button
+                        type="button"
                         onClick={() => setImages(images.filter((i) => i.id !== img.id))}
-                        className="p-1 text-ink-secondary hover:text-semantic-error opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="p-1 text-white/80 hover:text-semantic-error bg-black/40 hover:bg-black/60 rounded transition-colors"
+                        title={locale === 'en' ? 'Remove photo' : 'ลบรูปภาพ'}
                       >
                         <Trash2 className="w-3 h-3" />
                       </button>
                     </div>
-                    <div className="text-center my-auto">
-                      <ImageIcon className="w-5 h-5 text-brand-indigo mx-auto opacity-70 mb-0.5" />
-                      <p className="text-[9px] font-mono text-ink-secondary truncate">{img.name}</p>
+                    {!img.previewUrl && (
+                      <div className="text-center my-auto">
+                        <ImageIcon className="w-5 h-5 text-brand-indigo mx-auto opacity-70 mb-0.5" />
+                        <p className="text-[9px] font-mono text-ink-secondary truncate">{img.name}</p>
+                      </div>
+                    )}
+                    <div className="relative z-10 flex items-center justify-between text-[8px] font-mono text-white bg-black/40 px-1 py-0.5 rounded backdrop-blur-2xs">
+                      <span className="truncate max-w-[80px]">{img.name}</span>
+                      <span>{img.size}</span>
                     </div>
-                    <span className="text-[8px] font-mono text-ink-secondary">{img.size}</span>
                   </div>
                 ))}
 
                 {images.length < 10 && (
-                  <div className="aspect-square border-2 border-dashed border-border-rule rounded-editorial flex flex-col items-center justify-center p-2 text-center cursor-pointer hover:border-brand-indigo/60 transition-colors bg-paper-canvas/40">
-                    <Plus className="w-4 h-4 text-brand-indigo mb-0.5" />
+                  <div
+                    onClick={() => photoInputRef.current?.click()}
+                    className="aspect-square border-2 border-dashed border-border-rule rounded-editorial flex flex-col items-center justify-center p-2 text-center cursor-pointer hover:border-brand-indigo/60 hover:bg-brand-indigo/5 transition-colors bg-paper-canvas/40 group"
+                  >
+                    <Plus className="w-4 h-4 text-brand-indigo mb-0.5 group-hover:scale-110 transition-transform" />
                     <span className="text-[11px] font-serif font-medium text-ink-primary">Add Photo</span>
-                    <span className="text-[9px] font-mono text-ink-secondary">JPG, PNG</span>
+                    <span className="text-[9px] font-mono text-ink-secondary">JPG, PNG, WEBP</span>
                   </div>
                 )}
 
@@ -2472,15 +2943,19 @@ export default function CreatePostPage() {
               videoAsset ? (
                 <div className="p-3 bg-paper-canvas border border-border-rule rounded-editorial flex items-center justify-between">
                   <div className="flex items-center gap-2.5">
-                    <div className="w-10 h-10 rounded-editorial bg-semantic-info/10 text-semantic-info flex items-center justify-center shrink-0 border border-semantic-info/20">
-                      <Film className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-editorial bg-semantic-info/10 text-semantic-info flex items-center justify-center shrink-0 border border-semantic-info/20 overflow-hidden relative">
+                      {videoAsset.previewUrl ? (
+                        <img src={videoAsset.previewUrl} alt="Preview frame" className="w-full h-full object-cover" />
+                      ) : (
+                        <Film className="w-5 h-5" />
+                      )}
                     </div>
                     <div>
                       <h3 className="font-semibold text-xs text-ink-primary font-mono truncate max-w-[200px]">
                         {videoAsset.name}
                       </h3>
                       <p className="text-[10px] font-mono text-semantic-success mt-0.5">
-                        {videoAsset.resolution} • {videoAsset.duration}
+                        {videoAsset.resolution} • {videoAsset.duration} • {videoAsset.size}
                       </p>
                     </div>
                   </div>
@@ -2499,14 +2974,20 @@ export default function CreatePostPage() {
                   </div>
                 </div>
               ) : (
-                <div className="border-2 border-dashed border-border-rule rounded-editorial p-6 text-center bg-paper-canvas hover:border-brand-indigo/50 transition-colors">
-                  <Film className="w-8 h-8 mx-auto text-brand-indigo/50 mb-2" />
+                <div
+                  onClick={() => shortsVideoInputRef.current?.click()}
+                  className="border-2 border-dashed border-border-rule rounded-editorial p-6 text-center bg-paper-canvas hover:border-brand-indigo/50 hover:bg-brand-indigo/5 transition-colors cursor-pointer group"
+                >
+                  <Film className="w-8 h-8 mx-auto text-brand-indigo/50 mb-2 group-hover:scale-110 transition-transform" />
                   <p className="text-xs font-semibold text-ink-primary">
-                    {locale === 'en' ? 'Click or drag video file (MP4/MOV) here' : 'คลิกหรือลากไฟล์วิดีโอ มาวางที่นี่'}
+                    {locale === 'en' ? 'Click or drag video file (MP4/MOV/WebM) here' : 'คลิกหรือลากไฟล์วิดีโอ (MP4/MOV/WebM) มาวางที่นี่'}
                   </p>
                   <p className="text-[10px] font-mono text-ink-secondary mt-1">
-                    {locale === 'en' ? 'Supports 9:16 vertical ratio (Reels/Shorts/TikTok) up to 1080x1920' : 'รองรับอัตราส่วน 9:16 (Reels/Shorts/TikTok) ความละเอียดสูงสุด 1080x1920'}
+                    {locale === 'en' ? 'Supports 9:16 vertical ratio (Reels/Shorts/TikTok) up to 2GB' : 'รองรับอัตราส่วน 9:16 (Reels/Shorts/TikTok) สูงสุด 2GB'}
                   </p>
+                  <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full bg-brand-indigo/10 text-brand-indigo font-mono text-[9px] font-semibold border border-brand-indigo/20">
+                    {locale === 'en' ? '+ Choose 9:16 Video File' : '+ คลิกเพื่อเลือกไฟล์วิดีโอ 9:16'}
+                  </span>
                 </div>
               )
             )}
@@ -2517,8 +2998,12 @@ export default function CreatePostPage() {
                 {videoAsset ? (
                   <div className="p-3 bg-paper-canvas border border-[#FF0000]/30 rounded-editorial flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-11 h-11 rounded-editorial bg-[#FF0000]/10 text-[#FF0000] flex items-center justify-center shrink-0 border border-[#FF0000]/20">
-                        <Play className="w-5 h-5 fill-[#FF0000]" />
+                      <div className="w-11 h-11 rounded-editorial bg-[#FF0000]/10 text-[#FF0000] flex items-center justify-center shrink-0 border border-[#FF0000]/20 overflow-hidden relative">
+                        {videoAsset.previewUrl ? (
+                          <img src={videoAsset.previewUrl} alt="Preview frame" className="w-full h-full object-cover" />
+                        ) : (
+                          <Play className="w-5 h-5 fill-[#FF0000]" />
+                        )}
                       </div>
                       <div>
                         <div className="flex items-center gap-1.5">
@@ -2528,7 +3013,7 @@ export default function CreatePostPage() {
                           </h3>
                         </div>
                         <p className="text-[10px] font-mono text-semantic-success mt-0.5">
-                          {videoAsset.resolution} • {locale === 'en' ? 'Duration ' : 'ความยาว '}{videoAsset.duration} • 16:9 Landscape
+                          {videoAsset.resolution} • {locale === 'en' ? 'Duration ' : 'ความยาว '}{videoAsset.duration} • {videoAsset.size}
                         </p>
                       </div>
                     </div>
@@ -2548,14 +3033,7 @@ export default function CreatePostPage() {
                   </div>
                 ) : (
                   <div
-                    onClick={() => {
-                      setVideoAsset({
-                        name: `${activeWorkspace.name.toLowerCase().replace(/\s+/g, '-')}-full-presentation-4k.mp4`,
-                        size: '342 MB',
-                        resolution: '3840x2160 (4K UHD 16:9)',
-                        duration: '14:28'
-                      });
-                    }}
+                    onClick={() => fullVideoInputRef.current?.click()}
                     className="border-2 border-dashed border-[#FF0000]/40 rounded-editorial p-6 text-center bg-paper-canvas hover:border-[#FF0000] hover:bg-[#FF0000]/5 transition-all cursor-pointer group"
                   >
                     <div className="w-12 h-12 mx-auto rounded-full bg-[#FF0000]/10 text-[#FF0000] flex items-center justify-center mb-2.5 group-hover:scale-105 transition-transform">
@@ -2565,7 +3043,7 @@ export default function CreatePostPage() {
                       {locale === 'en' ? 'Click or drag 16:9 Landscape video (YouTube Full Video / FB Watch)' : 'คลิกหรือลากไฟล์วิดีโอแนวนอน 16:9 Landscape (YouTube Full Video / FB Watch)'}
                     </p>
                     <p className="text-[10px] font-mono text-ink-secondary mt-1">
-                      {locale === 'en' ? 'Supports MP4, MOV, WebM • 1080p, 2K, 4K UHD • Unlimited length (YouTube API max 128GB)' : 'รองรับ MP4, MOV, WebM • 1080p, 2K, 4K UHD • ไม่จำกัดความยาว (YouTube API สูงสุด 128GB)'}
+                      {locale === 'en' ? 'Supports MP4, MOV, WebM • 1080p, 2K, 4K UHD • Up to 2GB' : 'รองรับ MP4, MOV, WebM • 1080p, 2K, 4K UHD • สูงสุด 2GB'}
                     </p>
                     <span className="inline-block mt-2 px-2.5 py-0.5 rounded-full bg-[#FF0000]/10 text-[#FF0000] font-mono text-[9px] font-semibold border border-[#FF0000]/20">
                       {locale === 'en' ? '+ Choose 16:9 Video File' : '+ คลิกเพื่อเลือกไฟล์วิดีโอ 16:9'}
@@ -2583,19 +3061,23 @@ export default function CreatePostPage() {
                       </span>
                     </div>
                     <span className="text-[9px] font-mono text-ink-secondary">
-                      {locale === 'en' ? 'Recommended: 1280 × 720 px (16:9), under 2MB' : 'แนะนำ 1280 × 720 px (16:9) ไม่เกิน 2MB'}
+                      {locale === 'en' ? 'Recommended: 1280 × 720 px (16:9), under 25MB' : 'แนะนำ 1280 × 720 px (16:9) ไม่เกิน 25MB'}
                     </span>
                   </div>
 
                   {customThumbnail ? (
                     <div className="flex items-center justify-between p-2 bg-paper-canvas rounded border border-border-rule">
                       <div className="flex items-center gap-2.5">
-                        <div className="w-12 h-7 bg-brand-indigo/10 rounded flex items-center justify-center text-[8px] font-mono text-brand-indigo font-bold border border-brand-indigo/20 overflow-hidden">
-                          {locale === 'en' ? '16:9 Cover' : '16:9 ปก'}
+                        <div className="w-14 h-8 bg-brand-indigo/10 rounded flex items-center justify-center text-[8px] font-mono text-brand-indigo font-bold border border-brand-indigo/20 overflow-hidden relative">
+                          {customThumbnail.previewUrl ? (
+                            <img src={customThumbnail.previewUrl} alt="Thumbnail preview" className="w-full h-full object-cover" />
+                          ) : (
+                            <span>16:9 Cover</span>
+                          )}
                         </div>
                         <div>
                           <p className="text-xs font-medium text-ink-primary font-mono">{customThumbnail.name}</p>
-                          <p className="text-[9px] font-mono text-ink-secondary">{customThumbnail.size} • 1280x720 JPG</p>
+                          <p className="text-[9px] font-mono text-ink-secondary">{customThumbnail.size}</p>
                         </div>
                       </div>
                       <button
@@ -2611,19 +3093,30 @@ export default function CreatePostPage() {
                     <div className="grid grid-cols-2 gap-2">
                       <button
                         type="button"
-                        onClick={() => setCustomThumbnail({ id: 'thumb-1', name: 'yt-thumbnail-cover-16-9.jpg', size: '480 KB' })}
-                        className="py-2 px-3 border border-dashed border-border-rule hover:border-brand-indigo rounded text-center text-xs bg-paper-canvas transition-colors group flex items-center justify-center gap-1.5"
+                        onClick={() => thumbnailInputRef.current?.click()}
+                        className="py-2 px-3 border border-dashed border-border-rule hover:border-brand-indigo rounded text-center text-xs bg-paper-canvas transition-colors group flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <Plus className="w-3.5 h-3.5 text-brand-indigo group-hover:scale-110 transition-transform" />
                         <span className="text-[11px] font-medium text-ink-primary">{locale === 'en' ? 'Upload 16:9 Thumbnail' : 'อัปโหลดภาพปก 16:9'}</span>
                       </button>
                       <button
                         type="button"
-                        onClick={() => setCustomThumbnail({ id: 'thumb-ai', name: 'ai-generated-youtube-hero.jpg', size: '620 KB' })}
-                        className="py-2 px-3 border border-brand-indigo/40 hover:border-brand-indigo rounded text-center text-xs bg-brand-indigo/5 text-brand-indigo transition-colors flex items-center justify-center gap-1.5"
+                        onClick={() => {
+                          if (videoAsset?.previewUrl) {
+                            setCustomThumbnail({
+                              id: `thumb-${Date.now()}`,
+                              name: `${videoAsset.name.replace(/\.[^/.]+$/, '')}-frame.jpg`,
+                              size: 'Auto-frame',
+                              previewUrl: videoAsset.previewUrl,
+                            });
+                          } else {
+                            alert(locale === 'th' ? 'กรุณาอัปโหลดวิดีโอก่อนเพื่อดึงภาพปก' : 'Please upload a video first to extract frame.');
+                          }
+                        }}
+                        className="py-2 px-3 border border-brand-indigo/40 hover:border-brand-indigo rounded text-center text-xs bg-brand-indigo/5 text-brand-indigo transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
                       >
                         <Sparkles className="w-3.5 h-3.5" />
-                        <span className="text-[11px] font-medium">{locale === 'en' ? 'Auto-Extract Frame (AI)' : 'สุ่มตัดปกจากวิดีโอ'}</span>
+                        <span className="text-[11px] font-medium">{locale === 'en' ? 'Auto-Extract Frame' : 'สุ่มตัดปกจากวิดีโอ'}</span>
                       </button>
                     </div>
                   )}

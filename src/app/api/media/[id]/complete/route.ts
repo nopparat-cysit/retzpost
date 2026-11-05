@@ -12,6 +12,8 @@ export async function POST(
   const assetId = params.id;
 
   try {
+    const body = await req.json().catch(() => ({}));
+
     const asset = await prisma.mediaAsset.findUnique({
       where: { id: assetId },
     });
@@ -50,8 +52,12 @@ export async function POST(
         console.warn('Poster generation skipped or failed:', posterErr);
       }
     } catch (probeErr) {
-      console.warn('ffprobe execution skipped or failed (will use basic metadata):', probeErr);
+      console.warn('ffprobe execution skipped or failed (will use client or basic metadata):', probeErr);
     }
+
+    const width = probeMetadata?.width ?? (typeof body?.width === 'number' ? body.width : null);
+    const height = probeMetadata?.height ?? (typeof body?.height === 'number' ? body.height : null);
+    const durationSec = probeMetadata?.durationSec ?? (typeof body?.durationSeconds === 'number' ? body.durationSeconds : null);
 
     // Update asset in database
     const updated = await prisma.mediaAsset.update({
@@ -59,10 +65,10 @@ export async function POST(
       data: {
         status: 'READY',
         sizeBytes: BigInt(objectMeta.sizeBytes),
-        durationSec: probeMetadata?.durationSec ? probeMetadata.durationSec : null,
-        width: probeMetadata?.width ?? null,
-        height: probeMetadata?.height ?? null,
-        aspectRatio: probeMetadata?.aspectRatio ?? null,
+        durationSec: durationSec ? durationSec : null,
+        width,
+        height,
+        aspectRatio: probeMetadata?.aspectRatio ?? (width && height ? `${width}:${height}` : null),
         videoCodec: probeMetadata?.videoCodec ?? null,
         audioCodec: probeMetadata?.audioCodec ?? null,
         posterStorageKey,

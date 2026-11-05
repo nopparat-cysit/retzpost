@@ -1,17 +1,51 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/prisma';
-import { storageService, MAX_VIDEO_SIZE_BYTES } from '@/modules/media/storage';
+import {
+  storageService,
+  MAX_VIDEO_SIZE_BYTES,
+  MAX_IMAGE_SIZE_BYTES,
+} from '@/modules/media/storage';
 import crypto from 'crypto';
 
 export const dynamic = 'force-dynamic';
 
-const uploadRequestSchema = z.object({
-  workspaceId: z.string().uuid('Invalid workspace ID format'),
-  filename: z.string().min(1, 'Filename is required').max(255),
-  mimeType: z.string().min(1, 'MIME type is required'),
-  sizeBytes: z.number().int().positive().max(MAX_VIDEO_SIZE_BYTES, 'File size exceeds maximum 2GB limit'),
-});
+const uploadRequestSchema = z
+  .object({
+    workspaceId: z.string().uuid('Invalid workspace ID format'),
+    filename: z.string().min(1, 'Filename is required').max(255),
+    mimeType: z.string().min(1, 'MIME type is required'),
+    sizeBytes: z.number().int().positive('File size must be positive'),
+  })
+  .superRefine((data, ctx) => {
+    const isVideo = storageService.isAllowedVideoMime(data.mimeType);
+    const isImage = storageService.isAllowedImageMime(data.mimeType);
+
+    if (!isVideo && !isImage) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['mimeType'],
+        message: `Unsupported media format: '${data.mimeType}'. Supported formats are MP4, MOV, WebM, JPEG, PNG, and WebP.`,
+      });
+      return;
+    }
+
+    if (isVideo && data.sizeBytes > MAX_VIDEO_SIZE_BYTES) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['sizeBytes'],
+        message: 'Video file size exceeds maximum 2GB limit',
+      });
+    }
+
+    if (isImage && data.sizeBytes > MAX_IMAGE_SIZE_BYTES) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['sizeBytes'],
+        message: 'Image file size exceeds maximum 25MB limit',
+      });
+    }
+  });
 
 export async function POST(req: NextRequest) {
   try {
@@ -31,10 +65,10 @@ export async function POST(req: NextRequest) {
     const { workspaceId, filename, mimeType, sizeBytes } = parsed.data;
 
     // Validate MIME type
-    if (!storageService.isAllowedVideoMime(mimeType)) {
+    if (!storageService.isAllowedVideoMime(mimeType) && !storageService.isAllowedImageMime(mimeType)) {
       return NextResponse.json(
         {
-          error: `Unsupported media format: '${mimeType}'. Supported formats are MP4, MOV, and WebM.`,
+          error: `Unsupported media format: '${mimeType}'. Supported formats are MP4, MOV, WebM, JPEG, PNG, and WebP.`,
         },
         { status: 415 }
       );
