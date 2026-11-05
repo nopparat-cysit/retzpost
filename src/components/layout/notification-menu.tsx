@@ -18,44 +18,7 @@ interface NotificationItem {
   linkHref?: string;
 }
 
-const INITIAL_NOTIFICATIONS: NotificationItem[] = [
-  {
-    id: 'notif_1',
-    type: 'SUCCESS',
-    titleTh: 'เผยแพร่โพสต์สำเร็จ',
-    titleEn: 'Dispatch Published Successfully',
-    descTh: 'โพสต์รูปภาพและแคปชันถูกส่งไปยัง Facebook และ Instagram แล้ว',
-    descEn: 'Media dispatch delivered to Facebook Page and Instagram.',
-    timeTh: '5 นาทีที่แล้ว',
-    timeEn: '5m ago',
-    read: false,
-    linkHref: '/publishing/queue',
-  },
-  {
-    id: 'notif_2',
-    type: 'INFO',
-    titleTh: 'ช่วงเวลายอดนิยมพร้อมใช้งาน',
-    titleEn: 'Peak Slot Window Active',
-    descTh: 'ช่วงเวลา 19:00 - 21:00 น. มีอัตราการมีส่วนร่วมสูงที่สุดสำหรับคอนเทนต์วันนี้',
-    descEn: '19:00 - 21:00 window has highest audience engagement today.',
-    timeTh: '1 ชั่วโมงที่แล้ว',
-    timeEn: '1h ago',
-    read: false,
-    linkHref: '/calendar',
-  },
-  {
-    id: 'notif_3',
-    type: 'WARNING',
-    titleTh: 'สำรองโทเคนคงเหลือ',
-    titleEn: 'Token Balance Status',
-    descTh: 'กระเป๋า Master Wallet ของคุณเหลือเหรียญพร้อมใช้งาน',
-    descEn: 'Master Wallet balance is active and ready for auto-framing.',
-    timeTh: 'วันนี้',
-    timeEn: 'Today',
-    read: true,
-    linkHref: '/pricing',
-  },
-];
+const INITIAL_NOTIFICATIONS: NotificationItem[] = [];
 
 export const NotificationMenu: React.FC = () => {
   const { locale } = useTranslation();

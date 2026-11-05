@@ -892,6 +892,8 @@ export default function CreatePostPage() {
               }
               return next;
             });
+          } else {
+            setRealAccounts([]);
           }
         }
       } catch (err) {
@@ -903,12 +905,8 @@ export default function CreatePostPage() {
 
   // Active Channels Filtered by Workspace
   const workspaceChannels = useMemo(() => {
-    if (realAccounts.length > 0) {
-      return realAccounts;
-    }
-    if (isMockCleared) return [];
-    return CHANNELS_BY_WORKSPACE.filter(ch => ch.workspaceId === activeWorkspaceId);
-  }, [realAccounts, activeWorkspaceId, isMockCleared]);
+    return realAccounts;
+  }, [realAccounts]);
 
   const handlePublishDispatch = async () => {
     const activeAccountIds = Array.from(
