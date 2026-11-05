@@ -58,6 +58,7 @@ import {
   loadSampleMockData, 
   subscribeToMockDataChange 
 } from '@/modules/data/mock-data-manager';
+import { getCurrentUser } from '@/modules/auth/auth-service';
 import { EditorialEmptyState } from '@/components/ui/editorial-empty-state';
 import { useTranslation } from '@/modules/i18n/i18n-context';
 import { getWorkspaceDisplayName } from '@/modules/workspaces/active-workspace';
@@ -1676,61 +1677,75 @@ function ConnectedAccountsContent() {
 
                 {/* OAuth Trigger Buttons */}
                 <div className="space-y-2">
-                  {connectPlatform === 'FACEBOOK' && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const wsId = selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
-                        window.location.href = `/api/connections/meta/start?workspaceId=${wsId}`;
-                      }}
-                      className="w-full py-2.5 px-4 rounded-editorial bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
-                    >
-                      <FacebookLogo size={18} />
-                      <span>{locale === 'th' ? 'เข้าสู่ระบบด้วย Facebook (Log in with Facebook)' : 'Log in with Facebook'}</span>
-                    </button>
-                  )}
+                  {(() => {
+                    const resolveTargetWsId = () => {
+                      const currentUser = getCurrentUser();
+                      if (
+                        currentUser?.activeWorkspaceId &&
+                        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(currentUser.activeWorkspaceId)
+                      ) {
+                        return currentUser.activeWorkspaceId;
+                      }
+                      return selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
+                    };
+                    const targetWsId = resolveTargetWsId();
 
-                  {connectPlatform === 'INSTAGRAM' && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const wsId = selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
-                        window.location.href = `/api/connections/meta/start?workspaceId=${wsId}`;
-                      }}
-                      className="w-full py-2.5 px-4 rounded-editorial bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-opacity cursor-pointer"
-                    >
-                      <InstagramLogo size={18} />
-                      <span>{locale === 'th' ? 'เข้าสู่ระบบ Instagram ผ่าน Meta Business' : 'Log in to Instagram via Meta Business'}</span>
-                    </button>
-                  )}
+                    return (
+                      <>
+                        {connectPlatform === 'FACEBOOK' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              window.location.href = `/api/connections/meta/start?workspaceId=${targetWsId}`;
+                            }}
+                            className="w-full py-2.5 px-4 rounded-editorial bg-[#1877F2] hover:bg-[#166fe5] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                          >
+                            <FacebookLogo size={18} />
+                            <span>{locale === 'th' ? 'เข้าสู่ระบบด้วย Facebook (Log in with Facebook)' : 'Log in with Facebook'}</span>
+                          </button>
+                        )}
 
-                  {connectPlatform === 'YOUTUBE' && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const wsId = selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
-                        window.location.href = `/api/connections/youtube/start?workspaceId=${wsId}`;
-                      }}
-                      className="w-full py-2.5 px-4 rounded-editorial bg-[#FF0000] hover:bg-[#e60000] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
-                    >
-                      <YouTubeLogo size={18} />
-                      <span>{locale === 'th' ? 'เข้าสู่ระบบด้วย Google / YouTube Account' : 'Log in with Google / YouTube Account'}</span>
-                    </button>
-                  )}
+                        {connectPlatform === 'INSTAGRAM' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              window.location.href = `/api/connections/meta/start?workspaceId=${targetWsId}`;
+                            }}
+                            className="w-full py-2.5 px-4 rounded-editorial bg-gradient-to-r from-[#833AB4] via-[#FD1D1D] to-[#F77737] hover:opacity-95 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-opacity cursor-pointer"
+                          >
+                            <InstagramLogo size={18} />
+                            <span>{locale === 'th' ? 'เข้าสู่ระบบ Instagram ผ่าน Meta Business' : 'Log in to Instagram via Meta Business'}</span>
+                          </button>
+                        )}
 
-                  {connectPlatform === 'TIKTOK' && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const wsId = selectedWorkspaceId === 'ALL' ? 'ws_main' : selectedWorkspaceId;
-                        window.location.href = `/api/connections/tiktok/start?workspaceId=${wsId}`;
-                      }}
-                      className="w-full py-2.5 px-4 rounded-editorial bg-black hover:bg-neutral-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
-                    >
-                      <TikTokLogo size={18} />
-                      <span>{locale === 'th' ? 'เข้าสู่ระบบด้วย TikTok for Business' : 'Log in with TikTok for Business'}</span>
-                    </button>
-                  )}
+                        {connectPlatform === 'YOUTUBE' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              window.location.href = `/api/connections/youtube/start?workspaceId=${targetWsId}`;
+                            }}
+                            className="w-full py-2.5 px-4 rounded-editorial bg-[#FF0000] hover:bg-[#e60000] text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                          >
+                            <YouTubeLogo size={18} />
+                            <span>{locale === 'th' ? 'เข้าสู่ระบบด้วย Google / YouTube Account' : 'Log in with Google / YouTube Account'}</span>
+                          </button>
+                        )}
+
+                        {connectPlatform === 'TIKTOK' && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              window.location.href = `/api/connections/tiktok/start?workspaceId=${targetWsId}`;
+                            }}
+                            className="w-full py-2.5 px-4 rounded-editorial bg-black hover:bg-neutral-800 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-xs transition-colors cursor-pointer"
+                          >
+                            <TikTokLogo size={18} />
+                            <span>{locale === 'th' ? 'เข้าสู่ระบบด้วย TikTok for Business' : 'Log in with TikTok for Business'}</span>
+                          </button>
+                        )}
+                      </>
+                    );
+                  })()}
 
                   {(connectPlatform === 'X' || connectPlatform === 'LEMON8') && (
                     <div className="p-3 bg-amber-500/10 border border-amber-500/20 rounded-editorial text-xs text-amber-800 dark:text-amber-200">
