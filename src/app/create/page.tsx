@@ -56,6 +56,7 @@ import {
 } from 'lucide-react';
 import { Masthead } from '@/components/ui/masthead';
 import { useTranslation } from '@/modules/i18n/i18n-context';
+import { getCurrentUser } from '@/modules/auth/auth-service';
 import { Sticker } from '@/components/ui/sticker';
 import { CustomDatePicker } from '@/components/ui/custom-date-picker';
 import { CustomTimePicker } from '@/components/ui/custom-time-picker';
@@ -649,7 +650,19 @@ export default function CreatePostPage() {
   const [realAccounts, setRealAccounts] = useState<DestinationAccount[]>([]);
   const [isPublishing, setIsPublishing] = useState<boolean>(false);
   // Active Project Workspace Context
-  const [activeWorkspaceId, setActiveWorkspaceId] = useState('ws_acme');
+  const [activeWorkspaceId, setActiveWorkspaceId] = useState<string>(() => {
+    if (typeof window !== 'undefined') {
+      const user = getCurrentUser();
+      if (user?.activeWorkspaceId && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.activeWorkspaceId)) {
+        return user.activeWorkspaceId;
+      }
+      const saved = localStorage.getItem('retzpost_active_project_id');
+      if (saved && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(saved)) {
+        return saved;
+      }
+    }
+    return '';
+  });
   const [isWorkspaceMenuOpen, setIsWorkspaceMenuOpen] = useState(false);
 
   // Custom Presets State (Editable / Saveable)
@@ -822,13 +835,40 @@ export default function CreatePostPage() {
   const [scheduledTime, setScheduledTime] = useState('09:15');
 
   // Active Workspace Entity
-  const activeWorkspace = WORKSPACES_DATA.find(w => w.id === activeWorkspaceId) || WORKSPACES_DATA[0];
+  const activeWorkspace = useMemo(() => {
+    const matched = WORKSPACES_DATA.find((w) => w.id === activeWorkspaceId);
+    if (matched) return matched;
+    const user = typeof window !== 'undefined' ? getCurrentUser() : null;
+    return {
+      id: activeWorkspaceId || 'my-studio',
+      name: user?.name ? `${user.name} Studio` : 'My Studio',
+      category: 'Workspace',
+      badgeColor: 'bg-brand-indigo',
+    };
+  }, [activeWorkspaceId]);
 
   const targetWsId =
     activeWorkspaceId &&
     /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(activeWorkspaceId)
       ? activeWorkspaceId
-      : 'dfec755f-256c-4182-813f-a69266c7b6f0';
+      : (typeof window !== 'undefined' ? getCurrentUser()?.activeWorkspaceId : '') || '';
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('retzpost_draft_ws_acme');
+      localStorage.removeItem('retzpost_draft_ws_creator');
+      localStorage.removeItem('retzpost_draft_ws_main');
+      localStorage.removeItem('retzpost_draft_ws_brand');
+
+      const user = getCurrentUser();
+      if (
+        user?.activeWorkspaceId &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(user.activeWorkspaceId)
+      ) {
+        setActiveWorkspaceId(user.activeWorkspaceId);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     async function loadRealAccounts() {
@@ -1189,6 +1229,10 @@ export default function CreatePostPage() {
   // Auto-Save Draft: Load saved draft on workspace change or initial mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(activeWorkspaceId)) {
+        setDraftRestoredNotice(false);
+        return;
+      }
       const draftKey = `retzpost_draft_${activeWorkspaceId}`;
       const saved = localStorage.getItem(draftKey);
       if (saved) {
@@ -1214,6 +1258,7 @@ export default function CreatePostPage() {
   // Auto-Save Draft: Debounced save when user edits fields
   useEffect(() => {
     if (typeof window === 'undefined') return;
+    if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(activeWorkspaceId)) return;
     const timer = setTimeout(() => {
       const nowStr = new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       const draftKey = `retzpost_draft_${activeWorkspaceId}`;
@@ -1235,11 +1280,15 @@ export default function CreatePostPage() {
   const handleClearDraft = () => {
     if (typeof window !== 'undefined') {
       localStorage.removeItem(`retzpost_draft_${activeWorkspaceId}`);
+      localStorage.removeItem('retzpost_draft_ws_acme');
+      localStorage.removeItem('retzpost_draft_ws_creator');
+      localStorage.removeItem('retzpost_draft_ws_main');
+      localStorage.removeItem('retzpost_draft_ws_brand');
     }
-    setWorkingTitle('Omni-Format Publishing: Simultaneous Feed, Story & Reels');
-    setSharedCaption('Architecture over aesthetics. In this issue we break down our modular publishing pipeline designed for simultaneous Feed Posts, 24h Stories, and Reels/Shorts.\n\nSwipe to explore the full stack diagrams.');
-    setStoryLinkUrl('https://retzpost.com/announcement');
-    setSharedTags('architecture, publishing, tech, design-system');
+    setWorkingTitle('');
+    setSharedCaption('');
+    setStoryLinkUrl('');
+    setSharedTags('');
     setLastSavedDraftTime(null);
     setDraftRestoredNotice(false);
   };
