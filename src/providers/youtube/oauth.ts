@@ -27,7 +27,9 @@ export class YouTubeOAuthHelper {
   constructor() {
     this.clientId = process.env.GOOGLE_CLIENT_ID || '';
     this.clientSecret = process.env.GOOGLE_CLIENT_SECRET || '';
-    this.redirectUri = process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/api/connections/youtube/callback';
+    this.redirectUri =
+      process.env.YOUTUBE_REDIRECT_URI ||
+      `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/connections/youtube/callback`;
   }
 
   /**
