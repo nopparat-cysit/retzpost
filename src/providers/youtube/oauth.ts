@@ -42,7 +42,7 @@ export class YouTubeOAuthHelper {
       response_type: 'code',
       scope: YOUTUBE_OAUTH_SCOPES.join(' '),
       access_type: 'offline', // Required to receive refresh_token
-      prompt: 'consent',     // Forces consent prompt so refresh_token is returned
+      prompt: 'consent select_account', // Forces account picker and consent so user can choose account/channel
       state,
     });
 
